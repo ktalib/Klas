@@ -10,7 +10,7 @@
     x-transition:leave-start="transform opacity-100 scale-100"
     x-transition:leave-end="transform opacity-0 scale-95"
     class="action-menu">
-    <a href="{{ route('sectionaltitling.viewrecorddetail', $app->mother_id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+    <a href="{{ route('st_transfer.view', $app->mother_id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
       <i data-lucide="eye" class="inline w-4 h-4 mr-1 text-green-500"></i> View Details
     </a>
   

@@ -5,6 +5,7 @@
 @endsection
 
 @section('header-scripts')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
 @endsection
@@ -314,14 +315,7 @@
 <script src="{{ asset('js/st_transfer.js') }}?v={{ time() }}"></script>
 
 <!-- Debug information in dev mode -->
-@if(config('app.debug'))
-<div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4" role="alert">
-  <p class="font-bold">Debug Mode</p>
-  <p>Laravel debug mode is enabled. Check logs for detailed error information.</p>
-  <p>Laravel Version: {{ app()->version() }}</p>
-  <p>PHP Version: {{ phpversion() }}</p>
-</div>
-@endif
+
 
 @if(session('success'))
 <script>

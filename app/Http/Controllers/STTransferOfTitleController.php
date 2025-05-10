@@ -212,58 +212,104 @@ class STTransferOfTitleController extends Controller
 
     public function view($id)
     {
-        $application = DB::connection('sqlsrv')->table('subapplications')
-            ->join('mother_applications', 'subapplications.main_application_id', '=', 'mother_applications.id')
-            ->leftJoin('SectionalCofOReg', 'subapplications.id', '=', 'SectionalCofOReg.application_id')
-            ->where('subapplications.id', $id)
-            ->first();
+        $PageTitle = 'View ST Transfer of Title';
+        $PageDescription = '';
+        try {
+            // Use application_id instead of sub_application_id
+            $application = DB::connection('sqlsrv')->table('mother_applications')
+                ->leftJoin('SectionalCofOReg', 'mother_applications.id', '=', 'SectionalCofOReg.application_id')
+                ->leftJoin('users', 'SectionalCofOReg.created_by', '=', 'users.id')
+                ->select(
+                    'mother_applications.*',
+                    'SectionalCofOReg.*',
+                    'mother_applications.id as mother_id',
+                    'SectionalCofOReg.page_no as reg_page_no',
+                    'SectionalCofOReg.created_by as reg_created_by',
+                    'SectionalCofOReg.status as reg_status',
+                    DB::raw("CONCAT(users.first_name, ' ', users.last_name) as reg_creator_name")
+                )
+                ->where('mother_applications.id', $id)
+                ->first();
 
-        if (!$application) {
-            return redirect()->back()->with('error', 'Application not found');
+            if (!$application) {
+                \Log::error('Application not found', ['id' => $id]);
+                return redirect()->route('st_transfer.index')->with('error', 'Application not found');
+            }
+
+            // Process owner names if not already set
+            if (empty($application->owner_name)) {
+                if (!empty($application->multiple_owners_names)) {
+                    $ownerArray = json_decode($application->multiple_owners_names, true);
+                    $application->owner_name = $ownerArray ? implode(', ', $ownerArray) : null;
+                } elseif (!empty($application->corporate_name)) {
+                    $application->owner_name = $application->corporate_name;
+                } else {
+                    $application->owner_name = trim($application->applicant_title . ' ' . $application->first_name . ' ' . $application->surname);
+                }
+            }
+
+            return view('st_transfer.view', compact('application', 'PageTitle', 'PageDescription'));
+        } catch (\Exception $e) {
+            \Log::error('Error in view method', [
+                'id' => $id,
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->route('st_transfer.index')->with('error', 'An error occurred: ' . $e->getMessage());
         }
-
-        return view('st_transfer.view', compact('application'));
     }
 
     public function getNextSerialNumber()
     {
-        // Get the latest volume and page numbers
-        $latestRecord = DB::connection('sqlsrv')->table('SectionalCofOReg')
-            ->select('volume_no', 'page_no', 'serial_no')
-            ->orderBy('volume_no', 'desc')
-            ->orderBy('page_no', 'desc')
-            ->first();
-        
-        if (!$latestRecord) {
-            // First record ever
-            return response()->json([
-                'serial_no' => 1,
-                'page_no' => 1,
-                'volume_no' => 1,
-                'deeds_serial_no' => '1/1/1'
+        try {
+            // Get the latest volume and page numbers
+            $latestRecord = DB::connection('sqlsrv')->table('SectionalCofOReg')
+                ->select('volume_no', 'page_no', 'serial_no')
+                ->orderBy('volume_no', 'desc')
+                ->orderBy('page_no', 'desc')
+                ->first();
+            
+            if (!$latestRecord) {
+                // First record ever
+                return response()->json([
+                    'serial_no' => 1,
+                    'page_no' => 1,
+                    'volume_no' => 1,
+                    'deeds_serial_no' => '1/1/1'
+                ]);
+            }
+            
+            $volumeNo = $latestRecord->volume_no;
+            $pageNo = $latestRecord->page_no;
+            $serialNo = $latestRecord->serial_no;
+            
+            // Check if we need to start a new volume
+            if ($pageNo >= 100) {
+                $volumeNo++;
+                $pageNo = 1;
+                $serialNo = 1;
+            } else {
+                $pageNo++;
+                $serialNo++;
+            }
+            
+            $result = [
+                'serial_no' => $serialNo,
+                'page_no' => $pageNo,
+                'volume_no' => $volumeNo,
+                'deeds_serial_no' => "$serialNo/$pageNo/$volumeNo"
+            ];
+            
+            \Log::info('Generated next serial number', $result);
+            
+            return response()->json($result);
+        } catch (\Exception $e) {
+            \Log::error('Error generating next serial number', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
+            return response()->json(['error' => 'Failed to generate serial number: ' . $e->getMessage()], 500);
         }
-        
-        $volumeNo = $latestRecord->volume_no;
-        $pageNo = $latestRecord->page_no;
-        $serialNo = $latestRecord->serial_no;
-        
-        // Check if we need to start a new volume
-        if ($pageNo >= 100) {
-            $volumeNo++;
-            $pageNo = 1;
-            $serialNo = 1;
-        } else {
-            $pageNo++;
-            $serialNo++;
-        }
-        
-        return response()->json([
-            'serial_no' => $serialNo,
-            'page_no' => $pageNo,
-            'volume_no' => $volumeNo,
-            'deeds_serial_no' => "$serialNo/$pageNo/$volumeNo"
-        ]);
     }
 
     public function validateDeedsTime($time)
@@ -274,90 +320,113 @@ class STTransferOfTitleController extends Controller
 
     public function registerSingle(Request $request)
     {
-        $request->validate([
-            'application_id' => 'required|integer',
-            'sectional_title_file_no' => 'required|string|unique:sqlsrv.SectionalCofOReg,Sectional_Title_File_No',
-            'applicant_name' => 'required|string',
-            'tenure_period' => 'required',
-            'current_owner' => 'required|string',
-            'occupation' => 'required|string',
-            'deeds_time' => 'required|string',
-            'deeds_date' => 'required|date',
-          
-        ]);
-        
-        // Verify the application exists
-        $application = DB::connection('sqlsrv')->table('mother_applications')
-            ->where('id', $request->application_id)
-            ->first();
-            
-        if (!$application) {
-            return response()->json(['error' => 'Application not found. The application ID is invalid.'], 404);
-        }
-        
-        if (!$this->validateDeedsTime($request->deeds_time)) {
-            return response()->json(['error' => 'Deeds time must be in format HH:MM AM/PM'], 422);
-        }
-        
-        // Get next serial number
-        $serialData = $this->getNextSerialNumber()->getData(true);
-        
         try {
-            DB::connection('sqlsrv')->beginTransaction();
+            // Log incoming request for debugging
+            \Log::info('Register Single Request', [
+                'data' => $request->all()
+            ]);
             
-            // Generate STM reference number in format STM-YYYY-XXX
-            $year = date('Y');
-            $lastRef = DB::connection('sqlsrv')->table('SectionalCofOReg')
-                ->where('STM_Ref', 'like', "STM-$year-%")
-                ->orderBy('id', 'desc')
-                ->value('STM_Ref');
+            $request->validate([
+                'mother_application_id' => 'required|integer',
+                'sectional_title_file_no' => 'required|string|unique:sqlsrv.SectionalCofOReg,Sectional_Title_File_No',
+                'applicant_name' => 'required|string',
+                'tenure_period' => 'required',
+                'current_owner' => 'required|string',
+                'occupation' => 'required|string',
+                'deeds_time' => 'required|string',
+                'deeds_date' => 'required|date',
+            ]);
+            
+            // Verify the application exists
+            $application = DB::connection('sqlsrv')->table('mother_applications')
+                ->where('id', $request->mother_application_id)
+                ->first();
                 
-            if ($lastRef) {
-                $lastNumber = (int)substr($lastRef, -3);
-                $newNumber = $lastNumber + 1;
-            } else {
-                $newNumber = 1;
+            if (!$application) {
+                \Log::error('Application not found', ['id' => $request->mother_application_id]);
+                return response()->json(['error' => 'Application not found. The application ID is invalid.'], 404);
             }
             
-            $stmRef = "STM-$year-" . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+            if (!$this->validateDeedsTime($request->deeds_time)) {
+                \Log::error('Invalid deeds time format', ['time' => $request->deeds_time]);
+                return response()->json(['error' => 'Deeds time must be in format HH:MM AM/PM'], 422);
+            }
             
-            // Ensure we have a valid user ID
-         
-            $userId = Auth::id();
+            // Get next serial number
+            $serialData = $this->getNextSerialNumber()->getData(true);
             
-            // Create SectionalCofOReg record
-            DB::connection('sqlsrv')->table('SectionalCofOReg')->insert([
-                'application_id' => $request->application_id,
-                'Sectional_Title_File_No' => $request->sectional_title_file_no,
-                'STM_Ref' => $stmRef,
-                'Applicant_Name' => $request->applicant_name,
-                'Tenure_Period' => $request->tenure_period,
-                'Deeds_Transfer' => $request->deeds_transfer ?? null,
-                'Deeds_Serial_No' => $serialData['deeds_serial_no'],
-               
-                'Current_Owner' => $request->current_owner,
-                'Occupation' => $request->occupation,
-                'serial_no' => $serialData['serial_no'],
-                'page_no' => $serialData['page_no'],
-                'volume_no' => $serialData['volume_no'],
-                'deeds_time' => $request->deeds_time,
-                'deeds_date' => $request->deeds_date,
-                'created_by' => $userId,
-                'created_at' => now(),
-                'status' => 'registered'
-            ]);
-            
-            DB::connection('sqlsrv')->commit();
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'Certificate of Occupancy registered successfully',
-                'serial_data' => $serialData,
-                'stm_ref' => $stmRef
-            ]);
+            try {
+                DB::connection('sqlsrv')->beginTransaction();
+                
+                // Generate STM reference number in format STM-YYYY-XXX
+                $year = date('Y');
+                $lastRef = DB::connection('sqlsrv')->table('SectionalCofOReg')
+                    ->where('STM_Ref', 'like', "STM-$year-%")
+                    ->orderBy('id', 'desc')
+                    ->value('STM_Ref');
+                    
+                if ($lastRef) {
+                    $lastNumber = (int)substr($lastRef, -3);
+                    $newNumber = $lastNumber + 1;
+                } else {
+                    $newNumber = 1;
+                }
+                
+                $stmRef = "STM-$year-" . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+                
+                // Ensure we have a valid user ID
+                $userId = Auth::id() ?: 1; // Default to ID 1 if not authenticated
+                
+                // Create SectionalCofOReg record
+                DB::connection('sqlsrv')->table('SectionalCofOReg')->insert([
+                    'application_id' => $request->mother_application_id,
+                    'Sectional_Title_File_No' => $request->sectional_title_file_no,
+                    'STM_Ref' => $stmRef,
+                    'Applicant_Name' => $request->applicant_name,
+                    'Tenure_Period' => $request->tenure_period,
+                    'Deeds_Transfer' => $request->deeds_transfer ?? null,
+                    'Deeds_Serial_No' => $serialData['deeds_serial_no'],
+                   
+                    'Current_Owner' => $request->current_owner,
+                    'Occupation' => $request->occupation,
+                    'serial_no' => $serialData['serial_no'],
+                    'page_no' => $serialData['page_no'],
+                    'volume_no' => $serialData['volume_no'],
+                    'deeds_time' => $request->deeds_time,
+                    'deeds_date' => $request->deeds_date,
+                    'created_by' => $userId,
+                    'created_at' => now(),
+                    'status' => 'registered'
+                ]);
+                
+                DB::connection('sqlsrv')->commit();
+                
+                \Log::info('CofO registered successfully', [
+                    'application_id' => $request->mother_application_id,
+                    'serial_data' => $serialData,
+                    'stm_ref' => $stmRef
+                ]);
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Certificate of Occupancy registered successfully',
+                    'serial_data' => $serialData,
+                    'stm_ref' => $stmRef
+                ]);
+            } catch (\Exception $e) {
+                DB::connection('sqlsrv')->rollBack();
+                \Log::error('Database error while registering CofO', [
+                    'exception' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                return response()->json(['error' => 'Failed to register CofO: ' . $e->getMessage()], 500);
+            }
         } catch (\Exception $e) {
-            DB::connection('sqlsrv')->rollBack();
-            return response()->json(['error' => 'Failed to register CofO: ' . $e->getMessage()], 500);
+            \Log::error('Exception in registerSingle', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
 
@@ -514,6 +583,29 @@ class STTransferOfTitleController extends Controller
             ]);
             
             return response()->json(['error' => 'Failed to decline registration: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function debug()
+    {
+        try {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'API is working',
+                'timestamp' => now()->toDateTimeString(),
+                'environment' => app()->environment(),
+                'debug' => config('app.debug')
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Debug route failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 }

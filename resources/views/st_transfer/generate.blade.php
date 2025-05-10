@@ -14,7 +14,7 @@
         <!-- Page Header -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <h1 class="text-2xl font-bold text-gray-900">Generate Certificate of Occupancy</h1>
-            <a href="{{ route('st_registration.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700">
+            <a href="{{ route('st_transfer.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700">
                 <i class="fas fa-arrow-left mr-2"></i> Back to List
             </a>
         </div>
@@ -76,7 +76,7 @@
                     </div>
                 </div>
                 
-                <form action="{{ route('st_registration.save') }}" method="POST" class="space-y-6">
+                <form action="{{ route('st_transfer.save') }}" method="POST" class="space-y-6">
                     @csrf
                     <input type="hidden" name="sub_application_id" value="{{ $application->id }}">
                     
@@ -114,7 +114,7 @@
                     </div>
                     
                     <div class="flex justify-end gap-2">
-                        <a href="{{ route('st_registration.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50">
+                        <a href="{{ route('st_transfer.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50">
                             Cancel
                         </a>
                         <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">

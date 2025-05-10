@@ -1002,7 +1002,14 @@ function submitSingleRegistration() {
   // Get form data
   const form = document.getElementById('singleRegistrationForm');
   const formData = new FormData(form);
-  const data = Object.fromEntries(formData.entries());
+  
+  // Convert FormData to an object
+  let data = {};
+  formData.forEach((value, key) => {
+    data[key] = value;
+  });
+  
+  console.log('Form data to be submitted:', data);
   
   // Validate required fields
   let hasErrors = false;
@@ -1066,25 +1073,48 @@ function submitSingleRegistration() {
   const registerButton = document.getElementById('registerButton');
   registerButton.disabled = true;
   
+  // Get CSRF token
+  const csrfToken = document.querySelector('meta[name="csrf-token"]');
+  if (!csrfToken) {
+    console.error('CSRF token not found');
+    Swal.fire({
+      title: 'Error',
+      text: 'CSRF token not found. Please refresh the page.',
+      icon: 'error'
+    });
+    registerButton.disabled = false;
+    return;
+  }
+  
   // Submit form via AJAX
   fetch('http://localhost/gisedms/st_transfer/register-single', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      'Accept': 'application/json',
+      'X-CSRF-TOKEN': csrfToken.getAttribute('content')
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
+    credentials: 'same-origin'
   })
   .then(response => {
     if (!response.ok) {
       return response.text().then(text => {
-        console.error('Error response:', text);
-        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+        console.error('Error response text:', text);
+        try {
+          // Try to parse as JSON
+          const jsonResponse = JSON.parse(text);
+          throw new Error(jsonResponse.error || `HTTP error ${response.status}`);
+        } catch (jsonError) {
+          // If not valid JSON, return the text
+          throw new Error(`Server error (${response.status}): ${text.substring(0, 100)}...`);
+        }
       });
     }
     return response.json();
   })
   .then(data => {
+    console.log('Success response:', data);
     if (data.success) {
       Swal.fire({
         title: 'Success!',

@@ -165,7 +165,14 @@ Route::middleware(['auth'])->group(function () {
 
         Route::prefix('st_transfer')->group(function () {
         Route::get('/', [STTransferOfTitleController::class, 'StTransfer'])->name('st_transfer.index');
-        Route::get('/generate/{id}', [STTransferOfTitleController::class, 'save'])->name('st_transfer.save');
+        
+        // Fix generate route to point to generate method, not save
+        Route::get('/generate/{id}', [STTransferOfTitleController::class, 'generate'])->name('st_transfer.generate');
+        
+        // Save route (POST) 
+        Route::post('/save', [STTransferOfTitleController::class, 'save'])->name('st_transfer.save');
+        
+        // View route is correct but make sure it's accessible
         Route::get('/view/{id}', [STTransferOfTitleController::class, 'view'])->name('st_transfer.view');
 
         // New endpoints for direct CofO registration
@@ -173,6 +180,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/register-single', [STTransferOfTitleController::class, 'registerSingle'])->name('st_transfer.register-single');
         Route::post('/register-batch', [STTransferOfTitleController::class, 'registerBatch'])->name('st_transfer.register-batch');
         Route::post('/decline', [STTransferOfTitleController::class, 'declineRegistration'])->name('st_transfer.decline');
+        
+        // Debug route
+        Route::get('/debug', [STTransferOfTitleController::class, 'debug'])->name('st_transfer.debug');
     });
 
 
