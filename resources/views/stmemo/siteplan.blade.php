@@ -24,7 +24,7 @@
                              <span class="bg-green-100 text-green-600 ml-2 py-0.5 px-2.5 rounded-full">{{ count($PrimaryApplications->where('site_plan_status', 'Uploaded')) }}</span>
                          </button>
                          <button type="button" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="not-uploaded">
-                             Pending Site Plans
+                            Not Uploaded Site Plans
                              <span class="bg-red-100 text-red-600 ml-2 py-0.5 px-2.5 rounded-full">{{ count($PrimaryApplications->where('site_plan_status', '!=', 'Uploaded')) }}</span>
                          </button>
                      </nav>
@@ -35,22 +35,54 @@
              <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
                  <div class="flex justify-between items-center mb-6">
                      <h2 class="text-xl font-bold">Primary Applications</h2>
-                     @if (isset($useFilter) && !$useFilter)
-                         <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-2 rounded">
-                             <p class="text-sm">
-                                 <i data-lucide="alert-triangle" class="w-4 h-4 inline mr-1"></i>
-                                 Showing all applications with sub-units because no applications matched the sectional
-                                 titling filter.
-                                 <a href="{{ route('stmemo.stmemo', ['filter' => true]) }}" class="underline">Apply
-                                     filter</a>
-                             </p>
-                         </div>
-                     @endif
-                     {{-- <a href="{{ route('other_departments.survey_secondary') }}"
-                         class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-                         <i data-lucide="clipboard-list" class="w-4 h-4"></i>
-                         <span>View Secondary Applications</span>
-                     </a> --}}
+                      
+
+                     <!-- Smart Search Input -->
+                    <div class="relative flex-grow mx-4">
+                        <div class="flex items-center space-x-2">
+                            <!-- Search Icon Button -->
+                            <button id="show-search-btn" type="button" class="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 bg-white hover:bg-gray-100 focus:outline-none">
+                                <i data-lucide="search" class="h-5 w-5 text-gray-500"></i>
+                            </button>
+                            <!-- Search Input (hidden by default) -->
+                            <div id="search-input-container" class="relative hidden flex-grow">
+                                <input type="text" id="smart-search" placeholder="Search applications..." 
+                                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="search" class="h-5 w-5 text-gray-400"></i>
+                                </div>
+                                <button id="clear-search" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 hidden">
+                                    <i data-lucide="x" class="h-4 w-4"></i>
+                                </button>
+                                <div id="search-info" class="absolute mt-1 text-xs text-gray-500 hidden">
+                                    Found <span id="search-count">0</span> results
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const showSearchBtn = document.getElementById('show-search-btn');
+                            const searchInputContainer = document.getElementById('search-input-container');
+                            const smartSearch = document.getElementById('smart-search');
+                            // Show search input when icon is clicked
+                            showSearchBtn.addEventListener('click', function() {
+                                searchInputContainer.classList.remove('hidden');
+                                smartSearch.focus();
+                                showSearchBtn.classList.add('hidden');
+                            });
+                            // Hide search input when input loses focus and is empty
+                            smartSearch.addEventListener('blur', function() {
+                                setTimeout(function() {
+                                    if (smartSearch.value.trim() === '') {
+                                        searchInputContainer.classList.add('hidden');
+                                        showSearchBtn.classList.remove('hidden');
+                                    }
+                                }, 150);
+                            });
+                        });
+                    </script>
+                     
                      <div class="flex items-center space-x-4">
 
                          <div class="relative">
@@ -232,6 +264,15 @@
                      </table>
                  </div>
 
+                 <!-- No Results Message -->
+                 <div id="no-results-message" class="hidden py-8 text-center">
+                     <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                         <i data-lucide="search-x" class="h-8 w-8 text-gray-400"></i>
+                     </div>
+                     <h3 class="text-lg font-medium text-gray-900 mb-1">No matching applications found</h3>
+                     <p class="text-gray-500">Try adjusting your search or filter criteria</p>
+                 </div>
+
                  <div class="flex justify-between items-center mt-6 text-sm">
                      <div class="text-gray-500">Showing 5 of 68 applications</div>
                      <div class="flex items-center space-x-2">
@@ -373,31 +414,81 @@
              });
          }
 
-         // New Tab functionality
+         // New Tab and Search functionality
          document.addEventListener('DOMContentLoaded', function() {
              const tabButtons = document.querySelectorAll('.tab-button');
              const applicationRows = document.querySelectorAll('.application-row');
+             const searchInput = document.getElementById('smart-search');
+             const clearSearchBtn = document.getElementById('clear-search');
+             const searchInfo = document.getElementById('search-info');
+             const searchCount = document.getElementById('search-count');
+             const noResultsMessage = document.getElementById('no-results-message');
+             const table = document.getElementById('applications-table');
              
-             // Function to filter rows based on selected tab
-             function filterRows(tabId) {
+             let currentTab = 'all';
+             
+             // Function to filter rows based on selected tab and search input
+             function filterRows() {
+                 const searchTerm = searchInput.value.toLowerCase().trim();
+                 let visibleCount = 0;
+                 let totalRowsInTab = 0;
+                 
                  applicationRows.forEach(row => {
-                     if (tabId === 'all') {
-                         row.classList.remove('hidden');
-                     } else if (tabId === 'uploaded') {
-                         if (row.dataset.status === 'uploaded') {
+                     // First filter by tab
+                     const matchesTab = (currentTab === 'all') || 
+                                       (currentTab === 'uploaded' && row.dataset.status === 'uploaded') || 
+                                       (currentTab === 'not-uploaded' && row.dataset.status === 'not-uploaded');
+                     
+                     if (matchesTab) {
+                         totalRowsInTab++;
+                         
+                         // Then filter by search term if one exists
+                         if (searchTerm === '') {
                              row.classList.remove('hidden');
+                             visibleCount++;
                          } else {
-                             row.classList.add('hidden');
+                             const rowText = row.textContent.toLowerCase();
+                             if (rowText.includes(searchTerm)) {
+                                 row.classList.remove('hidden');
+                                 visibleCount++;
+                             } else {
+                                 row.classList.add('hidden');
+                             }
                          }
-                     } else if (tabId === 'not-uploaded') {
-                         if (row.dataset.status === 'not-uploaded') {
-                             row.classList.remove('hidden');
-                         } else {
-                             row.classList.add('hidden');
-                         }
+                     } else {
+                         row.classList.add('hidden');
                      }
                  });
+                 
+                 // Update search info
+                 if (searchTerm === '') {
+                     searchInfo.classList.add('hidden');
+                     clearSearchBtn.classList.add('hidden');
+                 } else {
+                     searchCount.textContent = visibleCount;
+                     searchInfo.classList.remove('hidden');
+                     clearSearchBtn.classList.remove('hidden');
+                 }
+                 
+                 // Show/hide no results message
+                 if (visibleCount === 0 && totalRowsInTab > 0) {
+                     table.classList.add('hidden');
+                     noResultsMessage.classList.remove('hidden');
+                 } else {
+                     table.classList.remove('hidden');
+                     noResultsMessage.classList.add('hidden');
+                 }
              }
+             
+             // Add search input event listener
+             searchInput.addEventListener('input', filterRows);
+             
+             // Add clear search button event listener
+             clearSearchBtn.addEventListener('click', function() {
+                 searchInput.value = '';
+                 filterRows();
+                 searchInput.focus();
+             });
              
              // Add click event listeners to tab buttons
              tabButtons.forEach(button => {
@@ -412,10 +503,16 @@
                      this.classList.add('active', 'border-blue-500', 'text-blue-600');
                      this.classList.remove('border-transparent', 'text-gray-500');
                      
-                     // Filter rows based on selected tab
-                     filterRows(this.dataset.tab);
+                     // Update current tab
+                     currentTab = this.dataset.tab;
+                     
+                     // Filter rows based on selected tab and current search
+                     filterRows();
                  });
              });
+             
+             // Initialize
+             filterRows();
          });
      </script>
  @endsection
