@@ -21,11 +21,7 @@
                 <a href="{{ route('st_transfer.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50">
                     <i class="fas fa-arrow-left mr-2"></i> Back to List
                 </a>
-                @if($application->reg_status !== 'registered')
-                <button onclick="window.location.href='{{ route('st_transfer.generate', $application->id) }}'" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
-                    <i class="fas fa-edit mr-2"></i> Edit
-                </button>
-                @endif
+               
                 <button onclick="printPage()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700">
                     <i class="fas fa-print mr-2"></i> Print
                 </button>
@@ -52,16 +48,60 @@
                             <p class="mt-1">{{ $application->fileno ?? 'N/A' }}</p>
                         </div>
                         <div>
-                            <h3 class="text-sm font-medium text-gray-500">STM Reference</h3>
+                            <h3 class="text-sm font-medium text-gray-500">STM No</h3>
                             <p class="mt-1">{{ $application->STM_Ref ?? 'N/A' }}</p>
                         </div>
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500">Sectional Title File No</h3>
-                            <p class="mt-1">{{ $application->Sectional_Title_File_No ?? 'N/A' }}</p>
-                        </div>
+                       
                         <div>
                             <h3 class="text-sm font-medium text-gray-500">Application Date</h3>
                             <p class="mt-1">{{ $application->created_at ? date('F j, Y', strtotime($application->created_at)) : 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                    <!-- Registration Details -->
+                <div>
+                    <h2 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Registration Details</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500">Registration Number</h3>
+                            <span class="inline-block px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-semibold text-sm mt-1">
+                                {{ $application->Deeds_Serial_No ?? 'N/A' }}
+                            </span>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500">Deeds Date</h3>
+                            <span class="inline-block px-3 py-1 rounded-full bg-green-100 text-green-800 font-semibold text-sm mt-1">
+                                {{ $application->deeds_date ? date('F j, Y', strtotime($application->deeds_date)) : 'N/A' }}
+                            </span>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500">Deeds Time</h3>
+                            <span class="inline-block px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 font-semibold text-sm mt-1">
+                                {{ $application->deeds_time ?? 'N/A' }}
+                            </span>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500">Tenure Period</h3>
+                            <span class="inline-block px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-semibold text-sm mt-1">
+                                {{ $application->Tenure_Period ? $application->Tenure_Period . ' years' : 'N/A' }}
+                            </span>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500">Serial Details</h3>
+                            <span class="inline-block px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 font-semibold text-sm mt-1">
+                                  SerialNo: {{ $application->serial_no ?? 'N/A' }}
+                                  PageNo: {{ $application->reg_page_no ?? 'N/A' }},
+                                  VolumeNo: {{ $application->volume_no ?? 'N/A' }},
+                              
+                                
+                            </span>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500">Registered By</h3>
+                            <span class="inline-block px-3 py-1 rounded-full bg-pink-100 text-pink-800 font-semibold text-sm mt-1">
+                                {{ $application->reg_creator_name ?? 'N/A' }}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -71,15 +111,15 @@
                     <h2 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Property Details</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div>
-                            <h3 class="text-sm font-medium text-gray-500">Units</h3>
+                            <h3 class="text-sm font-medium text-gray-500">Number of Units</h3>
                             <p class="mt-1">{{ $application->NoOfUnits ?? 'N/A' }}</p>
                         </div>
                         <div>
-                            <h3 class="text-sm font-medium text-gray-500">Blocks</h3>
+                            <h3 class="text-sm font-medium text-gray-500">Number of Blocks</h3>
                             <p class="mt-1">{{ $application->NoOfBlocks ?? 'N/A' }}</p>
                         </div>
                         <div>
-                            <h3 class="text-sm font-medium text-gray-500">Sections</h3>
+                            <h3 class="text-sm font-medium text-gray-500">Number of Sections</h3>
                             <p class="mt-1">{{ $application->NoOfSections ?? 'N/A' }}</p>
                         </div>
                         <div>
@@ -115,10 +155,10 @@
                 <div>
                     <h2 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Owner Information</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div>
+                        {{-- <div>
                             <h3 class="text-sm font-medium text-gray-500">Current Owner</h3>
                             <p class="mt-1">{{ $application->Current_Owner ?? 'N/A' }}</p>
-                        </div>
+                        </div> --}}
                         <div>
                             <h3 class="text-sm font-medium text-gray-500">Applicant Name</h3>
                             <p class="mt-1">{{ $application->Applicant_Name ?? 'N/A' }}</p>
@@ -130,36 +170,7 @@
                     </div>
                 </div>
                 
-                <!-- Registration Details -->
-                <div>
-                    <h2 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Registration Details</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500">Registration Number</h3>
-                            <p class="mt-1">{{ $application->Deeds_Serial_No ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500">Deeds Date</h3>
-                            <p class="mt-1">{{ $application->deeds_date ? date('F j, Y', strtotime($application->deeds_date)) : 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500">Deeds Time</h3>
-                            <p class="mt-1">{{ $application->deeds_time ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500">Tenure Period</h3>
-                            <p class="mt-1">{{ $application->Tenure_Period ? $application->Tenure_Period . ' years' : 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500">Serial Details</h3>
-                            <p class="mt-1">Volume: {{ $application->volume_no ?? 'N/A' }}, Page: {{ $application->reg_page_no ?? 'N/A' }}, Serial: {{ $application->serial_no ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500">Registered By</h3>
-                            <p class="mt-1">{{ $application->reg_creator_name ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                </div>
+            
                 
                 <!-- Status History -->
                 <div>
@@ -177,7 +188,7 @@
                         
                         @if($application->reg_status === 'registered')
                         <div class="border-l-2 border-green-500 pl-4 ml-5 mt-2">
-                            <p class="text-sm text-gray-600">Certificate of Occupancy has been successfully registered for this sectional title.</p>
+                    <p class="text-sm text-gray-600">Sectional transfer of title  successfully registered.</p>
                         </div>
                         @elseif($application->reg_status === 'rejected')
                         <div class="border-l-2 border-red-500 pl-4 ml-5 mt-2">

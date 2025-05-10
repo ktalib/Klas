@@ -23,7 +23,7 @@ class STTransferOfTitleController extends Controller
  
     public function StTransfer()
     {
-        $PageTitle = 'Primary Transfer of Title';
+        $PageTitle = 'ST Transfer of Title';
         $PageDescription = 'Assigments';
 
         // Fetch all approved applications with SectionalCofOReg data
