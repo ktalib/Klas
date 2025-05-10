@@ -20,6 +20,7 @@ use App\Http\Controllers\PlanningRecommendationController;
 use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\OtherDepartmentsController;
 use App\Http\Controllers\STMemoController;
+use App\Http\Controllers\STTransferOfTitleController;
 // Public routes
 Route::get('/primary-applications/{id}', [PrimaryActionsController::class, 'show']);
 
@@ -159,6 +160,23 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/register-batch', [SectionalCofORegistrationController::class, 'registerBatch'])->name('st_registration.register-batch');
         Route::post('/decline', [SectionalCofORegistrationController::class, 'declineRegistration'])->name('st_registration.decline');
     });
+
+
+
+        Route::prefix('st_transfer')->group(function () {
+        Route::get('/', [STTransferOfTitleController::class, 'StTransfer'])->name('st_transfer.index');
+        Route::get('/generate/{id}', [STTransferOfTitleController::class, 'save'])->name('st_transfer.save');
+        Route::get('/view/{id}', [STTransferOfTitleController::class, 'view'])->name('st_transfer.view');
+
+        // New endpoints for direct CofO registration
+        Route::get('/get-next-serial', [STTransferOfTitleController::class, 'getNextSerialNumber'])->name('st_transfer.get-next-serial');
+        Route::post('/register-single', [STTransferOfTitleController::class, 'registerSingle'])->name('st_transfer.register-single');
+        Route::post('/register-batch', [STTransferOfTitleController::class, 'registerBatch'])->name('st_transfer.register-batch');
+        Route::post('/decline', [STTransferOfTitleController::class, 'declineRegistration'])->name('st_transfer.decline');
+    });
+
+
+
 
     // Betterment Bill Routes
     Route::prefix('betterment-bill')->group(function () {
