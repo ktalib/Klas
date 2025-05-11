@@ -146,7 +146,8 @@
             </p>
     
             <p>
-                However, the recommendation is based on the recommended site plan at <span class="highlight">page {{ $memo->page_no ?? ($landAdmin->page_no ?? 'N/A') }}</span> and architectural design at <span class="highlight">page {{ $memo->page_no ?? ($landAdmin->page_no ?? 'N/A') }}</span> and back cover with the following measurements:
+                However, the recommendation is based on the recommended site plan at <span class="highlight">page {{ $memo->page_no ?? ($landAdmin->page_no ?? 'N/A') }}</span> and architectural design at <span class="highlight">page 
+                    {{ $memo->arc_design_page_no ?? ($landAdmin->arc_design_page_no ?? 'N/A') }}</span> and back cover with the following measurements:
             </p>
     
             <div class="my-6"></div>

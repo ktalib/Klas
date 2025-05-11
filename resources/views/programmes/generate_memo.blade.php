@@ -36,7 +36,7 @@
             </div>
             
             <form method="POST" action="{{ route('programmes.save_memo') }}" class="p-6 space-y-8">
-                @csrf
+                @csrf 
                 <input type="hidden" name="application_id" value="{{ $application->id }}">
                 <input type="hidden" name="memo_type" value="primary">
                 <input type="hidden" name="memo_no" value="{{ $existingMemo->memo_no ?? $memoNumber }}">
@@ -59,8 +59,14 @@
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">PageNo</label>
-                                <input type="text" name="page_no" value="{{ $existingMemo->page_no ?? ($landAdmin->page_no ?? '01') }}" 
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Site Plan PageNo</label>
+                                <input type="text" name="page_no"   
+                                   class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            </div>
+
+                             <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Arc Design PageNo</label>
+                                <input type="text" name="arc_design_page_no"
                                    class="w-full p-2 border border-gray-300 rounded-md text-sm">
                             </div>
                             
@@ -136,8 +142,8 @@
                         
                         <div class="flex items-center">
                             <div class="bg-gray-50 rounded-md p-3 border border-gray-100 flex items-center">
-                                <input type="checkbox" name="is_planning_recommended" value="1" 
-                                    {{ $existingMemo && $existingMemo->is_planning_recommended ? 'checked' : '' }}
+                                <input type="checkbox" name="is_planning_recommended" value="1"
+                                    @if(isset($application->planning_recommendation_status) && $application->planning_recommendation_status === 'Approved') checked disabled @endif
                                     class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded transition duration-150 ease-in-out">
                                 <label class="ml-2 block text-sm text-gray-700">
                                     Planning Recommendation Approved

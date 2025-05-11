@@ -17,11 +17,10 @@
             <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold">Primary Applications</h2>
-                    <a href="{{ route('other_departments.survey_secondary') }}"
-                        class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-                        <i data-lucide="clipboard-list" class="w-4 h-4"></i>
-                        <span>View Secondary Applications</span>
-                    </a>
+  <a href="{{ route('other_departments.survey_secondary') }}" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+              <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+              <span>View  Secondary Applications</span>
+          </a>
                     <div class="flex items-center space-x-4">
 
                         <div class="relative">
@@ -153,34 +152,34 @@
                                     <td class="table-cell">
                                         {{ \Carbon\Carbon::parse($PrimaryApplication->created_at)->format('Y-m-d') }}</td>
 
-                                    <td class="table-cell overflow-visible relative">
+                                   <td class="table-cell overflow-visible relative">
                                         <button
-                                            class="flex items-center px-2 py-1 text-xs border border-gray-200 rounded-md bg-white hover:bg-gray-50"
-                                            onclick="toggleDropdown(event)">
-                                            <i data-lucide="more-horizontal" class="w-4 h-4"></i>
+                                             class="flex items-center px-2 py-1 text-xs border border-gray-200 rounded-md bg-white hover:bg-gray-50"
+                                             onclick="toggleDropdown(event)">
+                                             <i data-lucide="more-horizontal" class="w-4 h-4"></i>
                                         </button>
                                         <div
-                                            class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
-                                            <ul class="py-2">
-                                                <li>
-                                                    <a href="{{ route('sectionaltitling.viewrecorddetail') }}?id={{ $PrimaryApplication->id }}"
-                                                        class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                        <i data-lucide="eye" class="w-4 h-4 text-blue-500"></i>
-                                                        View Application
-                                                    </a>
-                                                </li>
-
-                                                <li>
-                                                    <a href="{{ route('other_departments.survey', ['id' => $PrimaryApplication->id]) }}"
+                                             class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
+                                             <ul class="py-2">
+                                                  <li>
+                                                       <a href="{{ route('sectionaltitling.viewrecorddetail')}}?id={{$PrimaryApplication->id}}"
+                                                            class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                            <i data-lucide="eye" class="w-4 h-4 text-blue-500"></i>
+                                                            View Application
+                                                       </a>
+                                                  </li>
+                                          
+                                                  <li>
+                                                    <a href="{{ route('other_departments.deeds_view', ['id' => $PrimaryApplication->id]) }}"
                                                         class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                                         <i data-lucide="edit-3" class="w-4 h-4 text-yellow-500"></i>
-                                                        Manage Survey
+                                                      Manage Deeds
                                                     </a>
-                                                </li>
-
-                                            </ul>
+                                                  </li>
+                                                   
+                                             </ul>
                                         </div>
-                                    </td>
+                                   </td>
                                 </tr>
                             @endforeach
                         </tbody>

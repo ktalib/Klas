@@ -8,13 +8,16 @@
         // Step navigation
         const nextStep1 = document.getElementById('nextStep1');
         const nextStep2 = document.getElementById('nextStep2');
+        const nextStep3 = document.getElementById('nextStep3');
         const backStep2 = document.getElementById('backStep2');
         const backStep3 = document.getElementById('backStep3');
+        const backStep4 = document.getElementById('backStep4');
 
         // Form sections
         const step1 = document.getElementById('step1');
         const step2 = document.getElementById('step2');
         const step3 = document.getElementById('step3');
+        const step4 = document.getElementById('step4');
 
         if (nextStep1) {
             nextStep1.addEventListener('click', function(e) {
@@ -29,6 +32,18 @@
                 e.preventDefault();
                 step2.classList.remove('active');
                 step3.classList.add('active');
+            });
+        }
+
+        if (nextStep3) {
+            nextStep3.addEventListener('click', function(e) {
+                e.preventDefault();
+                step3.classList.remove('active');
+                step4.classList.add('active');
+                // Update summary when moving to final step
+                if (typeof updateApplicationSummary === 'function') {
+                    updateApplicationSummary();
+                }
             });
         }
 
@@ -48,6 +63,14 @@
             });
         }
 
+        if (backStep4) {
+            backStep4.addEventListener('click', function(e) {
+                e.preventDefault();
+                step4.classList.remove('active');
+                step3.classList.add('active');
+            });
+        }
+
         // Close modal buttons
         document.getElementById('closeModal').addEventListener('click', function() {
             // In a real application, this would close the modal
@@ -60,6 +83,11 @@
         });
 
         document.getElementById('closeModal3').addEventListener('click', function() {
+            // In a real application, this would close the modal
+            alert('Application process canceled');
+        });
+
+        document.getElementById('closeModal4').addEventListener('click', function() {
             // In a real application, this would close the modal
             alert('Application process canceled');
         });

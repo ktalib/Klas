@@ -408,7 +408,7 @@
                                       <div>
                                         <label class="flex items-center text-sm mb-1">
                                           <i data-lucide="map" class="w-4 h-4 mr-1 text-green-600"></i>
-                                          Site Plan (₦)
+                                         Survey Fee (₦)
                                         </label>
                                         <input type="text" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter site plan fee">
                                       </div>

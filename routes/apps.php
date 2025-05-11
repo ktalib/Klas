@@ -21,6 +21,8 @@ use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\OtherDepartmentsController;
 use App\Http\Controllers\STMemoController;
 use App\Http\Controllers\STTransferOfTitleController;
+use App\Http\Controllers\DeedsDepartmentController;
+use App\Http\Controllers\LandsDepartmentController;
 // Public routes
 Route::get('/primary-applications/{id}', [PrimaryActionsController::class, 'show']);
 
@@ -224,7 +226,17 @@ Route::middleware(['auth'])->group(function () {
        
     });
 
+    //* Deeds Departments 
  
+        Route::prefix('other_departments')->group(function () {
+        Route::get('/deeds_primary', [DeedsDepartmentController::class, 'Deeds_Primary'])->name('other_departments.deeds_primary');
+        Route::get('/deeds/{id}', [DeedsDepartmentController::class, 'DeedsView'])->name('other_departments.deeds');   
+        });
+
+     Route::prefix('other_departments')->group(function () {
+        Route::get('/lands_primary', [LandsDepartmentController::class, 'Lands_Primary'])->name('other_departments.lands_primary');
+        Route::get('/lands/{id}', [LandsDepartmentController::class, 'LandsView'])->name('other_departments.lands');   
+        });
 
     Route::prefix('stmemo')->group(function () {
           // New routes for STMemoController

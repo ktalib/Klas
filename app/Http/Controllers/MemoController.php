@@ -229,6 +229,7 @@ class MemoController extends Controller
             'application_id' => 'required|integer',
             'memo_type' => 'required|string',
             'page_no' => 'nullable|string',
+            'arc_design_page_no' => 'nullable|string',
             'certificate_number' => 'nullable|string',
             'applicant_name' => 'required|string',
             'property_location' => 'nullable|string',
@@ -305,6 +306,7 @@ class MemoController extends Controller
                 // Override with saved memo data
                 $memo->memo_no = $memoData->memo_no;
                 $memo->page_no = $memoData->page_no;
+                $memo->arc_design_page_no = $memoData->arc_design_page_no;
                 $memo->certificate_number = $memoData->certificate_number;
                 $memo->property_location = $memoData->property_location;
                 $memo->term_years = $memoData->term_years;
@@ -356,7 +358,8 @@ class MemoController extends Controller
                 'memoData',
                 'PageTitle',
                 'PageDescription',
-                'pageNo'
+                'pageNo',
+                
             ));
         } catch (\Exception $e) {
             // Log the error for debugging

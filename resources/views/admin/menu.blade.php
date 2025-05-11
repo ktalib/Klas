@@ -779,22 +779,45 @@
     <!-- 13. Systems -->
     <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
       <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="systems">
-        <div class="flex items-center gap-2"> 
-          <i data-lucide="shield" class="h-5 w-5 module-icon-systems"></i>
-          <span class="text-sm font-bold uppercase tracking-wider">13. Systems</span>
-        </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="systems"></i>
+      <div class="flex items-center gap-2"> 
+        <i data-lucide="shield" class="h-5 w-5 module-icon-systems"></i>
+        <span class="text-sm font-bold uppercase tracking-wider">13. Attribution</span>
+      </div>
+      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="systems"></i>
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="systems">
-        <a href="/systems/caveat" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="shield-alert" class="h-4 w-4"></i>
-          <span>Caveat</span>
+      <a href="/systems/caveat" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="database-zap" class="h-4 w-4"></i>
+        <span>GIS Data Entry</span>
+      </a>  
+      <a href="/systems/caveat" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="shield-alert" class="h-4 w-4"></i>
+        <span>Caveat</span>
+      </a>
+      <a href="/systems/encumbrance" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="lock" class="h-4 w-4"></i>
+        <span>Encumbrance</span>
+      </a>
+
+      <!-- Quality Control Submenu -->
+      <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="qualityControl">
+        <div class="flex items-center gap-2">
+        <i data-lucide="check-circle" class="h-4 w-4"></i>
+        <span>Quality Control</span>
+        </div>
+        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="qualityControl"></i>
+      </div>
+      <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="qualityControl">
+        <a href="/systems/quality-control/survey-unit" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="compass" class="h-3.5 w-3.5"></i>
+        <span>Survey Unit</span>
         </a>
-        <a href="/systems/encumbrance" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="lock" class="h-4 w-4"></i>
-          <span>Encumbrance</span>
+        <a href="/systems/quality-control/gis-attribution" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="map" class="h-3.5 w-3.5"></i>
+        <span>GIS Attribution</span>
         </a>
+      </div>
       </div>
     </div>
 

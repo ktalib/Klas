@@ -17,11 +17,11 @@
             <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold">Primary Applications</h2>
-                    <a href="{{ route('other_departments.survey_secondary') }}"
+                    {{-- <a href="{{ route('other_departments.survey_secondary') }}"
                         class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                         <i data-lucide="clipboard-list" class="w-4 h-4"></i>
                         <span>View Secondary Applications</span>
-                    </a>
+                    </a> --}}
                     <div class="flex items-center space-x-4">
 
                         <div class="relative">
@@ -171,10 +171,10 @@
                                                 </li>
 
                                                 <li>
-                                                    <a href="{{ route('other_departments.survey', ['id' => $PrimaryApplication->id]) }}"
+                                                    <a href="{{ route('other_departments.lands', ['id' => $PrimaryApplication->id]) }}"
                                                         class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                                         <i data-lucide="edit-3" class="w-4 h-4 text-yellow-500"></i>
-                                                        Manage Survey
+                                                        Manage Deeds
                                                     </a>
                                                 </li>
 

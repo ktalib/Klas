@@ -155,19 +155,19 @@
             <button 
                 onclick="showTab('primary-survey')"
                 id="primary-survey-tab"
-                class="flex items-center space-x-2 px-1 py-3 border-b-2 text-sm font-medium transition-colors duration-200 ease-in-out focus:outline-none border-green-600 text-green-700 hover:text-green-800 hover:border-green-700"
+                class="group flex items-center space-x-2 px-3 py-3.5 border-b-2 text-sm font-medium transition-all duration-200 ease-in-out focus:outline-none border-green-600 text-green-700 hover:text-green-800 hover:border-green-700"
                 aria-current="page"
             >
-                <i data-lucide="file-text" class="w-4 h-4"></i>
-                <span>Primary Applications</span>
+                <i data-lucide="file-text" class="w-4.5 h-4.5 text-green-600 group-hover:text-green-700"></i>
+                <span class="font-semibold">Primary Applications</span>
             </button>
             <button 
                 onclick="showTab('unit-survey')"
                 id="unit-survey-tab"
-                class="flex items-center space-x-2 px-1 py-3 border-b-2 text-sm font-medium transition-colors duration-200 ease-in-out focus:outline-none border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                class="group flex items-center space-x-2 px-3 py-3.5 border-b-2 text-sm font-medium transition-all duration-200 ease-in-out focus:outline-none border-transparent text-gray-500 hover:text-green-600 hover:border-green-500"
             >
-                <i data-lucide="layout-grid" class="w-4 h-4"></i> <!-- Changed icon for better representation -->
-                <span>Unit Applications</span>
+                <i data-lucide="layout-grid" class="w-4.5 h-4.5 text-gray-400 group-hover:text-green-600"></i>
+                <span class="font-semibold">Unit Applications</span>
             </button>
             </nav>
         </div>
@@ -175,27 +175,193 @@
         <!-- Primary Application Tab Content -->
         <div id="primary-survey">
             <!-- Sub-tabs for Primary Applications -->
-            <div class="flex space-x-3 mb-4">
-            <button 
-                onclick="showPrimaryTab('generated-memos')"
-                id="generated-memos-tab"
-                class="flex items-center px-4 py-2 text-sm font-medium rounded-md shadow-sm transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 bg-green-600 text-white hover:bg-green-700"
-            >
-                <i data-lucide="clipboard-check" class="w-4 h-4 mr-2"></i>
-                <span>Generated Memos</span>
-            </button>
+            <div class="flex space-x-4 mb-5">
             <button 
                 onclick="showPrimaryTab('not-generated')"
                 id="not-generated-tab"
-                class="flex items-center px-4 py-2 text-sm font-medium rounded-md shadow-sm transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+                class="flex items-center px-5 py-2.5 text-sm font-medium rounded-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:ring-offset-1 bg-green-600 text-white shadow-sm shadow-green-600/20 hover:bg-green-700"
             >
-                <i data-lucide="clipboard-plus" class="w-4 h-4 mr-2"></i>
-                <span>Not Generated</span>
+                <i data-lucide="clipboard-plus" class="w-4.5 h-4.5 mr-2.5"></i>
+                <span class="font-semibold">Not Generated</span>
+            </button>
+            <button 
+                onclick="showPrimaryTab('generated-memos')"
+                id="generated-memos-tab"
+                class="flex items-center px-5 py-2.5 text-sm font-medium rounded-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:ring-offset-1 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:text-green-600 hover:border-green-300"
+            >
+                <i data-lucide="clipboard-check" class="w-4.5 h-4.5 mr-2.5 text-gray-500"></i>
+                <span class="font-semibold">Generated Memos</span>
             </button>
             </div>
-            <!-- Generated Memos Tab Content -->
-        <div id="generated-memos">
-            <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
+            
+            <!-- Not Generated Tab Content (Now First) -->
+            <div id="not-generated">
+                <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
+                <!-- Filter Toggle and Export Buttons -->
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center space-x-2">
+                        <button id="toggleFiltersNotGenerated" class="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                            <i data-lucide="filter" class="w-4 h-4"></i>
+                            <span>Filters</span>
+                        </button>
+                        
+                        <!-- Add search bar that's always visible -->
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                id="searchInputNotGenerated" 
+                                placeholder="Search records..." 
+                                class="pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 w-64"
+                            >
+                            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                        </div>
+                    </div>
+                    
+                    <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
+                        <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
+                        <span>Export</span>
+                    </button>
+                </div>
+                
+                <!-- Filters Container (Hidden by Default) -->
+                <div id="filterContainerNotGenerated" class="filter-container mb-6">
+                    <div class="flex flex-wrap items-center gap-4 w-full">
+                        <!-- Land Use Filter -->
+                        <div class="relative min-w-[160px]">
+                            <label for="landUseFilterNotGenerated" class="block text-xs font-medium text-gray-700 mb-1">Land Use</label>
+                            <select id="landUseFilterNotGenerated" class="pl-4 pr-8 py-2 w-full border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 appearance-none">
+                                <option value="">All</option>
+                                <option value="Residential">Residential</option>
+                                <option value="Commercial">Commercial</option>
+                                <option value="Industrial">Industrial</option>
+                                <option value="Mixed Use">Mixed Use</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="absolute right-3 top-[60%] transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                        </div>
+                        
+                        <!-- Date Range Filter -->
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <div>
+                                <label for="dateFromNotGenerated" class="block text-xs font-medium text-gray-700 mb-1">Date From</label>
+                                <input type="date" id="dateFromNotGenerated" class="pl-4 pr-2 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                            </div>
+                            <div>
+                                <label for="dateToNotGenerated" class="block text-xs font-medium text-gray-700 mb-1">Date To</label>
+                                <input type="date" id="dateToNotGenerated" class="pl-4 pr-2 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                            </div>
+                        </div>
+                        
+                        <!-- Apply and Reset Buttons -->
+                        <div class="flex items-end space-x-2">
+                            <button id="applyFilterNotGenerated" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
+                                Apply Filters
+                            </button>
+                            <button id="resetFilterNotGenerated" class="border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-md">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold">Memo</h2>
+                        <p class="text-sm text-gray-600 mt-1">Not Generated</p>
+                    </div>
+                </div>
+                
+                <div>
+                    <table id="notGeneratedTable" class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                             <tr class="text-xs">
+                                <th class="table-header">File No</th>
+                                <th class="table-header">Owner</th>
+                                <th class="table-header">LGA</th>
+                                <th class="table-header">Land Use</th>
+                                <th class="table-header">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @php
+                                $hasNotGenerated = false;
+                            @endphp
+                            
+                            @foreach($motherApplications as $application)
+                                @php
+                                    // Fetch memo data if it exists
+                                    $memoData = DB::connection('sqlsrv')->table('memos')
+                                        ->where('application_id', $application->id)
+                                        ->where('memo_type', 'primary')
+                                        ->first();
+                                        
+                                    // Skip if memo already exists
+                                    if ($memoData) continue;
+                                    
+                                    $hasNotGenerated = true;
+                                @endphp
+                                
+                                 <tr class="text-xs">
+                                    <td class="table-cell">{{ $application->fileno ?? 'N/A' }}</td>
+                                    <td class="table-cell">
+                                        @if(!empty($application->multiple_owners_names) && json_decode($application->multiple_owners_names))
+                                            @php
+                                                $owners = json_decode($application->multiple_owners_names);
+                                                $firstOwner = isset($owners[0]) ? $owners[0] : 'N/A';
+                                                $allOwners = json_encode($owners);
+                                            @endphp
+                                            {{ $firstOwner }}
+                                            <span class="info-icon" onclick="showOwners({{ $allOwners }})">i</span>
+                                        @else
+                                            {{ $application->owner_name ?? 'N/A' }}
+                                        @endif
+                                    </td>
+                                    <td class="table-cell">{{ $application->property_lga ?? 'N/A' }}</td>
+                                    <td class="table-cell">{{ $application->land_use ?? 'N/A' }}</td>
+                                    <td class="table-cell relative">
+                                        <!-- Dropdown Toggle Button -->
+                                        <button type="button" class="p-2 hover:bg-gray-100 focus:outline-none rounded-full" onclick="customToggleDropdown(this, event)">
+                                            <i data-lucide="more-horizontal" class="w-5 h-5"></i>
+                                        </button>
+                                        
+                                        <!-- Dropdown Menu for Not Generated -->
+                                        <ul class="fixed action-menu z-50 bg-white border rounded-lg shadow-lg hidden w-56">
+                                            <li>
+                                                <a href="{{ route('sectionaltitling.viewrecorddetail')}}?id={{$application->id}}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                                                    <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
+                                                    <span>View Record</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                                                    <i data-lucide="pencil" class="w-4 h-4 text-amber-600"></i>
+                                                    <span>Edit Record</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('programmes.generate_memo', $application->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                                                    <i data-lucide="file-plus" class="w-4 h-4 text-indigo-600"></i>
+                                                    <span>Generate Memo</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            
+                            @if(!$hasNotGenerated)
+                                 <tr class="text-xs">
+                                    <td colspan="5" class="table-cell text-center py-4 text-gray-500">All applications have generated memos</td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
+            
+            <!-- Generated Memos Tab Content (Now Second and Hidden) -->
+            <div id="generated-memos" class="hidden">
+                <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
                 <!-- Filter Toggle and Export Buttons -->
                 <div class="flex justify-between items-center mb-4">
                     <div class="flex items-center space-x-2">
@@ -383,15 +549,38 @@
                     </table>
                 </div>
             </div>
+            </div>
+     </div>
+     
+     <!-- Unit Application Tab  -->
+     <div id="unit-survey" class="hidden">
+        <!-- Sub-tabs for Generated and Not Generated -->
+        <div class="flex space-x-4 mb-5">
+            <button 
+            onclick="showUnitTab('unit-not-generated')"
+            id="unit-not-generated-tab"
+            class="flex items-center px-5 py-2.5 text-sm font-medium rounded-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:ring-offset-1 bg-green-600 text-white shadow-sm shadow-green-600/20 hover:bg-green-700"
+            >
+          <i data-lucide="clipboard-plus" class="w-4.5 h-4.5 mr-2.5"></i>
+          <span class="font-semibold">Not Generated</span>
+            </button>
+            <button 
+            onclick="showUnitTab('unit-generated-memos')"
+            id="unit-generated-memos-tab"
+            class="flex items-center px-5 py-2.5 text-sm font-medium rounded-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:ring-offset-1 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:text-green-600 hover:border-green-300"
+            >
+          <i data-lucide="clipboard-check" class="w-4.5 h-4.5 mr-2.5 text-gray-500"></i>
+          <span class="font-semibold">Generated Memos</span>
+            </button>
         </div>
-        
-        <!-- Not Generated Tab -->
-        <div id="not-generated" class="hidden">
+
+        <!-- Not Generated Tab for Unit Applications (Now First) -->
+        <div id="unit-not-generated">
             <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
                 <!-- Filter Toggle and Export Buttons -->
                 <div class="flex justify-between items-center mb-4">
                     <div class="flex items-center space-x-2">
-                        <button id="toggleFiltersNotGenerated" class="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                        <button id="toggleUnitFiltersNotGenerated" class="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
                             <i data-lucide="filter" class="w-4 h-4"></i>
                             <span>Filters</span>
                         </button>
@@ -400,7 +589,7 @@
                         <div class="relative">
                             <input 
                                 type="text" 
-                                id="searchInputNotGenerated" 
+                                id="unitSearchInputNotGenerated" 
                                 placeholder="Search records..." 
                                 class="pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 w-64"
                             >
@@ -415,12 +604,12 @@
                 </div>
                 
                 <!-- Filters Container (Hidden by Default) -->
-                <div id="filterContainerNotGenerated" class="filter-container mb-6">
+                <div id="unitFilterContainerNotGenerated" class="filter-container mb-6">
                     <div class="flex flex-wrap items-center gap-4 w-full">
                         <!-- Land Use Filter -->
                         <div class="relative min-w-[160px]">
-                            <label for="landUseFilterNotGenerated" class="block text-xs font-medium text-gray-700 mb-1">Land Use</label>
-                            <select id="landUseFilterNotGenerated" class="pl-4 pr-8 py-2 w-full border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 appearance-none">
+                            <label for="unitLandUseFilterNotGenerated" class="block text-xs font-medium text-gray-700 mb-1">Land Use</label>
+                            <select id="unitLandUseFilterNotGenerated" class="pl-4 pr-8 py-2 w-full border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 appearance-none">
                                 <option value="">All</option>
                                 <option value="Residential">Residential</option>
                                 <option value="Commercial">Commercial</option>
@@ -430,24 +619,18 @@
                             <i data-lucide="chevron-down" class="absolute right-3 top-[60%] transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
                         </div>
                         
-                        <!-- Date Range Filter -->
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <div>
-                                <label for="dateFromNotGenerated" class="block text-xs font-medium text-gray-700 mb-1">Date From</label>
-                                <input type="date" id="dateFromNotGenerated" class="pl-4 pr-2 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                            </div>
-                            <div>
-                                <label for="dateToNotGenerated" class="block text-xs font-medium text-gray-700 mb-1">Date To</label>
-                                <input type="date" id="dateToNotGenerated" class="pl-4 pr-2 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                            </div>
+                        <!-- Scheme Number Filter -->
+                        <div class="relative min-w-[160px]">
+                            <label for="schemeNoFilterNotGenerated" class="block text-xs font-medium text-gray-700 mb-1">Scheme Number</label>
+                            <input type="text" id="schemeNoFilterNotGenerated" class="pl-4 pr-2 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                         </div>
                         
                         <!-- Apply and Reset Buttons -->
                         <div class="flex items-end space-x-2">
-                            <button id="applyFilterNotGenerated" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
+                            <button id="applyUnitFilterNotGenerated" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
                                 Apply Filters
                             </button>
-                            <button id="resetFilterNotGenerated" class="border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-md">
+                            <button id="resetUnitFilterNotGenerated" class="border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-md">
                                 Reset
                             </button>
                         </div>
@@ -457,67 +640,71 @@
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h2 class="text-xl font-bold">Memo</h2>
-                        <p class="text-sm text-gray-600 mt-1">Not Generated</p>
+                        <p class="text-sm text-gray-600 mt-1">Unit Applications - Not Generated</p>
                     </div>
                 </div>
                 
                 <div>
-                    <table id="notGeneratedTable" class="min-w-full divide-y divide-gray-200">
+                    <table id="unitNotGeneratedTable" class="min-w-full divide-y divide-gray-200">
                         <thead>
                              <tr class="text-xs">
-                                <th class="table-header">File No</th>
-                                <th class="table-header">Owner</th>
+                                <th class="table-header">ST FileNo</th>
+                                <th class="table-header">SchemeNo</th>
+                                <th class="table-header">Unit Owner</th>
                                 <th class="table-header">LGA</th>
+                                <th class="table-header">Block/Floor/Unit</th>
                                 <th class="table-header">Land Use</th>
                                 <th class="table-header">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @php
-                                $hasNotGenerated = false;
+                                $hasNotGeneratedUnitMemos = false;
                             @endphp
                             
-                            @foreach($motherApplications as $application)
+                            @foreach($subapplications as $unitApplication)
                                 @php
-                                    // Fetch memo data if it exists
-                                    $memoData = DB::connection('sqlsrv')->table('memos')
-                                        ->where('application_id', $application->id)
+                                    // Check if the parent application has a memo
+                                    $primaryMemoData = DB::connection('sqlsrv')->table('memos')
+                                        ->where('application_id', $unitApplication->main_application_id)
                                         ->where('memo_type', 'primary')
                                         ->first();
                                         
-                                    // Skip if memo already exists
-                                    if ($memoData) continue;
+                                    // Skip if memo data exists for parent
+                                    if ($primaryMemoData) continue;
                                     
-                                    $hasNotGenerated = true;
+                                    $hasNotGeneratedUnitMemos = true;
                                 @endphp
                                 
-                                 <tr class="text-xs">
-                                    <td class="table-cell">{{ $application->fileno ?? 'N/A' }}</td>
+                                <tr data-land-use="{{ strtolower($unitApplication->land_use ?? '') }}" data-scheme-no="{{ strtolower($unitApplication->scheme_no ?? '') }}" data-search="{{ strtolower($unitApplication->fileno . ' ' . $unitApplication->scheme_no . ' ' . ($unitApplication->owner_name ?? '') . ' ' . ($unitApplication->property_lga ?? '')) }}">
+                                    <td class="table-cell">{{ $unitApplication->fileno ?? 'N/A' }}</td>
+                                    <td class="table-cell">{{ $unitApplication->scheme_no ?? 'N/A' }}</td>
                                     <td class="table-cell">
-                                        @if(!empty($application->multiple_owners_names) && json_decode($application->multiple_owners_names))
+                                        @if(!empty($unitApplication->multiple_owners_names) && json_decode($unitApplication->multiple_owners_names))
                                             @php
-                                                $owners = json_decode($application->multiple_owners_names);
+                                                $owners = json_decode($unitApplication->multiple_owners_names);
                                                 $firstOwner = isset($owners[0]) ? $owners[0] : 'N/A';
                                                 $allOwners = json_encode($owners);
                                             @endphp
                                             {{ $firstOwner }}
                                             <span class="info-icon" onclick="showOwners({{ $allOwners }})">i</span>
                                         @else
-                                            {{ $application->owner_name ?? 'N/A' }}
+                                            {{ $unitApplication->owner_name ?? 'N/A' }}
                                         @endif
                                     </td>
-                                    <td class="table-cell">{{ $application->property_lga ?? 'N/A' }}</td>
-                                    <td class="table-cell">{{ $application->land_use ?? 'N/A' }}</td>
+                                    <td class="table-cell">{{ $unitApplication->property_lga ?? 'N/A' }}</td>
+                                    <td class="table-cell">{{ $unitApplication->block_number ?? '' }}/{{ $unitApplication->floor_number ?? '' }}/{{ $unitApplication->unit_number ?? '' }}</td>
+                                    <td class="table-cell">{{ $unitApplication->land_use ?? 'N/A' }}</td>
                                     <td class="table-cell relative">
                                         <!-- Dropdown Toggle Button -->
                                         <button type="button" class="p-2 hover:bg-gray-100 focus:outline-none rounded-full" onclick="customToggleDropdown(this, event)">
                                             <i data-lucide="more-horizontal" class="w-5 h-5"></i>
                                         </button>
                                         
-                                        <!-- Dropdown Menu for Not Generated -->
-                                        <ul class="fixed action-menu z-50 bg-white border rounded-lg shadow-lg hidden w-56">
+                                        <!-- Dropdown Menu for Not Generated Unit Memos -->
+                                        <ul class="action-menu z-50 bg-white border rounded-lg shadow-lg hidden w-56">
                                             <li>
-                                                <a href="{{ route('sectionaltitling.viewrecorddetail')}}?id={{$application->id}}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                                                <a href="{{ route('sectionaltitling.viewrecorddetail_sub', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                                     <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
                                                     <span>View Record</span>
                                                 </a>
@@ -529,7 +716,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="{{ route('programmes.generate_memo', $application->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                                                <a href="{{ route('programmes.generate_memo', $unitApplication->main_application_id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                                     <i data-lucide="file-plus" class="w-4 h-4 text-indigo-600"></i>
                                                     <span>Generate Memo</span>
                                                 </a>
@@ -539,9 +726,9 @@
                                 </tr>
                             @endforeach
                             
-                            @if(!$hasNotGenerated)
+                            @if(!$hasNotGeneratedUnitMemos)
                                  <tr class="text-xs">
-                                    <td colspan="5" class="table-cell text-center py-4 text-gray-500">All applications have generated memos</td>
+                                    <td colspan="7" class="table-cell text-center py-4 text-gray-500">All unit applications have generated memos</td>
                                 </tr>
                             @endif
                         </tbody>
@@ -549,36 +736,9 @@
                 </div>
             </div>
         </div>
-     </div>
-     
-     <!-- Unit Application Tab  -->
-     <div id="unit-survey" class="hidden">
-        <!-- Sub-tabs for Generated and Not Generated -->
-        <div class="flex space-x-3 mb-4">
-            <button 
-            onclick="showUnitTab('unit-generated-memos')"
-            id="unit-generated-memos-tab"
-            class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg shadow-sm transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 bg-green-600 text-white hover:bg-green-700"
-            >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
-          </svg>
-          <span>Generated Memos</span>
-            </button>
-            <button 
-            onclick="showUnitTab('unit-not-generated')"
-            id="unit-not-generated-tab"
-            class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg shadow-sm transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
-            >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd" />
-          </svg>
-          <span>Not Generated</span>
-            </button>
-        </div>
-
-        <!-- Generated Memos Tab -->
-        <div id="unit-generated-memos">
+        
+        <!-- Generated Memos Tab for Unit Applications (Now Second and Hidden) -->
+        <div id="unit-generated-memos" class="hidden">
             <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
                 <!-- Filter Toggle and Export Buttons -->
                 <div class="flex justify-between items-center mb-4">
@@ -734,169 +894,6 @@
                             @if(!$hasGeneratedUnitMemos)
                                  <tr class="text-xs">
                                     <td colspan="8" class="table-cell text-center py-4 text-gray-500">No generated unit memos found</td>
-                                </tr>
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Not Generated Tab for Unit Applications -->
-        <div id="unit-not-generated" class="hidden">
-            <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
-                <!-- Filter Toggle and Export Buttons -->
-                <div class="flex justify-between items-center mb-4">
-                    <div class="flex items-center space-x-2">
-                        <button id="toggleUnitFiltersNotGenerated" class="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-                            <i data-lucide="filter" class="w-4 h-4"></i>
-                            <span>Filters</span>
-                        </button>
-                        
-                        <!-- Add search bar that's always visible -->
-                        <div class="relative">
-                            <input 
-                                type="text" 
-                                id="unitSearchInputNotGenerated" 
-                                placeholder="Search records..." 
-                                class="pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 w-64"
-                            >
-                            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-                        </div>
-                    </div>
-                    
-                    <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
-                        <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
-                        <span>Export</span>
-                    </button>
-                </div>
-                
-                <!-- Filters Container (Hidden by Default) -->
-                <div id="unitFilterContainerNotGenerated" class="filter-container mb-6">
-                    <div class="flex flex-wrap items-center gap-4 w-full">
-                        <!-- Land Use Filter -->
-                        <div class="relative min-w-[160px]">
-                            <label for="unitLandUseFilterNotGenerated" class="block text-xs font-medium text-gray-700 mb-1">Land Use</label>
-                            <select id="unitLandUseFilterNotGenerated" class="pl-4 pr-8 py-2 w-full border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 appearance-none">
-                                <option value="">All</option>
-                                <option value="Residential">Residential</option>
-                                <option value="Commercial">Commercial</option>
-                                <option value="Industrial">Industrial</option>
-                                <option value="Mixed Use">Mixed Use</option>
-                            </select>
-                            <i data-lucide="chevron-down" class="absolute right-3 top-[60%] transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-                        </div>
-                        
-                        <!-- Scheme Number Filter -->
-                        <div class="relative min-w-[160px]">
-                            <label for="schemeNoFilterNotGenerated" class="block text-xs font-medium text-gray-700 mb-1">Scheme Number</label>
-                            <input type="text" id="schemeNoFilterNotGenerated" class="pl-4 pr-2 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        
-                        <!-- Apply and Reset Buttons -->
-                        <div class="flex items-end space-x-2">
-                            <button id="applyUnitFilterNotGenerated" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
-                                Apply Filters
-                            </button>
-                            <button id="resetUnitFilterNotGenerated" class="border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-md">
-                                Reset
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h2 class="text-xl font-bold">Memo</h2>
-                        <p class="text-sm text-gray-600 mt-1">Unit Applications - Not Generated</p>
-                    </div>
-                </div>
-                
-                <div>
-                    <table id="unitNotGeneratedTable" class="min-w-full divide-y divide-gray-200">
-                        <thead>
-                             <tr class="text-xs">
-                                <th class="table-header">ST FileNo</th>
-                                <th class="table-header">SchemeNo</th>
-                                <th class="table-header">Unit Owner</th>
-                                <th class="table-header">LGA</th>
-                                <th class="table-header">Block/Floor/Unit</th>
-                                <th class="table-header">Land Use</th>
-                                <th class="table-header">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @php
-                                $hasNotGeneratedUnitMemos = false;
-                            @endphp
-                            
-                            @foreach($subapplications as $unitApplication)
-                                @php
-                                    // Check if the parent application has a memo
-                                    $primaryMemoData = DB::connection('sqlsrv')->table('memos')
-                                        ->where('application_id', $unitApplication->main_application_id)
-                                        ->where('memo_type', 'primary')
-                                        ->first();
-                                        
-                                    // Skip if memo data exists for parent
-                                    if ($primaryMemoData) continue;
-                                    
-                                    $hasNotGeneratedUnitMemos = true;
-                                @endphp
-                                
-                                <tr data-land-use="{{ strtolower($unitApplication->land_use ?? '') }}" data-scheme-no="{{ strtolower($unitApplication->scheme_no ?? '') }}" data-search="{{ strtolower($unitApplication->fileno . ' ' . $unitApplication->scheme_no . ' ' . ($unitApplication->owner_name ?? '') . ' ' . ($unitApplication->property_lga ?? '')) }}">
-                                    <td class="table-cell">{{ $unitApplication->fileno ?? 'N/A' }}</td>
-                                    <td class="table-cell">{{ $unitApplication->scheme_no ?? 'N/A' }}</td>
-                                    <td class="table-cell">
-                                        @if(!empty($unitApplication->multiple_owners_names) && json_decode($unitApplication->multiple_owners_names))
-                                            @php
-                                                $owners = json_decode($unitApplication->multiple_owners_names);
-                                                $firstOwner = isset($owners[0]) ? $owners[0] : 'N/A';
-                                                $allOwners = json_encode($owners);
-                                            @endphp
-                                            {{ $firstOwner }}
-                                            <span class="info-icon" onclick="showOwners({{ $allOwners }})">i</span>
-                                        @else
-                                            {{ $unitApplication->owner_name ?? 'N/A' }}
-                                        @endif
-                                    </td>
-                                    <td class="table-cell">{{ $unitApplication->property_lga ?? 'N/A' }}</td>
-                                    <td class="table-cell">{{ $unitApplication->block_number ?? '' }}/{{ $unitApplication->floor_number ?? '' }}/{{ $unitApplication->unit_number ?? '' }}</td>
-                                    <td class="table-cell">{{ $unitApplication->land_use ?? 'N/A' }}</td>
-                                    <td class="table-cell relative">
-                                        <!-- Dropdown Toggle Button -->
-                                        <button type="button" class="p-2 hover:bg-gray-100 focus:outline-none rounded-full" onclick="customToggleDropdown(this, event)">
-                                            <i data-lucide="more-horizontal" class="w-5 h-5"></i>
-                                        </button>
-                                        
-                                        <!-- Dropdown Menu for Not Generated Unit Memos -->
-                                        <ul class="action-menu z-50 bg-white border rounded-lg shadow-lg hidden w-56">
-                                            <li>
-                                                <a href="{{ route('sectionaltitling.viewrecorddetail_sub', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                                                    <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
-                                                    <span>View Record</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                                                    <i data-lucide="pencil" class="w-4 h-4 text-amber-600"></i>
-                                                    <span>Edit Record</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="{{ route('programmes.generate_memo', $unitApplication->main_application_id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                                                    <i data-lucide="file-plus" class="w-4 h-4 text-indigo-600"></i>
-                                                    <span>Generate Memo</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            
-                            @if(!$hasNotGeneratedUnitMemos)
-                                 <tr class="text-xs">
-                                    <td colspan="7" class="table-cell text-center py-4 text-gray-500">All unit applications have generated memos</td>
                                 </tr>
                             @endif
                         </tbody>

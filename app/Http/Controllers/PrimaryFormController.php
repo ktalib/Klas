@@ -63,6 +63,9 @@ class PrimaryFormController extends Controller
                 'building_plan' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png',
                 'architectural_design' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png',
                 'ownership_document' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png',
+                'shared_areas' => 'nullable|array',
+                'shared_areas.*' => 'nullable|string',
+                'other_areas_detail' => 'nullable|string|max:500',
             ]);
 
             // Debug log to check what's being received
@@ -128,6 +131,20 @@ class PrimaryFormController extends Controller
                 }
             }
 
+            // Process shared areas
+            $sharedAreas = null;
+            if ($request->has('shared_areas') && is_array($request->input('shared_areas'))) {
+                $sharedAreas = $request->input('shared_areas');
+                
+                // If "other" is selected and other_areas_detail is provided, add it to the array
+                if (in_array('other', $sharedAreas) && $request->filled('other_areas_detail')) {
+                    $sharedAreas['other_details'] = $request->input('other_areas_detail');
+                }
+                
+                // Convert to JSON for storage
+                $sharedAreas = json_encode($sharedAreas);
+            }
+
             // Format phone numbers
             $phoneNumber = null;
             if ($request->has('phone_number') && is_array($request->input('phone_number'))) {
@@ -182,6 +199,7 @@ class PrimaryFormController extends Controller
                 'updated_at' => now(),
                 // Store documents as a proper JSON string
                 'documents' => !empty($documents) ? json_encode($documents) : null,
+                'shared_areas' => $sharedAreas,
             ];
 
             // Log the data being inserted

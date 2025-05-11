@@ -1,8 +1,8 @@
-<div class="form-section" id="step3">
+<div class="form-section" id="step4">
     <div class="p-6">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-center text-gray-800">MINISTRY OF LAND AND PHYSICAL PLANNING</h2>
-        <button id="closeModal3" class="text-gray-500 hover:text-gray-700">
+        <button id="closeModal4" class="text-gray-500 hover:text-gray-700">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
@@ -26,10 +26,13 @@
         <div class="flex items-center mr-4">
           <div class="step-circle inactive">2</div>
         </div>
-        <div class="flex items-center">
-          <div class="step-circle active">3</div>
+        <div class="flex items-center mr-4">
+          <div class="step-circle inactive">3</div>
         </div>
-        <div class="ml-4">Step 3</div>
+        <div class="flex items-center">
+          <div class="step-circle active">4</div>
+        </div>
+        <div class="ml-4">Step 4</div>
       </div>
 
       <div class="mb-6" id="application-summary">
@@ -200,14 +203,14 @@
         
         <div class="flex justify-between mt-8">
           <div class="flex space-x-4">
-            <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md" id="backStep3">Back</button>
+            <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md" id="backStep4">Back</button>
             <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md flex items-center" id="printApplicationSlip">
               <i data-lucide="printer" class="w-4 h-4 mr-2"></i>
               Print Application Slip
             </button>
           </div>
           <div class="flex items-center">
-            <span class="text-sm text-gray-500 mr-4">Step 3 of 3</span>
+            <span class="text-sm text-gray-500 mr-4">Step 4 of 4</span>
             <button type="submit" class="px-4 py-2 bg-black text-white rounded-md">Submit Application</button>
           </div>
         </div>

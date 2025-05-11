@@ -1,13 +1,12 @@
 <?php
-//!Survey Department Controller
-
+//Lnads Department Controller
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-class OtherDepartmentsController extends Controller
+class LandsDepartmentController extends Controller
 {
     private function getApplication($id)
     {
@@ -95,10 +94,10 @@ class OtherDepartmentsController extends Controller
         return $application;
     }
 
-    public function Survey_Primary(Request $request)
+    public function Lands_Primary(Request $request)
     {
-        $PageTitle = 'SECTIONAL TITLING -SURVEY DEPARTMENT';
-        $PageDescription = 'processing of sectional title survey  for primary applications';
+        $PageTitle = 'SECTIONAL TITLING - LAND DEPARTMENT';
+        $PageDescription = '';
         
         if ($request->has('id')) {
             $application = $this->getApplication($request->get('id'));
@@ -106,17 +105,17 @@ class OtherDepartmentsController extends Controller
                 return $application;
             }
             
-            return view('other_departments.survey', compact('application', 'PageTitle', 'PageDescription'));
+            return view('other_departments.primary_lands', compact('application', 'PageTitle', 'PageDescription'));
         }
         
         $PrimaryApplications = DB::connection('sqlsrv')->table('dbo.mother_applications')->get();
-        return view('other_departments.primary_survey', compact('PrimaryApplications', 'PageTitle', 'PageDescription'));
+        return view('other_departments.primary_lands', compact('PrimaryApplications', 'PageTitle', 'PageDescription'));
     }
 
     public function Survey_Secondary(Request $request)
     {
-        $PageTitle = 'SECTIONAL TITLING  -SURVEY DEPARTMENT';
-        $PageDescription = 'processing of sectional title survey  for secondary applications';
+        $PageTitle = 'SECTIONAL TITLING  LANDS  DEPARTMENT';
+        $PageDescription = '';
         if ($request->has('id')) {
             $application = $this->getSecondaryApplication($request->get('id'));
             if ($application instanceof \Illuminate\Http\JsonResponse) {
@@ -168,29 +167,32 @@ class OtherDepartmentsController extends Controller
         return view('other_departments.secondary_survey', compact('SecondaryApplications', 'PageTitle', 'PageDescription')); 
     }
 
-    public function Survey($d)
+    public function LandsView($d)
     {
-        $PageTitle = 'SECTIONAL TITLING  - SURVEY DEPARTMENT';
-        $PageDescription = 'processing of sectional title survey applications for primary applications';
+        $PageTitle = 'SECTIONAL TITLING - LAND DEPARTMENT';
+        $PageDescription = '';
         
         $application = $this->getPrimaryApplication($d);
         if ($application instanceof \Illuminate\Http\JsonResponse) {
             return $application;
         }
 
-        return view('other_departments.survey', compact('application', 'PageTitle', 'PageDescription'));
+        // Fetch all primary applications to satisfy the template's requirement
+        $PrimaryApplications = DB::connection('sqlsrv')->table('dbo.mother_applications')->get();
+
+        return view('other_departments.lands', compact('application', 'PrimaryApplications', 'PageTitle', 'PageDescription'));
     }   
     
-    public function SecondarySurveyView($d)
-    {
-        $PageTitle = 'SECTIONAL TITLING  SURVEY';
-        $PageDescription = 'processing of sectional title survey applications for secondary applications';
+    // public function SecondarySurveyView($d)
+    // {
+    //     $PageTitle = 'SECTIONAL TITLING  SURVEY';
+    //     $PageDescription = 'processing of sectional title survey applications for secondary applications';
         
-        $application = $this->getSecondaryApplication($d);
-        if ($application instanceof \Illuminate\Http\JsonResponse) {
-            return $application;
-        }
+    //     $application = $this->getSecondaryApplication($d);
+    //     if ($application instanceof \Illuminate\Http\JsonResponse) {
+    //         return $application;
+    //     }
 
-        return view('other_departments.secondary_survey_view', compact('application', 'PageTitle', 'PageDescription'));
-    }
+    //     return view('other_departments.secondary_survey_view', compact('application', 'PageTitle', 'PageDescription'));
+    // }
 }

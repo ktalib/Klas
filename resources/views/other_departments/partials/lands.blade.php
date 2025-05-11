@@ -1,4 +1,4 @@
-<div id="final-tab" class="tab-content {{ request()->has('lands') ? 'active' : '' }}">
+<div id="final-tab" class="tab-content active">
             <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                 <div class="p-4 border-b">
                     <h3 class="text-sm font-medium">Lands</h3>
