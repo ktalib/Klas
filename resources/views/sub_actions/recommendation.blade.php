@@ -258,7 +258,7 @@
         
         // Get the direct URL to the planning recommendation with the print parameter
         const applicationId = document.getElementById('application_id').value;
-        const printUrl = `{{ url('planning-recommendation/print') }}/${applicationId}?url=print`;
+        const printUrl = `{{ url('sub-actions/planning-recommendation/print') }}/${applicationId}?url=print`;
         
         // Navigate the new window to this URL
         printWindow.location.href = printUrl;
@@ -297,7 +297,7 @@
     const approvalDate = document.getElementById('approval-date').value;
     const comments = document.getElementById('comments')?.value || '';
     
-    fetch('{{ url("planning-recommendation/update") }}', {
+    fetch('{{ url("sub-actions/planning-recommendation/update") }}', {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
@@ -321,7 +321,12 @@
                 title: 'Success!',
                 text: 'Planning recommendation updated successfully!',
                 confirmButtonColor: '#10B981'
-            }).then(() => { location.reload(); });
+            }).then(() => { 
+                // Redirect to sub-application print URL instead of primary application URL
+                const applicationId = document.getElementById('application_id').value;
+                const printUrl = `{{ url('sub-actions/planning-recommendation/print') }}/${applicationId}?url=print`;
+                window.location.href = printUrl;
+            });
         } else {
             Swal.fire({
                 icon: 'error',
@@ -394,7 +399,7 @@
                                     </button>
                                     
                                     <!-- Fallback Print Link -->
-                                    <a href="{{ url('planning-recommendation/print') }}/{{$application->id}}?url=print" target="_blank" class="flex items-center px-3 py-1 text-xs bg-blue-700 text-white rounded-md hover:bg-blue-800">
+                                    <a href="{{ url('sub-actions/planning-recommendation/print') }}/{{$application->id}}?url=print" target="_blank" class="flex items-center px-3 py-1 text-xs bg-blue-700 text-white rounded-md hover:bg-blue-800">
                                         <i data-lucide="external-link" class="w-3.5 h-3.5 mr-1.5"></i>
                                         Print (Alt)
                                     </a>
@@ -444,7 +449,7 @@
         
         // Get the direct URL to the planning recommendation with the print parameter
         const applicationId = document.getElementById('application_id').value;
-        const printUrl = `{{ url('planning-recommendation/print') }}/${applicationId}?url=print`;
+        const printUrl = `{{ url('sub-actions/planning-recommendation/print') }}/${applicationId}?url=print`;
         
         // Navigate the new window to this URL
         printWindow.location.href = printUrl;
@@ -481,8 +486,9 @@
       const applicationId = document.getElementById('application_id').value;
       const decision = document.querySelector('input[name="decision"]:checked').value;
       const approvalDate = document.getElementById('approval-date').value;
-      const comments = document.getElementById('comments').value;
-      fetch('{{ url("planning-recommendation/update") }}', {
+      const comments = document.getElementById('comments').value || '';
+      
+      fetch('{{ url("sub-actions/planning-recommendation/update") }}', {
           method: 'POST',
           headers: {
               'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
@@ -506,7 +512,12 @@
                   title: 'Success!',
                   text: 'Planning recommendation updated successfully!',
                   confirmButtonColor: '#10B981'
-              }).then(() => { location.reload(); });
+              }).then(() => { 
+                  // Redirect to sub-application print URL instead of primary application URL
+                  const applicationId = document.getElementById('application_id').value;
+                  const printUrl = `{{ url('sub-actions/planning-recommendation/print') }}/${applicationId}?url=print`;
+                  window.location.href = printUrl;
+              });
           } else {
               Swal.fire({
                   icon: 'error',

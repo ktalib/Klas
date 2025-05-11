@@ -12,24 +12,7 @@
          <!-- Dashboard Content -->
          <div class="p-6">
              <!-- Tab Navigation -->
-             <div class="mb-6">
-                 <div class="border-b border-gray-200">
-                     <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                         <button type="button" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-blue-500 text-blue-600 active" data-tab="all">
-                             All Applications
-                             <span class="bg-gray-100 text-gray-600 ml-2 py-0.5 px-2.5 rounded-full">{{ count($PrimaryApplications) }}</span>
-                         </button>
-                         <button type="button" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="uploaded">
-                             Uploaded Site Plans
-                             <span class="bg-green-100 text-green-600 ml-2 py-0.5 px-2.5 rounded-full">{{ count($PrimaryApplications->where('site_plan_status', 'Uploaded')) }}</span>
-                         </button>
-                         <button type="button" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="not-uploaded">
-                            Not Uploaded Site Plans
-                             <span class="bg-red-100 text-red-600 ml-2 py-0.5 px-2.5 rounded-full">{{ count($PrimaryApplications->where('site_plan_status', '!=', 'Uploaded')) }}</span>
-                         </button>
-                     </nav>
-                 </div>
-             </div>
+       
 
              <!-- Primary Applications Table -->
              <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">

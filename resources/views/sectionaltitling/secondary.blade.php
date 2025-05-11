@@ -20,14 +20,19 @@
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-xl font-bold">Secondary Applications</h2>
           
-                @php
-               $specialUrls = ['phy_planning', 'recommendation'];
+                          @php
+                            $specialUrls = ['phy_planning', 'recommendation'];
                             $isSurveyOrSpecialUrl = request()->has('survey') || (request()->has('url') && in_array(request()->get('url'), $specialUrls));
                             $urlParam = request()->get('url');
-                            $routeUrl = route('sectionaltitling.primary', ['url' => $urlParam]);
-                            // Append 'survey' as a flag without a value
-                            $separator = strpos($routeUrl, '?') !== false ? '&' : '?';
-                            $routeUrl .= $separator . 'survey';
+                            // Only add 'survey' if it exists in the request
+                            $query = [];
+                            if ($urlParam) {
+                                $query['url'] = $urlParam;
+                            }
+                            if (request()->has('survey')) {
+                                $query['survey'] = true;
+                            }
+                            $routeUrl = route('sectionaltitling.primary', $query);
                         @endphp
 
                         @if($isSurveyOrSpecialUrl)
@@ -36,8 +41,6 @@
                                 <span>View Primary Applications</span>
                             </a>
                         @endif
-
-
 
 
 

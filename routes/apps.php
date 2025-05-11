@@ -88,6 +88,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/conveyance/update', [SubActionsController::class, 'updateFinalConveyance'])->name('sub-actions.conveyance.update');
         Route::post('/conveyance/finalize', [SubActionsController::class, 'finalizeFinalConveyance'])->name('sub-actions.conveyance.finalize');
         Route::get('/conveyance/{applicationId}', [SubActionsController::class, 'getConveyance'])->name('sub-actions.conveyance.get');
+        Route::get('/planning-recommendation/print/{id}', [SubActionsController::class, 'printPlanningRecommendation'])->name('sub-actions.planning-recommendation.print');
     });
 
     Route::prefix('programmes')->group(function () {

@@ -31,10 +31,15 @@
                             $specialUrls = ['phy_planning', 'recommendation'];
                             $isSurveyOrSpecialUrl = request()->has('survey') || (request()->has('url') && in_array(request()->get('url'), $specialUrls));
                             $urlParam = request()->get('url');
-                            $routeUrl = route('sectionaltitling.secondary', ['url' => $urlParam]);
-                            // Append 'survey' as a flag without a value
-                            $separator = strpos($routeUrl, '?') !== false ? '&' : '?';
-                            $routeUrl .= $separator . 'survey';
+                            // Only add 'survey' if it exists in the request
+                            $query = [];
+                            if ($urlParam) {
+                                $query['url'] = $urlParam;
+                            }
+                            if (request()->has('survey')) {
+                                $query['survey'] = true;
+                            }
+                            $routeUrl = route('sectionaltitling.secondary', $query);
                         @endphp
 
                         @if($isSurveyOrSpecialUrl)

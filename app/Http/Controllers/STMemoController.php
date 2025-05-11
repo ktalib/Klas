@@ -109,13 +109,48 @@ class STMemoController extends Controller
             return view('stmemo.view_application', compact('application', 'PageTitle', 'PageDescription'));
         }
 
-        // Just select all from mother_applications
-        $PrimaryApplications = DB::connection('sqlsrv')->table('mother_applications')
-            ->select('*')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Get count of applications with generated memos
+        $generatedCount = DB::connection('sqlsrv')
+            ->table('mother_applications')
+            ->join('memos', 'mother_applications.id', '=', 'memos.application_id')
+            ->where('memos.memo_status', 'GENERATED')
+            ->count();
 
-        return view('stmemo.stmemo', compact('PrimaryApplications', 'PageTitle', 'PageDescription'));
+        // Get count of applications without generated memos
+        $notGeneratedCount = DB::connection('sqlsrv')
+            ->table('mother_applications')
+            ->leftJoin('memos', function($join) {
+                $join->on('mother_applications.id', '=', 'memos.application_id')
+                     ->where('memos.memo_status', 'GENERATED');
+            })
+            ->whereNull('memos.id')
+            ->count();
+
+        // Filter applications based on selected status
+        $status = $request->input('status', 'not_generated');
+        
+        if ($status == 'generated') {
+            $PrimaryApplications = DB::connection('sqlsrv')
+                ->table('mother_applications')
+                ->select('mother_applications.*')
+                ->join('memos', 'mother_applications.id', '=', 'memos.application_id')
+                ->where('memos.memo_status', 'GENERATED')
+                ->orderBy('mother_applications.created_at', 'desc')
+                ->get();
+        } else {
+            $PrimaryApplications = DB::connection('sqlsrv')
+                ->table('mother_applications')
+                ->select('mother_applications.*')
+                ->leftJoin('memos', function($join) {
+                    $join->on('mother_applications.id', '=', 'memos.application_id')
+                         ->where('memos.memo_status', 'GENERATED');
+                })
+                ->whereNull('memos.id')
+                ->orderBy('mother_applications.created_at', 'desc')
+                ->get();
+        }
+
+        return view('stmemo.stmemo', compact('PrimaryApplications', 'PageTitle', 'PageDescription', 'generatedCount', 'notGeneratedCount'));
     }
 
     
@@ -429,12 +464,12 @@ class STMemoController extends Controller
         
         // Update the application status
         if (isset($request->is_primary) && $request->is_primary == '1') {
-            DB::connection('sqlsrv')->table('mother_applications')
-                ->where('id', $request->application_id)
+            DB::connection('sqlsrv')->table('memos')
+                ->where('application_id', $request->application_id)
                 ->update(['memo_status' => 'GENERATED']);
         } else {
-            DB::connection('sqlsrv')->table('subapplications')
-                ->where('id', $request->application_id)
+            DB::connection('sqlsrv')->table('memos')
+                ->where('sub_application_id', $request->application_id)
                 ->update(['memo_status' => 'GENERATED']);
         }
         

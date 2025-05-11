@@ -65,7 +65,13 @@
          @if(request()->get('url') === 'phy_planning')
             <a href="{{ route('sub-actions.recommendation', $app->id) }}?url=phy_planning" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                <i data-lucide="clipboard-check" class="w-4 h-4 text-blue-500"></i>
-               <span>Planning Recommendation</span>
+                    <span>
+                     @if(request()->has('url') && request()->get('url') === 'phy_planning')
+                       Planning Recommendation Approval
+                     @else
+                       Planning Recommendation
+                     @endif
+                    </span>
             </a>
          @elseif(request()->get('url') === 'recommendation')
             <a href="{{ route('sub-actions.recommendation', $app->id) }}?url=recommendation" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">

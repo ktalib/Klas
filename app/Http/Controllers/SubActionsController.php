@@ -462,4 +462,17 @@ class SubActionsController extends Controller
             ], 500);
         }
     }
+
+    public function printPlanningRecommendation($id)
+    {
+        $PageTitle = 'PLANNING RECOMMENDATION';
+        $PageDescription = 'Print Planning Recommendation for Sub-Application';
+        
+        $application = $this->getApplication($id);
+        if ($application instanceof \Illuminate\Http\JsonResponse) {
+            return $application;
+        }
+
+        return view('sub_actions.print_planning_recommendation', compact('application', 'PageTitle', 'PageDescription'));
+    }
 }

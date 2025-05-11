@@ -14,32 +14,83 @@
 
 
             <!-- Primary Applications Table -->
+
+                        <div class="mb-6">
+                 <div class="border-b border-gray-200">
+                     <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                              <button onclick="window.location='{{ route('stmemo.stmemo', ['status' => 'not_generated']) }}'" 
+                            class="py-2 px-4 {{ request()->input('status', 'not_generated') == 'not_generated' ? 'border-b-2 border-green-500 text-green-600 font-medium' : 'text-gray-500 hover:text-gray-700' }}">
+                            Not Generated
+                            <span class="ml-1 bg-gray-100 text-gray-700 py-0.5 px-2 rounded-full text-xs">
+                                {{ $notGeneratedCount ?? 0 }}
+                            </span>
+                        </button>
+                        <button onclick="window.location='{{ route('stmemo.stmemo', ['status' => 'generated']) }}'" 
+                            class="py-2 px-4 {{ request()->input('status') == 'generated' ? 'border-b-2 border-green-500 text-green-600 font-medium' : 'text-gray-500 hover:text-gray-700' }}">
+                            Generated ST Memos
+                            <span class="ml-1 bg-gray-100 text-gray-700 py-0.5 px-2 rounded-full text-xs">
+                                {{ $generatedCount ?? 0 }}
+                            </span>
+                        </button>
+                     </nav>
+                 </div>
+             </div>
             <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold">Primary Applications</h2>
-                    @if(isset($useFilter) && !$useFilter)
-                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-2 rounded">
-                        <p class="text-sm">
-                            <i data-lucide="alert-triangle" class="w-4 h-4 inline mr-1"></i>
-                            Showing all applications with sub-units because no applications matched the sectional titling filter.
-                            <a href="{{ route('stmemo.stmemo', ['filter' => true]) }}" class="underline">Apply filter</a>
-                        </p>
+         
+                    <!-- ST Memo Status Tabs -->
+                    <div class="flex border-b border-gray-200 mb-4">
+                       <!-- Smart Search Input -->
+                    <div class="relative flex-grow mx-4">
+                        <div class="flex items-center space-x-2">
+                            <!-- Search Icon Button -->
+                            <button id="show-search-btn" type="button" class="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 bg-white hover:bg-gray-100 focus:outline-none">
+                                <i data-lucide="search" class="h-5 w-5 text-gray-500"></i>
+                            </button>
+                            <!-- Search Input (hidden by default) -->
+                            <div id="search-input-container" class="relative hidden flex-grow">
+                                <input type="text" id="smart-search" placeholder="Search applications..." 
+                                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="search" class="h-5 w-5 text-gray-400"></i>
+                                </div>
+                                <button id="clear-search" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 hidden">
+                                    <i data-lucide="x" class="h-4 w-4"></i>
+                                </button>
+                                <div id="search-info" class="absolute mt-1 text-xs text-gray-500 hidden">
+                                    Found <span id="search-count">0</span> results
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    @endif
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const showSearchBtn = document.getElementById('show-search-btn');
+                            const searchInputContainer = document.getElementById('search-input-container');
+                            const smartSearch = document.getElementById('smart-search');
+                            // Show search input when icon is clicked
+                            showSearchBtn.addEventListener('click', function() {
+                                searchInputContainer.classList.remove('hidden');
+                                smartSearch.focus();
+                                showSearchBtn.classList.add('hidden');
+                            });
+                            // Hide search input when input loses focus and is empty
+                            smartSearch.addEventListener('blur', function() {
+                                setTimeout(function() {
+                                    if (smartSearch.value.trim() === '') {
+                                        searchInputContainer.classList.add('hidden');
+                                        showSearchBtn.classList.remove('hidden');
+                                    }
+                                }, 150);
+                            });
+                        });
+                    </script>
+                    </div>
                
                     <div class="flex items-center space-x-4">
 
-                        <div class="relative">
-                            <select
-                                class="pl-4 pr-8 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none">
-                                <option>All...</option>
-                                <option>Approved</option>
-                                <option>Pending</option>
-                                <option>Declined</option>
-                            </select>
-                            <i data-lucide="chevron-down"
-                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-                        </div>
+                   
 
                         <style>
                             button:hover {
@@ -68,7 +119,7 @@
                                 <th class="table-header text-green-500">Owner</th>
                                 <th class="table-header text-green-500">Units</th>
                                 <th class="table-header text-green-500">Date</th>
-
+                                <th class="table-header text-green-500">Status</th>
                                 <th class="table-header text-green-500">Actions</th>
                             </tr>
                         </thead>
@@ -157,6 +208,32 @@
                                     <td class="table-cell">{{ $PrimaryApplication->NoOfUnits }}</td>
                                     <td class="table-cell">
                                         {{ \Carbon\Carbon::parse($PrimaryApplication->created_at)->format('Y-m-d') }}</td>
+                                    
+                                    <td class="table-cell">
+                                        @php
+                                            $memoStatus = DB::connection('sqlsrv')
+                                                ->table('memos')
+                                                ->where('application_id', $PrimaryApplication->id)
+                                                ->where('memo_status', 'GENERATED')
+                                                ->exists();
+                                        @endphp
+                                        
+                                        @if($memoStatus)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <svg class="mr-1.5 h-2 w-2 text-green-400" fill="currentColor" viewBox="0 0 8 8">
+                                                    <circle cx="4" cy="4" r="3" />
+                                                </svg>
+                                                Generated
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                <svg class="mr-1.5 h-2 w-2 text-gray-400" fill="currentColor" viewBox="0 0 8 8">
+                                                    <circle cx="4" cy="4" r="3" />
+                                                </svg>
+                                                Not Generated
+                                            </span>
+                                        @endif
+                                    </td>
 
                                    <td class="table-cell overflow-visible relative">
                                         <button
@@ -332,5 +409,76 @@
             }
           });
         }
+
+        // Smart Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const showSearchBtn = document.getElementById('show-search-btn');
+            const searchInputContainer = document.getElementById('search-input-container');
+            const smartSearch = document.getElementById('smart-search');
+            const clearSearchBtn = document.getElementById('clear-search');
+            const searchInfo = document.getElementById('search-info');
+            const searchCount = document.getElementById('search-count');
+            const tableRows = document.querySelectorAll('tbody tr');
+            
+            // Show search input when icon is clicked
+            showSearchBtn.addEventListener('click', function() {
+                searchInputContainer.classList.remove('hidden');
+                smartSearch.focus();
+                showSearchBtn.classList.add('hidden');
+            });
+            
+            // Hide search input when input loses focus and is empty
+            smartSearch.addEventListener('blur', function() {
+                setTimeout(function() {
+                    if (smartSearch.value.trim() === '') {
+                        searchInputContainer.classList.add('hidden');
+                        showSearchBtn.classList.remove('hidden');
+                        searchInfo.classList.add('hidden');
+                    }
+                }, 150);
+            });
+            
+            // Filter table rows based on search input
+            smartSearch.addEventListener('input', function() {
+                const searchValue = this.value.toLowerCase().trim();
+                let matchCount = 0;
+                
+                // Show or hide clear button
+                if (searchValue.length > 0) {
+                    clearSearchBtn.classList.remove('hidden');
+                    searchInfo.classList.remove('hidden');
+                } else {
+                    clearSearchBtn.classList.add('hidden');
+                    searchInfo.classList.add('hidden');
+                }
+                
+                // Filter table rows
+                tableRows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchValue)) {
+                        row.style.display = '';
+                        matchCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Update search results count
+                searchCount.textContent = matchCount;
+            });
+            
+            // Clear search function
+            clearSearchBtn.addEventListener('click', function() {
+                smartSearch.value = '';
+                smartSearch.focus();
+                clearSearchBtn.classList.add('hidden');
+                searchInfo.classList.add('hidden');
+                
+                // Show all rows
+                tableRows.forEach(row => {
+                    row.style.display = '';
+                });
+            });
+        });
     </script>
 @endsection

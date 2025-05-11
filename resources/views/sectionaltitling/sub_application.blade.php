@@ -471,6 +471,25 @@
             <!-- Footer -->
             @include('admin.footer')
             </div>
+<script>
+  function toggleOtherAreasTextarea() {
+    const checkbox = document.getElementById('other_areas');
+    const container = document.getElementById('other_areas_container');
+    
+    if (checkbox.checked) {
+      container.style.display = 'block';
+    } else {
+      container.style.display = 'none';
+      // Clear the textarea when unchecked
+      document.getElementById('other_areas_detail').value = '';
+    }
+  }
+  
+  // Initialize on page load to handle pre-filled forms
+  document.addEventListener('DOMContentLoaded', function() {
+    toggleOtherAreasTextarea();
+  });
+</script>
 
             <script>
  // Initialize Lucide icons

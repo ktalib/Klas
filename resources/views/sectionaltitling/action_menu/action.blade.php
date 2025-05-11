@@ -132,7 +132,13 @@
                               : '') 
                   }}" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                   <i data-lucide="clipboard-check" class="w-4 h-4 text-blue-500"></i>
-                  <span>Planning Recommendation</span>
+                    <span>
+                     @if(request()->has('url') && request()->get('url') === 'phy_planning')
+                       Planning Recommendation Approval
+                     @else
+                       Planning Recommendation
+                     @endif
+                    </span>
                </a>
             </li>
          @else
@@ -145,7 +151,7 @@
          @endif
 
          @if(!request()->has('url') || (request()->get('url') !== 'phy_planning' && request()->get('url') !== 'recommendation'))
-      @endif
+     
       <li>
          <a href="{{ route('actions.director-approval', ['id' => $PrimaryApplication->id]) }}" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
          <i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>
@@ -206,5 +212,6 @@
       </li>
       @endif
        @endif
+        @endif
    </ul>
  </div>
