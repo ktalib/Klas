@@ -51,46 +51,46 @@
                     </div>
                     
                     <div class="space-y-4">
-                         <div class="flex items-center">
-                              <span class="text-gray-600 font-medium w-40">Owner:</span>
-                              <span class="text-gray-800">
-                                   @if(isset($isPrimary) && $isPrimary)
-                                        @if(!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname))
+                          <div class="flex items-center">
+                                <span class="text-gray-600 font-medium w-40">Owner:</span>
+                                <span class="text-gray-400 bg-gray-100 rounded px-2 py-1 select-none">
+                                      @if(isset($isPrimary) && $isPrimary)
+                                             @if(!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname))
+                                                   {{ $application->applicant_title ?? '' }} {{ $application->first_name ?? '' }} {{ $application->surname ?? '' }}
+                                             @elseif(!empty($application->corporate_name))
+                                                   {{ $application->corporate_name }}
+                                             @else
+                                                   N/A
+                                             @endif
+                                      @else
+                                             @if(!empty($application->primary_applicant_title) || !empty($application->primary_first_name) || !empty($application->primary_surname))
+                                                   {{ $application->primary_applicant_title ?? '' }} {{ $application->primary_first_name ?? '' }} {{ $application->primary_surname ?? '' }}
+                                             @elseif(!empty($application->mother_corporate_name))
+                                                   {{ $application->mother_corporate_name }}
+                                             @else
+                                                   N/A
+                                             @endif
+                                      @endif
+                                </span>
+                          </div>
+                          
+                          @if(!isset($isPrimary) || !$isPrimary)
+                          <div class="flex items-center">
+                                <span class="text-gray-600 font-medium w-40">Unit Owner:</span>
+                                <span class="text-gray-400 bg-gray-100 rounded px-2 py-1 select-none">
+                                      @if(!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname))
                                              {{ $application->applicant_title ?? '' }} {{ $application->first_name ?? '' }} {{ $application->surname ?? '' }}
-                                        @elseif(!empty($application->corporate_name))
+                                      @elseif(!empty($application->corporate_name))
                                              {{ $application->corporate_name }}
-                                        @else
+                                      @else
                                              N/A
-                                        @endif
-                                   @else
-                                        @if(!empty($application->primary_applicant_title) || !empty($application->primary_first_name) || !empty($application->primary_surname))
-                                             {{ $application->primary_applicant_title ?? '' }} {{ $application->primary_first_name ?? '' }} {{ $application->primary_surname ?? '' }}
-                                        @elseif(!empty($application->mother_corporate_name))
-                                             {{ $application->mother_corporate_name }}
-                                        @else
-                                             N/A
-                                        @endif
-                                   @endif
-                              </span>
-                         </div>
-                         
-                         @if(!isset($isPrimary) || !$isPrimary)
-                         <div class="flex items-center">
-                              <span class="text-gray-600 font-medium w-40">Unit Owner:</span>
-                              <span class="text-gray-800">
-                                   @if(!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname))
-                                        {{ $application->applicant_title ?? '' }} {{ $application->first_name ?? '' }} {{ $application->surname ?? '' }}
-                                   @elseif(!empty($application->corporate_name))
-                                        {{ $application->corporate_name }}
-                                   @else
-                                        N/A
-                                   @endif
-                              </span>
-                         </div>
-                         @endif
-                         
-                         <div class="flex items-center">
-                              <span class="text-gray-600 font-medium w-40">Land Use:</span>
+                                      @endif
+                                </span>
+                          </div>
+                          @endif
+                          
+                          <div class="flex items-center">
+                                <span class="text-gray-600 font-medium w-
                               <span class="text-gray-800">{{ $application->land_use ?? 'N/A' }}</span>
                          </div>
                          <div class="flex items-center">
@@ -103,17 +103,20 @@
                               </span>
                               <input type="hidden" name="property_location" value="{{ $application->property_house_no ?? '' }} {{ $application->property_plot_no ?? '' }}, {{ $application->property_street_name ?? '' }}, {{ $application->property_lga ?? '' }}">
                          </div>
-                         <div class="flex items-center">
-                              <span class="text-gray-600 font-medium w-40">Applicant Name:</span>
-                              <input type="text" name="applicant_name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
-                                   value="{{ isset($isPrimary) && $isPrimary ? 
-                                   ((!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname)) ? 
-                                   ($application->applicant_title ?? '') . ' ' . ($application->first_name ?? '') . ' ' . ($application->surname ?? '') : 
-                                   ($application->corporate_name ?? 'N/A')) : 
-                                   ((!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname)) ? 
-                                   ($application->applicant_title ?? '') . ' ' . ($application->first_name ?? '') . ' ' . ($application->surname ?? '') : 
-                                   ($application->corporate_name ?? 'N/A')) }}">
-                         </div>
+                          <div class="flex items-center">
+                                <span class="text-gray-600 font-medium w-40">Applicant Name:</span>
+                                <input type="text" name="applicant_name" 
+                                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300 sm:text-sm" 
+                                      value="{{ isset($isPrimary) && $isPrimary ? 
+                                      ((!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname)) ? 
+                                      ($application->applicant_title ?? '') . ' ' . ($application->first_name ?? '') . ' ' . ($application->surname ?? '') : 
+                                      ($application->corporate_name ?? 'N/A')) : 
+                                      ((!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname)) ? 
+                                      ($application->applicant_title ?? '') . ' ' . ($application->first_name ?? '') . ' ' . ($application->surname ?? '') : 
+                                      ($application->corporate_name ?? 'N/A')) }}"
+                                      disabled
+                                >
+                          </div>
                     </div>
                </div>
                
@@ -135,9 +138,27 @@
                <div class="tab-content" id="measurements-tab">
                     <div class="mb-6">
                          <label class="block text-sm font-medium text-gray-700 mb-2">Shared Facilities</label>
-                         <textarea name="shared_facilities" rows="3" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="List shared facilities like parking, common areas, etc."></textarea>
+                         @php
+                              // Decode the shared_areas JSON if present, else use old input or empty array
+                              $sharedAreas = [];
+                              if (old('shared_facilities')) {
+                                   // If user submitted, use the old value (as plain text)
+                                   $sharedAreasText = old('shared_facilities');
+                              } elseif (!empty($application->shared_areas)) {
+                                   // If from DB, decode JSON and format as readable list
+                                   $decoded = json_decode($application->shared_areas, true);
+                                   if (is_array($decoded)) {
+                                        $sharedAreas = $decoded;
+                                        $sharedAreasText = implode(", ", $sharedAreas);
+                                   } else {
+                                        $sharedAreasText = $application->shared_areas;
+                                   }
+                              } else {
+                                   $sharedAreasText = '';
+                              }
+                         @endphp
+                         <textarea name="shared_facilities" rows="3" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">{{ $sharedAreasText }}</textarea>
                     </div>
-                    
                     <div class="mb-4">
                          <div class="flex justify-between items-center mb-2">
                               <label class="block text-sm font-medium text-gray-700">Unit Measurements</label>

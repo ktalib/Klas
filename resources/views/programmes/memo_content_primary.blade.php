@@ -165,10 +165,10 @@
                     a) Consider and approve the application for Sectional Titling over plot <span class="highlight">{{ $memo->property_plot_no ?? 'N/A' }}</span> situated at <span class="highlight">{{ $memo->property_location ?? ($memo->property_street_name . ', ' . $memo->property_district) }}</span> covered by Certificate of Occupancy No. <span class="highlight">{{ $memo->certificate_number ?? $memo->fileno ?? 'N/A' }}</span> in Favor of <span class="highlight">{{ $memo->memo_applicant_name ?? $memo->owner_name ?? 'N/A' }}</span>
                 </li>
                 <li>
-                    b) Consider and approve the change of name of various shop owners as per provisions of the Bill.
+                    b) Consider and approve the change of name to various shop owners as per provisions of the Bill.
                 </li>
                 <li>
-                    c) Consider and approve the Revocation of old Certificate of Occupancy <span class="highlight">{{ $memo->certificate_number ?? $memo->fileno ?? 'N/A' }}</span> to pave the way for new Sectional Titles to the new owners.
+                    c) Consider and approve the Cancellation of old Certificate of Occupancy <span class="highlight">{{ $memo->certificate_number ?? $memo->fileno ?? 'N/A' }}</span> to pave the way for new Sectional Titles to the new owners.
                 </li>
             </ol>
     

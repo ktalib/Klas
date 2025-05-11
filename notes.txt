@@ -1,5 +1,74 @@
+////  Applicant names formate 
 
-    <div class="flex flex-col md:flex-row items-center justify-between mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
+
+<div class="space-y-4">
+                         <div class="flex items-center">
+                              <span class="text-gray-600 font-medium w-40">Owner:</span>
+                              <span class="text-gray-800">
+                                   @if(isset($isPrimary) && $isPrimary)
+                                        @if(!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname))
+                                             {{ $application->applicant_title ?? '' }} {{ $application->first_name ?? '' }} {{ $application->surname ?? '' }}
+                                        @elseif(!empty($application->corporate_name))
+                                             {{ $application->corporate_name }}
+                                        @else
+                                             N/A
+                                        @endif
+                                   @else
+                                        @if(!empty($application->primary_applicant_title) || !empty($application->primary_first_name) || !empty($application->primary_surname))
+                                             {{ $application->primary_applicant_title ?? '' }} {{ $application->primary_first_name ?? '' }} {{ $application->primary_surname ?? '' }}
+                                        @elseif(!empty($application->mother_corporate_name))
+                                             {{ $application->mother_corporate_name }}
+                                        @else
+                                             N/A
+                                        @endif
+                                   @endif
+                              </span>
+                         </div>
+                         
+                         @if(!isset($isPrimary) || !$isPrimary)
+                         <div class="flex items-center">
+                              <span class="text-gray-600 font-medium w-40">Unit Owner:</span>
+                              <span class="text-gray-800">
+                                   @if(!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname))
+                                        {{ $application->applicant_title ?? '' }} {{ $application->first_name ?? '' }} {{ $application->surname ?? '' }}
+                                   @elseif(!empty($application->corporate_name))
+                                        {{ $application->corporate_name }}
+                                   @else
+                                        N/A
+                                   @endif
+                              </span>
+                         </div>
+                         @endif
+                         
+                         <div class="flex items-center">
+                              <span class="text-gray-600 font-medium w-40">Land Use:</span>
+                              <span class="text-gray-800">{{ $application->land_use ?? 'N/A' }}</span>
+                         </div>
+                         <div class="flex items-center">
+                              <span class="text-gray-600 font-medium w-40">Property Address:</span>
+                              <span class="text-gray-800">
+                                   {{ $application->property_house_no ?? '' }} 
+                                   {{ $application->property_plot_no ?? '' }}, 
+                                   {{ $application->property_street_name ?? '' }}, 
+                                   {{ $application->property_lga ?? '' }}
+                              </span>
+                              <input type="hidden" name="property_location" value="{{ $application->property_house_no ?? '' }} {{ $application->property_plot_no ?? '' }}, {{ $application->property_street_name ?? '' }}, {{ $application->property_lga ?? '' }}">
+                         </div>
+                         <div class="flex items-center">
+                              <span class="text-gray-600 font-medium w-40">Applicant Name:</span>
+                              <input type="text" name="applicant_name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                                   value="{{ isset($isPrimary) && $isPrimary ? 
+                                   ((!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname)) ? 
+                                   ($application->applicant_title ?? '') . ' ' . ($application->first_name ?? '') . ' ' . ($application->surname ?? '') : 
+                                   ($application->corporate_name ?? 'N/A')) : 
+                                   ((!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname)) ? 
+                                   ($application->applicant_title ?? '') . ' ' . ($application->first_name ?? '') . ' ' . ($application->surname ?? '') : 
+                                   ($application->corporate_name ?? 'N/A')) }}">
+                         </div>
+                    </div>
+
+///application info header
+                    <div class="flex flex-col md:flex-row items-center justify-between mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
                         <div class="flex-1 mb-4 md:mb-0">
                           <h3 class="text-base font-semibold text-gray-800 flex items-center gap-2">
                             <i data-lucide="home" class="w-5 h-5 text-blue-500"></i>

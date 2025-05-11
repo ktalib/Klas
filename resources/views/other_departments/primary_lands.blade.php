@@ -174,7 +174,7 @@
                                                     <a href="{{ route('other_departments.lands', ['id' => $PrimaryApplication->id]) }}"
                                                         class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                                         <i data-lucide="edit-3" class="w-4 h-4 text-yellow-500"></i>
-                                                        Manage Deeds
+                                                        Manage Lands
                                                     </a>
                                                 </li>
 

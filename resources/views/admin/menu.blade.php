@@ -376,11 +376,11 @@
             <i data-lucide="building-2" class="h-3.5 w-3.5"></i>
             <span>ST Survey Unit</span>
           </a>
-          <a href="{{ route('sectionaltitling.primary') }}?deeds" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200  {{ request()->routeIs('programmes.approvals.director') ? 'active' : '' }}">
+          <a href="{{ route('other_departments.deeds_primary') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200  {{ request()->routeIs('other_departments.deeds_primary') ? 'active' : '' }}">
             <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
             <span>Deeds</span>
           </a>
-          <a href="{{ route('sectionaltitling.primary') }}?lands" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.director') ? 'active' : '' }}">
+          <a href="{{ route('other_departments.lands_primary') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('other_departments.lands_primary') ? 'active' : '' }}">
             <i data-lucide="stamp" class="h-3.5 w-3.5"></i>
             <span>Lands</span>
           </a>
@@ -674,22 +674,26 @@
         <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="ppMemo"></i>
       </div>
       <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="ppMemo">
-        <a href="" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 ">
+        <a href="#" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 ">
         <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
         <span>Regular Memo</span>
         </a>
-        <a href="" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 ">
+        <a href="{{route('stmemo.stmemo')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('stmemo.stmemo') ? 'active' : '' }}">
         <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
         <span>ST Memo</span>
         </a>
-        <a href="" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 ">
+        <a href="{{route('stmemo.siteplan')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('stmemo.siteplan') ? 'active' : '' }}">
+        <i data-lucide="home" class="h-3.5 w-3.5"></i>
+        <span>Site Plan</span>
+        </a> 
+        
+        <a href="#" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 ">
         <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
         <span>SLTR Memo</span>
         </a>
       </div>
-      </div>
 
-      
+
       <a href="{{ route('sectionaltitling.primary') }}?url=phy_planning" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sectionaltitling.primary') && request()->query('url') == 'phy_planning' ? 'active' : '' }}">
         <i data-lucide="check-circle" class="h-4 w-4"></i>
         <span>Approvals</span>
@@ -704,6 +708,10 @@
         <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
         <span>PP Reports</span>
       </a>
+      </div>
+
+      
+      
 
      
     </div>
