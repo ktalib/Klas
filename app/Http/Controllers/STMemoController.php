@@ -157,8 +157,8 @@ class STMemoController extends Controller
 
     public function SitePlan(Request $request)
     {
-        $PageTitle = 'SECTIONAL TITLING SURVEY - SURVEY DEPARTMENT';
-        $PageDescription = 'processing of sectional title survey for primary applications';
+        $PageTitle = 'ST Applications';
+        $PageDescription = '';
 
         // Fetch primary applications only from mother_applications
         $PrimaryApplications = DB::connection('sqlsrv')->table('mother_applications')
@@ -482,14 +482,17 @@ class STMemoController extends Controller
         $PageDescription = 'View sectional titling memo details';
         
         // Get the memo details
-        $memo = DB::connection('sqlsrv')->table('memos')->where('id', $id)->first();
+        $memo = DB::connection('sqlsrv')->table('memos')
+            ->where('application_id', $id)
+            ->where('memo_type', 'ST')
+            ->first();
         if (!$memo) {
             return redirect()->route('stmemo.stmemo')->with('error', 'Memo not found');
         }
         
         // Get the unit measurements
         $measurements = DB::connection('sqlsrv')->table('st_unit_measurements')
-            ->where('memo_id', $id)
+            ->where('application_id', $id)
             ->get();
         
         // Check if primary or secondary application

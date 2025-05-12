@@ -173,8 +173,24 @@
                                                 <li>
                                                     <a href="{{ route('other_departments.survey', ['id' => $PrimaryApplication->id]) }}"
                                                         class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                        <i data-lucide="edit-3" class="w-4 h-4 text-yellow-500"></i>
-                                                        Manage Survey
+                                                        <i data-lucide="map" class="w-4 h-4 text-blue-500"></i>
+                                                        Survey
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a href="{{ route('other_departments.deeds', ['id' => $PrimaryApplication->id]) }}"
+                                                        class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                        <i data-lucide="file-text" class="w-4 h-4 text-green-600"></i>
+                                                        Deeds
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a href="{{ route('other_departments.lands', ['id' => $PrimaryApplication->id]) }}"
+                                                        class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                        <i data-lucide="layers" class="w-4 h-4 text-purple-600"></i>
+                                                        Lands
                                                     </a>
                                                 </li>
 

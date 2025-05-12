@@ -97,8 +97,8 @@ class OtherDepartmentsController extends Controller
 
     public function Survey_Primary(Request $request)
     {
-        $PageTitle = 'SECTIONAL TITLING -SURVEY DEPARTMENT';
-        $PageDescription = 'processing of sectional title survey  for primary applications';
+        $PageTitle = 'Other Departments';
+        $PageDescription = '';
         
         if ($request->has('id')) {
             $application = $this->getApplication($request->get('id'));
@@ -115,8 +115,8 @@ class OtherDepartmentsController extends Controller
 
     public function Survey_Secondary(Request $request)
     {
-        $PageTitle = 'SECTIONAL TITLING  -SURVEY DEPARTMENT';
-        $PageDescription = 'processing of sectional title survey  for secondary applications';
+        $PageTitle = 'Other Departments';
+        $PageDescription = '';
         if ($request->has('id')) {
             $application = $this->getSecondaryApplication($request->get('id'));
             if ($application instanceof \Illuminate\Http\JsonResponse) {
