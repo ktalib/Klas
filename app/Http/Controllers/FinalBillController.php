@@ -41,7 +41,7 @@ class FinalBillController extends Controller
                 'survey_fee' => $existingBill->survey_fee,
                 'assignment_fee' => $existingBill->assignment_fee,
                 'bill_balance' => $existingBill->bill_balance,
-                'ground_rent' => $existingBill->ground_rent,
+                'recertification_fee' => $existingBill->recertification_fee,
                 'dev_charges' => $existingBill->dev_charges,
                 'total_amount' => $existingBill->total_amount
             ];
@@ -73,7 +73,7 @@ class FinalBillController extends Controller
                 'survey_fee' => 'required|numeric',
                 'assignment_fee' => 'required|numeric',
                 'bill_balance' => 'required|numeric',
-                'ground_rent' => 'required|numeric',
+                'recertification_fee' => 'required|numeric',
                 'dev_charges' => 'required|numeric', // Added development charges
                 'bill_date' => 'required|date',
                 'bill_status' => 'nullable|string|in:generated,sent,paid,cancelled'
@@ -85,7 +85,7 @@ class FinalBillController extends Controller
                 $validatedData['survey_fee'] + 
                 $validatedData['assignment_fee'] + 
                 $validatedData['bill_balance'] + 
-                $validatedData['ground_rent'] +
+                $validatedData['recertification_fee'] +
                 $validatedData['dev_charges']; // Added to total
             
             // Set default status if not provided
@@ -109,7 +109,7 @@ class FinalBillController extends Controller
                         'survey_fee' => $validatedData['survey_fee'],
                         'assignment_fee' => $validatedData['assignment_fee'],
                         'bill_balance' => $validatedData['bill_balance'],
-                        'ground_rent' => $validatedData['ground_rent'],
+                        'recertification_fee' => $validatedData['recertification_fee'],
                         'dev_charges' => $validatedData['dev_charges'], // Added
                         'total_amount' => $validatedData['total_amount'],
                         'bill_date' => $validatedData['bill_date'],
@@ -128,7 +128,7 @@ class FinalBillController extends Controller
                         'survey_fee' => $validatedData['survey_fee'],
                         'assignment_fee' => $validatedData['assignment_fee'],
                         'bill_balance' => $validatedData['bill_balance'],
-                        'ground_rent' => $validatedData['ground_rent'],
+                        'recertification_fee' => $validatedData['recertification_fee'],
                         'dev_charges' => $validatedData['dev_charges'], // Added
                         'total_amount' => $validatedData['total_amount'],
                         'bill_date' => $validatedData['bill_date'],
@@ -191,7 +191,7 @@ class FinalBillController extends Controller
             'survey_fee' => $surveyFee,
             'assignment_fee' => $assignmentFee,
             'bill_balance' => $billBalance,
-            'ground_rent' => $groundRent,
+            'recertification_fee' => $groundRent,
             'dev_charges' => $devCharges,
             'total_amount' => $totalAmount
         ];
@@ -224,7 +224,7 @@ class FinalBillController extends Controller
                 'survey_fee' => $fees['survey_fee'],
                 'assignment_fee' => $fees['assignment_fee'],
                 'bill_balance' => $fees['bill_balance'],
-                'ground_rent' => $fees['ground_rent'],
+                'recertification_fee' => $fees['recertification_fee'],
                 'dev_charges' => $fees['dev_charges'],
                 'total_amount' => $fees['total_amount'],
                 'bill_date' => Carbon::now()->format('Y-m-d'),

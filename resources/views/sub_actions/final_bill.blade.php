@@ -73,26 +73,12 @@
                 @php
                     // Add fallback if $fees is not defined
                     $fees = $fees ?? [
-                        'processing_fee' => 20000,
-                        'survey_fee' => 50000,
                         'assignment_fee' => 50000,
                         'bill_balance' => 30525,
-                        'ground_rent' => 5000,
-                        'total_amount' => 155525
+                        'recertification_fee' => 5000,
+                        'total_amount' => 85525
                     ];
                 @endphp
-                
-                <div class="space-y-2">
-                  <label for="processing_fee" class="text-xs font-medium">Processing Fee (₦)</label>
-                  <input id="processing_fee" name="processing_fee" type="number" value="{{ $fees['processing_fee'] }}" 
-                      class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                </div>
-                
-                <div class="space-y-2">
-                  <label for="survey_fee" class="text-xs font-medium">Survey Fee (₦)</label>
-                  <input id="survey_fee" name="survey_fee" type="number" value="{{ $fees['survey_fee'] }}" 
-                      class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                </div>
                 
                 <div class="space-y-2">
                   <label for="assignment_fee" class="text-xs font-medium">Assignment Fee (₦)</label>
@@ -107,8 +93,8 @@
                 </div>
                 
                 <div class="space-y-2">
-                  <label for="ground_rent" class="text-xs font-medium">Ground Rent (₦)</label>
-                  <input id="ground_rent" name="ground_rent" type="number" value="{{ $fees['ground_rent'] }}" 
+                  <label for="recertification_fee" class="text-xs font-medium">Recertification Fee  (₦)</label>
+                  <input id="recertification_fee" name="recertification_fee" type="number" value="{{ $fees['recertification_fee'] }}" 
                       class="w-full p-2 border border-gray-300 rounded-md text-sm">
                 </div>
                 
@@ -222,35 +208,24 @@
                     $landUse = strtolower($application->land_use ?? 'residential');
                     // Make sure $fees is defined with defaults if needed
                     $fees = $fees ?? [
-                        'processing_fee' => 20000,
-                        'survey_fee' => 50000,
                         'assignment_fee' => 50000,
                         'bill_balance' => 30525,
-                        'ground_rent' => 5000,
-                        'total_amount' => 155525
+                        'recertification_fee' => 5000,
+                        'total_amount' => 85525
                     ];
                   @endphp
                   
                   @if($landUse == 'residential')
-                    <p class="font-semibold">a.Residential Fees</p>
-                    <p class="pl-2">i.Processing Fee</p>
-                    <p class="font-semibold">b.Survey Fees</p>
-                    <p class="pl-2">i.Block of Flats</p>
-                    <p class="pl-2">ii.Apartment</p>
-                    <p class="font-semibold">c.Assignment Fees</p>
-                    <p class="font-semibold">d.Bill Balance</p>
+                    <p class="font-semibold">a.Assignment Fees</p>
+                    <p class="font-semibold">b.Bill Balance</p>
                   @else
-                    <p class="font-semibold">e.Commercial Fees</p>
-                    <p class="pl-2">i.Processing Fee</p>
-                    <p class="pl-2">ii.Survey Fees</p>
-                    <p class="pl-2">iii.Assignment Fees</p>
-                    <p class="pl-2">iv.Bill Balance</p>
+                    <p class="font-semibold">a.Commercial Fees</p>
+                    <p class="pl-2">i.Assignment Fees</p>
+                    <p class="pl-2">ii.Bill Balance</p>
                   @endif
                 </td>
                 <td class="p-1.5 border-r border-black" id="fee-col">
                   <!-- Dynamically populated fees -->
-                  <p id="res-processing-fee">N {{ number_format($fees['processing_fee'], 2) }}</p>
-                  <p id="res-survey-fee">N {{ number_format($fees['survey_fee'], 2) }}</p>
                   <p id="res-assignment-fee">N {{ number_format($fees['assignment_fee'], 2) }}</p>
                   <p id="res-bill-balance">N {{ number_format($fees['bill_balance'], 2) }}</p>
                 </td>
@@ -261,7 +236,7 @@
               </tr>
               <tr class="border-t border-black">
                 <td class="p-1.5 border-r border-black">One year Ground Rent</td>
-                <td class="p-1.5 border-r border-black">N <span id="ground-rent-amount">{{ number_format($fees['ground_rent'], 2) }}</span></td>
+                <td class="p-1.5 border-r border-black">N <span id="ground-rent-amount">{{ number_format($fees['recertification_fee'], 2) }}</span></td>
                 <td class="p-1.5">N __________________</td>
               </tr>
               <tr class="border-t border-black">
@@ -401,30 +376,24 @@
     });
     
     // Real-time calculation on input change
-    document.getElementById('processing_fee').addEventListener('input', calculateAndUpdateBill);
-    document.getElementById('survey_fee').addEventListener('input', calculateAndUpdateBill);
     document.getElementById('assignment_fee').addEventListener('input', calculateAndUpdateBill);
     document.getElementById('bill_balance').addEventListener('input', calculateAndUpdateBill);
-    document.getElementById('ground_rent').addEventListener('input', calculateAndUpdateBill);
+    document.getElementById('recertification_fee').addEventListener('input', calculateAndUpdateBill);
     document.getElementById('dev_charges').addEventListener('input', calculateAndUpdateBill);
     
     // Calculate and update bill values
     function calculateAndUpdateBill() {
-      const processingFee = parseFloat(document.getElementById('processing_fee').value) || 0;
-      const surveyFee = parseFloat(document.getElementById('survey_fee').value) || 0;
       const assignmentFee = parseFloat(document.getElementById('assignment_fee').value) || 0;
       const billBalance = parseFloat(document.getElementById('bill_balance').value) || 0;
-      const groundRent = parseFloat(document.getElementById('ground_rent').value) || 0;
+      const groundRent = parseFloat(document.getElementById('recertification_fee').value) || 0;
       const devCharges = parseFloat(document.getElementById('dev_charges').value) || 0;
       
-      const totalAmount = processingFee + surveyFee + assignmentFee + billBalance + groundRent + devCharges;
+      const totalAmount = assignmentFee + billBalance + groundRent + devCharges;
       
       // Update calculated total in the form
       document.getElementById('calculated-total').textContent = '₦ ' + totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       
       // Update the final bill preview
-      document.getElementById('res-processing-fee').textContent = 'N ' + processingFee.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      document.getElementById('res-survey-fee').textContent = 'N ' + surveyFee.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       document.getElementById('res-assignment-fee').textContent = 'N ' + assignmentFee.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       document.getElementById('res-bill-balance').textContent = 'N ' + billBalance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       document.getElementById('ground-rent-amount').textContent = groundRent.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");

@@ -185,7 +185,7 @@
                 <ol class="list-decimal pl-6 mb-4 space-y-2">
                     <li>Payment of
                         <ol class="list-[lower-latin] pl-6 space-y-2">
-                            <li>Ground rent ₦<span class="font-bold">{{ number_format($rofoData->ground_rent ?? 0, 2) }}</span></li>
+                            <li>Ground rent ₦<span class="font-bold">{{ number_format($rofoData->recertification_fee ?? 0, 2) }}</span></li>
                             <li>Development Charges <span class="font-bold">{{ number_format($rofoData->development_charges ?? 0, 2) }}</span> (payable only once)</li>
                             <li>Survey and processing fees <span class="font-bold">{{ number_format($rofoData->survey_processing_fees ?? 0, 2) }}</span></li>
                         </ol>
@@ -296,12 +296,12 @@
                         </tr>
                         <tr>
                             <td class="border border-black p-2">One year Ground Rent</td>
-                            <td class="border border-black p-2">₦ <span class="font-bold">{{ number_format($rofoData->ground_rent ?? 0, 2) }}</span></td>
-                            <td class="border border-black p-2">₦ <span class="font-bold">{{ number_format($rofoData->ground_rent ?? 0, 2) }}</span></td>
+                            <td class="border border-black p-2">₦ <span class="font-bold">{{ number_format($rofoData->recertification_fee ?? 0, 2) }}</span></td>
+                            <td class="border border-black p-2">₦ <span class="font-bold">{{ number_format($rofoData->recertification_fee ?? 0, 2) }}</span></td>
                         </tr>
                         <tr>
                             <td class="border border-black p-2" colspan="3">
-                                <p>TOTAL ₦ <span class="font-bold">{{ number_format(($rofoData->ground_rent ?? 0) + ($rofoData->development_charges ?? 0) + ($rofoData->survey_processing_fees ?? 0), 2) }}</span></p>
+                                <p>TOTAL ₦ <span class="font-bold">{{ number_format(($rofoData->recertification_fee ?? 0) + ($rofoData->development_charges ?? 0) + ($rofoData->survey_processing_fees ?? 0), 2) }}</span></p>
                             </td>
                         </tr>
                     </table>

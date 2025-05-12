@@ -77,7 +77,7 @@
                         'survey_fee' => 50000,
                         'assignment_fee' => 50000,
                         'bill_balance' => 30525,
-                        'ground_rent' => 5000,
+                        'recertification_fee' => 5000,
                         'total_amount' => 155525
                     ];
                 @endphp
@@ -107,8 +107,8 @@
                 </div>
                 
                 <div class="space-y-2">
-                  <label for="ground_rent" class="text-xs font-medium">Ground Rent (₦)</label>
-                  <input id="ground_rent" name="ground_rent" type="number" value="{{ $fees['ground_rent'] }}" 
+                  <label for="recertification_fee" class="text-xs font-medium">Ground Rent (₦)</label>
+                  <input id="recertification_fee" name="recertification_fee" type="number" value="{{ $fees['recertification_fee'] }}" 
                       class="w-full p-2 border border-gray-300 rounded-md text-sm">
                 </div>
                 
@@ -226,7 +226,7 @@
                         'survey_fee' => 50000,
                         'assignment_fee' => 50000,
                         'bill_balance' => 30525,
-                        'ground_rent' => 5000,
+                        'recertification_fee' => 5000,
                         'total_amount' => 155525
                     ];
                   @endphp
@@ -261,7 +261,7 @@
               </tr>
               <tr class="border-t border-black">
                 <td class="p-1.5 border-r border-black">One year Ground Rent</td>
-                <td class="p-1.5 border-r border-black">N <span id="ground-rent-amount">{{ number_format($fees['ground_rent'], 2) }}</span></td>
+                <td class="p-1.5 border-r border-black">N <span id="ground-rent-amount">{{ number_format($fees['recertification_fee'], 2) }}</span></td>
                 <td class="p-1.5">N __________________</td>
               </tr>
               <tr class="border-t border-black">
@@ -417,7 +417,7 @@
     document.getElementById('survey_fee').addEventListener('input', calculateAndUpdateBill);
     document.getElementById('assignment_fee').addEventListener('input', calculateAndUpdateBill);
     document.getElementById('bill_balance').addEventListener('input', calculateAndUpdateBill);
-    document.getElementById('ground_rent').addEventListener('input', calculateAndUpdateBill);
+    document.getElementById('recertification_fee').addEventListener('input', calculateAndUpdateBill);
     document.getElementById('dev_charges').addEventListener('input', calculateAndUpdateBill);
     
     // Calculate and update bill values
@@ -426,7 +426,7 @@
       const surveyFee = parseFloat(document.getElementById('survey_fee').value) || 0;
       const assignmentFee = parseFloat(document.getElementById('assignment_fee').value) || 0;
       const billBalance = parseFloat(document.getElementById('bill_balance').value) || 0;
-      const groundRent = parseFloat(document.getElementById('ground_rent').value) || 0;
+      const groundRent = parseFloat(document.getElementById('recertification_fee').value) || 0;
       const devCharges = parseFloat(document.getElementById('dev_charges').value) || 0;
       
       const totalAmount = processingFee + surveyFee + assignmentFee + billBalance + groundRent + devCharges;

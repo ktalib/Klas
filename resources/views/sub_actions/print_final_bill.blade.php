@@ -200,8 +200,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>One year Ground Rent</td>
-                    <td>N {{ number_format($bill->ground_rent, 2) }}</td>
+                    <td>Recertification Fee</td>
+                    <td>N {{ number_format($bill->recertification_fee, 2) }}</td>
                     <td>N __________________</td>
                 </tr>
                 <tr>

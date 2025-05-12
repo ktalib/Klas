@@ -6,7 +6,7 @@ CREATE TABLE final_bills (
     survey_fee DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
     assignment_fee DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
     bill_balance DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
-    ground_rent DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
+    recertification_fee DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
     dev_charges DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
     total_amount DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
     bill_date DATE NOT NULL,

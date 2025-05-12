@@ -138,8 +138,8 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Ground Rent (₦)</label>
-                                <input type="number" name="ground_rent" step="0.01" class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100" readonly
-                                    value="{{ $existingRofo->ground_rent ?? ($finalBill->ground_rent ?? '') }}">
+                                <input type="number" name="recertification_fee" step="0.01" class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100" readonly
+                                    value="{{ $existingRofo->recertification_fee ?? ($finalBill->recertification_fee ?? '') }}">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Development Charges (₦)</label>

@@ -122,10 +122,10 @@
                                     <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
                                     GENERATE BETTERMENT BILL
                                 </button>
-                                <button class="tab-button" data-tab="final">
+                                {{-- <button class="tab-button" data-tab="final">
                                     <i data-lucide="file-check" class="w-3.5 h-3.5 mr-1.5"></i>
                                     GENERATE FINAL BILL
-                                </button>
+                                </button> --}}
                             </div>
 
                             <!-- Initial Bill Tab -->
