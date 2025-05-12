@@ -117,6 +117,20 @@
           Storage Areas
         </label>
       </div>
+
+         <div class="flex items-center">
+        <input type="checkbox" id="other_areas" name="shared_areas[]" value="other" class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500" onchange="toggleOtherAreasTextarea()">
+        <label for="other_areas" class="ml-2 text-gray-700 flex items-center">
+          <i data-lucide="plus-circle" class="w-4 h-4 mr-1 text-gray-500"></i>
+          Other
+        </label>
+      </div>
+
+    </div>
+
+    <div id="other_areas_container" class="mt-4" style="display: none;">
+      <label for="other_areas_detail" class="block text-sm font-medium text-gray-700 mb-1">Please specify other shared areas:</label>
+      <textarea id="other_areas_detail" name="other_areas_detail" rows="3" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter other shared areas here..."></textarea>
     </div>
   </div>
         

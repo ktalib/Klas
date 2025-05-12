@@ -57,6 +57,7 @@
                             <tr class="text-xs">
                                 <th class="table-header text-green-500">ID</th>
                                 <th class="table-header text-green-500">File No</th>
+                                  <th class="table-header text-green-500">RegNo</th>
                                 <th class="table-header text-green-500">Property</th>
                                 <th class="table-header text-green-500">Type</th>
                                 <th class="table-header text-green-500">Land Use</th>
@@ -72,7 +73,23 @@
                                 <tr class="text-xs">
                                     <td class="table-cell">ST-2025-0{{ $PrimaryApplication->id }}</td>
                                     <td class="table-cell">{{ $PrimaryApplication->fileno }}</td>
-
+                                    <td class="table-cell px-1 py-1 truncate">
+                                      
+                                       @php
+                                        $cofo = \DB::connection('sqlsrv')->table('landAdministration')
+                                          ->where('application_id', $PrimaryApplication->id)
+                                          ->select('serial_no', 'page_no', 'volume_no')
+                                          ->first();
+                                        @endphp
+                                        @if($cofo)
+                                      
+                                          {{ $cofo->serial_no ?? 'N/A' }}/{{ $cofo->page_no ?? 'N/A' }}/{{ $cofo->volume_no ?? 'N/A' }}</span>
+                                          
+                                         </div>
+                                        @else
+                                        <span class="text-gray-400">N/A</span>
+                                        @endif
+                                    </td>
                                     <td class="table-cell">
                                         <div class="truncate max-w-[150px]"
                                             title="{{ $PrimaryApplication->property_plot_no }} {{ $PrimaryApplication->property_street_name }}, {{ $PrimaryApplication->property_lga }}">

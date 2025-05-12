@@ -2,10 +2,14 @@
             <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                 <div class="p-4 border-b">
                     <h3 class="text-sm font-medium">Lands</h3>
-                    <p class="text-xs text-gray-500"></p>
+                    <p class="text-xs text-gray-500">{{ isset($isSecondary) && $isSecondary ? 'Secondary Application' : 'Primary Application' }}</p>
                 </div>
                 <input type="hidden" id="application_id" value="{{ $application->id }}">
                 <input type="hidden" name="fileno" value="{{ $application->fileno }}">
+                @if(isset($isSecondary) && $isSecondary)
+                    <input type="hidden" name="sub_application_id" value="{{ $application->id }}">
+                @endif
+                
                 <div class="p-4 space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-2">
@@ -65,7 +69,7 @@
                     <div class="flex justify-between items-center">
                         <div class="flex gap-2">
                             <a
-                                href="{{ route('sectionaltitling.primary') }}"
+                                href="{{ isset($isSecondary) && $isSecondary ? route('other_departments.survey_secondary') : route('sectionaltitling.primary') }}"
                                 class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-white hover:bg-gray-50"
                             >
                                 <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>

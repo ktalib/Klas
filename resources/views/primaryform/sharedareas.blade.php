@@ -29,7 +29,7 @@
         <div class="flex items-center mr-4">
           <div class="step-circle inactive">3</div>
         </div> 
-         <div class="flex items-center">
+         <div class="flex items-center mr-4">
           <div class="step-circle inactive">4</div>
         </div>
         <div class="ml-4">Step 2</div>

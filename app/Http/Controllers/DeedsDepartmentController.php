@@ -50,6 +50,7 @@ class DeedsDepartmentController extends Controller
             ->select(
                 'dbo.subapplications.*',
                 'dbo.subapplications.id as id',
+                'dbo.subapplications.id as applicationID', // Add alias for applicationID
                 'dbo.mother_applications.fileno as primary_fileno', // Changed alias to primary_fileno
                 'dbo.mother_applications.passport as mother_passport',
                 'dbo.mother_applications.multiple_owners_passport as mother_multiple_owners_passport',
@@ -169,31 +170,68 @@ class DeedsDepartmentController extends Controller
 
     public function DeedsView($d)
     {
-        $PageTitle = 'SECTIONAL TITLING - DEEDS DEPARTMENT';
+        $PageTitle = 'DEEDS';
         $PageDescription = '';
         
-        $application = $this->getPrimaryApplication($d);
-        if ($application instanceof \Illuminate\Http\JsonResponse) {
-            return $application;
+        // Check if this is a secondary application
+        $isSecondary = request()->has('is') && request()->get('is') === 'secondary';
+        
+        if ($isSecondary) {
+            // For secondary applications, get the subapplication
+            $application = $this->getSecondaryApplication($d);
+            if ($application instanceof \Illuminate\Http\JsonResponse) {
+                return $application;
+            }
+            
+            // Get deeds data from SectionalCofOReg for secondary applications
+            // Check if the table and column names match exactly what's in the database
+            $deeds = DB::connection('sqlsrv')->table('SectionalCofOReg')
+                ->where('sub_application_id', $d)
+                ->first();
+            
+            // If no data is found, log this for debugging
+            if (!$deeds) {
+                \Log::info('No deeds found for secondary application: ' . $d);
+                
+                // Try with different column name to check if that's the issue
+                $deedsAlt = DB::connection('sqlsrv')->table('SectionalCofOReg')
+                    ->where('sub_application_id', $d)
+                    ->first();
+                
+                if ($deedsAlt) {
+                    \Log::info('Found deeds with subapplication_id instead of sub_application_id');
+                    $deeds = $deedsAlt;
+                }
+                
+                // Create an empty object to avoid errors in the view
+                if (!$deeds) {
+                    $deeds = (object)[
+                        'serial_no' => '',
+                        'page_no' => '',
+                        'volume_no' => '',
+                        'deeds_time' => '',
+                        'deeds_date' => ''
+                    ];
+                }
+            }
+        } else {
+            // For primary applications, get the primary application
+            $application = $this->getPrimaryApplication($d);
+            if ($application instanceof \Illuminate\Http\JsonResponse) {
+                return $application;
+            }
+            
+            // Get deeds data from landAdministration for primary applications
+            $deeds = DB::connection('sqlsrv')->table('landAdministration')
+                ->where('application_id', $application->id)
+                ->first();
         }
 
         // Fetch all primary applications to satisfy the template's requirement
         $PrimaryApplications = DB::connection('sqlsrv')->table('dbo.mother_applications')->get();
 
-        return view('other_departments.deeds', compact('application', 'PrimaryApplications', 'PageTitle', 'PageDescription'));
+        return view('other_departments.deeds', compact('application', 'PrimaryApplications', 'PageTitle', 'PageDescription', 'deeds', 'isSecondary'));
     }   
-    
-    // public function SecondarySurveyView($d)
-    // {
-    //     $PageTitle = 'SECTIONAL TITLING  SURVEY';
-    //     $PageDescription = 'processing of sectional title survey applications for secondary applications';
-        
-    //     $application = $this->getSecondaryApplication($d);
-    //     if ($application instanceof \Illuminate\Http\JsonResponse) {
-    //         return $application;
-    //     }
-
-    //     return view('other_departments.secondary_survey_view', compact('application', 'PageTitle', 'PageDescription'));
-    // }
+   
 
  }

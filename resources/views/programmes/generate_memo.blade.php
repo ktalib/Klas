@@ -35,7 +35,7 @@
                 </div>
             </div>
             
-            <form method="POST" action="{{ route('programmes.save_memo') }}" class="p-6 space-y-8">
+            <form method="POST" action="{{ route('programmes.save_memo') }}" class="p-6 space-y-8" id="memoForm">
                 @csrf 
                 <input type="hidden" name="application_id" value="{{ $application->id }}">
                 <input type="hidden" name="memo_type" value="primary">
@@ -53,34 +53,34 @@
                         
                         <div class="space-y-5">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">FileNo</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">FileNo <span class="text-red-500">*</span></label>
                                 <input type="text" name="certificate_number" value="{{ $existingMemo->certificate_number ?? $certificateNumber }}" 
-                                   class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                                   class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Site Plan PageNo</label>
-                                <input type="text" name="page_no"   
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Site Plan PageNo <span class="text-red-500">*</span></label>
+                                <input type="text" name="page_no" required
                                    class="w-full p-2 border border-gray-300 rounded-md text-sm">
                             </div>
 
                              <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Arc Design PageNo</label>
-                                <input type="text" name="arc_design_page_no"
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Arc Design PageNo <span class="text-red-500">*</span></label>
+                                <input type="text" name="arc_design_page_no" required
                                    class="w-full p-2 border border-gray-300 rounded-md text-sm">
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Applicant Name</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Applicant Name <span class="text-red-500">*</span></label>
                                 <input type="text" name="applicant_name" value="{{ $existingMemo->applicant_name ?? $application->owner_name }}" 
-                                   class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                                   class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Property Location</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Property Location <span class="text-red-500">*</span></label>
                                 <input type="text" name="property_location" 
                                     value="{{ $existingMemo->property_location ?? $application->property_street_name . ', ' . $application->property_district . ', ' . $application->property_lga }}" 
-                                   class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                                   class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                             </div>
                         </div>
                     </div>
@@ -96,29 +96,29 @@
                         
                         <div class="space-y-5">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Commencement Date</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Commencement Date <span class="text-red-500">*</span></label>
                                 <input type="date" name="commencement_date" 
                                     value="{{ $existingMemo->commencement_date ?? ($application->approval_date ? date('Y-m-d', strtotime($application->approval_date)) : date('Y-m-d')) }}" 
-                                   class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                                   class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Term (Years)</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Term (Years) <span class="text-red-500">*</span></label>
                                 <input type="number" name="term_years" value="{{ $existingMemo->term_years ?? $totalYears }}" 
-                                   class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                                   class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Residual Years</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Residual Years <span class="text-red-500">*</span></label>
                                 <input type="number" name="residual_years" value="{{ $existingMemo->residual_years ?? $residualYears }}" 
-                                   class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                                   class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date <span class="text-red-500">*</span></label>
                                 <input type="date" name="expiry_date" 
                                     value="{{ $existingMemo->expiry_date ?? ($expiryDate ? date('Y-m-d', strtotime($expiryDate)) : '') }}" 
-                                   class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                                   class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                             </div>
                         </div>
                     </div>
@@ -135,8 +135,8 @@
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Planning Recommendation</label>
-                            <textarea name="planner_recommendation" rows="4" 
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Planning Recommendation <span class="text-red-500">*</span></label>
+                            <textarea name="planner_recommendation" rows="4" required
                                 class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm transition duration-150 ease-in-out hover:border-gray-400 resize-none">{{ $existingMemo->planner_recommendation ?? 'The application was referred to Physical Planning Department for planning, engineering as well as architectural views. The planners recommended the application because it is feasible, and the shops meet the minimum requirements for commercial titles. Moreover, the proposal is accessible and conforms with the existing commercial development in the area.' }}</textarea>
                         </div>
                         
@@ -186,15 +186,16 @@
                     </a>
 
                     <a href="{{ route('programmes.generate_memo', $application->id) }}?edit=yes" 
-                        class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border border-transparent shadow-sm">
+                        id="editMemoBtn"
+                        class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border border-transparent shadow-sm opacity-50 cursor-not-allowed" disabled>
                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                          </svg>
                          {{ request()->has('edit') && request('edit') == 'yes' ? 'Cancel Edit' : 'Edit Memo' }}
                      </a>
 
-
-                    <button type="submit" class="inline-flex justify-center items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border border-transparent shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    <button type="submit" id="generateMemoBtn" 
+                        class="inline-flex justify-center items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md transition-colors duration-150 ease-in-out border border-transparent shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 opacity-50 cursor-not-allowed" disabled>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
@@ -208,4 +209,47 @@
     <!-- Page Footer -->
     @include($footerPartial ?? 'admin.footer')
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('memoForm');
+        const generateMemoBtn = document.getElementById('generateMemoBtn');
+        const editMemoBtn = document.getElementById('editMemoBtn');
+        const requiredInputs = form.querySelectorAll('input[required], textarea[required]');
+        
+        // Function to check if all required fields are filled
+        function checkFormValidity() {
+            let formIsValid = true;
+            
+            requiredInputs.forEach(input => {
+                if (!input.value.trim()) {
+                    formIsValid = false;
+                }
+            });
+            
+            // Enable or disable buttons based on form validity
+            if (formIsValid) {
+                generateMemoBtn.disabled = false;
+                generateMemoBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                
+                editMemoBtn.disabled = false;
+                editMemoBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                generateMemoBtn.disabled = true;
+                generateMemoBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                
+                editMemoBtn.disabled = true;
+                editMemoBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+        
+        // Initial check
+        checkFormValidity();
+        
+        // Check on input change
+        requiredInputs.forEach(input => {
+            input.addEventListener('input', checkFormValidity);
+        });
+    });
+</script>
 @endsection

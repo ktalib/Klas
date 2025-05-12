@@ -50,6 +50,7 @@ class LandsDepartmentController extends Controller
             ->select(
                 'dbo.subapplications.*',
                 'dbo.subapplications.id as id',
+                'dbo.subapplications.id as applicationID', // Add alias for applicationID
                 'dbo.mother_applications.fileno as primary_fileno', // Changed alias to primary_fileno
                 'dbo.mother_applications.passport as mother_passport',
                 'dbo.mother_applications.multiple_owners_passport as mother_multiple_owners_passport',
@@ -114,7 +115,7 @@ class LandsDepartmentController extends Controller
 
     public function Survey_Secondary(Request $request)
     {
-        $PageTitle = 'SECTIONAL TITLING  LANDS  DEPARTMENT';
+        $PageTitle = 'LANDS';
         $PageDescription = '';
         if ($request->has('id')) {
             $application = $this->getSecondaryApplication($request->get('id'));
@@ -169,18 +170,30 @@ class LandsDepartmentController extends Controller
 
     public function LandsView($d)
     {
-        $PageTitle = 'SECTIONAL TITLING - LAND DEPARTMENT';
+        $PageTitle = 'LANDS';
         $PageDescription = '';
         
-        $application = $this->getPrimaryApplication($d);
-        if ($application instanceof \Illuminate\Http\JsonResponse) {
-            return $application;
+        // Check if this is a secondary application
+        $isSecondary = request()->has('is') && request()->get('is') === 'secondary';
+        
+        if ($isSecondary) {
+            // For secondary applications, get the subapplication
+            $application = $this->getSecondaryApplication($d);
+            if ($application instanceof \Illuminate\Http\JsonResponse) {
+                return $application;
+            }
+        } else {
+            // For primary applications, get the primary application
+            $application = $this->getPrimaryApplication($d);
+            if ($application instanceof \Illuminate\Http\JsonResponse) {
+                return $application;
+            }
         }
 
         // Fetch all primary applications to satisfy the template's requirement
         $PrimaryApplications = DB::connection('sqlsrv')->table('dbo.mother_applications')->get();
 
-        return view('other_departments.lands', compact('application', 'PrimaryApplications', 'PageTitle', 'PageDescription'));
+        return view('other_departments.lands', compact('application', 'PrimaryApplications', 'PageTitle', 'PageDescription', 'isSecondary'));
     }   
     
     // public function SecondarySurveyView($d)

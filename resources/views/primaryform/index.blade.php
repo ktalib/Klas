@@ -139,10 +139,10 @@
                       <div class="flex items-center mr-4">
                         <div class="step-circle inactive flex items-center justify-center">2</div>
                       </div>
-                      <div class="flex items-center">
+                      <div class="flex items-center mr-4">
                         <div class="step-circle inactive flex items-center justify-center">3</div>
                       </div>
-                       <div class="flex items-center">
+                       <div class="flex items-center mr-4">
                         <div class="step-circle inactive flex items-center justify-center">4</div>
                       </div>
                       

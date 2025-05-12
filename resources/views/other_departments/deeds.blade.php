@@ -35,8 +35,15 @@
 @section('content')
    @php
     use Illuminate\Support\Facades\DB;
-    $deeds = DB::connection('sqlsrv')->table('landAdministration')->where('application_id', $application->id)->first();  
-     @endphp
+    // Only query landAdministration for primary applications
+    if(!isset($isSecondary) || !$isSecondary) {
+        $deeds = DB::connection('sqlsrv')
+            ->table('landAdministration')
+            ->where('application_id', $application->id)
+            ->first();
+    }
+    // For secondary applications, $deeds should already be set in the controller
+   @endphp
     <div class="flex-1 overflow-auto">
         <!-- Header -->
         @include('admin.header')
@@ -49,7 +56,7 @@
 
                 <div class="modal-content p-6">
                     <div class="flex justify-between items-center mb-4">
-                      <h2 class="text-lg font-medium">Survey</h2>
+                      <h2 class="text-lg font-medium">Deeds</h2>
                       <button  type="button"  class="text-gray-500 hover:text-gray-700" onclick="window.history.back()">
                         <i data-lucide="x" class="w-5 h-5"></i>
                       </button>

@@ -31,13 +31,13 @@
                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="space-y-4">
                          <div class="flex items-center">
-                              <span class="text-gray-600 font-medium w-40">File No:</span>
-                              <span class="text-gray-800">{{ isset($isPrimary) && $isPrimary ? $application->fileno : $application->primary_fileno }}</span>
+                              <span class="text-gray-600 font-medium w-40">File No: {{ isset($isPrimary) && $isPrimary ? $application->fileno : $application->primary_fileno }}</span>
+                               
                          </div>
                          @if(!isset($isPrimary) || !$isPrimary)
                          <div class="flex items-center">
-                              <span class="text-gray-600 font-medium w-40">ST File No:</span>
-                              <span class="text-gray-800">{{ $application->fileno ?? 'N/A' }}</span>
+                              <span class="text-gray-600 font-medium w-40">ST File No: {{ $application->fileno ?? 'N/A' }}</span>
+                              
                          </div>
                          <div class="flex items-center">
                               <span class="text-gray-600 font-medium w-40">Scheme No:</span>
@@ -51,75 +51,139 @@
                     </div>
                     
                     <div class="space-y-4">
+                            <div class="flex items-center">
+                                      <span class="text-gray-600 font-medium w-40">Owner:</span>
+                                      <span class="text-gray-400 bg-gray-100 rounded px-2 py-1 select-none">
+                                               @php
+                                                    // Get primary owner name
+                                                    $primaryName = '';
+                                                    if(isset($isPrimary) && $isPrimary) {
+                                                         if(!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname)) {
+                                                              $primaryName = trim(($application->applicant_title ?? '') . ' ' . ($application->first_name ?? '') . ' ' . ($application->surname ?? ''));
+                                                         } elseif(!empty($application->corporate_name)) {
+                                                              $primaryName = $application->corporate_name;
+                                                         }
+                                                    } else {
+                                                         if(!empty($application->primary_applicant_title) || !empty($application->primary_first_name) || !empty($application->primary_surname)) {
+                                                              $primaryName = trim(($application->primary_applicant_title ?? '') . ' ' . ($application->primary_first_name ?? '') . ' ' . ($application->primary_surname ?? ''));
+                                                         } elseif(!empty($application->mother_corporate_name)) {
+                                                              $primaryName = $application->mother_corporate_name;
+                                                         }
+                                                    }
+                                                    
+                                                    // Get multiple owners
+                                                    $multipleOwners = [];
+                                                    if(!empty($application->multiple_owners_names)) {
+                                                         if(is_string($application->multiple_owners_names)) {
+                                                              $multipleOwners = json_decode($application->multiple_owners_names, true);
+                                                         } else {
+                                                              $multipleOwners = $application->multiple_owners_names;
+                                                         }
+                                                    }
+                                                    
+                                                    // Combine names
+                                                    $ownersList = $primaryName;
+                                                    if(!empty($multipleOwners)) {
+                                                         if(!empty($primaryName)) {
+                                                              $ownersList .= ', ' . implode(', ', $multipleOwners);
+                                                         } else {
+                                                              $ownersList = implode(', ', $multipleOwners);
+                                                         }
+                                                    }
+                                                    
+                                                    echo !empty($ownersList) ? $ownersList : 'N/A';
+                                               @endphp
+                                      </span>
+                            </div>
+                            
+                            @if(!isset($isPrimary) || !$isPrimary)
+                            <div class="flex items-center">
+                                      <span class="text-gray-600 font-medium w-40">Unit Owner:</span>
+                                      <span class="text-gray-400 bg-gray-100 rounded px-2 py-1 select-none">
+                                               @if(!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname))
+                                                          {{ $application->applicant_title ?? '' }} {{ $application->first_name ?? '' }} {{ $application->surname ?? '' }}
+                                               @elseif(!empty($application->corporate_name))
+                                                          {{ $application->corporate_name }}
+                                               @else
+                                                          N/A
+                                               @endif
+                                      </span>
+                            </div>
+                            @endif
+                            
+                            <div class="flex items-center">
+                                      <span class="text-gray-600 font-medium w-
+                           
+                           <div class="flex items-center">
+                                   <span class="text-gray-600 font-medium w-
+                                <span class="text-gray-800">{{ $application->land_use ?? 'N/A' }}</span>
+                          </div>
                           <div class="flex items-center">
-                                <span class="text-gray-600 font-medium w-40">Owner:</span>
-                                <span class="text-gray-400 bg-gray-100 rounded px-2 py-1 select-none">
-                                      @if(isset($isPrimary) && $isPrimary)
-                                             @if(!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname))
-                                                   {{ $application->applicant_title ?? '' }} {{ $application->first_name ?? '' }} {{ $application->surname ?? '' }}
-                                             @elseif(!empty($application->corporate_name))
-                                                   {{ $application->corporate_name }}
-                                             @else
-                                                   N/A
-                                             @endif
-                                      @else
-                                             @if(!empty($application->primary_applicant_title) || !empty($application->primary_first_name) || !empty($application->primary_surname))
-                                                   {{ $application->primary_applicant_title ?? '' }} {{ $application->primary_first_name ?? '' }} {{ $application->primary_surname ?? '' }}
-                                             @elseif(!empty($application->mother_corporate_name))
-                                                   {{ $application->mother_corporate_name }}
-                                             @else
-                                                   N/A
-                                             @endif
-                                      @endif
+                                <span class="text-gray-600 font-medium w-40">Property Address:</span>
+                                <span class="text-gray-800">
+                                      {{ $application->property_house_no ?? '' }} 
+                                      {{ $application->property_plot_no ?? '' }}, 
+                                      {{ $application->property_street_name ?? '' }}, 
+                                      {{ $application->property_lga ?? '' }}
                                 </span>
+                                <input type="hidden" name="property_location" value="{{ $application->property_house_no ?? '' }} {{ $application->property_plot_no ?? '' }}, {{ $application->property_street_name ?? '' }}, {{ $application->property_lga ?? '' }}">
                           </div>
-                          
-                          @if(!isset($isPrimary) || !$isPrimary)
-                          <div class="flex items-center">
-                                <span class="text-gray-600 font-medium w-40">Unit Owner:</span>
-                                <span class="text-gray-400 bg-gray-100 rounded px-2 py-1 select-none">
-                                      @if(!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname))
-                                             {{ $application->applicant_title ?? '' }} {{ $application->first_name ?? '' }} {{ $application->surname ?? '' }}
-                                      @elseif(!empty($application->corporate_name))
-                                             {{ $application->corporate_name }}
-                                      @else
-                                             N/A
-                                      @endif
-                                </span>
-                          </div>
-                          @endif
-                          
-                          <div class="flex items-center">
-                                <span class="text-gray-600 font-medium w-
-                              <span class="text-gray-800">{{ $application->land_use ?? 'N/A' }}</span>
-                         </div>
-                         <div class="flex items-center">
-                              <span class="text-gray-600 font-medium w-40">Property Address:</span>
-                              <span class="text-gray-800">
-                                   {{ $application->property_house_no ?? '' }} 
-                                   {{ $application->property_plot_no ?? '' }}, 
-                                   {{ $application->property_street_name ?? '' }}, 
-                                   {{ $application->property_lga ?? '' }}
-                              </span>
-                              <input type="hidden" name="property_location" value="{{ $application->property_house_no ?? '' }} {{ $application->property_plot_no ?? '' }}, {{ $application->property_street_name ?? '' }}, {{ $application->property_lga ?? '' }}">
-                         </div>
-                          <div class="flex items-center">
-                                <span class="text-gray-600 font-medium w-40">Applicant Name:</span>
-                                <input type="text" name="applicant_name" 
-                                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300 sm:text-sm" 
-                                      value="{{ isset($isPrimary) && $isPrimary ? 
-                                      ((!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname)) ? 
-                                      ($application->applicant_title ?? '') . ' ' . ($application->first_name ?? '') . ' ' . ($application->surname ?? '') : 
-                                      ($application->corporate_name ?? 'N/A')) : 
-                                      ((!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname)) ? 
-                                      ($application->applicant_title ?? '') . ' ' . ($application->first_name ?? '') . ' ' . ($application->surname ?? '') : 
-                                      ($application->corporate_name ?? 'N/A')) }}"
-                                      disabled
-                                >
-                          </div>
+                           <div class="flex items-center">
+                                   <span class="text-gray-600 font-medium w-40">Applicant Name:</span>
+                                      @php
+                                           // Determine the primary applicant name
+                                           // Initialize variables
+                                           $primaryName = '';
+                                           $multipleOwners = [];
+                                           
+                                           // Get primary applicant name
+                                           if(isset($isPrimary) && $isPrimary) {
+                                                  if(!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname)) {
+                                                        $primaryName = trim(($application->applicant_title ?? '') . ' ' . ($application->first_name ?? '') . ' ' . ($application->surname ?? ''));
+                                                  } elseif(!empty($application->corporate_name)) {
+                                                        $primaryName = $application->corporate_name;
+                                                  }
+                                           } else {
+                                                  if(!empty($application->applicant_title) || !empty($application->first_name) || !empty($application->surname)) {
+                                                        $primaryName = trim(($application->applicant_title ?? '') . ' ' . ($application->first_name ?? '') . ' ' . ($application->surname ?? ''));
+                                                  } elseif(!empty($application->corporate_name)) {
+                                                        $primaryName = $application->corporate_name;
+                                                  }
+                                           }
+                                           
+                                           // Get multiple owners if they exist
+                                           if(!empty($application->multiple_owners_names)) {
+                                                  if(is_string($application->multiple_owners_names)) {
+                                                        $multipleOwners = json_decode($application->multiple_owners_names, true);
+                                                  } else {
+                                                        $multipleOwners = $application->multiple_owners_names;
+                                                  }
+                                           }
+                                           
+                                           // Combine names
+                                           $applicantName = $primaryName;
+                                           if(!empty($multipleOwners)) {
+                                                  if(!empty($primaryName)) {
+                                                        $applicantName .= ', ' . implode(', ', $multipleOwners);
+                                                  } else {
+                                                        $applicantName = implode(', ', $multipleOwners);
+                                                  }
+                                           }
+                                           
+                                           // If no names found at all, use N/A
+                                           if(empty($applicantName)) {
+                                                  $applicantName = 'N/A';
+                                           }
+                                     @endphp
+                                     <input type="text" name="applicant_name" 
+                                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300 sm:text-sm" 
+                                                value="{{ $applicantName }}"
+                                                disabled
+                                   >
+                           </div>
                     </div>
-               </div>
-               
+             </div>
+             
                <!-- Rest of the form remains the same -->
                
                <!-- Tabs -->
@@ -157,7 +221,7 @@
                                    $sharedAreasText = '';
                               }
                          @endphp
-                         <textarea name="shared_facilities" rows="3" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">{{ $sharedAreasText }}</textarea>
+                         <textarea name="shared_facilities" rows="3" class="w-full border border-gray-500 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">{{ $sharedAreasText }}</textarea>
                     </div>
                     <div class="mb-4">
                          <div class="flex justify-between items-center mb-2">
