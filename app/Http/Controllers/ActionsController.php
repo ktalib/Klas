@@ -84,6 +84,20 @@ class ActionsController extends Controller
         }
 
         return view('actions.final_conveyance', compact('application', 'PageTitle', 'PageDescription'));
+    }  
+    
+    
+    public function  BuyersList($d)
+    {
+        $PageTitle = 'Add List of Buyers';
+        $PageDescription = '';
+        
+        $application = $this->getApplication($d);
+        if ($application instanceof \Illuminate\Http\JsonResponse) {
+            return $application;
+        }
+
+        return view('actions.buyers_list', compact('application', 'PageTitle', 'PageDescription'));
     }
 
     public function DirectorApproval($d)

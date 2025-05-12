@@ -491,6 +491,22 @@ class PrimaryActionsController extends Controller
         ]);
     }
 
+
+    public function BuyersList($id)
+    {
+        $application = DB::connection('sqlsrv')->table('mother_applications')
+            ->where('id', $id)
+            ->first();
+
+        if (!$application) {
+            return redirect()->back()->with('error', 'Application not found');
+        }
+
+        return view('actions.buyers_list', [
+            'application' => $application
+        ]);
+    }
+
     /**
      * Render the buyers list template with provided data
      */

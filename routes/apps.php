@@ -64,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/payments/{id}', [ActionsController::class, 'Payment'])->name('actions.payments');
         Route::get('/recommendation/{id}', [ActionsController::class, 'Recommendation'])->name('actions.recommendation');
         Route::get('/final-conveyance/{id}', [ActionsController::class, 'FinalConveyance'])->name('actions.final-conveyance');
+         Route::get('/buyers_list/{id}', [ActionsController::class, 'BuyersList'])->name('actions.buyers_list');
         Route::post('/{application}/update-architectural-design', [ActionsController::class, 'updateArchitecturalDesign'])->name('actions.update-architectural-design');
         Route::get('/director-approval/{id}', [ActionsController::class, 'DirectorApproval'])->name('actions.director-approval');
     });
