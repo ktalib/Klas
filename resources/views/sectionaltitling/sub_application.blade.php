@@ -1,6 +1,6 @@
             @extends('layouts.app')
             @section('page-title')
-            {{ __('SECTIONAL TITLING  MODULE') }}
+            {{ __('Secondary Application Form') }}
             @endsection
             @include('sectionaltitling.sub_app_css')
             @include('sectionaltitling.partials.assets.css')
@@ -408,7 +408,7 @@
                                       <div>
                                         <label class="flex items-center text-sm mb-1">
                                           <i data-lucide="map" class="w-4 h-4 mr-1 text-green-600"></i>
-                                         Survey Fee (₦)
+                                       site plan Fee (₦)
                                         </label>
                                         <input type="text" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter site plan fee">
                                       </div>

@@ -165,7 +165,7 @@
                                         <div class="grid grid-cols-2 gap-4">
                                             <div class="space-y-2">
                                                 <label for="site-plan-fee" class="text-xs font-medium block">
-                                                    Survey Fee (₦)
+                                                    Site Plan Fee (₦)
                                                 </label>
                                                 <input id="site-plan-fee" type="text"
                                                     value="{{ $application->site_plan_fee ?? '0.00' }}"
@@ -338,8 +338,7 @@
                                                                 </td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="border border-gray-300 p-2">Survey
-                                                                    Fee</td>
+                                                                <td class="border border-gray-300 p-2">Site Plan Fee</td>
                                                                 <td
                                                                     class="border border-gray-300 p-2 text-right">
                                                                     {{ number_format($application->site_plan_fee ?? 0, 2) }}

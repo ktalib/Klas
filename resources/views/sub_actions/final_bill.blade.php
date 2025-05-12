@@ -235,7 +235,7 @@
                 </td>
               </tr>
               <tr class="border-t border-black">
-                <td class="p-1.5 border-r border-black">One year Ground Rent</td>
+                <td class="p-1.5 border-r border-black">Recertification Fee	</td>
                 <td class="p-1.5 border-r border-black">N <span id="ground-rent-amount">{{ number_format($fees['recertification_fee'], 2) }}</span></td>
                 <td class="p-1.5">N __________________</td>
               </tr>

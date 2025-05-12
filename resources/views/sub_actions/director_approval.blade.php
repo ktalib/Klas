@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('page-title')
-    {{ __('SECTIONAL TITLING  MODULE') }}
+    {{ __('Directors Approval') }}
 @endsection
 
 <style>
@@ -45,7 +45,7 @@
                 <div class="modal-content p-6">
                     <div class="flex justify-between items-center mb-4">
                       <h2 class="text-lg font-medium">{{$PageTitle}}</h2>
-                      <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                      <button   class="text-gray-500 hover:text-gray-700" onclick="window.history.back()">
                         <i data-lucide="x" class="w-5 h-5"></i>
                       </button>
                     </div>
@@ -348,10 +348,10 @@
                               <div class="flex justify-between items-center">
                                  
                                 <div class="flex gap-2">
-                                  <button class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-white hover:bg-gray-50">
-                                    <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
-                                   Back
-                                  </button>
+                                  <a  href="{{route('sectionaltitling.secondary')}}" class="flex items-center px-3 py-1 text-xs bg-white text-black p-2 border border-gray-500 rounded-md hover:bg-gray-800">
+                                  <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
+                                 Back
+                                 </a> 
                                
                                   <button type="submit" class="flex items-center px-3 py-1 text-xs bg-green-700 text-white rounded-md hover:bg-gray-800">
                                       <i data-lucide="send-horizontal" class="w-3.5 h-3.5 mr-1.5"></i>
