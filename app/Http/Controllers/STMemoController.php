@@ -380,7 +380,7 @@ class STMemoController extends Controller
 
     public function generateSTMemo($id)
     {
-        $PageTitle = 'GENERATE SECTIONAL TITLING MEMO';
+        $PageTitle = 'Generate Physical Planning Memo';
         $PageDescription = 'Create a new sectional titling memo';
         
         // Check if this is a primary application
@@ -444,7 +444,7 @@ class STMemoController extends Controller
         $memoId = DB::connection('sqlsrv')->table('memos')->insertGetId([
             'memo_no' => $memoNo,
             'application_id' => $request->application_id,
-            'memo_type' => 'ST',
+            'memo_type' => 'st_memo',
             'applicant_name' => $request->applicant_name,
             'property_location' => $request->property_location,
             'created_by' => Auth::id(),
@@ -473,18 +473,18 @@ class STMemoController extends Controller
                 ->update(['memo_status' => 'GENERATED']);
         }
         
-        return redirect()->route('stmemo.view', $memoId)->with('success', 'ST Memo has been successfully generated');
+        return redirect()->route('stmemo.view', $memoId)->with('success', 'Generate Physical Planning Memo has been successfully generated');
     }
     
     public function viewSTMemo($id)
     {
-        $PageTitle = 'VIEW SECTIONAL TITLING MEMO';
+        $PageTitle = 'View Physical Planning Memo';
         $PageDescription = 'View sectional titling memo details';
         
         // Get the memo details
         $memo = DB::connection('sqlsrv')->table('memos')
             ->where('application_id', $id)
-            ->where('memo_type', 'ST')
+            ->where('memo_type', 'st_memo')
             ->first();
         if (!$memo) {
             return redirect()->route('stmemo.stmemo')->with('error', 'Memo not found');

@@ -129,7 +129,14 @@
                                     @elseif($application->applicant_type == 'corporate')
                                         {{ $application->rc_number }} {{ $application->corporate_name }}
                                     @elseif($application->applicant_type == 'multiple')
-                                        {{ $application->multiple_owners_names }}
+                                        @php
+                                            $names = @json_decode($application->multiple_owners_names, true);
+                                            if (is_array($names) && count($names) > 0) {
+                                                echo implode(', ', $names);
+                                            } else {
+                                                echo $application->multiple_owners_names;
+                                            }
+                                        @endphp
                                     @endif
                                 </h3>
                                 <p class="text-xs text-gray-500">
@@ -240,11 +247,11 @@
 
                                         <div class="flex justify-between items-center">
                                             <div class="flex gap-2">
-                                                <a href="{{ route('sectionaltitling.primary') }}"
+                                                <button type="button" onclick="window.history.back()"
                                                     class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-white hover:bg-gray-50">
                                                     <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
                                                     Back
-                                                </a>
+                                                </button>
                                                 <button id="planningRecommendationSubmitBtn" type="submit"
                                                     class="flex items-center px-3 py-1 text-xs bg-green-700 text-white rounded-md hover:bg-gray-800">
                                                     <i data-lucide="send-horizontal" class="w-3.5 h-3.5 mr-1.5"></i>
@@ -447,7 +454,7 @@
                                             target="_blank"
                                             class="flex items-center px-3 py-1 text-xs bg-blue-700 text-white rounded-md hover:bg-blue-800">
                                             <i data-lucide="external-link" class="w-3.5 h-3.5 mr-1.5"></i>
-                                            Print (Alt)
+                                            Print
                                         </a>
                                     </div>
                                 </div>

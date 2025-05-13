@@ -108,10 +108,10 @@
                                 <th class="table-header text-green-500">Land Use</th>
                                 <th class="table-header text-green-500">Owner</th>
                                 <th class="table-header text-green-500">Units</th>
-                                <th class="table-header text-green-500">Approval Status</th>
-                                <th class="table-header text-green-500">Planning Recommendation Status</th>
                                 <th class="table-header text-green-500">ST Memo Status</th>
                                 <th class="table-header text-green-500">Site Plan Status</th>
+                                <th class="table-header text-green-500">Approval Status</th>
+                                <th class="table-header text-green-500">Planning Recommendation Status</th>
                                 <th class="table-header text-green-500">Actions</th>
                             </tr>
                         </thead>
@@ -127,6 +127,7 @@
                                         ->table('memos')
                                         ->where('application_id', $PrimaryApplication->id)
                                         ->where('memo_status', 'GENERATED')
+                                        ->where('memo_type', 'st_memo')
                                         ->exists();
 
                                     $approvalStatus = strtolower($PrimaryApplication->planning_recommendation_status) === 'approved';
@@ -214,34 +215,6 @@
                                     </td>
                                     <td class="table-cell">{{ $PrimaryApplication->NoOfUnits }}</td>
                                     <td class="table-cell">
-                                        <div class="flex items-center">
-                                            <span class="badge badge-{{ strtolower($PrimaryApplication->planning_recommendation_status) }}">
-                                                {{ $PrimaryApplication->planning_recommendation_status }}
-                                            </span>
-                                            @if($PrimaryApplication->planning_recommendation_status == 'Declined')
-                                                <i data-lucide="info" class="w-4 h-4 ml-1 text-blue-500 cursor-pointer" 
-                                                   onclick="showDeclinedInfo(event, 'Planning Recommendation', {{ json_encode($PrimaryApplication->recomm_comments) }}, {{ json_encode($PrimaryApplication->director_comments) }})"></i>
-                                            @endif
-                                        </div>
-                                    </td> 
-                                    <td class="table-cell">
-                                        @if($sitePlanDimensionExists)
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                <svg class="mr-1.5 h-2 w-2 text-green-400" fill="currentColor" viewBox="0 0 8 8">
-                                                    <circle cx="4" cy="4" r="3" />
-                                                </svg>
-                                               Approved
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                                <svg class="mr-1.5 h-2 w-2 text-gray-400" fill="currentColor" viewBox="0 0 8 8">
-                                                    <circle cx="4" cy="4" r="3" />
-                                                </svg>
-                                               Pending
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="table-cell">
                                         @if($memoStatus)
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                                 <svg class="mr-1.5 h-2 w-2 text-green-400" fill="currentColor" viewBox="0 0 8 8">
@@ -268,6 +241,34 @@
                                                 Uploaded</span>
                                         @endif
                                     </td>
+                                    <td class="table-cell">
+                                        <div class="flex items-center">
+                                            <span class="badge badge-{{ strtolower($PrimaryApplication->planning_recommendation_status) }}">
+                                                {{ $PrimaryApplication->planning_recommendation_status }}
+                                            </span>
+                                            @if($PrimaryApplication->planning_recommendation_status == 'Declined')
+                                                <i data-lucide="info" class="w-4 h-4 ml-1 text-blue-500 cursor-pointer" 
+                                                   onclick="showDeclinedInfo(event, 'Planning Recommendation', {{ json_encode($PrimaryApplication->recomm_comments) }}, {{ json_encode($PrimaryApplication->director_comments) }})"></i>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td class="table-cell">
+                                        @if($sitePlanDimensionExists)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <svg class="mr-1.5 h-2 w-2 text-green-400" fill="currentColor" viewBox="0 0 8 8">
+                                                    <circle cx="4" cy="4" r="3" />
+                                                </svg>
+                                               Approved
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                <svg class="mr-1.5 h-2 w-2 text-gray-400" fill="currentColor" viewBox="0 0 8 8">
+                                                    <circle cx="4" cy="4" r="3" />
+                                                </svg>
+                                               Pending
+                                            </span>
+                                        @endif
+                                    </td>
                                     <td class="table-cell overflow-visible relative">
                                         <button
                                             class="flex items-center px-2 py-1 text-xs border border-gray-200 rounded-md bg-white hover:bg-gray-50"
@@ -275,7 +276,7 @@
                                             <i data-lucide="more-horizontal" class="w-4 h-4"></i>
                                         </button>
                                         <div
-                                            class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
+                                            class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-50">
                                             <ul class="py-2">
                                                 <li>
                                                     <a href="{{ route('sectionaltitling.viewrecorddetail') }}?id={{ $PrimaryApplication->id }}"
@@ -377,8 +378,35 @@
         function toggleDropdown(event) {
             event.stopPropagation();
             const dropdownMenu = event.currentTarget.nextElementSibling;
+            
+            // Hide all other dropdowns first
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                if (menu !== dropdownMenu) menu.classList.add('hidden');
+            });
+            
             if (dropdownMenu) {
-                dropdownMenu.classList.toggle('hidden');
+                // Toggle visibility
+                const isHidden = dropdownMenu.classList.toggle('hidden');
+                
+                if (!isHidden) {
+                    // Check if dropdown would go off-screen
+                    const buttonRect = event.currentTarget.getBoundingClientRect();
+                    const tableBottom = document.querySelector('.overflow-x-auto').getBoundingClientRect().bottom;
+                    const dropdownHeight = dropdownMenu.offsetHeight;
+                    
+                    // Position dropdown above or below based on available space
+                    if (buttonRect.bottom + dropdownHeight > tableBottom) {
+                        dropdownMenu.style.bottom = "100%";
+                        dropdownMenu.style.top = "auto";
+                        dropdownMenu.style.marginTop = "0";
+                        dropdownMenu.style.marginBottom = "0.5rem";
+                    } else {
+                        dropdownMenu.style.top = "100%";
+                        dropdownMenu.style.bottom = "auto";
+                        dropdownMenu.style.marginTop = "0.5rem";
+                        dropdownMenu.style.marginBottom = "0";
+                    }
+                }
             }
         }
 
@@ -479,8 +507,8 @@
         // New function to handle "Generate ST Memo" action
         function generateSTMemo(applicationId) {
             Swal.fire({
-                title: 'Generate ST Memo',
-                text: 'Are you sure you want to generate a Sectional Titling Memo for this application?',
+                title: 'Generate Physical Planning Memo',
+                text: 'Are you sure you want to physical planning memo for this application?',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, generate it!',

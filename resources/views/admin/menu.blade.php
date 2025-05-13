@@ -743,7 +743,7 @@
      
  
 
-      <a href="{{ route('sectionaltitling.primary') }}?url=phy_planning" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sectionaltitling.primary') && request()->query('url') == 'phy_planning' ? 'active' : '' }}">
+      <a href="#" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 ">
         <i data-lucide="check-circle" class="h-4 w-4"></i>
         <span>Regular Applications</span>
       </a>

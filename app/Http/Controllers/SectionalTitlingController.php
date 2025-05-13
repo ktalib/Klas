@@ -45,7 +45,7 @@ class  SectionalTitlingController extends Controller
             $PageDescription = 'Process Survey Applications';
         } else {
             $PageTitle = $request->get('url') === 'phy_planning' ? 'Planning Recommendation Approval' : 
-                    ($request->get('url') === 'recommendation' ? 'Planning Recommendation' : 'Sectional Titling Module (STM)');
+                    ($request->get('url') === 'recommendation' ? 'Planning Recommendation' : 'Primary Applications');
             $PageDescription = $request->get('url') === 'phy_planning' ? '' : 
                     ($request->get('url') === 'recommendation' ? 'Review and process planning recommendation for sectional titles' : 'Process CofO for individually owned sections of multi-unit developments.');
         }

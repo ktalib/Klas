@@ -13,7 +13,7 @@
     <div class="p-6">
       <!-- Stats Cards -->
       
-    
+     {{-- @include('sectionaltitling.partials.statistic.statistic_card') --}}
       <!-- SecondaryApplications Overview  -->
       @include('sectionaltitling.partials.statistic.SecondaryApplications')
       <!-- Secondary Applications Table - Screenshot 135 -->

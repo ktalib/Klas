@@ -188,9 +188,9 @@
   <div class="mb-6">
     <div class="flex justify-between items-center mb-2">
       <p class="text-sm font-bold">TABLE A: APPROVED SITE PLAN DIMENSIONS</p>
-      @if(request()->query('url') == 'recommendation')
+      {{-- @if(request()->query('url') == 'recommendation')
       <button type="button" class="btn btn-primary admin-controls" id="add-dimension">Add Dimension</button>
-      @endif
+      @endif --}}
     </div>
     <table class="w-full mb-4" id="dimensions-table">
       <thead>
@@ -216,9 +216,9 @@
   <div class="mb-8">
     <div class="flex justify-between items-center mb-2">
       <p class="text-sm font-bold">TABLE B: ARC DESIGN SHARED UTILITIES</p>
-      @if(request()->query('url') == 'recommendation')
+      {{-- @if(request()->query('url') == 'recommendation')
       <button type="button" class="btn btn-primary admin-controls" id="add-utility">Add Utility</button>
-      @endif
+      @endif --}}
     </div>
     <table class="w-full" id="utilities-table">
       <thead>

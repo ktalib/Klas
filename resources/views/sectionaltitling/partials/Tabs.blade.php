@@ -27,11 +27,11 @@
                 </a>
 
                 {{-- Units --}}
-                <a href="{{ route('sectionaltitling.secondary') }}" class="group flex flex-col items-center py-3 px-3 {{ request()->routeIs('sectionaltitling.secondary') ? 'border-b-2 border-gray-700' : 'hover:bg-gray-50 rounded-md' }}">
+                <a href="{{ route('sectionaltitling.units') }}" class="group flex flex-col items-center py-3 px-3 {{ request()->routeIs('sectionaltitling.units') ? 'border-b-2 border-gray-700' : 'hover:bg-gray-50 rounded-md' }}">
                     <div class="flex items-center justify-center w-8 h-8 {{ request()->routeIs('sectionaltitling.secondary') ? 'bg-gray-200 text-gray-700' : 'text-gray-500 group-hover:text-gray-700' }} rounded-full mb-1">
                         <i data-lucide="files" class="w-4 h-4"></i>
                     </div>
-                    <span class="text-sm font-medium {{ request()->routeIs('sectionaltitling.secondary') ? 'text-gray-700' : 'text-gray-700 group-hover:text-gray-700' }}">Units</span>
+                    <span class="text-sm font-medium {{ request()->routeIs('sectionaltitling.units') ? 'text-gray-700' : 'text-gray-700 group-hover:text-gray-700' }}">Units</span>
                 </a>
 
                 {{-- Planning --}}

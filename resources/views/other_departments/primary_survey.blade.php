@@ -177,7 +177,7 @@
                                             <i data-lucide="more-horizontal" class="w-4 h-4"></i>
                                         </button>
                                         <div
-                                            class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
+                                            class="dropdown-menu hidden fixed w-48 bg-white shadow-lg rounded-md z-50">
                                             <ul class="py-2">
                                                 <li>
                                                     <a href="{{ route('sectionaltitling.viewrecorddetail') }}?id={{ $PrimaryApplication->id }}"
@@ -245,9 +245,45 @@
     <script>
         function toggleDropdown(event) {
             event.stopPropagation();
-            const dropdownMenu = event.currentTarget.nextElementSibling;
+            const button = event.currentTarget;
+            const dropdownMenu = button.nextElementSibling;
+            
             if (dropdownMenu) {
-                dropdownMenu.classList.toggle('hidden');
+                // Close all other open dropdowns first
+                document.querySelectorAll('.dropdown-menu:not(.hidden)').forEach(menu => {
+                    if (menu !== dropdownMenu) {
+                        menu.classList.add('hidden');
+                    }
+                });
+                
+                // Toggle the current dropdown
+                const isHidden = dropdownMenu.classList.contains('hidden');
+                
+                if (isHidden) {
+                    // Position the dropdown
+                    const buttonRect = button.getBoundingClientRect();
+                    const windowHeight = window.innerHeight;
+                    const dropdownHeight = 180; // Approximate height of dropdown
+                    
+                    // Check if there's enough space below
+                    const spaceBelow = windowHeight - buttonRect.bottom;
+                    
+                    if (spaceBelow < dropdownHeight && buttonRect.top > dropdownHeight) {
+                        // Position above the button
+                        dropdownMenu.style.top = (buttonRect.top - dropdownHeight) + 'px';
+                    } else {
+                        // Position below the button
+                        dropdownMenu.style.top = buttonRect.bottom + 'px';
+                    }
+                    
+                    // Horizontal positioning
+                    dropdownMenu.style.left = (buttonRect.left - 120) + 'px'; // Align dropdown to the left of the button
+                    
+                    // Show the dropdown
+                    dropdownMenu.classList.remove('hidden');
+                } else {
+                    dropdownMenu.classList.add('hidden');
+                }
             }
         }
 

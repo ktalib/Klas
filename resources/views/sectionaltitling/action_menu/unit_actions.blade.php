@@ -19,27 +19,27 @@
          </button>
       </li>
       <li>
-         <button type="button" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2"
+         <a href="{{ route('programmes.generate_memo', $app->id) }}"  class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2"
             data-id="{{ $app->id }}" onclick="generateMemo('{{ $app->id }}')">
          <i data-lucide="file-text" class="w-4 h-4 text-indigo-500"></i>
          <span>Generate Memo</span>
-         </button>
+         </a>
       </li>
       <li>
-         <a href="#" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+         <a href="{{ route('programmes.generate_memo', $app->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
          <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
          <span>View Memo</span>
          </a>
       </li>
-      <li>
-         <button type="button" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2"
-            data-id="{{ $app->id }}" onclick="generateRofO('{{ $app->id }}')">
+      <li> 
+         <a href="{{ route('programmes.generate_rofo', $app->id) }}" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2"
+              >
          <i data-lucide="file-plus" class="w-4 h-4 text-purple-500"></i>
          <span>Generate RofO</span>
-         </button>
+         </a>
       </li>
       <li>
-         <a href="#" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+         <a href="{{ route('programmes.view_rofo', $app->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
          <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
          <span>View RofO</span>
          </a>
@@ -51,14 +51,14 @@
          </a>
       </li>
       <li>
-         <button type="button" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2"
-            data-id="{{ $app->id }}" onclick="generateCofO('{{ $app->id }}')">
+         <a href="{{route('programmes.generate_cofo', $app->id)}}" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2"
+           >
          <i data-lucide="file-plus" class="w-4 h-4 text-purple-500"></i>
          <span>Generate CofO</span>
-         </button>
+      </a>
       </li>
       <li>
-         <a href="#" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+         <a href="{{ route('programmes.view_cofo', $app->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
          <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
          <span>View CofO</span>
          </a>
