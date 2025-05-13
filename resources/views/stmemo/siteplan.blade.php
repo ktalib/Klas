@@ -17,8 +17,12 @@
             <!-- Primary Applications Table -->
             <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold">Primary Applications</h2>
-
+                    <div class="flex items-center">
+                        <h2 class="text-xl font-bold">Primary Applications</h2>
+                        <button type="button" onclick="showTableInfo()" class="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none">
+                            <i data-lucide="info" class="h-5 w-5"></i>
+                        </button>
+                    </div>
 
                     <!-- Smart Search Input -->
                     <div class="relative flex-grow mx-4">
@@ -108,10 +112,10 @@
                                 <th class="table-header text-green-500">Land Use</th>
                                 <th class="table-header text-green-500">Owner</th>
                                 <th class="table-header text-green-500">Units</th>
-                                <th class="table-header text-green-500">ST Memo Status</th>
-                                <th class="table-header text-green-500">Site Plan Status</th>
-                                <th class="table-header text-green-500">Approval Status</th>
-                                <th class="table-header text-green-500">Planning Recommendation Status</th>
+                                <th class="table-header text-green-500">ST Memo</th>
+                                <th class="table-header text-green-500">Site Plan</th>
+                                <th class="table-header text-green-500">Approval</th>
+                                <th class="table-header text-green-500">Planning Recommendation</th>
                                 <th class="table-header text-green-500">Actions</th>
                             </tr>
                         </thead>
@@ -285,22 +289,7 @@
                                                         View Application
                                                     </a>
                                                 </li>
-                                                <li>
-                                                    <a href="{{ route('actions.recommendation' , ['id' => $PrimaryApplication->id]) }}?url=phy_planning"
-                                                        class="flex items-center gap-2 px-4 py-2 text-sm {{ $approvalStatus ? 'text-gray-400 cursor-not-allowed bg-gray-50' : 'text-gray-700 hover:bg-gray-100' }}"
-                                                        @if($approvalStatus) tabindex="-1" aria-disabled="true" onclick="return false;" @endif>
-                                                        <i data-lucide="check-circle" class="w-4 h-4 {{ $approvalStatus ? 'text-gray-400' : 'text-green-500' }}"></i>
-                                                        Approval
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('actions.recommendation' , ['id' => $PrimaryApplication->id]) }}?url=recommendation"
-                                                        class="flex items-center gap-2 px-4 py-2 text-"
-                                                      >
-                                                        <i data-lucide="file-text" class="w-4 h-4 text-yellow-500"></i>
-                                                        Planning Recommendation
-                                                    </a>
-                                                </li>
+                                                <!-- ST Memo -->
                                                 <li>
                                                     <a href="javascript:void(0)"
                                                         onclick="if(!{{ $stMemoGenerated ? 'true' : 'false' }}) generateSTMemo({{ $PrimaryApplication->id }})"
@@ -318,6 +307,7 @@
                                                         View ST Memo
                                                     </a>
                                                 </li>
+                                                <!-- Site Plan -->
                                                 <li>
                                                     <a href="{{ route('stmemo.uploadSitePlan', $PrimaryApplication->id) }}"
                                                         class="flex items-center gap-2 px-4 py-2 text-sm {{ $sitePlanUploaded ? 'text-gray-400 cursor-not-allowed bg-gray-50' : 'text-gray-700 hover:bg-gray-100' }}"
@@ -332,6 +322,24 @@
                                                         @if(!$sitePlanUploaded) tabindex="-1" aria-disabled="true" onclick="return false;" @endif>
                                                         <i data-lucide="eye" class="w-4 h-4 {{ $sitePlanUploaded ? 'text-blue-500' : 'text-gray-400' }}"></i>
                                                         View Site Plan
+                                                    </a>
+                                                </li>
+                                                <!-- Approval -->
+                                                <li>
+                                                    <a href="{{ route('actions.recommendation' , ['id' => $PrimaryApplication->id]) }}?url=phy_planning"
+                                                        class="flex items-center gap-2 px-4 py-2 text-sm {{ $approvalStatus ? 'text-gray-400 cursor-not-allowed bg-gray-50' : 'text-gray-700 hover:bg-gray-100' }}"
+                                                        @if($approvalStatus) tabindex="-1" aria-disabled="true" onclick="return false;" @endif>
+                                                        <i data-lucide="check-circle" class="w-4 h-4 {{ $approvalStatus ? 'text-gray-400' : 'text-green-500' }}"></i>
+                                                        Approval
+                                                    </a>
+                                                </li>
+                                                <!-- Planning Recommendation -->
+                                                <li>
+                                                    <a href="{{ route('actions.recommendation' , ['id' => $PrimaryApplication->id]) }}?url=recommendation"
+                                                        class="flex items-center gap-2 px-4 py-2 text-"
+                                                      >
+                                                        <i data-lucide="file-text" class="w-4 h-4 text-yellow-500"></i>
+                                                        Planning Recommendation
                                                     </a>
                                                 </li>
                                             </ul>
@@ -375,6 +383,47 @@
     @include('sectionaltitling.action_modals.eRegistry_modal')
 
     <script>
+        // Add the showTableInfo function to display a helpful popup
+        function showTableInfo() {
+            Swal.fire({
+                title: 'Using the Applications Table',
+                html: `
+                    <div class="text-left p-2">
+                        <h3 class="font-bold text-lg mb-2">Quick Tips:</h3>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li><span class="font-semibold">Action Menu:</span> Click the three dots (...) to access actions for each application.</li>
+                            <li><span class="font-semibold">Status Indicators:</span> 
+                                <ul class="list-circle pl-5 mt-1">
+                                    <li>Green badges indicate completed items</li>
+                                    <li>Gray badges indicate pending items</li>
+                                    <li>Red badges indicate declined items</li>
+                                </ul>
+                            </li>
+                            <li><span class="font-semibold">Search:</span> Use the search icon to find applications by ID, file number, property details, etc.</li>
+                            <li><span class="font-semibold">Workflow Steps:</span> Follow these steps in order:
+                                <ol class="list-decimal pl-5 mt-1">
+                                    <li>Generate ST Memo</li>
+                                    <li>Upload Site Plan</li>
+                                    <li>Approve Application</li>
+                                </ol>
+                            </li>
+                            <li><span class="font-semibold">Info Icons:</span> Click on <i data-lucide="info" class="h-4 w-4 inline text-blue-500"></i> icons for more details about declined items.</li>
+                        </ul>
+                    </div>
+                `,
+                width: '600px',
+                showCloseButton: true,
+                showConfirmButton: false,
+                focusConfirm: false,
+                didOpen: () => {
+                    // Initialize any Lucide icons in the modal
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }
+            });
+        }
+
         function toggleDropdown(event) {
             event.stopPropagation();
             const dropdownMenu = event.currentTarget.nextElementSibling;
