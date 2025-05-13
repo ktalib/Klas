@@ -19,7 +19,9 @@
                 <div class="border rounded-lg overflow-hidden">
                   <div class="p-3 bg-gray-50 border-b">
                     <h4 class="font-medium">Building Plan</h4>
-                    <p class="text-xs text-gray-500">{{ $documents['building_plan']['original_name'] }}</p>
+                    <p class="text-xs text-gray-500">
+                      {{ $documents['building_plan']['original_name'] ?? 'Unknown File Name' }}
+                    </p>
                   </div>
                   <div class="p-4 flex justify-center">
                     <img 
@@ -35,7 +37,9 @@
                 <div class="border rounded-lg overflow-hidden">
                   <div class="p-3 bg-gray-50 border-b">
                     <h4 class="font-medium">Architectural Design</h4>
-                    <p class="text-xs text-gray-500">{{ $documents['architectural_design']['original_name'] }}</p>
+                    <p class="text-xs text-gray-500">
+                      {{ $documents['architectural_design']['original_name'] ?? '' }}
+                    </p>
                   </div>
                   <div class="p-4 flex justify-center">
                     <img 

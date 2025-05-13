@@ -65,17 +65,28 @@
                           <div class="flex flex-wrap gap-2 mt-2 text-xs text-gray-500">
                             <span class="inline-flex items-center gap-1">
                               <i data-lucide="hash" class="w-4 h-4"></i>
-                              Application ID: <span class="font-medium text-gray-700">{{ $application->applicationID }}</span>
+                               <span class="font-medium text-gray-700">
+                                  {{ isset($isSecondary) && $isSecondary ? 'Mother FileNo: ' . ($application->primary_fileno ?? 'N/A') : '' }}
+                               </span>
                             </span>
                             <span class="inline-flex items-center gap-1">
                               <i data-lucide="folder" class="w-4 h-4"></i>
-                              File No: <span class="font-medium text-gray-700">{{ $application->fileno }}</span>
+                             <span class="font-medium text-gray-700">
+                              
+                               {{ isset($isSecondary) && $isSecondary ? 'ST FileNo: ' . ($application->fileno ?? 'N/A') : 'FileNo: ' . ($application->fileno ?? 'N/A') }}
+                             </span>
                             </span>
                           </div>
                         </div>
                         <div class="flex-1 text-right">
                           <h3 class="text-base font-semibold text-gray-800">
-                            {{ $application->applicant_title }} {{ $application->first_name }} {{ $application->surname }}
+                                            @if($application->applicant_type == 'individual')
+                      {{$application->applicant_title }} {{$application->first_name }} {{$application->surname }}
+                      @elseif($application->applicant_type == 'corporate')
+                      {{$application->rc_number }} {{$application->corporate_name }}
+                      @elseif($application->applicant_type == 'multiple')
+                      {{$application->multiple_owners_names }}
+                      @endif
                           </h3>
                           <span class="inline-flex items-center px-3 py-1 mt-2 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
                             <i data-lucide="map-pin" class="w-4 h-4 mr-1"></i>

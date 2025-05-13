@@ -39,23 +39,23 @@
 
       <!-- Unit Control Beacon Information Card -->
       <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-        <h4 class="text-sm font-medium mb-3">Control Beacon Information</h4>
+        <h4 class="text-sm font-medium mb-3">Unit Control Beacon Information</h4>
         <div class="grid grid-cols-3 gap-4">
           <div class="space-y-2">
           <label for="unit-beacon-control-name" class="text-xs font-medium block">
-            Control Beacon Name
+            Unit Control Beacon Name
           </label>
           <input id="unit-beacon-control-name" name="beacon_control_name" type="text" placeholder="Enter unit control beacon name" class="w-full p-2 border border-gray-300 rounded-md text-sm">
           </div>
           <div class="space-y-2">
           <label for="unit-beacon-control-x" class="text-xs font-medium block">
-            Control Beacon X
+            Unit Control Beacon X
           </label>
           <input id="unit-beacon-control-x" name="Control_Beacon_Coordinate_X" type="text" placeholder="Enter X coordinate" class="w-full p-2 border border-gray-300 rounded-md text-sm">
           </div>
           <div class="space-y-2">
           <label for="unit-beacon-control-y" class="text-xs font-medium block">
-            Control Beacon Y
+           Unit Control Beacon Y
           </label>
           <input id="unit-beacon-control-y" name="Control_Beacon_Coordinate_Y" type="text" placeholder="Enter Y coordinate" class="w-full p-2 border border-gray-300 rounded-md text-sm">
           </div>

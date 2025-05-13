@@ -8,18 +8,7 @@ function capitalizeFirstLetter(string) {
 }
 
 // Get human-friendly unit type description
-function getUnitTypeDisplay(unitType) {
-  switch(unitType) {
-    case 'commercial_type':
-      return 'Commercial';
-    case 'industrial_type':
-      return 'Industrial';
-    case 'residence_type':
-      return 'Residential';
-    default:
-      return 'Residential';
-  }
-}
+ 
 
 // Initialize variables
 let activeTab = 'pending';
@@ -34,15 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (typeof serverCofoData !== 'undefined') {
     cofoData = serverCofoData.map(item => {
       // Get the actual unit type value, not just which column has a value
-      let unitType = '';
-      if (item.commercial_type) {
-        unitType = item.commercial_type;
-      } else if (item.industrial_type) {
-        unitType = item.industrial_type;
-      } else if (item.residential_type) {
-        unitType = item.residential_type;
-      }
-      
+    
       return {
         id: item.cofo_id || item.mother_id,
         stmRef: item.fileno,
@@ -50,13 +31,19 @@ document.addEventListener('DOMContentLoaded', function() {
         blockNo: item.NoOfBlocks,
         sectionNo: item.NoOfSections,
         owner: item.owner_name,
-        propertyDescription: item.property_description,
+        propertyDescription: [
+          item.property_house_no ? `House No: ${item.property_house_no}` : '',
+          item.property_plot_no ? `Plot No: ${item.property_plot_no}` : '',
+          item.property_street_name || '',
+          item.property_district || '',
+          item.property_state || ''
+        ].filter(Boolean).join(', '),
         status: item.status, 
         mother_id: item.mother_id,
         certificateNumber: item.certificate_number,
         reg_status: item.reg_status,
         land_use: item.land_use,
-        unit_type: unitType,
+         
         commercial_type: item.commercial_type,
         industrial_type: item.industrial_type,
         residential_type: item.residential_type
@@ -371,23 +358,14 @@ function openSingleRegisterModalWithData(motherId) {
   application.status = 'pending';
   
   // Get the actual unit type value
-  let unitType = '';
-  if (application.commercial_type) {
-    unitType = application.commercial_type;
-  } else if (application.industrial_type) {
-    unitType = application.industrial_type;
-  } else if (application.residential_type) {
-    unitType = application.residential_type;
-  }
-  
+ 
   // Set application data
   document.getElementById('selectedStmRef').textContent = application.stmRef;
   document.getElementById('selectedProperty').textContent = application.propertyDescription;
   document.getElementById('selectedUnitNo').textContent = application.unitNo;
   document.getElementById('selectedBlockNo').textContent = application.blockNo || 'N/A';
   document.getElementById('selectedSectionNo').textContent = application.sectionNo || 'N/A';
-  document.getElementById('selectedOwner').textContent = application.owner;
-  document.getElementById('selectedUnitType').textContent = unitType; 
+ 
   document.getElementById('selectedUnitSize').textContent = 'N/A';
   
   // Populate form fields
@@ -1301,7 +1279,13 @@ document.addEventListener('DOMContentLoaded', function() {
         blockNo: item.NoOfBlocks,
         sectionNo: item.NoOfSections,
         owner: item.owner_name,
-        propertyDescription: item.property_description,
+        propertyDescription: [
+          item.property_house_no ? `House No: ${item.property_house_no}` : '',
+          item.property_plot_no ? `Plot No: ${item.property_plot_no}` : '',
+          item.property_street_name || '',
+          item.property_district || '',
+          item.property_state || ''
+        ].filter(Boolean).join(', '),
          status: item.status,
         mother_id: item.mother_id,
         certificateNumber: item.certificate_number,

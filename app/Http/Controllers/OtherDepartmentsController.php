@@ -18,6 +18,7 @@ class OtherDepartmentsController extends Controller
                 'subapplications.id as applicationID', // Add alias for applicationID
                 'subapplications.main_application_id as main_application_id', // Add main_application_id if it exists
                 'mother_applications.fileno as primary_fileno',
+                'mother_applications.fileno as primary_applicant_type',
                 'mother_applications.first_name as primary_first_name',
                 'mother_applications.surname as primary_surname',
                 'mother_applications.applicant_title as primary_applicant_title',
@@ -51,12 +52,13 @@ class OtherDepartmentsController extends Controller
             ->select(
                 'dbo.subapplications.*',
                 'dbo.subapplications.id as id',
-                'dbo.mother_applications.fileno as primary_fileno', // Changed alias to primary_fileno
+                'dbo.mother_applications.fileno as primary_fileno', 
+                'dbo.mother_applications.fileno as primary_applicant_type',  
                 'dbo.mother_applications.passport as mother_passport',
                 'dbo.mother_applications.multiple_owners_passport as mother_multiple_owners_passport',
-                'dbo.mother_applications.applicant_title as primary_applicant_title', // Changed alias to primary_applicant_title
-                'dbo.mother_applications.first_name as primary_first_name', // Changed alias to primary_first_name
-                'dbo.mother_applications.surname as primary_surname', // Changed alias to primary_surname
+                'dbo.mother_applications.applicant_title as primary_applicant_title',  
+                'dbo.mother_applications.first_name as primary_first_name',  
+                'dbo.mother_applications.surname as primary_surname',  
                 'dbo.mother_applications.corporate_name as mother_corporate_name',
                 'dbo.mother_applications.multiple_owners_names as mother_multiple_owners_names',
                 'dbo.mother_applications.land_use',
@@ -65,7 +67,7 @@ class OtherDepartmentsController extends Controller
                 'dbo.mother_applications.property_street_name',
                 'dbo.mother_applications.property_district',
                 'dbo.mother_applications.property_lga',
-                'dbo.mother_applications.id as main_application_id' // Add main_application_id for reference
+                'dbo.mother_applications.id as main_application_id'  
             )
             ->where('dbo.subapplications.id', $id)
             ->first();
@@ -170,8 +172,8 @@ class OtherDepartmentsController extends Controller
 
     public function Survey($d)
     {
-        $PageTitle = 'SECTIONAL TITLING  - SURVEY DEPARTMENT';
-        $PageDescription = 'processing of sectional title survey applications for primary applications';
+        $PageTitle = 'Other Departments';
+        $PageDescription = '';
         
         $application = $this->getPrimaryApplication($d);
         if ($application instanceof \Illuminate\Http\JsonResponse) {

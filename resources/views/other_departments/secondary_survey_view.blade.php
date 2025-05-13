@@ -49,7 +49,7 @@
 
                 <div class="modal-content p-6">
                     <div class="flex justify-between items-center mb-4">
-                      <h2 class="text-lg font-medium">ST Survey </h2>
+                      <h2 class="text-lg font-medium">Survey</h2>
                       <button  type="button"  class="text-gray-500 hover:text-gray-700" onclick="window.history.back()">
                         <i data-lucide="x" class="w-5 h-5"></i>
                       </button>
@@ -58,38 +58,39 @@
                     <div class="py-2">
               
                     <div class="py-2">
-                      <div class="bg-green-900 border border-gray-200 rounded-lg p-4 mb-4">
-                        <!-- Primary Application Info (First, as requested) -->
-                        <div class="flex items-center mb-3">
-                          <div class="bg-blue-100 text-blue-800 rounded-full p-1 mr-2">
-                            <i data-lucide="file-check" class="w-4 h-4"></i>
-                          </div>
-                          <div>
-                            <h3 class="text-sm font-medium text-white">Oringal Owner</h3>
-                            <p class="text-xs text-white">
-                              {{ $application->primary_applicant_title ?? '' }} {{ $application->primary_first_name ?? '' }} {{ $application->primary_surname ?? '' }}
-                              <span class="inline-flex items-center px-2 py-0.5 ml-1 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                                <i data-lucide="link" class="w-3 h-3 mr-1"></i>File No: {{ $application->primary_fileno ?? 'N/A' }}
-                              </span>
-                            </p>
+                   <div class="flex flex-col md:flex-row items-center justify-between mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <div class="flex-1 mb-4 md:mb-0">
+                          <h3 class="text-base font-semibold text-gray-800 flex items-center gap-2">
+                            <i data-lucide="home" class="w-5 h-5 text-blue-500"></i>
+                            {{ $application->land_use }} Property
+                          </h3>
+                          <div class="flex flex-wrap gap-2 mt-2 text-xs text-gray-500">
+                            <span class="inline-flex items-center gap-1">
+                              <i data-lucide="hash" class="w-4 h-4"></i>
+                              Mother FileNo: <span class="font-medium text-gray-700">{{ $application->primary_fileno ?? 'N/A' }}</span>
+                            </span>
+                            <span class="inline-flex items-center gap-1">
+                              <i data-lucide="folder" class="w-4 h-4"></i>
+                              ST FileNo: <span class="font-medium text-gray-700">{{ $application->fileno }}</span>
+                            </span>
                           </div>
                         </div>
-                        
-                        <!-- Current Application Info -->
-                        <div class="flex justify-between items-center border-t border-gray-200 pt-3">
-                          <div>
-                            <h3 class="text-sm  text-white font-medium">{{ $application->land_use ?? 'Property' }}</h3>
-                            <p class="text-xs text-white mt-1">
-                              File No: <span class="font-medium">{{ $application->fileno ?? 'N/A' }}</span>
-                            </p>
-                          </div>
-                          <div class="text-right">
-                            <h3 class="text-sm  text-white font-medium">{{ $application->applicant_title ?? '' }} {{ $application->surname ?? '' }} {{ $application->first_name ?? '' }}</h3>
-                            <p class="text-xs text-white mt-1">Applicant</p>
-                          </div>
+                        <div class="flex-1 text-right">
+                          <h3 class="text-base font-semibold text-gray-800">
+                            @if($application->applicant_type == 'individual')
+                          {{$application->applicant_title }} {{$application->first_name }} {{$application->surname }}
+                          @elseif($application->applicant_type == 'corporate')
+                          {{$application->rc_number }} {{$application->corporate_name }}
+                          @elseif($application->applicant_type == 'multiple')
+                          {{$application->multiple_owners_names }}
+                          @endif
+                          </h3>
+                          <span class="inline-flex items-center px-3 py-1 mt-2 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
+                            <i data-lucide="map-pin" class="w-4 h-4 mr-1"></i>
+                            {{ $application->land_use }}
+                          </span>
                         </div>
                       </div>
-                
                       <!-- Tabs Navigation -->
                       
                       @php

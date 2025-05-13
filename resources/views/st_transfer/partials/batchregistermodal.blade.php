@@ -1,13 +1,13 @@
 <div id="batchRegisterModal" class="modal ">
     <div class="modal-content modal-center-y lg:max-w-[1100px]" style="width: 90%; max-width: 800px;">
       <div class="modal-header flex justify-between items-center p-4 border-b">
-        <h2 class="text-lg font-semibold">Batch Register Sectional Certificates of Occupancy</h2>
+        <h2 class="text-lg font-semibold">Batch Transfer</h2>
         <button onclick="closeBatchRegisterModal()" class="text-gray-500 hover:text-gray-700">
           <i class="fas fa-times"></i>
         </button>
       </div>
  
-    <p class="text-gray-500 mb-6">Select multiple verified sectional properties to register their Certificates of Occupancy.</p>
+    <p class="text-gray-500 mb-6">Select multiple verified sectional properties.</p>
     
     <div id="batchSearchSection">
       <div class="flex justify-between mb-4">
@@ -36,10 +36,10 @@
                 St FileNo
               </th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Unit Number
+                Number of Unit 
               </th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Block
+              Number of   Block
               </th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Owner
@@ -129,10 +129,10 @@
                     ST FileNo
                   </th>
                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Unit Number
+                   Number of  Unit
                   </th>
                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Block
+                    Number of Block
                   </th>
                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Owner

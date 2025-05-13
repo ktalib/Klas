@@ -68,13 +68,13 @@
 
                     <div class="flex justify-between items-center">
                         <div class="flex gap-2">
-                            <a
-                                href="{{ isset($isSecondary) && $isSecondary ? route('other_departments.survey_secondary') : route('sectionaltitling.primary') }}"
+                            <button
+                                onclick="window.history.back()"
                                 class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-white hover:bg-gray-50"
                             >
                                 <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
                                 Back
-                            </a>
+                            </button>
                             <button
                                 class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-sky-900 hover:bg-gray-50"
                             >

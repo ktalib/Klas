@@ -8,9 +8,8 @@
           alt="KLAS Logo"
           class="h-10 w-auto object-contain rounded"
         />
-  
       </div>
-      
+       
     </div>
   </div>
 
@@ -72,18 +71,25 @@
           <i data-lucide="building" class="h-4 w-4 text-green-500"></i>
           <span>Corporate</span>
         </a>
-        <a href="/customer-manager" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="user-cog" class="h-4 w-4 text-green-500"></i>
-          <span>Customer Manager</span>
-        </a>
-        <a href="/appointment" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="calendar-clock" class="h-4 w-4 text-green-500"></i>
-          <span>Appointment</span>
-        </a>
-        <a href="/appointment-calendar" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="calendar" class="h-4 w-4 text-green-500"></i>
-          <span>Appointment Calendar</span>
-        </a>
+       
+        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="appointments">
+          <div class="flex items-center gap-2">
+            <i data-lucide="calendar-clock" class="h-4 w-4 text-green-500"></i>
+            <span>Customer Manager</span>
+          </div>
+          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="appointments"></i>
+        </div>
+
+        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="appointments">
+          <a href="/appointment" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="calendar-clock" class="h-3.5 w-3.5 text-green-400"></i>
+            <span>Appointment</span>
+          </a>
+          <a href="/appointment-calendar" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="calendar" class="h-3.5 w-3.5 text-green-400"></i>
+            <span>Appointment Calendar</span>
+          </a>
+        </div>
       </div>
     </div>
 
@@ -141,8 +147,8 @@
           <span>Recertification</span>
         </a>
         <a href="/programmes/regularization" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="file-up" class="h-4 w-4 text-purple-500"></i>
-          <span>Conversion/Regularization</span>
+          <i data-lucide="file-down" class="h-4 w-4 text-purple-500 flex-shrink-0"></i>
+          <span class="truncate">Conversion/Regularization</span>
         </a>
         
         <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="enumeration">
@@ -219,6 +225,23 @@
           <i data-lucide="book-open" class="h-4 w-4 text-amber-500"></i>
           <span>Instrument Registration</span>
         </a>
+
+       
+        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="assignments">
+          <div class="flex items-center gap-2">
+            <i data-lucide="calendar-sync" class="h-4 w-4 text-amber-500"></i>
+            <span>ST Transfer Of Title</span>
+          </div>
+          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="assignments"></i>
+        </div>
+
+        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="assignments">
+          <a href="{{route('st_transfer.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('st_transfer.index') ? 'active' : '' }}">
+            <i data-lucide="folder-sync" class="h-3.5 w-3.5 text-amber-400"></i>
+            <span>Assignments</span>
+          </a>
+   
+        </div>
         
         <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="cofoRegistration">
           <div class="flex items-center gap-2">
@@ -360,11 +383,8 @@
         </a>
         <a href="{{ route('sectionaltitling.secondary') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sectionaltitling.secondary') && !in_array(request()->query('url'), ['recommendation', 'phy_planning']) ? 'active' : '' }}">
           <i data-lucide="file-plus-2" class="h-4 w-4"></i>
-          <span>Secondary Applications</span>
+          <span>Unit Applications</span>
         </a>
-
-       
-
 
         <a href="{{route('programmes.field-data')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.field-data') ? 'active' : '' }}">
           <i data-lucide="clipboard-list" class="h-4 w-4"></i>
@@ -397,34 +417,30 @@
             <span>Director's Approval</span>
           </a>
         </div>
-        
 
         <a href="{{route('programmes.memo')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.memo') ? 'active' : '' }}">
           <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
-          <span> Memo</span>
-      </a>
+          <span>Memo</span>
+        </a>
 
-
-      <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="eRegistry">
-        <div class="flex items-center gap-2">
-          <i data-lucide="database" class="h-3.5 w-3.5"></i>
-          <span>Certificate</span>
+        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="eRegistry">
+          <div class="flex items-center gap-2">
+            <i data-lucide="database" class="h-3.5 w-3.5"></i>
+            <span>Certificate</span>
+          </div>
+          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="eRegistry"></i>
         </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="eRegistry"></i>
-      </div>
-      
-      <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="eRegistry">
-        <a href="{{route('programmes.rofo')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.rofo') ? 'active' : '' }}">
-          <i data-lucide="folder" class="h-3.5 w-3.5"></i>
-          <span>RofO</span>
-        </a>
-        <a href="{{route('programmes.certificates')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.certificates') ? 'active' : '' }}">
-          <i data-lucide="file-cog" class="h-4 w-4 "></i>
-          <span> CofO</span>
-        </a>
-    </div>
-
-
+        
+        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="eRegistry">
+          <a href="{{route('programmes.rofo')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.rofo') ? 'active' : '' }}">
+            <i data-lucide="folder" class="h-3.5 w-3.5"></i>
+            <span>RofO</span>
+          </a>
+          <a href="{{route('programmes.certificates')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.certificates') ? 'active' : '' }}">
+            <i data-lucide="file-cog" class="h-4 w-4 "></i>
+            <span>CofO</span>
+          </a>
+        </div>
 
         <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stERegistry">
           <div class="flex items-center gap-2">
@@ -439,13 +455,7 @@
             <i data-lucide="folder" class="h-3.5 w-3.5"></i>
             <span>Files</span>
           </a>
-         
         </div>
-        
-        <a href="{{route('programmes.report')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.report') ? 'active' : '' }}">
-          <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
-          <span>Reports</span>
-        </a>
         
         <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stGis">
           <div class="flex items-center gap-2">
@@ -456,15 +466,35 @@
         </div>
         
         <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stGis">
-          <a href="/sectional-titling/gis/system" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-            <i data-lucide="server" class="h-3.5 w-3.5"></i>
-            <span>System</span>
+          <a href="/sectional-titling/gis/attribution" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="database" class="h-3.5 w-3.5"></i>
+            <span>Attribution</span>
           </a>
           <a href="{{ route('map.index') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('map.index') ? 'active' : '' }}">
             <i data-lucide="map-pin" class="h-3.5 w-3.5"></i>
             <span>Map</span>
           </a>
         </div>
+        
+        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stSurvey">
+          <div class="flex items-center gap-2">
+            <i data-lucide="land-plot" class="h-4 w-4"></i>
+            <span>Survey</span>
+          </div>
+          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="stSurvey"></i>
+        </div>
+        
+        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stSurvey">
+          <a href="{{route('attribution.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('attribution.index') ? 'active' : '' }}">
+            <i data-lucide="land-plot" class="h-3.5 w-3.5"></i>
+            <span>Attribution</span>
+          </a>
+        </div>
+        
+        <a href="{{route('programmes.report')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.report') ? 'active' : '' }}">
+          <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
+          <span>Reports</span>
+        </a>
       </div>
     </div>
 
@@ -479,9 +509,17 @@
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="sltr">
+        <a href="/programmes/sltr/overview" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="file-text" class="h-4 w-4"></i>
+          <span>Overview</span>
+        </a>
         <a href="/programmes/sltr/application" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
           <i data-lucide="file-plus" class="h-4 w-4"></i>
           <span>Application</span>
+        </a>
+        <a href="/programmes/sltr/legacy-data" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="history" class="h-4 w-4"></i>
+          <span>Legacy Data</span>
         </a>
         <a href="/programmes/sltr/field-data" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
           <i data-lucide="clipboard-list" class="h-4 w-4"></i>
@@ -501,10 +539,33 @@
         </div>
         
         <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="sltrApprovals">
-          <a href="/programmes/sltr/approvals/other-departments" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-            <i data-lucide="building-2" class="h-3.5 w-3.5"></i>
-            <span>Other Departments</span>
-          </a>
+          <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="sltrDepartments">
+            <div class="flex items-center gap-2">
+              <i data-lucide="building-2" class="h-3.5 w-3.5"></i>
+              <span>Other Departments</span>
+            </div>
+            <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="sltrDepartments"></i>
+          </div>
+          
+          <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="sltrDepartments">
+            <a href="/programmes/sltr/approvals/departments/lands" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+              <i data-lucide="file-text" class="h-3 w-3"></i>
+              <span>Lands</span>
+            </a>
+            <a href="/programmes/sltr/approvals/departments/deeds" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+              <i data-lucide="file-text" class="h-3 w-3"></i>
+              <span>Deeds</span>
+            </a>
+            <a href="/programmes/sltr/approvals/departments/survey" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+              <i data-lucide="file-text" class="h-3 w-3"></i>
+              <span>Survey</span>
+            </a>
+            <a href="/programmes/sltr/approvals/departments/cadastral" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+              <i data-lucide="file-text" class="h-3 w-3"></i>
+              <span>Cadastral</span>
+            </a>
+          </div>
+          
           <a href="/programmes/sltr/approvals/planning" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
             <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
             <span>Planning Recommendation</span>
@@ -512,6 +573,30 @@
           <a href="/programmes/sltr/approvals/director" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
             <i data-lucide="stamp" class="h-3.5 w-3.5"></i>
             <span>Director's Approval</span>
+          </a>
+        </div>
+        
+        <a href="/programmes/sltr/memo" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="clipboard-list" class="h-4 w-4"></i>
+          <span>Memo</span>
+        </a>
+        
+        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="sltrCertificate">
+          <div class="flex items-center gap-2">
+            <i data-lucide="file-badge" class="h-4 w-4"></i>
+            <span>Certificate</span>
+          </div>
+          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="sltrCertificate"></i>
+        </div>
+        
+        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="sltrCertificate">
+          <a href="/programmes/sltr/certificate/rofo" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="folder" class="h-3.5 w-3.5"></i>
+            <span>RofO</span>
+          </a>
+          <a href="/programmes/sltr/certificate/cofo" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="file-badge" class="h-3.5 w-3.5"></i>
+            <span>CofO</span>
           </a>
         </div>
         
@@ -528,13 +613,7 @@
             <i data-lucide="folder" class="h-3.5 w-3.5"></i>
             <span>Files</span>
           </a>
-          <a href="/programmes/sltr/e-registry/certificate" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-            <i data-lucide="file-badge" class="h-3.5 w-3.5"></i>
-            <span>Certificate</span>
-          </a>
         </div>
-        
-     
         
         <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="sltrGis">
           <div class="flex items-center gap-2">
@@ -545,9 +624,9 @@
         </div>
         
         <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="sltrGis">
-          <a href="/programmes/sltr/gis/system" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-            <i data-lucide="server" class="h-3.5 w-3.5"></i>
-            <span>System</span>
+          <a href="/programmes/sltr/gis/attribution" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="database" class="h-3.5 w-3.5"></i>
+            <span>Attribution</span>
           </a>
           <a href="/programmes/sltr/gis/map" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
             <i data-lucide="map-pin" class="h-3.5 w-3.5"></i>
@@ -555,28 +634,25 @@
           </a>
         </div>
 
-             <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="sltrGis">
+        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="sltrSurvey">
           <div class="flex items-center gap-2">
             <i data-lucide="land-plot" class="h-4 w-4"></i>
             <span>Survey</span>
           </div>
-          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="sltrGis"></i>
+          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="sltrSurvey"></i>
         </div>
         
-        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="sltrGis">
-          <a href="/programmes/sltr/gis/system" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="sltrSurvey">
+          <a href="/programmes/sltr/survey/attribution" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
             <i data-lucide="land-plot" class="h-3.5 w-3.5"></i>
             <span>Attribution</span>
           </a>
-           
         </div>
 
-
-           <a href="/programmes/sltr/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <a href="/programmes/sltr/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
           <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
           <span>Reports</span>
         </a>
-
       </div>
     </div>
 
@@ -763,57 +839,52 @@
       </div>
     </div>
 
-    <!-- 13. Systems -->
+    <!-- 13. GIS -->
+    <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
+      <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="gis">
+        <div class="flex items-center gap-2"> 
+          <i data-lucide="map" class="h-5 w-5"></i>
+          <span class="text-sm font-bold uppercase tracking-wider">13. GIS</span>
+        </div>
+        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="gis"></i>
+      </div>
+
+      <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="gis">
+        <a href="/gis/attribution" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="database-zap" class="h-4 w-4"></i>
+          <span>GIS Attribution</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 14. Systems -->
     <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
       <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="systems">
       <div class="flex items-center gap-2"> 
         <i data-lucide="shield" class="h-5 w-5 module-icon-systems"></i>
-        <span class="text-sm font-bold uppercase tracking-wider">13. Attribution</span>
+        <span class="text-sm font-bold uppercase tracking-wider">14. Systems</span>
       </div>
       <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="systems"></i>
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="systems">
-      <a href="/systems/caveat" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-        <i data-lucide="database-zap" class="h-4 w-4"></i>
-        <span>GIS Data Entry</span>
-      </a>  
-      <a href="/systems/caveat" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-        <i data-lucide="shield-alert" class="h-4 w-4"></i>
-        <span>Caveat</span>
-      </a>
-      <a href="/systems/encumbrance" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-        <i data-lucide="lock" class="h-4 w-4"></i>
-        <span>Encumbrance</span>
-      </a>
-
-      <!-- Quality Control Submenu -->
-      <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="qualityControl">
-        <div class="flex items-center gap-2">
-        <i data-lucide="check-circle" class="h-4 w-4"></i>
-        <span>Quality Control</span>
-        </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="qualityControl"></i>
-      </div>
-      <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="qualityControl">
-        <a href="/systems/quality-control/survey-unit" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-        <i data-lucide="compass" class="h-3.5 w-3.5"></i>
-        <span>Survey Unit</span>
+        <a href="/systems/caveat" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="shield-alert" class="h-4 w-4"></i>
+          <span>Caveat</span>
         </a>
-        <a href="/systems/quality-control/gis-attribution" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-        <i data-lucide="map" class="h-3.5 w-3.5"></i>
-        <span>GIS Attribution</span>
+        <a href="/systems/encumbrance" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="lock" class="h-4 w-4"></i>
+          <span>Encumbrance</span>
         </a>
-      </div>
       </div>
     </div>
 
-    <!-- 14. Legacy Systems -->
+    <!-- 15. Legacy Systems -->
     <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
       <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="legacy">
         <div class="flex items-center gap-2">
           <i data-lucide="hard-drive" class="h-5 w-5"></i>
-          <span class="text-sm font-bold uppercase tracking-wider">14. Legacy Systems</span>
+          <span class="text-sm font-bold uppercase tracking-wider">15. Legacy Systems</span>
         </div>
         <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="legacy"></i>
       </div>
@@ -826,12 +897,12 @@
       </div>
     </div>
 
-    <!-- 15. System Admin -->
+    <!-- 16. System Admin -->
     <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
       <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="admin">
         <div class="flex items-center gap-2"> 
           <i data-lucide="cog" class="h-5 w-5 module-icon-admin"></i>
-          <span class="text-sm font-bold uppercase tracking-wider">15. System Admin</span>
+          <span class="text-sm font-bold uppercase tracking-wider">16. System Admin</span>
         </div>
         <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="admin"></i>
       </div>

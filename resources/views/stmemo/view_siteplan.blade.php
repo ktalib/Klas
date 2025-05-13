@@ -23,7 +23,7 @@
                     </a>
                     <a href="{{ route('stmemo.uploadSitePlan', $application->id) }}" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center">
                         <i data-lucide="edit" class="w-4 h-4 mr-1"></i>
-                        Edit Site Plan
+                        Reupload Site Plan
                     </a>
                 </div>
             </div>

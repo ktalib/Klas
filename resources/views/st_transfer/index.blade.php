@@ -27,10 +27,10 @@
           </div>
           <div class="dropdown">
             <button onclick="toggleDropdown()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2">
-             ST Transfer <i class="fas fa-chevron-down text-xs"></i>
+             Transfer <i class="fas fa-chevron-down text-xs"></i>
             </button>
             <div id="registerDropdown" class="dropdown-content">
-              <a href="#" onclick="openSingleRegisterModal()" class="whitespace-nowrap"><i class="fas fa-file-alt mr-2"></i> Transfer Single  </a>
+              <a href="#" onclick="openSingleRegisterModal()" class="whitespace-nowrap"><i class="fas fa-file-alt mr-2"></i> Transfer</a>
               <a href="#" onclick="openBatchRegisterModal()" class="whitespace-nowrap"><i class="fas fa-upload mr-2"></i> Batch Transfer </a>
             </div>
           </div>
@@ -76,7 +76,7 @@
                   <a href="#"
                      onclick="switchTab('registered', this)"
                      class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-green-600 hover:border-green-300 text-gray-600 border-transparent tab-item">
-                     <span class="flex items-center">Registered</span>
+                     <span class="flex items-center">Transfer</span>
                      <span class="ml-2 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                        {{ $registeredCount }}
                      </span>
@@ -96,7 +96,7 @@
                   <a href="#"
                      onclick="switchTab('all', this)"
                      class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-indigo-600 hover:border-indigo-300 text-gray-600 border-transparent tab-item">
-                     <span class="flex items-center">All Transfer</span>
+                     <span class="flex items-center">All Assignments</span>
                   </a>
                 </li>
               </ul>
@@ -112,17 +112,17 @@
                     </th>
                      
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
-                      File No
+                      FileNo
                     </th>
                     
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
-                      Units
+                     Number Of Units
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
-                      Blocks
+                     Number Of Blocks
                     </th> 
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
-                      Sections
+                      Number Of Sections
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
                       Owner

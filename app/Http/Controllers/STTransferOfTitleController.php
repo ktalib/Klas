@@ -23,8 +23,8 @@ class STTransferOfTitleController extends Controller
  
     public function StTransfer()
     {
-        $PageTitle = 'ST Transfer of Title';
-        $PageDescription = 'Assigments';
+        $PageTitle = 'Assignments ';
+        $PageDescription = '';
 
         // Fetch all approved applications with SectionalCofOReg data
         $approvedApplications = DB::connection('sqlsrv')->table('mother_applications')
@@ -108,11 +108,11 @@ class STTransferOfTitleController extends Controller
             
             // Format property description
             $application->property_description = 
-                'Units: ' . $application->NoOfUnits . 
-                (!empty($application->NoOfBlocks) ? ', Blocks: ' . $application->NoOfBlocks : '') .
-                (!empty($application->NoOfSections) ? ', Sections: ' . $application->NoOfSections : '') .
-                (!empty($application->property_street_name) ? ', ' . $application->property_street_name : '') .
-                (!empty($application->property_district) ? ', ' . $application->property_district : '');
+                (!empty($application->property_house_no) ? 'House No: ' . $application->property_house_no . ', ' : '') .
+                (!empty($application->property_plot_no) ? 'Plot No: ' . $application->property_plot_no . ', ' : '') .
+                (!empty($application->property_street_name) ? $application->property_street_name . ', ' : '') .
+                (!empty($application->property_district) ? $application->property_district . ', ' : '') .
+                (!empty($application->property_state) ? $application->property_state : '');
                 
             // Determine unit type based on which type column is not null
             if (!empty($application->commercial_type)) {

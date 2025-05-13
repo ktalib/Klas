@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('page-title')
-    {{ __('Add List of Buyers') }}
+    {{ __('SECTIONAL TITLING  MODULE') }}
 @endsection
 
 @section('content')
@@ -66,7 +66,15 @@
                                 </p>
                             </div>
                             <div class="text-right">
-                                <h3 class="text-sm font-medium">{{$application->applicant_title }} {{$application->first_name }} {{$application->surname }}</h3>
+                                <h3 class="text-sm font-medium">
+                                    @if($application->applicant_type == 'individual')
+                                        {{$application->applicant_title }} {{$application->first_name }} {{$application->surname }}
+                                    @elseif($application->applicant_type == 'corporate')
+                                        {{$application->rc_number }} {{$application->corporate_name }}
+                                    @elseif($application->applicant_type == 'multiple')
+                                        {{$application->multiple_owners_names }}
+                                    @endif
+                                </h3>
                                 <p class="text-xs text-gray-500">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                         {{$application->land_use }}
@@ -76,16 +84,26 @@
                         </div>
                     
                         <!-- Tabs Navigation -->
-                        <div class="grid grid-cols-3 gap-2 mb-4">
-                             
-                            
-                         
+                        {{-- <div class="grid grid-cols-3 gap-2 mb-4">
+                            <button class="tab-button active" data-tab="initial">
+                                <i data-lucide="banknote" class="w-3.5 h-3.5 mr-1.5"></i>
+                                Add Buyers
+                            </button>
+                            <button class="tab-button" data-tab="detterment">
+                                <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
+                                Buyers List
+                            </button>
+                            <button class="tab-button" data-tab="final">
+                                <i data-lucide="file-check" class="w-3.5 h-3.5 mr-1.5"></i>
+                                Final Conveyance Agreement
+                            </button>
                             <input type="hidden" name="application_fileno" value="{{$application->fileno}}">
                         </div>
-                     <div class="p-4 border-b">
-                                <h3 class="text-sm font-medium">Add list of buyers</h3>
-                                </div>
+                     --}}
                         <!-- Add Buyers Tab -->
+                         <div class="p-4 border-b">
+                                    <h3 class="text-sm font-medium">Add list of buyers</h3>
+                                </div>
                         <div id="initial-tab" class="tab-content active" x-data="{ buyers: [{}] }">
                             <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                                
@@ -170,7 +188,38 @@
                                 </form>
                             </div>
                         </div>
-             
+                    
+                        <!-- Buyers List Tab -->
+                        <div id="detterment-tab" class="tab-content">
+                            <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                                <div class="p-4 border-b">
+                                    <h3 class="text-sm font-medium">Buyers List</h3>
+                                    <p class="text-xs text-gray-500"></p>
+                                </div>
+                                <input type="hidden" id="application_id" value="{{$application->id}}">
+                                <input type="hidden" name="fileno" value="{{$application->fileno}}">
+                                <div class="p-4 space-y-4">
+                                    <div class="overflow-x-auto" id="buyers-list-container">
+                                        <!-- Dynamic content will be loaded here -->
+                                        <div class="text-center text-gray-500 py-4">Loading buyers list...</div>
+                                    </div>
+                                    
+                                    <hr class="my-4">
+                                    
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex gap-2">
+                                            <a href="{{route('sectionaltitling.primary')}}" class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-white hover:bg-gray-50">
+                                                <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
+                                                Back
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <!-- Final Conveyance Agreement Tab -->
+                        @include('actions.FinalConveyanceAgreement')
                     </div>
                 </div>
             </div>
@@ -240,19 +289,13 @@
                                 html: 
                                     '<div class="mb-4">' + data.message + '</div>' +
                                     '<div class="text-left">' + recordsHtml + '</div>',
-                                confirmButtonText: 'View Buyers List',
-                                showCancelButton: true,
-                                cancelButtonText: 'Add More Buyers'
+                                confirmButtonText: 'OK'
                             }).then((result) => {
                                 if (result.isConfirmed) {
-                                    // Switch to the buyers list tab
-                                    document.querySelector('[data-tab="detterment"]').click();
-                                } else {
-                                    // Reset the form for adding more buyers
-                                    buyersForm.reset();
+                                    // Redirect to sectionaltitling.primary route
+                                    window.location.href = "{{route('sectionaltitling.primary')}}";
                                 }
                             });
-                            
                             // Refresh buyers list data in background
                             loadBuyersList();
                         } else {

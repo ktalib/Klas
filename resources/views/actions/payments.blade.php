@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('page-title')
-{{ __('SECTIONAL TITLING  MODULE') }}
+{{ __('Payments') }}
 @endsection
 
 

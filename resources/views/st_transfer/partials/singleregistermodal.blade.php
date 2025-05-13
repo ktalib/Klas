@@ -2,12 +2,12 @@
 <div id="singleRegisterModal" class="modal">
   <div class="modal-content max-w-4xl" style="width: 90%; max-width: 800px;">
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-lg font-semibold">Register Sectional Title Certificate of Occupancy</h2>
+      <h2 class="text-lg font-semibold">Transfer of Sectional Title</h2>
       <button onclick="closeSingleRegisterModal()" class="text-gray-500 hover:text-gray-700">
         <i class="fas fa-times"></i>
       </button>
     </div>
-    <p class="text-gray-500 mb-6">Select a verified unit from the sectional title scheme to register its Certificate of Occupancy.</p>
+    <p class="text-gray-500 mb-6">Select a verified properties from the sectional title scheme for sectional title transfer.</p>
     
     <!-- Unit Search Section -->
     <div id="unitSearchSection">
@@ -81,7 +81,7 @@
       <!-- Property Details Overview -->
       <div class="bg-gray-50 p-4 rounded-lg space-y-4 mb-6">
         <div class="flex items-center justify-between">
-          <h3 class="font-medium">Selected Unit Details</h3>
+          <h3 class="font-medium">Selected Property  Details</h3>
           <button class="text-gray-500 hover:text-gray-700 text-sm" onclick="backToUnitSearch()">
             Change
           </button>
@@ -97,41 +97,24 @@
             <span class="ml-2 font-medium" id="selectedProperty">Love Court Estate</span>
           </div>
           <div>
-            <span class="text-gray-500">Unit Number:</span>
+            <span class="text-gray-500">Number of Units:</span>
             <span class="ml-2 font-medium" id="selectedUnitNo">101</span>
           </div>
           <div>
-            <span class="text-gray-500">Block Number:</span>
+            <span class="text-gray-500">Number of Block:</span>
             <span class="ml-2 font-medium" id="selectedBlockNo">A</span>
           </div>
-          <div>
-            <span class="text-gray-500">Owner:</span>
-            <span class="ml-2 font-medium" id="selectedOwner">Fatima Ahmed</span>
-          </div>
-          <div>
-            <span class="text-gray-500">Unit Type:</span>
-            <span class="ml-2 font-medium" id="selectedUnitType"></span>
-          </div>
+           
+        
           <div style="display: none;">
             <span class="text-gray-500">Unit Size:</span>
             <span class="ml-2 font-medium" id="selectedUnitSize">75 sq.m</span>
           </div>
+         
+           
+         
           <div>
-            <span class="text-gray-500">Status:</span>
-            <span class="ml-2">
-              <span class="badge badge-pending">Pending</span>
-            </span>
-          </div>
-          <div>
-            <span class="text-gray-500">Units:</span>
-            <span class="ml-2 font-medium" id="selectedUnitNo">0</span>
-          </div>
-          <div>
-            <span class="text-gray-500">Blocks:</span>
-            <span class="ml-2 font-medium" id="selectedBlockNo">0</span>
-          </div>
-          <div>
-            <span class="text-gray-500">Sections:</span>
+            <span class="text-gray-500">Number of Sections:</span>
             <span class="ml-2 font-medium" id="selectedSectionNo">0</span>
           </div>
         </div>

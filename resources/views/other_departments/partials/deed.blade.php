@@ -4,7 +4,8 @@
         <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
             <div class="p-4 border-b">
                 <h3 class="text-sm font-medium">Deeds</h3>
-                <p class="text-xs text-gray-500">{{ isset($isSecondary) && $isSecondary ? 'Secondary Application' : 'Primary Application' }}</p>
+                <p class="text-xs text-gray-500">
+                    {{ isset($isSecondary) && $isSecondary ? 'Secondary Application' : 'Primary Application' }}</p>
             </div>
             <input type="hidden" name="application_id" value="{{ $application->id }}">
             <input type="hidden" name="fileno" value="{{ $application->fileno }}">
@@ -95,19 +96,16 @@
                 </div>
                 <hr class="my-4">
 
-                <div class="flex justify-between items-center">
-                    <div class="flex gap-2">
-                        <a
-                            href="{{ isset($isSecondary) && $isSecondary ? route('other_departments.survey_secondary') : route('other_departments.deeds_primary') }}"
-                            class="flex items-center px-3 py-1 text-xs bg-white text-black p-2 border border-gray-500 rounded-md hover:bg-gray-800"
-                        >
-                            <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
-                            Back
-                        </a>
-                    </div>
+              <div class="flex gap-2">
+                    <a
+                        href="javascript:void(0);"
+                        onclick="window.history.back()"
+                        class="flex items-center px-3 py-1 text-xs bg-white text-black p-2 border border-gray-500 rounded-md hover:bg-gray-800"
+                    >
+                        <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
+                        Back
+                    </a>
                     
-                    <!-- Edit and Submit Buttons - ensure data-lucide icons are initialized -->
-                    <div class="flex gap-2">
                         <button
                             type="button"
                             id="edit-deeds"

@@ -23,6 +23,7 @@ use App\Http\Controllers\STMemoController;
 use App\Http\Controllers\STTransferOfTitleController;
 use App\Http\Controllers\DeedsDepartmentController;
 use App\Http\Controllers\LandsDepartmentController;
+use App\Http\Controllers\AttributionController;
 // Public routes
 Route::get('/primary-applications/{id}', [PrimaryActionsController::class, 'show']);
 
@@ -30,7 +31,7 @@ Route::get('/primary-applications/{id}', [PrimaryActionsController::class, 'show
 Route::middleware(['auth'])->group(function () {
 
     Route::post('/primary-applications', [PrimaryActionsController::class, 'store'])->name('primary-applications.store');
-     Route::get('/survey/{applicationId}', [PrimaryActionsController::class, 'getSurvey'])->name('survey.get');
+    Route::get('/survey/{applicationId}', [PrimaryActionsController::class, 'getSurvey'])->name('survey.get');
     Route::post('/survey/update', [PrimaryActionsController::class, 'updateSurvey'])->name('survey.update');
     Route::post('/primary-applications/storeDeeds', [PrimaryActionsController::class, 'storeDeeds'])->name('primary-applications.storeDeeds');
     Route::post('/planning-recommendation/update', [PrimaryActionsController::class, 'updatePlanningRecommendation'])->name('planning-recommendation.update');
@@ -64,7 +65,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/payments/{id}', [ActionsController::class, 'Payment'])->name('actions.payments');
         Route::get('/recommendation/{id}', [ActionsController::class, 'Recommendation'])->name('actions.recommendation');
         Route::get('/final-conveyance/{id}', [ActionsController::class, 'FinalConveyance'])->name('actions.final-conveyance');
-         Route::get('/buyers_list/{id}', [ActionsController::class, 'BuyersList'])->name('actions.buyers_list');
+        Route::get('/buyers_list/{id}', [ActionsController::class, 'BuyersList'])->name('actions.buyers_list');
         Route::post('/{application}/update-architectural-design', [ActionsController::class, 'updateArchitecturalDesign'])->name('actions.update-architectural-design');
         Route::get('/director-approval/{id}', [ActionsController::class, 'DirectorApproval'])->name('actions.director-approval');
     });
@@ -98,7 +99,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/approvals/other-departments', [ProgrammesController::class, 'Others'])->name('programmes.approvals.other-departments');
         Route::get('/approvals/deeds', [ProgrammesController::class, 'Deeds'])->name('programmes.approvals.deeds');
         Route::get('/approvals/lands', [ProgrammesController::class, 'Lands'])->name('programmes.approvals.lands');
-         Route::get('/eRegistry', [ProgrammesController::class, 'eRegistry'])->name('programmes.eRegistry');
+        Route::get('/eRegistry', [ProgrammesController::class, 'eRegistry'])->name('programmes.eRegistry');
         Route::get('/approvals/planning_recomm', [ProgrammesController::class, 'PlanningRecomm'])->name('programmes.approvals.planning_recomm');
         Route::get('/approvals/director', [ProgrammesController::class, 'Director_approval'])->name('programmes.approvals.director');
         Route::get('/report', [ProgrammesController::class, 'ST_Report'])->name('programmes.report');
@@ -167,7 +168,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-        Route::prefix('st_transfer')->group(function () {
+    Route::prefix('st_transfer')->group(function () {
         Route::get('/', [STTransferOfTitleController::class, 'StTransfer'])->name('st_transfer.index');
         
         // Fix generate route to point to generate method, not save
@@ -230,18 +231,18 @@ Route::middleware(['auth'])->group(function () {
 
     //* Deeds Departments 
  
-        Route::prefix('other_departments')->group(function () {
+    Route::prefix('other_departments')->group(function () {
         Route::get('/deeds_primary', [DeedsDepartmentController::class, 'Deeds_Primary'])->name('other_departments.deeds_primary');
         Route::get('/deeds/{id}', [DeedsDepartmentController::class, 'DeedsView'])->name('other_departments.deeds');   
-        });
+    });
 
-     Route::prefix('other_departments')->group(function () {
+    Route::prefix('other_departments')->group(function () {
         Route::get('/lands_primary', [LandsDepartmentController::class, 'Lands_Primary'])->name('other_departments.lands_primary');
         Route::get('/lands/{id}', [LandsDepartmentController::class, 'LandsView'])->name('other_departments.lands');   
-        });
+    });
 
     Route::prefix('stmemo')->group(function () {
-          // New routes for STMemoController
+        // New routes for STMemoController
         Route::get('/stmemo', [STMemoController::class, 'STmemo'])->name('stmemo.stmemo');
         Route::get('/siteplan', [STMemoController::class, 'SitePlan'])->name('stmemo.siteplan');
         Route::get('/temotemplate', [STMemoController::class, 'MemoTemplate'])->name('stmemo.temotemplate');
@@ -257,4 +258,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/view-siteplan/{id}', [STMemoController::class, 'viewSitePlan'])->name('stmemo.viewSitePlan');
         Route::delete('/delete-siteplan/{id}', [STMemoController::class, 'deleteSitePlan'])->name('stmemo.deleteSitePlan');
     });
+
+    Route::prefix('attribution')->group(function () {
+        // Routes for AttributionController
+        Route::get('/', [AttributionController::class, 'Attributions'])->name('attribution.index');
+        Route::get('/update-survey/{id}', [AttributionController::class, 'editSurvey'])->name('attribution.update-survey');
+        Route::post('/update-survey', [AttributionController::class, 'updateSurvey'])->name('attribution.update-survey');
+    });
+
 });

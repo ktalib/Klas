@@ -259,8 +259,8 @@ class PrimaryFormController extends Controller
             ]);
 
             // Return response with success message and flash data
-            return redirect()->route('primaryform.index')
-                ->with('success', 'Application submitted successfully!')
+            return redirect()->route('actions.buyers_list', ['id' => $applicationId])
+                ->with('success', 'Application submitted successfully! Add list of buyers.')
                 ->with('application_id', $applicationId);
         } catch (Exception $e) {
             // Enhanced error logging for debugging
