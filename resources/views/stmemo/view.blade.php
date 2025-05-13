@@ -19,7 +19,7 @@
                     <p class="text-sm text-gray-500">Memo #: {{ $memo->memo_no }}</p>
                </div>
                <div class="flex items-center gap-2">
-                    <a href="{{ route('stmemo.stmemo') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md flex items-center gap-2">
+                    <a href="{{ route('stmemo.siteplan') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md flex items-center gap-2">
                          <i data-lucide="arrow-left" class="w-4 h-4"></i>
                          Back to List
                     </a>

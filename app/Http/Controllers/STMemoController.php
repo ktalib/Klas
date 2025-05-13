@@ -473,7 +473,7 @@ class STMemoController extends Controller
                 ->update(['memo_status' => 'GENERATED']);
         }
         
-        return redirect()->route('stmemo.view', $memoId)->with('success', 'Generate Physical Planning Memo has been successfully generated');
+        return redirect()->route('stmemo.viewSTMemo', $request->application_id)->with('success', 'Physical Planning Memo has been successfully generated');
     }
     
     public function viewSTMemo($id)
@@ -487,7 +487,7 @@ class STMemoController extends Controller
             ->where('memo_type', 'st_memo')
             ->first();
         if (!$memo) {
-            return redirect()->route('stmemo.stmemo')->with('error', 'Memo not found');
+            return redirect()->route('stmemo.siteplan')->with('error', 'Memo not found');
         }
         
         // Get the unit measurements

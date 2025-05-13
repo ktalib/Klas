@@ -27,10 +27,10 @@
           </div>
           <div class="dropdown">
             <button onclick="toggleDropdown()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2">
-             Transfer <i class="fas fa-chevron-down text-xs"></i>
+             Transfer of Title <i class="fas fa-chevron-down text-xs"></i>
             </button>
             <div id="registerDropdown" class="dropdown-content">
-              <a href="#" onclick="openSingleRegisterModal()" class="whitespace-nowrap"><i class="fas fa-file-alt mr-2"></i> Transfer</a>
+              <a href="#" onclick="openSingleRegisterModal()" class="whitespace-nowrap"><i class="fas fa-file-alt mr-2"></i>Transfer</a>
               <a href="#" onclick="openBatchRegisterModal()" class="whitespace-nowrap"><i class="fas fa-upload mr-2"></i> Batch Transfer </a>
             </div>
           </div>
@@ -43,7 +43,7 @@
         <div class="bg-white rounded-lg shadow">
           <div class="p-4 border-b">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <h2 class="text-lg font-semibold">Sectional Title Transfer</h2>
+              <h2 class="text-lg font-semibold">Sectional Title Transfer (Assignment)</h2>
               <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
                 <div class="flex gap-2">
                   <div class="relative w-full sm:w-64">

@@ -225,23 +225,15 @@
           <i data-lucide="book-open" class="h-4 w-4 text-amber-500"></i>
           <span>Instrument Registration</span>
         </a>
+        
+        <a href="{{route('st_transfer.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('st_transfer.index') ? 'active' : '' }}">
+          <i data-lucide="calendar-sync" class="h-4 w-4 text-amber-500"></i>
+          <span>ST Transfer Of Title</span>
+        </a>
 
        
-        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="assignments">
-          <div class="flex items-center gap-2">
-            <i data-lucide="calendar-sync" class="h-4 w-4 text-amber-500"></i>
-            <span>ST Transfer Of Title</span>
-          </div>
-          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="assignments"></i>
-        </div>
-
-        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="assignments">
-          <a href="{{route('st_transfer.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('st_transfer.index') ? 'active' : '' }}">
-            <i data-lucide="folder-sync" class="h-3.5 w-3.5 text-amber-400"></i>
-            <span>Assignments</span>
-          </a>
-   
-        </div>
+      
+        
         
         <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="cofoRegistration">
           <div class="flex items-center gap-2">
