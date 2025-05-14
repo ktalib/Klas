@@ -229,6 +229,9 @@ class STMemoController extends Controller
         }
         
         if ($application instanceof \Illuminate\Http\JsonResponse) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Application not found']);
+            }
             return redirect()->route('stmemo.siteplan')->with('error', 'Application not found');
         }
         
@@ -267,6 +270,7 @@ class STMemoController extends Controller
             ->where('application_id', $applicationId)
             ->first();
             
+        $isUpdate = false;
         if ($existingSitePlan) {
             // Delete old file if exists
             if (Storage::disk('public')->exists($existingSitePlan->site_file)) {
@@ -284,6 +288,7 @@ class STMemoController extends Controller
                 ]);
                 
             $message = 'Site plan has been successfully updated';
+            $isUpdate = true;
         } else {
             // Create new record
             DB::connection('sqlsrv')->table('site_plans')->insert([
@@ -299,6 +304,17 @@ class STMemoController extends Controller
             $message = 'Site plan has been successfully uploaded';
         }
         
+        // Check if this is an AJAX request
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'update' => $isUpdate,
+                'file_path' => Storage::url($filePath)
+            ]);
+        }
+        
+        // If not AJAX, redirect as before
         return redirect()->route('stmemo.viewSitePlan', $applicationId)->with('success', $message);
     }
     

@@ -147,9 +147,8 @@
     <!-- Footer -->
     @include('admin.footer')
 </div>
-@endsection
 
-@push('scripts')
+ 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const fileInput = document.getElementById('file-upload');
@@ -215,4 +214,4 @@
         }
     });
 </script>
-@endpush
+@endsection

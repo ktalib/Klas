@@ -58,7 +58,7 @@
                     <div class="py-2">
               
                     <div class="py-2">
-                   <div class="flex flex-col md:flex-row items-center justify-between mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
+                  <div class="flex flex-col md:flex-row items-center justify-between mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
                         <div class="flex-1 mb-4 md:mb-0">
                           <h3 class="text-base font-semibold text-gray-800 flex items-center gap-2">
                             <i data-lucide="home" class="w-5 h-5 text-blue-500"></i>

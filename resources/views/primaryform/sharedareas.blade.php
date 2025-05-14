@@ -32,6 +32,9 @@
          <div class="flex items-center mr-4">
           <div class="step-circle inactive">4</div>
         </div>
+        <div class="flex items-center mr-4">
+          <div class="step-circle inactive">5</div>
+        </div>
         <div class="ml-4">Step 2</div>
       </div>
 
@@ -187,7 +190,7 @@
         <div class="flex justify-between mt-8">
           <button class="px-4 py-2 bg-white border border-gray-300 rounded-md" id="backStep2">Back</button>
           <div class="flex items-center">
-            <span class="text-sm text-gray-500 mr-4">Step 2 of 4</span>
+            <span class="text-sm text-gray-500 mr-4">Step 2 of 5</span>
             <button class="px-4 py-2 bg-black text-white rounded-md" id="nextStep2">Next</button>
           </div>
         </div>

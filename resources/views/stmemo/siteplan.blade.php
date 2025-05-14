@@ -19,9 +19,9 @@
                 <div class="flex justify-between items-center mb-6">
                     <div class="flex items-center">
                         <h2 class="text-xl font-bold">Primary Applications</h2>
-                        <button type="button" onclick="showTableInfo()" class="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none">
+                        {{-- <button type="button" onclick="showTableInfo()" class="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none">
                             <i data-lucide="info" class="h-5 w-5"></i>
-                        </button>
+                        </button> --}}
                     </div>
 
                     <!-- Smart Search Input -->

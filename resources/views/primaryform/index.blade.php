@@ -142,8 +142,11 @@
                       <div class="flex items-center mr-4">
                         <div class="step-circle inactive flex items-center justify-center">3</div>
                       </div>
-                       <div class="flex items-center mr-4">
+                      <div class="flex items-center mr-4">
                         <div class="step-circle inactive flex items-center justify-center">4</div>
+                      </div>
+                      <div class="flex items-center mr-4">
+                        <div class="step-circle inactive flex items-center justify-center">5</div>
                       </div>
                       
                       <div class="ml-4">Step 1</div>
@@ -343,7 +346,7 @@
                       <div class="flex justify-between mt-8">
                         <button type="button" onclick="window.history.back()" class="px-4 py-2 bg-white border border-gray-300 rounded-md">Cancel</button>
                         <div class="flex items-center">
-                          <span class="text-sm text-gray-500 mr-4">Step 1 of 4</span>
+                          <span class="text-sm text-gray-500 mr-4">Step 1 of 5</span>
                           <button class="px-4 py-2 bg-black text-white rounded-md" id="nextStep1">Next</button>
                         </div>
                       </div>
@@ -351,6 +354,7 @@
                   </div>
                 </div>
               @include('primaryform.sharedareas')
+              @include('primaryform.unitdetails')
              @include('primaryform.documents')
              @include('primaryform.summary')
             </form>

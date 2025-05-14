@@ -9,15 +9,18 @@
         const nextStep1 = document.getElementById('nextStep1');
         const nextStep2 = document.getElementById('nextStep2');
         const nextStep3 = document.getElementById('nextStep3');
+        const nextStep4 = document.getElementById('nextStep4');
         const backStep2 = document.getElementById('backStep2');
         const backStep3 = document.getElementById('backStep3');
         const backStep4 = document.getElementById('backStep4');
+        const backStep5 = document.getElementById('backStep5');
 
         // Form sections
         const step1 = document.getElementById('step1');
         const step2 = document.getElementById('step2');
         const step3 = document.getElementById('step3');
         const step4 = document.getElementById('step4');
+        const step5 = document.getElementById('step5');
 
         if (nextStep1) {
             nextStep1.addEventListener('click', function(e) {
@@ -47,6 +50,15 @@
             });
         }
 
+        if (nextStep4) {
+            nextStep4.addEventListener('click', function(e) {
+                e.preventDefault();
+                step4.classList.remove('active');
+                step5.classList.add('active');
+                updateApplicationSummary(); // Make sure summary is updated
+            });
+        }
+
         if (backStep2) {
             backStep2.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -70,6 +82,20 @@
                 step3.classList.add('active');
             });
         }
+
+        if (backStep5) {
+            backStep5.addEventListener('click', function(e) {
+                e.preventDefault();
+                step5.classList.remove('active');
+                step4.classList.add('active');
+            });
+        }
+
+        // Update the IDs for the summary step (now step 5)
+        document.getElementById('backStep5').addEventListener('click', function() {
+            document.getElementById('step5').classList.remove('active');
+            document.getElementById('step4').classList.add('active');
+        });
 
         // Close modal buttons
         document.getElementById('closeModal').addEventListener('click', function() {

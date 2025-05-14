@@ -29,10 +29,13 @@
         <div class="flex items-center mr-4">
           <div class="step-circle inactive">3</div>
         </div>
-        <div class="flex items-center">
-          <div class="step-circle active">4</div>
+        <div class="flex items-center mr-4">
+          <div class="step-circle inactive">4</div>
         </div>
-        <div class="ml-4">Step 4</div>
+        <div class="flex items-center">
+          <div class="step-circle active">5</div>
+        </div>
+        <div class="ml-4">Step 5</div>
       </div>
 
       <div class="mb-6" id="application-summary">
@@ -203,14 +206,14 @@
         
         <div class="flex justify-between mt-8">
           <div class="flex space-x-4">
-            <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md" id="backStep4">Back</button>
+            <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md" id="backStep5">Back</button>
             <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md flex items-center" id="printApplicationSlip">
               <i data-lucide="printer" class="w-4 h-4 mr-2"></i>
               Print Application Slip
             </button>
           </div>
           <div class="flex items-center">
-            <span class="text-sm text-gray-500 mr-4">Step 4 of 4</span>
+            <span class="text-sm text-gray-500 mr-4">Step 5 of 5</span>
             <button type="submit" class="px-4 py-2 bg-black text-white rounded-md">Submit Application</button>
           </div>
         </div>
@@ -220,6 +223,12 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Add event listener for the back button
+      document.getElementById('backStep5').addEventListener('click', function() {
+        document.getElementById('step5').classList.remove('active');
+        document.getElementById('step4').classList.add('active');
+      });
+      
       // Function to update the application summary
       function updateApplicationSummary() {
         // Applicant Information
@@ -442,5 +451,8 @@
       
       // Initialize print functionality
       initializePrintFunctionality();
+      
+      // Make updateApplicationSummary globally accessible
+      window.updateApplicationSummary = updateApplicationSummary;
     });
   </script>

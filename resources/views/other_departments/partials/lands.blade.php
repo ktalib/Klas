@@ -28,11 +28,23 @@
                             <label for="file-name" class="text-xs font-medium block">
                                 File Name
                             </label>
+                            @php
+                                $fileName = '';
+                                if ($application->applicant_type == 'individual') {
+                                    $fileName = $application->first_name . ' ' . $application->surname;
+                                } elseif ($application->applicant_type == 'corporate') {
+                                    $fileName = $application->corporate_name;
+                                } elseif ($application->applicant_type == 'multiple') {
+                                    $ownerNames = json_decode($application->multiple_owners_names, true);
+                                    $fileName = is_array($ownerNames) && !empty($ownerNames) ? $ownerNames[0] . ' ' : 'Multiple Owners';
+                                }
+                            @endphp
                             <input
                                 id="file-name"
                                 type="text"
-                                placeholder="Enter File Name"
-                                class="w-full p-2 border border-gray-300 rounded-md text-sm"
+                                class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 text-gray-500 cursor-not-allowed"
+                                value="{{ $fileName }}"
+                                readonly
                             >
                         </div>
                     </div>
