@@ -3,10 +3,10 @@
             <div class="p-6">
                 <!-- Applicant Type Section -->
               
-                <input type="hidden" id="applicantType">
+                <input type="hidden" id="applicantType" value="{{ old('applicantType') }}">
 
                 <!-- Personal Information Section -->
-                <div class="mb-10" id="individualFields" style="display: none;">
+                <div class="mb-10" id="individualFields" style="{{ old('applicantType') == 'individual' ? 'display: block;' : 'display: none;' }}">
                     <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Personal Information</h2>
                     <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -21,31 +21,31 @@
                                         <select id="applicantTitle" name="applicant_title"
                                             class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                                             onchange="updateApplicantNamePreview()">
-                                            <option value="" disabled selected>Select title</option>
-                                            <option value="Mr.">Mr.</option>
-                                            <option value="Mrs.">Mrs.</option>
-                                            <option value="Chief">Chief</option>
-                                            <option value="Master">Master</option>
-                                            <option value="Capt">Capt</option>
-                                            <option value="Coln">Coln</option>
-                                            <option value="Pastor">Pastor</option>
-                                            <option value="King">King</option>
-                                            <option value="Prof">Prof</option>
-                                            <option value="Dr.">Dr.</option>
-                                            <option value="Alhaji">Alhaji</option>
-                                            <option value="Alhaja">Alhaja</option>
-                                            <option value="High Chief">High Chief</option>
-                                            <option value="Lady">Lady</option>
-                                            <option value="Bishop">Bishop</option>
-                                            <option value="Senator">Senator</option>
-                                            <option value="Messr">Messr</option>
-                                            <option value="Honorable">Honorable</option>
-                                            <option value="Miss">Miss</option>
-                                            <option value="Rev.">Rev.</option>
-                                            <option value="Barr.">Barr.</option>
-                                            <option value="Arc.">Arc.</option>
-                                            <option value="Sister">Sister</option>
-                                            <option value="Other">Other</option>
+                                            <option value="" disabled {{ old('applicant_title') ? '' : 'selected' }}>Select title</option>
+                                            <option value="Mr." {{ old('applicant_title') == 'Mr.' ? 'selected' : '' }}>Mr.</option>
+                                            <option value="Mrs." {{ old('applicant_title') == 'Mrs.' ? 'selected' : '' }}>Mrs.</option>
+                                            <option value="Chief" {{ old('applicant_title') == 'Chief' ? 'selected' : '' }}>Chief</option>
+                                            <option value="Master" {{ old('applicant_title') == 'Master' ? 'selected' : '' }}>Master</option>
+                                            <option value="Capt" {{ old('applicant_title') == 'Capt' ? 'selected' : '' }}>Capt</option>
+                                            <option value="Coln" {{ old('applicant_title') == 'Coln' ? 'selected' : '' }}>Coln</option>
+                                            <option value="Pastor" {{ old('applicant_title') == 'Pastor' ? 'selected' : '' }}>Pastor</option>
+                                            <option value="King" {{ old('applicant_title') == 'King' ? 'selected' : '' }}>King</option>
+                                            <option value="Prof" {{ old('applicant_title') == 'Prof' ? 'selected' : '' }}>Prof</option>
+                                            <option value="Dr." {{ old('applicant_title') == 'Dr.' ? 'selected' : '' }}>Dr.</option>
+                                            <option value="Alhaji" {{ old('applicant_title') == 'Alhaji' ? 'selected' : '' }}>Alhaji</option>
+                                            <option value="Alhaja" {{ old('applicant_title') == 'Alhaja' ? 'selected' : '' }}>Alhaja</option>
+                                            <option value="High Chief" {{ old('applicant_title') == 'High Chief' ? 'selected' : '' }}>High Chief</option>
+                                            <option value="Lady" {{ old('applicant_title') == 'Lady' ? 'selected' : '' }}>Lady</option>
+                                            <option value="Bishop" {{ old('applicant_title') == 'Bishop' ? 'selected' : '' }}>Bishop</option>
+                                            <option value="Senator" {{ old('applicant_title') == 'Senator' ? 'selected' : '' }}>Senator</option>
+                                            <option value="Messr" {{ old('applicant_title') == 'Messr' ? 'selected' : '' }}>Messr</option>
+                                            <option value="Honorable" {{ old('applicant_title') == 'Honorable' ? 'selected' : '' }}>Honorable</option>
+                                            <option value="Miss" {{ old('applicant_title') == 'Miss' ? 'selected' : '' }}>Miss</option>
+                                            <option value="Rev." {{ old('applicant_title') == 'Rev.' ? 'selected' : '' }}>Rev.</option>
+                                            <option value="Barr." {{ old('applicant_title') == 'Barr.' ? 'selected' : '' }}>Barr.</option>
+                                            <option value="Arc." {{ old('applicant_title') == 'Arc.' ? 'selected' : '' }}>Arc.</option>
+                                            <option value="Sister" {{ old('applicant_title') == 'Sister' ? 'selected' : '' }}>Sister</option>
+                                            <option value="Other" {{ old('applicant_title') == 'Other' ? 'selected' : '' }}>Other</option>
                                         </select>
                                     </div>
 
@@ -54,7 +54,7 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-1">
                                             First Name <span class="text-red-500">*</span>
                                         </label>
-                                        <input type="text" id="applicantName" name="first_name"
+                                        <input type="text" id="applicantName" name="first_name" value="{{ old('first_name') }}"
                                             class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                                             placeholder="Enter first name" oninput="updateApplicantNamePreview()">
                                     </div>
@@ -64,7 +64,7 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-1">
                                             Middle Name (Optional)
                                         </label>
-                                        <input type="text" id="applicantMiddleName" name="middle_name"
+                                        <input type="text" id="applicantMiddleName" name="middle_name" value="{{ old('middle_name') }}"
                                             class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                                             placeholder="Enter middle name" oninput="updateApplicantNamePreview()">
                                     </div>
@@ -74,7 +74,7 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-1">
                                             Surname <span class="text-red-500">*</span>
                                         </label>
-                                        <input type="text" id="applicantSurname" name="surname"
+                                        <input type="text" id="applicantSurname" name="surname" value="{{ old('surname') }}"
                                             class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                                             placeholder="Enter surname" oninput="updateApplicantNamePreview()">
                                     </div>
@@ -128,7 +128,7 @@
                 </div>
 
                 <!-- Corporate Body Information -->
-                <div class="mb-10" id="corporateFields" style="display: none;">
+                <div class="mb-10" id="corporateFields" style="{{ old('applicantType') == 'corporate' ? 'display: block;' : 'display: none;' }}">
                     <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Corporate Body Information</h2>
                     <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -136,7 +136,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Name of Corporate Body <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="corporateName" name="corporate_name"
+                                <input type="text" id="corporateName" name="corporate_name" value="{{ old('corporate_name') }}"
                                     class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                                     placeholder="Enter corporate body name">
                             </div>
@@ -144,7 +144,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     RC Number <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="rcNumber" name="rc_number"
+                                <input type="text" id="rcNumber" name="rc_number" value="{{ old('rc_number') }}"
                                     class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                                     placeholder="Enter RC number">
                             </div>
@@ -153,7 +153,7 @@
                 </div>      
                 
                 <!-- Multiple Owners Information -->
-                <div class="mb-10" id="multipleOwnersFields" style="display: none;">
+                <div class="mb-10" id="multipleOwnersFields" style="{{ old('applicantType') == 'multiple' ? 'display: block;' : 'display: none;' }}">
                     <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Multiple Owners Information</h2>
                     <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
                         <div id="ownersContainer" class="space-y-4">
@@ -289,7 +289,30 @@
 
         // Initialize the handlers when the document loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Any initialization code can go here
+            // Show the correct fields based on old input
+            const applicantType = "{{ old('applicantType') }}";
+            if (applicantType === 'individual') {
+                showIndividualFields();
+            } else if (applicantType === 'corporate') {
+                showCorporateFields();
+            } else if (applicantType === 'multiple') {
+                showMultipleOwnersFields();
+            }
+            
+            // Initialize applicant name preview if returning with validation errors
+            if ("{{ old('first_name') }}" || "{{ old('middle_name') }}" || "{{ old('surname') }}") {
+                updateApplicantNamePreview();
+            }
+            
+            // Restore multiple owners if any
+            @if(old('multiple_owners_names'))
+                @foreach(old('multiple_owners_names') as $index => $name)
+                    // Add owner row for each old value
+                    if ({{ $index }} > 0) { // Skip first row as it's added by default
+                        addOwnerRow();
+                    }
+                @endforeach
+            @endif
         });
 
         function showIndividualFields() {

@@ -354,7 +354,7 @@
                   </div>
                 </div>
               @include('primaryform.sharedareas')
-              @include('primaryform.unitdetails')
+              @include('primaryform.buyer_list')
              @include('primaryform.documents')
              @include('primaryform.summary')
             </form>

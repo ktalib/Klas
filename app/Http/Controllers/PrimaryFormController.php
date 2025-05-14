@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use App\Helpers\SectionalTitleHelper;
 
 class PrimaryFormController extends Controller
 {
@@ -76,12 +77,19 @@ class PrimaryFormController extends Controller
 
             // Process the file number based on active tab
             $fileNo = null;
+            $mlsFileNo = null;
+            $kangisFileNo = null;
+            $newKangisFileNo = null;
+            
             if ($request->filled('mlsPreviewFileNumber')) {
                 $fileNo = $request->input('mlsPreviewFileNumber');
+                $mlsFileNo = $request->input('mlsPreviewFileNumber');
             } elseif ($request->filled('kangisPreviewFileNumber')) {
                 $fileNo = $request->input('kangisPreviewFileNumber');
+                $kangisFileNo = $request->input('kangisPreviewFileNumber');
             } elseif ($request->filled('newKangisPreviewFileNumber')) {
                 $fileNo = $request->input('newKangisPreviewFileNumber');
+                $newKangisFileNo = $request->input('newKangisPreviewFileNumber');
             }
 
             // Handle passport upload
@@ -175,7 +183,6 @@ class PrimaryFormController extends Controller
                 'phone_number' => $phoneNumber,
                 'email' => $request->input('owner_email'),
                 'identification_type' => $request->input('idType'),
-             
                
                 'property_plot_no' => $request->input('property_plot_no'),
                 'property_street_name' => $request->input('property_street_name'),
@@ -211,56 +218,36 @@ class PrimaryFormController extends Controller
             // Insert data into the mother_applications table
             $applicationId = DB::connection('sqlsrv')->table('mother_applications')->insertGetId($data);
 
-            // Capture file numbers for eRegistry
-            $mlsFileNo = $request->filled('mlsPreviewFileNumber') ? $request->input('mlsPreviewFileNumber') : null;
-            $kangisFileNo = $request->filled('kangisPreviewFileNumber') ? $request->input('kangisPreviewFileNumber') : null;
-            $newKangisFileNo = $request->filled('newKangisPreviewFileNumber') ? $request->input('newKangisPreviewFileNumber') : null;
-            
             // Get authenticated user information
             $createdBy = Auth::user() ? Auth::user()->first_name : null;
             
-            // Generate a unique Sectional_Title_File_No using SQL to avoid duplicates
-            $currentYear = date('Y');
-            $lastNumberQuery = DB::connection('sqlsrv')
-                ->table('eRegistry')
-                ->where('Sectional_Title_File_No', 'like', "ST/{$currentYear}/%")
-                ->orderByRaw("CAST(SUBSTRING(Sectional_Title_File_No, 9, 3) AS INT) DESC")
-                ->value(DB::raw("SUBSTRING(Sectional_Title_File_No, 9, 3)"));
-            
-            $nextNumber = $lastNumberQuery ? (int)$lastNumberQuery + 1 : 1;
-            $sectionalTitleFileNo = 'ST/' . $currentYear . '/' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-            
-            // Create eRegistry data array
-            $eRegistryData = [
-                'application_id' => $applicationId,
-                'MLSFileNo' => $mlsFileNo,
-                'KANGISFileNo' => $kangisFileNo,
-                'NEWKangisFileNo' => $newKangisFileNo,
-                'Sectional_Title_File_No' => $sectionalTitleFileNo,
-                'Commissioning_Date' => now(),
-                'Decommissioning_Date' => now(),
-                'Site_Plan_Approval' => null,
-                'Survey_Plan_Approval' => null,
-                'Expected_Return_Date' => null,
-                'Current_Office' => null,
-                'created_by' => $createdBy,
-                'modify_by' => null,
-                'created_at' => now(),
-                'updated_at' => now()
+            // Use helper class to generate and insert file numbers
+            $fileData = [
+                'mlsFileNo' => $mlsFileNo,
+                'kangisFileNo' => $kangisFileNo,
+                'newKangisFileNo' => $newKangisFileNo
             ];
             
-            // Insert data into eRegistry table
-            DB::connection('sqlsrv')->table('eRegistry')->insert($eRegistryData);
+            $sectionalTitleFileNo = SectionalTitleHelper::generateAndInsertFileNumber(
+                $applicationId, 
+                $createdBy, 
+                $fileData
+            );
+            
+            // Process records/buyers if they exist in the request
+            if ($request->has('records') && is_array($request->input('records'))) {
+                SectionalTitleHelper::insertBuyers($applicationId, $request->input('records'));
+            }
             
             // Log successful submission
             Log::info('Application submitted successfully', [
                 'application_id' => $applicationId,
-                'eRegistry_added' => true
+                'sectional_title_file_no' => $sectionalTitleFileNo
             ]);
 
             // Return response with success message and flash data
-            return redirect()->route('actions.buyers_list', ['id' => $applicationId])
-                ->with('success', 'Application submitted successfully! Add list of buyers.')
+            return redirect()->route('sectionaltitling.primary', ['id' => $applicationId])
+                ->with('success', 'Application submitted successfully!')
                 ->with('application_id', $applicationId);
         } catch (Exception $e) {
             // Enhanced error logging for debugging
