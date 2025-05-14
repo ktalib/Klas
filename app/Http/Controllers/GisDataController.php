@@ -84,10 +84,26 @@ class GisDataController extends Controller
             'SurveyorGeneralSignatureDate' => 'nullable|date',
             'CofOSerialNo' => 'nullable|string',
             'CompanyRCNo' => 'nullable|string',
+            'transactionDocument' => 'nullable|file',
+            'passportPhoto' => 'nullable|file',
+            'nationalId' => 'nullable|file',
+            'internationalPassport' => 'nullable|file',
+            'businessRegCert' => 'nullable|file',
+            'formCO7AndCO4' => 'nullable|file',
+            'certOfIncorporation' => 'nullable|file',
+            'memorandumAndArticle' => 'nullable|file',
+            'letterOfAdmin' => 'nullable|file',
+            'courtAffidavit' => 'nullable|file',
+            'policeReport' => 'nullable|file',
+            'newspaperAdvert' => 'nullable|file',
+            'picture' => 'nullable|file',
+            'SurveyPlan' => 'nullable|file',
         ]);
         
-        // Handle file uploads
-        $files = [];
+        // Prepare data array with validated fields
+        $data = $validated;
+        
+        // Handle file uploads - each file gets stored in its own column
         $fileFields = [
             'transactionDocument', 'passportPhoto', 'nationalId', 'internationalPassport',
             'businessRegCert', 'formCO7AndCO4', 'certOfIncorporation', 'memorandumAndArticle',
@@ -97,20 +113,20 @@ class GisDataController extends Controller
         foreach ($fileFields as $field) {
             if ($request->hasFile($field) && $request->file($field)->isValid()) {
                 $path = $request->file($field)->store('gis_documents', 'public');
-                $files[$field] = $path;
+                $data[$field] = $path; // Store file path directly in the corresponding column
+            } else {
+                // Remove the field from data if no file was uploaded
+                unset($data[$field]);
             }
         }
         
         try {
-            // Merge all data for storage
-            $data = array_merge($validated, ['files' => json_encode($files)]);
-            
             // Add metadata
             $data['created_by'] = Auth::id();
             $data['created_at'] = now();
             $data['updated_at'] = now();
             
-            // Store in database using SQL Server connection and correct table name
+            // Store in database using SQL Server connection
             $id = DB::connection('sqlsrv')->table('gisDataCapture')->insertGetId($data);
             
             return redirect()->route('gis.view', $id)->with('success', 'GIS data saved successfully!');
@@ -133,5 +149,173 @@ class GisDataController extends Controller
         }
         
         return view('gis.view', compact('PageTitle', 'PageDescription', 'gisData'));
+    }
+
+    public function edit($id)
+    {
+        $PageTitle = 'Edit GIS Data';
+        $PageDescription = '';
+        
+        // Get the GIS data record using SQL Server connection
+        $gisData = DB::connection('sqlsrv')->table('gisDataCapture')->where('id', $id)->first();
+        
+        if (!$gisData) {
+            return redirect()->route('gis.index')->with('error', 'GIS data record not found.');
+        }
+        
+        return view('gis.edit', compact('PageTitle', 'PageDescription', 'gisData'));
+    }
+    
+    public function update(Request $request, $id)
+    {
+        // Validate the request data
+        $validated = $request->validate([
+            'mlsfNo' => 'nullable|string',
+            'kangisFileNo' => 'nullable|string',
+            'NewKANGISFileno' => 'nullable|string',
+            'plotNo' => 'nullable|string',
+            'blockNo' => 'nullable|string',
+            'approvedPlanNo' => 'nullable|string',
+            'tpPlanNo' => 'nullable|string',
+            'surveyedBy' => 'nullable|string',
+            'drawnBy' => 'nullable|string',
+            'checkedBy' => 'nullable|string',
+            'passedBy' => 'nullable|string',
+            'beaconControlName' => 'nullable|string',
+            'beaconControlX' => 'nullable|string',
+            'beaconControlY' => 'nullable|string',
+            'metricSheetIndex' => 'nullable|string',
+            'metricSheetNo' => 'nullable|string',
+            'imperialSheet' => 'nullable|string',
+            'imperialSheetNo' => 'nullable|string',
+            'layoutName' => 'nullable|string',
+            'districtName' => 'nullable|string',
+            'lgaName' => 'nullable|string',
+            'StateName' => 'nullable|string',
+            'oldTitleSerialNo' => 'nullable|string',
+            'oldTitlePageNo' => 'nullable|string',
+            'oldTitleVolumeNo' => 'nullable|string',
+            'deedsDate' => 'nullable|date',
+            'deedsTime' => 'nullable',
+            'certificateDate' => 'nullable|date',
+            'originalAllottee' => 'nullable|string',
+            'addressOfOriginalAllottee' => 'nullable|string',
+            'titleIssuedYear' => 'nullable|integer',
+            'changeOfOwnership' => 'nullable|string',
+            'reasonForChange' => 'nullable|string',
+            'currentAllottee' => 'nullable|string',
+            'addressOfCurrentAllottee' => 'nullable|string',
+            'titleOfCurrentAllottee' => 'nullable|string',
+            'phoneNo' => 'nullable|string',
+            'emailAddress' => 'nullable|email',
+            'occupation' => 'nullable|string',
+            'nationality' => 'nullable|string',
+            'landUse' => 'nullable|string',
+            'specifically' => 'nullable|string',
+            'streetName' => 'nullable|string',
+            'houseNo' => 'nullable|string',
+            'houseType' => 'nullable|string',
+            'tenancy' => 'nullable|string',
+            'areaInHectares' => 'nullable|numeric',
+            'SurveyorGeneralSignatureDate' => 'nullable|date',
+            'CofOSerialNo' => 'nullable|string',
+            'CompanyRCNo' => 'nullable|string',
+            'transactionDocument' => 'nullable|file',
+            'passportPhoto' => 'nullable|file',
+            'nationalId' => 'nullable|file',
+            'internationalPassport' => 'nullable|file',
+            'businessRegCert' => 'nullable|file',
+            'formCO7AndCO4' => 'nullable|file',
+            'certOfIncorporation' => 'nullable|file',
+            'memorandumAndArticle' => 'nullable|file',
+            'letterOfAdmin' => 'nullable|file',
+            'courtAffidavit' => 'nullable|file',
+            'policeReport' => 'nullable|file',
+            'newspaperAdvert' => 'nullable|file',
+            'picture' => 'nullable|file',
+            'SurveyPlan' => 'nullable|file',
+        ]);
+        
+        // Get the current record data
+        $currentData = DB::connection('sqlsrv')->table('gisDataCapture')->where('id', $id)->first();
+        
+        if (!$currentData) {
+            return redirect()->route('gis.index')->with('error', 'GIS data record not found.');
+        }
+        
+        // Prepare data array with validated fields
+        $data = $validated;
+        
+        // Handle file uploads - each file gets stored in its own column
+        $fileFields = [
+            'transactionDocument', 'passportPhoto', 'nationalId', 'internationalPassport',
+            'businessRegCert', 'formCO7AndCO4', 'certOfIncorporation', 'memorandumAndArticle',
+            'letterOfAdmin', 'courtAffidavit', 'policeReport', 'newspaperAdvert', 'picture', 'SurveyPlan'
+        ];
+        
+        foreach ($fileFields as $field) {
+            if ($request->hasFile($field) && $request->file($field)->isValid()) {
+                // Delete old file if exists
+                if (isset($currentData->$field) && $currentData->$field) {
+                    Storage::disk('public')->delete($currentData->$field);
+                }
+                
+                // Store new file
+                $path = $request->file($field)->store('gis_documents', 'public');
+                $data[$field] = $path;
+            } else {
+                // Keep the existing file if no new one is uploaded
+                unset($data[$field]);
+            }
+        }
+        
+        try {
+            // Add metadata
+            $data['updated_by'] = Auth::id();
+            $data['updated_at'] = now();
+            
+            // Update in database using SQL Server connection
+            DB::connection('sqlsrv')->table('gisDataCapture')->where('id', $id)->update($data);
+            
+            return redirect()->route('gis.view', $id)->with('success', 'GIS data updated successfully!');
+            
+        } catch (\Exception $e) {
+            Log::error('GIS Data Update Error: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Failed to update GIS data. Please try again.');
+        }
+    }
+    
+    public function destroy($id)
+    {
+        try {
+            // Get the record to check for files to delete
+            $record = DB::connection('sqlsrv')->table('gisDataCapture')->where('id', $id)->first();
+            
+            if (!$record) {
+                return redirect()->route('gis.index')->with('error', 'GIS data record not found.');
+            }
+            
+            // Delete associated files
+            $fileFields = [
+                'transactionDocument', 'passportPhoto', 'nationalId', 'internationalPassport',
+                'businessRegCert', 'formCO7AndCO4', 'certOfIncorporation', 'memorandumAndArticle',
+                'letterOfAdmin', 'courtAffidavit', 'policeReport', 'newspaperAdvert', 'picture', 'SurveyPlan'
+            ];
+            
+            foreach ($fileFields as $field) {
+                if (isset($record->$field) && $record->$field) {
+                    Storage::disk('public')->delete($record->$field);
+                }
+            }
+            
+            // Delete the record
+            DB::connection('sqlsrv')->table('gisDataCapture')->where('id', $id)->delete();
+            
+            return redirect()->route('gis.index')->with('success', 'GIS data deleted successfully!');
+            
+        } catch (\Exception $e) {
+            Log::error('GIS Data Delete Error: ' . $e->getMessage());
+            return redirect()->route('gis.index')->with('error', 'Failed to delete GIS data. Please try again.');
+        }
     }
 }

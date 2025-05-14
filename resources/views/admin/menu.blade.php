@@ -412,7 +412,7 @@
 
         <a href="{{route('programmes.memo')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.memo') ? 'active' : '' }}">
           <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
-          <span>Memo</span>
+          <span>ST Memo</span>
         </a>
 
         <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="eRegistry">

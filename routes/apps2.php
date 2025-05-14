@@ -16,6 +16,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/create', [GisDataController::class, 'create'])->name('create');
         Route::post('/store', [GisDataController::class, 'store'])->name('store');
         Route::get('/{id}', [GisDataController::class, 'show'])->name('view');
+        Route::get('/{id}/edit', [GisDataController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [GisDataController::class, 'update'])->name('update');
+        Route::delete('/{id}', [GisDataController::class, 'destroy'])->name('destroy');
     });
     
     // Add other route groups here
