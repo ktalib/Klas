@@ -289,21 +289,32 @@
                             <!-- This will be filled dynamically based on conveyance data -->
                             @if (count($conveyanceData) > 0)
                                 @foreach ($conveyanceData as $index => $buyer)
+                                    @php
+                                        // Find measurement for this unit if exists
+                                        $unitMeasurement = '';
+                                        if(isset($unitMeasurements)) {
+                                            foreach($unitMeasurements as $measurement) {
+                                                if($measurement->unit_no == $buyer->unit_no) {
+                                                    $unitMeasurement = $measurement->measurement;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
                                     <div
                                         class="measurement-row grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-md bg-gray-50">
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-1">Section/Unit
                                                 No</label>
-                                            <input type="text" name="sections[]" value="{{ $buyer['sectionNo'] ?? '' }}"
+                                            <input type="text" name="sections[]" value="{{ $buyer->unit_no ?? '' }}"
                                                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         </div>
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-1">Measurement
                                                 (sqm)</label>
-                                            <input type="text" name="measurements[]"
+                                            <input type="text" name="measurements[]" value="{{ $unitMeasurement }}"
                                                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         </div>
-
                                     </div>
                                 @endforeach
                             @else
@@ -349,11 +360,11 @@
                                     @foreach ($conveyanceData as $buyer)
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $buyer['buyerTitle'] ?? 'N/A' }}</td>
+                                                {{ $buyer->buyer_title ?? 'N/A' }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $buyer['buyerName'] ?? 'N/A' }}</td>
+                                                {{ $buyer->buyer_name ?? 'N/A' }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $buyer['sectionNo'] ?? 'N/A' }}</td>
+                                                {{ $buyer->unit_no ?? 'N/A' }}</td>
                                         </tr>
                                     @endforeach
                                 @else

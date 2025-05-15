@@ -25,8 +25,8 @@ class MemoController extends Controller
     //Memo
     public function Memo()
     {
-        $PageTitle = 'Memo';
-        $PageDescription = '';
+        $PageTitle = 'ST Memo';
+        $PageDescription = 'Sectional Title Memo';
 
         // Fetch subapplications data
         $subapplications = DB::connection('sqlsrv')->table('subapplications')

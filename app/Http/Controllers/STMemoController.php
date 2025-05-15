@@ -394,6 +394,24 @@ class STMemoController extends Controller
         return view('other_departments.secondary_survey_view', compact('application', 'PageTitle', 'PageDescription'));
     }
 
+    private function getUnitMeasurements($applicationId) 
+    {
+        // Get all measurements from the st_unit_measurements table based on application_id
+        $measurements = DB::connection('sqlsrv')->table('st_unit_measurements')
+            ->select(
+                'application_id',
+                'buyer_id',
+                'unit_no',
+                'measurement',
+                'created_at',
+                'updated_at'
+            )
+            ->where('application_id', $applicationId)
+            ->get();
+            
+        return $measurements;
+    }
+
     public function generateSTMemo($id)
     {
         $PageTitle = 'Generate Physical Planning Memo';
@@ -409,10 +427,16 @@ class STMemoController extends Controller
                 return $application;
             }
             
-            // Get conveyance data from the mother_applications table
-            $conveyanceData = $this->getConveyanceData($id);
+            // Get conveyance data from the buyer_list table
+            $conveyanceData = DB::connection('sqlsrv')->table('buyer_list')
+                ->select('*')
+                ->where('application_id', $id)
+                ->get();
             
-            return view('stmemo.generate', compact('application', 'conveyanceData', 'PageTitle', 'PageDescription', 'isPrimary'));
+            // Get unit measurements if they exist
+            $unitMeasurements = $this->getUnitMeasurements($id);
+            
+            return view('stmemo.generate', compact('application', 'conveyanceData', 'unitMeasurements', 'PageTitle', 'PageDescription', 'isPrimary'));
         } else {
             // Existing code for secondary application
             $application = $this->getSecondaryApplication($id);
@@ -420,10 +444,16 @@ class STMemoController extends Controller
                 return $application;
             }
             
-            // Get conveyance data from the primary application
-            $conveyanceData = $this->getConveyanceData($application->main_application_id);
+            // Get conveyance data from the buyer_list table for the primary application
+            $conveyanceData = DB::connection('sqlsrv')->table('buyer_list')
+                ->select('*')
+                ->where('application_id', $application->main_application_id)
+                ->get();
             
-            return view('stmemo.generate', compact('application', 'conveyanceData', 'PageTitle', 'PageDescription', 'isPrimary'));
+            // Get unit measurements if they exist
+            $unitMeasurements = $this->getUnitMeasurements($id);
+            
+            return view('stmemo.generate', compact('application', 'conveyanceData', 'unitMeasurements', 'PageTitle', 'PageDescription', 'isPrimary'));
         }
     }
     
@@ -435,7 +465,6 @@ class STMemoController extends Controller
             'property_location' => 'required',
             'applicant_name' => 'required',
             'sections' => 'required|array',
-            'measurements' => 'required|array',
             'shared_facilities' => 'required'
         ]);
         
@@ -460,7 +489,8 @@ class STMemoController extends Controller
         $memoId = DB::connection('sqlsrv')->table('memos')->insertGetId([
             'memo_no' => $memoNo,
             'application_id' => $request->application_id,
-            'memo_type' => 'st_memo',
+            'memo_type' => 'physical_planning',
+            'memo_status' => 'GENERATED',
             'applicant_name' => $request->applicant_name,
             'property_location' => $request->property_location,
             'created_by' => Auth::id(),
@@ -468,28 +498,18 @@ class STMemoController extends Controller
             'shared_facilities' => $request->shared_facilities
         ]);
         
-        // Save the unit measurements
-        foreach ($request->sections as $key => $section) {
-            DB::connection('sqlsrv')->table('st_unit_measurements')->insert([
-                'memo_id' => $memoId,
-                'section_no' => $section,
-                'measurement' => $request->measurements[$key],
-                'created_at' => now()
-            ]);
-        }
+     
         
         // Update the application status
         if (isset($request->is_primary) && $request->is_primary == '1') {
             DB::connection('sqlsrv')->table('memos')
-                ->where('application_id', $request->application_id)
+                ->where('id', $memoId)
                 ->update(['memo_status' => 'GENERATED']);
         } else {
-            DB::connection('sqlsrv')->table('memos')
-                ->where('sub_application_id', $request->application_id)
-                ->update(['memo_status' => 'GENERATED']);
+            
         }
         
-        return redirect()->route('stmemo.viewSTMemo', $request->application_id)->with('success', 'Physical Planning Memo has been successfully generated');
+        return redirect()->route('stmemo.viewSTMemo', $memoId)->with('success', 'Physical Planning Memo has been successfully generated');
     }
     
     public function viewSTMemo($id)
@@ -537,18 +557,21 @@ class STMemoController extends Controller
     
     private function getConveyanceData($mainApplicationId)
     {
-        // Get conveyance data from the mother_applications table
-        $application = DB::connection('sqlsrv')->table('mother_applications')
-            ->select('conveyance')
-            ->where('id', $mainApplicationId)
-            ->first();
+        // Get all conveyance data from the buyer_list table based on application_id
+        $buyerRecords = DB::connection('sqlsrv')->table('buyer_list')
+            ->select(
+                'application_id',
+                'buyer_title',
+                'buyer_name',
+                'unit_no',
+                'created_at',
+                'updated_at'
+            )
+            ->where('application_id', $mainApplicationId)
+            ->get();
             
-        if ($application && !empty($application->conveyance)) {
-            // Parse the JSON buyers data
-            $buyersData = json_decode($application->conveyance, true);
-            return $buyersData['records'] ?? [];
-        }
-        
-        return [];
+        // Each item in the collection is an object, access properties with ->
+        // For example: $buyerRecord->buyer_name, not $buyerRecord['buyer_name']
+        return $buyerRecords;
     }
 }

@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GisDataController;
-
+use App\Http\Controllers\AttributionController;
 // Public routes
 Route::get('/custom-public', function() {
     return 'This is a public custom route';
@@ -21,10 +21,14 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}', [GisDataController::class, 'destroy'])->name('destroy');
     });
     
-    // Add other route groups here
-    // Example:
-    // Route::prefix('dashboard')->name('dashboard.')->group(function () {
-    
-    // });
+      Route::prefix('attribution')->group(function () {
+        // Routes for AttributionController
+        Route::get('/', [AttributionController::class, 'Attributions'])->name('attribution.index');
+        Route::get('/create', [AttributionController::class, 'create'])->name('attribution.create');
+        Route::post('/store', [AttributionController::class, 'store'])->name('attribution.store');
+        Route::get('/update-survey/{id}', [AttributionController::class, 'editSurvey'])->name('attribution.update-survey');
+        Route::post('/update-survey', [AttributionController::class, 'updateSurvey'])->name('attribution.update-survey');
+        Route::post('/search-fileno', [AttributionController::class, 'searchFileNo'])->name('attribution.search-fileno');
+    });
 });
 

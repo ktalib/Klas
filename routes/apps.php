@@ -23,7 +23,7 @@ use App\Http\Controllers\STMemoController;
 use App\Http\Controllers\STTransferOfTitleController;
 use App\Http\Controllers\DeedsDepartmentController;
 use App\Http\Controllers\LandsDepartmentController;
-use App\Http\Controllers\AttributionController;
+
 // Public routes
 Route::get('/primary-applications/{id}', [PrimaryActionsController::class, 'show']);
 
@@ -259,11 +259,6 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/delete-siteplan/{id}', [STMemoController::class, 'deleteSitePlan'])->name('stmemo.deleteSitePlan');
     });
 
-    Route::prefix('attribution')->group(function () {
-        // Routes for AttributionController
-        Route::get('/', [AttributionController::class, 'Attributions'])->name('attribution.index');
-        Route::get('/update-survey/{id}', [AttributionController::class, 'editSurvey'])->name('attribution.update-survey');
-        Route::post('/update-survey', [AttributionController::class, 'updateSurvey'])->name('attribution.update-survey');
-    });
+
 
 });

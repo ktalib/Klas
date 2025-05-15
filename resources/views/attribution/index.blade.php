@@ -20,10 +20,41 @@
           <h2 class="text-xl font-bold">Survey Record</h2>
           
           <div class="flex items-center space-x-4">
-            <button   class="flex items-center space-x-2 px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800">
+            <div class="relative inline-block text-left">
+              <button id="survey-dropdown-button" class="flex items-center space-x-2 px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800">
               <i data-lucide="plus" class="w-4 h-4"></i>
               <span>Create New Survey</span>
-            </button>
+              <i data-lucide="chevron-down" class="w-4 h-4"></i>
+              </button>
+              <div id="survey-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+              <div class="py-1">
+              <a href="{{ route('attribution.create', ['is' => 'primary']) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i data-lucide="file-plus" class="w-4 h-4 mr-2"></i>
+                Create Primary Survey
+              </a>
+              <a href="{{ route('attribution.create', ['is' => 'secondary']) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i data-lucide="layers" class="w-4 h-4 mr-2"></i>
+                Create Secondary Survey
+              </a>
+              </div>
+              </div>
+            </div>
+            <script>
+              document.addEventListener('DOMContentLoaded', function() {
+              const dropdownButton = document.getElementById('survey-dropdown-button');
+              const dropdownMenu = document.getElementById('survey-dropdown-menu');
+              
+              dropdownButton.addEventListener('click', function() {
+              dropdownMenu.classList.toggle('hidden');
+              });
+              
+              document.addEventListener('click', function(event) {
+              if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+              dropdownMenu.classList.add('hidden');
+              }
+              });
+              });
+            </script>
             <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
               <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
               <span>Export</span>
