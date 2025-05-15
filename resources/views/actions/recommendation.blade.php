@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('page-title')
-    {{ __('SECTIONAL TITLING  MODULE') }}
+    {{ __('Planning Recommendation') }}
 @endsection
 
 <style>
@@ -97,14 +97,22 @@
 
                 <div class="modal-content8 p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-medium">Planning Recommendation <span
-                                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $statusClass }}">
+                        <h2 class="text-lg font-medium">
+                            Planning Recommendation 
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $statusClass }}">
                                 <i data-lucide="{{ $statusIcon }}" class="w-3 h-3 mr-1"></i>
                                 {{ $application->planning_recommendation_status }}
-                            </span></h2>
+                            </span>
+                        </h2>
                         <button onclick="window.history.back()" class="text-gray-500 hover:text-gray-700">
                             <i data-lucide="x" class="w-5 h-5"></i>
                         </button>
+                    </div>
+                    <div class="text-sm mb-4">
+                        Approval Date:
+                        <span class="font-medium">
+                            {{ $application->planning_approval_date }}
+                        </span>
                     </div>
 
                     <div class="py-2">
@@ -263,199 +271,54 @@
                                 </form>
                             </div>
 
-                            <script>
-                                console.log("JS loaded successfully"); // Debug log
 
-                                document.addEventListener('DOMContentLoaded', function() {
-                                    // Tab switching functionality
-                                    const tabButtons = document.querySelectorAll('.tab-button');
-                                    const tabContents = document.querySelectorAll('.tab-content');
-                                    tabButtons.forEach(button => {
-                                        button.addEventListener('click', function() {
-                                            const tabId = this.getAttribute('data-tab');
-                                            // Deactivate all tabs
-                                            tabButtons.forEach(btn => btn.classList.remove('active'));
-                                            tabContents.forEach(content => content.classList.remove('active'));
-                                            this.classList.add('active');
-                                            document.getElementById(`${tabId}-tab`).classList.add('active');
-                                        });
-                                    });
-
-                                    // Close modal button
-                                    document.getElementById('closeModal').addEventListener('click', function() {
-                                        // In a real application, this would close the modal
-                                        alert('Modal closed');
-                                    });
-
-                                    // Print Planning Recommendation using a new window
-                                    document.getElementById('print-planning-recommendation').addEventListener('click', function(e) {
-                                        e.preventDefault();
-                                        try {
-                                            console.log('Print button clicked'); // Debug log
-
-                                            // Create a new window with just the planning recommendation content
-                                            const printWindow = window.open('', '_blank', 'height=800,width=800');
-
-                                            // Get the direct URL to the planning recommendation with the print parameter
-                                            const applicationId = document.getElementById('application_id').value;
-                                            const printUrl =
-                                                `{{ url('planning-recommendation/print') }}/${applicationId}?url=print`;
-
-                                            // Navigate the new window to this URL
-                                            printWindow.location.href = printUrl;
-
-                                            // Set up listener for when content is loaded
-                                            printWindow.onload = function() {
-                                                setTimeout(function() {
-                                                    printWindow.focus();
-                                                    printWindow.print();
-                                                }, 1000); // Short delay to ensure content is fully loaded
-                                            };
-                                        } catch (error) {
-                                            console.error('Error printing:', error);
-                                            alert('There was an error during printing. See console for details.');
-                                        }
-                                    });
-
-                                    // Toggle reason field based on decision
-                                    const decisionRadios = document.querySelectorAll('input[name="decision"]');
-                                    const reasonContainer = document.getElementById('reasonContainer');
-                                    decisionRadios.forEach(radio => {
-                                        radio.addEventListener('change', function() {
-                                            reasonContainer.style.display = (this.value === 'decline') ? 'block' : 'none';
-                                        });
-                                    });
-                                });
-
-                                // Separate the form handling function
-                                function handlePlanningRecommendation(e) {
-                                    e.preventDefault();
-                                    showPreloader();
-                                    const submitBtn = document.getElementById('planningRecommendationSubmitBtn');
-                                    if (submitBtn) {
-                                        submitBtn.disabled = true;
-                                    }
-                                    const applicationId = document.getElementById('application_id').value;
-                                    const decision = document.querySelector('input[name="decision"]:checked').value;
-                                    const approvalDate = document.getElementById('approval-date').value;
-                                    const comments = document.getElementById('comments')?.value || '';
-
-                                    fetch('{{ url('planning-recommendation/update') }}', {
-                                            method: 'POST',
-                                            headers: {
-                                                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                                                'Content-Type': 'application/json',
-                                                'Accept': 'application/json'
-                                            },
-                                            body: JSON.stringify({
-                                                application_id: applicationId,
-                                                status: decision,
-                                                approval_date: approvalDate,
-                                                comments: comments
-                                            })
-                                        })
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            hidePreloader();
-                                            submitBtn.disabled = false;
-                                            if (data.success) {
-                                                Swal.fire({
-                                                    icon: 'success',
-                                                    title: 'Success!',
-                                                    text: 'Planning recommendation updated successfully!',
-                                                    confirmButtonColor: '#10B981'
-                                                }).then(() => {
-                                                    // Redirect to print URL instead of reloading
-                                                    const applicationId = document.getElementById('application_id').value;
-                                                    const printUrl =
-                                                        `{{ url('planning-recommendation/print') }}/${applicationId}?url=print`;
-                                                    window.location.href = printUrl;
-                                                });
-                                            } else {
-                                                Swal.fire({
-                                                    icon: 'error',
-                                                    title: 'Error',
-                                                    text: data.message || 'Something went wrong!',
-                                                    confirmButtonColor: '#EF4444'
-                                                });
-                                            }
-                                        })
-                                        .catch(error => {
-                                            console.error('Error:', error);
-                                            hidePreloader();
-                                            submitBtn.disabled = false;
-                                            Swal.fire({
-                                                icon: 'error',
-                                                title: 'Error',
-                                                text: 'An error occurred while updating planning recommendation.',
-                                                confirmButtonColor: '#EF4444'
-                                            });
-                                        });
-                                    return false;
-                                }
-
-                                function showPreloader() {
-                                    Swal.fire({
-                                        title: 'Processing...',
-                                        html: 'Approval',
-                                        allowOutsideClick: false,
-                                        allowEscapeKey: false,
-                                        didOpen: () => {
-                                            Swal.showLoading();
-                                        }
-                                    });
-                                }
-
-                                function hidePreloader() {
-                                    Swal.close();
-                                }
-                            </script>
                         </div>
-                
 
 
 
 
 
 
-                    <!-- Final Bill Tab -->
-                    <div id="final-tab"
-                        class="tab-content {{ request()->query('url') != 'phy_planning' ? 'active' : '' }}">
+
+                        <!-- Final Bill Tab -->
+                        <div id="final-tab"
+                            class="tab-content">
 
 
-                        <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
-                            <div class="p-4 border-b">
-                                <h3 class="text-sm font-medium">Planning Recommendation</h3>
-                                <p class="text-xs text-gray-500"></p>
-                            </div>
-                            <input type="hidden" id="application_id" value="{{ $application->id }}">
-                            <input type="hidden" name="fileno" value="{{ $application->fileno }}">
-                            <div class="p-4 space-y-4">
+                            <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                                <div class="p-4 border-b">
+                                    <h3 class="text-sm font-medium">Planning Recommendation</h3>
+                                    <p class="text-xs text-gray-500"></p>
+                                </div>
+                                <input type="hidden" id="application_id" value="{{ $application->id }}">
+                                <input type="hidden" name="fileno" value="{{ $application->fileno }}">
+                                <div class="p-4 space-y-4">
 
-                                @include('actions.planning_recomm')
-                                <hr class="my-4">
+                                    @include('actions.planning_recomm')
+                                    <hr class="my-4">
 
-                                <div class="flex justify-between items-center">
-                                    <div class="flex gap-2">
-                                        <button onclick="window.history.back()"
-                                            class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-white hover:bg-gray-50">
-                                            <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
-                                            Back
-                                        </button>
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex gap-2">
+                                            <button onclick="window.history.back()"
+                                                class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-white hover:bg-gray-50">
+                                                <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
+                                                Back
+                                            </button>
 
-                                        <button type="button" id="print-planning-recommendation"
-                                            class="flex items-center px-3 py-1 text-xs bg-green-700 text-white rounded-md hover:bg-gray-800">
-                                            <i data-lucide="printer-check" class="w-3.5 h-3.5 mr-1.5"></i>
-                                            Print
-                                        </button>
+                                            <button type="button" id="print-planning-recommendation"
+                                                class="flex items-center px-3 py-1 text-xs bg-green-700 text-white rounded-md hover:bg-gray-800">
+                                                <i data-lucide="printer-check" class="w-3.5 h-3.5 mr-1.5"></i>
+                                                Print
+                                            </button>
 
-                                        <!-- Fallback Print Link -->
-                                        <a href="{{ url('planning-recommendation/print') }}/{{ $application->id }}?url=print"
-                                            target="_blank"
-                                            class="flex items-center px-3 py-1 text-xs bg-blue-700 text-white rounded-md hover:bg-blue-800">
-                                            <i data-lucide="external-link" class="w-3.5 h-3.5 mr-1.5"></i>
-                                            Print
-                                        </a>
+                                            <!-- Fallback Print Link -->
+                                            <a href="{{ url('planning-recommendation/print') }}/{{ $application->id }}?url=print"
+                                                target="_blank"
+                                                class="flex items-center px-3 py-1 text-xs bg-blue-700 text-white rounded-md hover:bg-blue-800">
+                                                <i data-lucide="external-link" class="w-3.5 h-3.5 mr-1.5"></i>
+                                                Print
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -463,11 +326,159 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Footer -->
-        @include('admin.footer')
+            <!-- Footer -->
+            @include('admin.footer')
+        </div>
     </div>
     </div>
-    </div>
+
+
+    <script>
+        console.log("JS loaded successfully"); // Debug log
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    // Deactivate all tabs
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+
+            // Close modal button
+            document.getElementById('closeModal').addEventListener('click', function() {
+                // In a real application, this would close the modal
+                alert('Modal closed');
+            });
+
+            // Print Planning Recommendation using a new window
+            document.getElementById('print-planning-recommendation').addEventListener('click', function(e) {
+                e.preventDefault();
+                try {
+                    console.log('Print button clicked'); // Debug log
+
+                    // Create a new window with just the planning recommendation content
+                    const printWindow = window.open('', '_blank', 'height=800,width=800');
+
+                    // Get the direct URL to the planning recommendation with the print parameter
+                    const applicationId = document.getElementById('application_id').value;
+                    const printUrl =
+                        `{{ url('planning-recommendation/print') }}/${applicationId}?url=print`;
+
+                    // Navigate the new window to this URL
+                    printWindow.location.href = printUrl;
+
+                    // Set up listener for when content is loaded
+                    printWindow.onload = function() {
+                        setTimeout(function() {
+                            printWindow.focus();
+                            printWindow.print();
+                        }, 1000); // Short delay to ensure content is fully loaded
+                    };
+                } catch (error) {
+                    console.error('Error printing:', error);
+                    alert('There was an error during printing. See console for details.');
+                }
+            });
+
+            // Toggle reason field based on decision
+            const decisionRadios = document.querySelectorAll('input[name="decision"]');
+            const reasonContainer = document.getElementById('reasonContainer');
+            decisionRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    reasonContainer.style.display = (this.value === 'decline') ? 'block' : 'none';
+                });
+            });
+        });
+
+        // Separate the form handling function
+        function handlePlanningRecommendation(e) {
+            e.preventDefault();
+            showPreloader();
+            const submitBtn = document.getElementById('planningRecommendationSubmitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+            }
+            const applicationId = document.getElementById('application_id').value;
+            const decision = document.querySelector('input[name="decision"]:checked').value;
+            const approvalDate = document.getElementById('approval-date').value;
+            const comments = document.getElementById('comments')?.value || '';
+
+            fetch('{{ url('planning-recommendation/update') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        application_id: applicationId,
+                        status: decision,
+                        approval_date: approvalDate,
+                        comments: comments
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    hidePreloader();
+                    submitBtn.disabled = false;
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Planning recommendation updated successfully!',
+                            confirmButtonColor: '#10B981'
+                        }).then(() => {
+                            // Redirect to print URL instead of reloading
+                            const applicationId = document.getElementById('application_id').value;
+                            const printUrl =
+                                `{{ url('planning-recommendation/print') }}/${applicationId}?url=print`;
+                            window.location.href = printUrl;
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'Something went wrong!',
+                            confirmButtonColor: '#EF4444'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    hidePreloader();
+                    submitBtn.disabled = false;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while updating planning recommendation.',
+                        confirmButtonColor: '#EF4444'
+                    });
+                });
+            return false;
+        }
+
+        function showPreloader() {
+            Swal.fire({
+                title: 'Processing...',
+                html: 'Approval',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+        }
+
+        function hidePreloader() {
+            Swal.close();
+        }
+    </script>
 @endsection

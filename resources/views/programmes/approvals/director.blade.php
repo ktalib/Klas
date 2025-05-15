@@ -157,8 +157,9 @@
       <div class="text-3xl font-bold">{{ $totalPrimaryApplications + $totalUnitApplications }}</div>
       <div class="flex items-center mt-2 text-sm">
         <i data-lucide="info" class="text-blue-500 w-4 h-4 mr-1"></i>
-        <span class="text-blue-500">All Applications in system</span>
+        <span class="text-blue-500">All Applications in system </span>
       </div>
+      <span class="text-xs italic">(Primary + Unit Applications)</span>
     </div>
      
     <div class="stat-card">
@@ -296,8 +297,14 @@
                               <span>View Application</span>
                             </a>
                           </li>
+                          <li>
+                            <a href="{{ route('actions.director-approval', ['id' => $application->id]) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                              <i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>
+                              <span>Approve</span>
+                            </a>
+                          </li>
                              <li>
-                                <a href="{{ route('actions.director-approval', ['id' => $application->id]) }}}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                                <a href="{{ route('actions.director-approval', ['id' => $application->id]) }}?url=view" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                     <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
                                     <span>View approval</span>
                                 </a>
@@ -401,7 +408,13 @@
                         </a>
                       </li>
                       <li>
-                        <a href="{{ route('sub-actions.director-approval', ['id' => $application->id]) }}}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                        <a href="{{ route('sub-actions.director-approval', ['id' => $unitApplication->id]) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                          <i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>
+                          <span>Approve</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="{{ route('sub-actions.director-approval', ['id' => $unitApplication->id]) }}?url=view" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                           <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
                           <span>View approval</span>
                         </a>

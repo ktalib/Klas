@@ -37,6 +37,25 @@
         <!-- Header -->
         @include('admin.header')
         <!-- Dashboard Content -->
+            @php
+    $statusClass = match(strtolower($application->application_status ?? '')) {
+      'approve' => 'bg-green-100 text-green-800',
+      'approved' => 'bg-green-100 text-green-800',
+      'pending' => 'bg-yellow-100 text-yellow-800',
+      'decline' => 'bg-red-100 text-red-800',
+      'declined' => 'bg-red-100 text-red-800',
+      default => 'bg-gray-100 text-gray-800'
+    };
+    
+    $statusIcon = match(strtolower($application->application_status ?? '')) {
+      'approve' => 'check-circle',
+      'approved' => 'check-circle',
+      'pending' => 'clock',
+      'decline' => 'x-circle',
+      'declined' => 'x-circle',
+      default => 'help-circle'
+    };
+  @endphp
         <div class="p-6">
         
             <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
@@ -44,10 +63,19 @@
 
                 <div class="modal-content p-6">
                     <div class="flex justify-between items-center mb-4">
-                      <h2 class="text-lg font-medium">{{$PageTitle}}</h2>
-                      <button   class="text-gray-500 hover:text-gray-700" onclick="window.history.back()">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                      </button>
+                      <div>
+                        <h2 class="text-lg font-medium">
+                          {{$PageTitle}}   
+                          <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $statusClass }}">
+                            <i data-lucide="{{ $statusIcon }}" class="w-3 h-3 mr-1"></i>
+                            {{$application->application_status }}
+                          </span>
+                        </h2>
+                        <p class="text-xs text-gray-500 mt-1">
+                          Approval Date: 
+                          {{ $application->approval_date ? \Carbon\Carbon::parse($application->approval_date)->format('Y-m-d') : '' }}
+                        </p>
+                      </div>
                     </div>
                     
                     <div class="py-2">
@@ -60,7 +88,27 @@
                           <div>
                             <h3 class="text-sm font-medium text-blue-800">Original Owner</h3>
                             <p class="text-xs text-gray-700">
-                              {{ $application->primary_applicant_title ?? '' }} {{ $application->primary_first_name ?? '' }} {{ $application->primary_surname ?? '' }}
+
+                              @if ($application->primary_applicant_type == 'individual')
+                          {{ $application->applicant_title }} {{ $application->primary_first_name }}
+                          {{ $application->primary_surname }}
+                        @elseif($application->primary_applicant_type == 'corporate')
+                          {{ $application->primary_rc_number }} {{ $application->primary_corporate_name }}
+                        @elseif($application->primary_applicant_type == 'multiple')
+                          @php
+                            $names = @json_decode($application->primary_multiple_owners_names, true);
+                            if (is_array($names) && count($names) > 0) {
+                              echo implode(', ', $names);
+                            } else {
+                              echo $application->primary_multiple_owners_names;
+                            }
+                          @endphp
+                        @endif
+     
+                    @php
+                      $is_view = (request()->query('url') === 'view') ? 'none' : 'no';
+                    @endphp
+
                               <span class="inline-flex items-center px-2 py-0.5 ml-1 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
                                 <i data-lucide="link" class="w-3 h-3 mr-1"></i>File No: {{ $application->primary_fileno ?? 'N/A' }}
                               </span>
@@ -77,7 +125,23 @@
                             </p>
                           </div>
                           <div class="text-right">
-                            <h3 class="text-sm font-medium">{{ $application->applicant_title ?? '' }} {{ $application->surname ?? '' }} {{ $application->first_name ?? '' }}</h3>
+                            <h3 class="text-sm font-medium">
+                               @if ($application->applicant_type == 'individual')
+                          {{ $application->applicant_title }} {{ $application->first_name }}
+                          {{ $application->surname }}
+                        @elseif($application->applicant_type == 'corporate')
+                          {{ $application->rc_number }} {{ $application->corporate_name }}
+                        @elseif($application->applicant_type == 'multiple')
+                          @php
+                            $names = @json_decode($application->multiple_owners_names, true);
+                            if (is_array($names) && count($names) > 0) {
+                              echo implode(', ', $names);
+                            } else {
+                              echo $application->multiple_owners_names;
+                            }
+                          @endphp
+                        @endif
+                            </h3>
                             <p class="text-xs text-gray-600 mt-1">Applicant</p>
                           </div>
                         </div>
@@ -85,7 +149,7 @@
                 
                       <!-- Tabs Navigation -->
                       
-                    
+                     <div style="display:{{$is_view}}">
 
                       <div class="grid grid-cols-3 gap-2 mb-4">
                       
@@ -295,10 +359,11 @@
                       
                           <div class="flex justify-between items-center">
                           <div class="flex gap-2">
-                          <a  href="{{route('sectionaltitling.secondary')}}" class="flex items-center px-3 py-1 text-xs bg-white text-black p-2 border border-gray-500 rounded-md hover:bg-gray-800">
-                            <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
-                            Back
-                          </a>  
+                             <button type="button" onclick="window.history.back();" class="flex items-center px-3 py-1 text-xs bg-white text-black p-2 border border-gray-500 rounded-md hover:bg-gray-800">
+                                  <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
+                                  Back
+                              </button> 
+ 
                           </div>
                           </div>
                           </div>
@@ -348,11 +413,10 @@
                               <div class="flex justify-between items-center">
                                  
                                 <div class="flex gap-2">
-                                  <a  href="{{route('sectionaltitling.secondary')}}" class="flex items-center px-3 py-1 text-xs bg-white text-black p-2 border border-gray-500 rounded-md hover:bg-gray-800">
+                                  <button type="button" onclick="window.history.back();" class="flex items-center px-3 py-1 text-xs bg-white text-black p-2 border border-gray-500 rounded-md hover:bg-gray-800">
                                   <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
-                                 Back
-                                 </a> 
-                               
+                                  Back
+                                  </button> 
                                   <button type="submit" class="flex items-center px-3 py-1 text-xs bg-green-700 text-white rounded-md hover:bg-gray-800">
                                       <i data-lucide="send-horizontal" class="w-3.5 h-3.5 mr-1.5"></i>
                                       Submit
@@ -364,6 +428,7 @@
                             </form>
                           </div>
                         </div>
+                       </div>
                       <!-- Final Bill Tab -->
                       <div id="final-tab" class="tab-content">
                         @include('actions.final_bill')

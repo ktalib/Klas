@@ -466,6 +466,8 @@ class STMemoController extends Controller
             'applicant_name' => 'required',
             'sections' => 'required|array',
             'shared_facilities' => 'required'
+        ], [
+            'sections.required' => 'Unit Measurements Required'
         ]);
         
         // Generate next memo number

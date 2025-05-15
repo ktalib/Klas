@@ -136,15 +136,15 @@
                      @if(request()->has('url') && request()->get('url') === 'phy_planning')
                        Planning Recommendation Approval
                      @else
-                       Planning Recommendation
+                      View Planning Recommendation
                      @endif
                     </span>
                </a>
             </li>
          @else
-            <li class="opacity-50 cursor-not-allowed">
-               <a href="#" class="w-full text-left px-4 py-2 flex items-center space-x-2">
-                  <i data-lucide="clipboard-check" class="w-4 h-4 text-gray-500"></i>
+            <li >
+               <a href="{{ route('actions.recommendation', ['id' => $PrimaryApplication->id]) }}" class="w-full text-left px-4 py-2 flex items-center space-x-2">
+                  <i data-lucide="clipboard-check" class="w-4 h-4 text-blue-500"></i>
                   <span>Planning Recommendation</span>
                </a>
             </li>
@@ -153,9 +153,9 @@
          @if(!request()->has('url') || (request()->get('url') !== 'phy_planning' && request()->get('url') !== 'recommendation'))
      
       <li>
-         <a href="{{ route('actions.director-approval', ['id' => $PrimaryApplication->id]) }}" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+         <a href="{{ route('actions.director-approval', ['id' => $PrimaryApplication->id]) }}?url=view" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
          <i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>
-         <span>Director's Approval</span>
+         <span>View Director's Approval</span>
          </a>
       </li>
        </li>

@@ -14,9 +14,10 @@ class SubActionsController extends Controller
         $application = DB::connection('sqlsrv')->table('subapplications')
             ->select(
                 'subapplications.*', 
-                'subapplications.id as applicationID', // Add alias for applicationID
-                'subapplications.main_application_id as main_application_id', // Add main_application_id if it exists
+                'subapplications.id as applicationID', 
+                'subapplications.main_application_id as main_application_id',  
                 'mother_applications.fileno as primary_fileno',
+                'mother_applications.applicant_type as primary_applicant_type',
                 'mother_applications.first_name as primary_first_name',
                 'mother_applications.surname as primary_surname',
                 'mother_applications.applicant_title as primary_applicant_title',

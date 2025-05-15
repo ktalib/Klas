@@ -34,7 +34,7 @@
               </a>
               <a href="{{ route('attribution.create', ['is' => 'secondary']) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                 <i data-lucide="layers" class="w-4 h-4 mr-2"></i>
-                Create Secondary Survey
+                Create Unit Survey
               </a>
               </div>
               </div>
@@ -70,6 +70,7 @@
                 <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Block No</th>
                 <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Approved Plan No</th>
                 <th class="px-4 py-2 text-left text-sm font-medium text-green-500">TP Plan No</th>
+                 <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Survey Type</th>
                 <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Control Beacon Name</th>
                 <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Control Beacon X</th>
                 <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Control Beacon Y</th>
@@ -99,6 +100,16 @@
                 <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->block_no }}</td>
                 <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->approved_plan_no }}</td>
                 <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->tp_plan_no }}</td>
+                <td class="px-4 py-2 text-sm">
+                  @if(!empty($survey->application_id))
+                  <span class="px-2 py-1 rounded-full text-white bg-green-500">Primary</span>
+                    @elseif(!empty($survey->sub_application_id))
+                  <span class="px-2 py-1 rounded-full text-white bg-blue-500">Unit</span>
+                  
+                  @else
+                  <span class="px-2 py-1 rounded-full text-white bg-gray-500">Unknown</span>
+                  @endif
+                </td>
                 <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->beacon_control_name }}</td>
                 <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Control_Beacon_Coordinate_X }}</td>
                 <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Control_Beacon_Coordinate_Y }}</td>

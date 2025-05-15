@@ -32,7 +32,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="space-y-4">
                         <div class="flex items-center">
-                            <span class="text-gray-600 font-medium w-40">File No:
+                            <span class="text-gray-600 font-medium w-30">File No:
                                 {{ isset($isPrimary) && $isPrimary ? $application->fileno : $application->primary_fileno }}</span>
 
                         </div>

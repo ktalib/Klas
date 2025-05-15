@@ -15,7 +15,7 @@
      <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8 border border-gray-200 mb-8">
           <div class="flex justify-between items-center mb-6 border-b pb-4">
                <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Sectional Titling Memo</h2>
+                    <h2 class="text-2xl font-bold text-gray-800">Physical Planning Memo</h2>
                     <p class="text-sm text-gray-500">Memo #: {{ $memo->memo_no }}</p>
                </div>
                <div class="flex items-center gap-2">
