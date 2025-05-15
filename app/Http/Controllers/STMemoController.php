@@ -509,7 +509,7 @@ class STMemoController extends Controller
             
         }
         
-        return redirect()->route('stmemo.viewSTMemo', $memoId)->with('success', 'Physical Planning Memo has been successfully generated');
+        return redirect()->route('stmemo.view', $request->application_id)->with('success', 'Physical Planning Memo has been successfully generated');
     }
     
     public function viewSTMemo($id)

@@ -273,8 +273,8 @@
                                 $sharedAreasText = '';
                             }
                         @endphp
-                        <textarea name="shared_facilities" rows="3"
-                            class="w-full border border-gray-500 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">{{ $sharedAreasText }}</textarea>
+                        <textarea name="shared_facilities" rows="3" readonly
+                            class="w-full border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700 focus:ring-0 focus:border-gray-300">{{ !empty($sharedAreasText) ? $sharedAreasText : 'No Records Found' }}</textarea>
                     </div>
                     <div class="mb-4">
                         {{-- <div class="flex justify-between items-center mb-2">
@@ -294,7 +294,9 @@
                                         $unitMeasurement = '';
                                         if(isset($unitMeasurements)) {
                                             foreach($unitMeasurements as $measurement) {
-                                                if($measurement->unit_no == $buyer->unit_no) {
+                                                // Match both unit_no and buyer_id to get the correct measurement
+                                                if($measurement->unit_no == $buyer->unit_no && 
+                                                   (isset($measurement->buyer_id) && isset($buyer->id) && $measurement->buyer_id == $buyer->id)) {
                                                     $unitMeasurement = $measurement->measurement;
                                                     break;
                                                 }
@@ -304,35 +306,22 @@
                                     <div
                                         class="measurement-row grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-md bg-gray-50">
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Section/Unit
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Unit
                                                 No</label>
-                                            <input type="text" name="sections[]" value="{{ $buyer->unit_no ?? '' }}"
-                                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <input type="text" name="sections[]" value="{{ $buyer->unit_no ?? '' }}" readonly
+                                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700 focus:outline-none focus:ring-0 focus:border-gray-300 sm:text-sm">
                                         </div>
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-1">Measurement
                                                 (sqm)</label>
-                                            <input type="text" name="measurements[]" value="{{ $unitMeasurement }}"
-                                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <input type="text" name="measurements[]" value="{{ $unitMeasurement }}" readonly
+                                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700 focus:outline-none focus:ring-0 focus:border-gray-300 sm:text-sm">
                                         </div>
                                     </div>
                                 @endforeach
                             @else
-                                <div
-                                    class="measurement-row grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-md bg-gray-50">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Section/Unit No</label>
-                                        <input type="text" name="sections[]"
-                                            value="{{ isset($isPrimary) && $isPrimary ? '' : $application->unit_number ?? '' }}"
-                                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Measurement
-                                            (sqm)</label>
-                                        <input type="text" name="measurements[]"
-                                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                    </div>
-
+                                <div class="p-4 border rounded-md bg-gray-50 text-center text-gray-600">
+                                    No Records Found
                                 </div>
                             @endif
                         </div>
@@ -344,25 +333,22 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Buyer Title</th>
+                                    
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Buyer Name</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Section/Unit No</th>
+                                        Unit No</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @if (count($conveyanceData) > 0)
                                     @foreach ($conveyanceData as $buyer)
                                         <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $buyer->buyer_title ?? 'N/A' }}</td>
+                                             
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $buyer->buyer_name ?? 'N/A' }}</td>
+                                                {{ $buyer->buyer_title ?? 'N/A' }} {{ $buyer->buyer_name ?? 'N/A' }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {{ $buyer->unit_no ?? 'N/A' }}</td>
                                         </tr>

@@ -53,8 +53,8 @@
                          <div class="mt-3">
                                <span class="font-semibold text-gray-600 uppercase text-sm">RE:</span>
                                <span class="ml-2 text-gray-800 font-medium uppercase">APPLICATION FOR SECTIONAL TITLING IN RESPECT OF 
-                                     <span class="underline">{{ strtoupper($memo->property_location) }}</span> BY 
-                                     <span class="underline">{{ strtoupper($memo->applicant_name) }}</span>
+                                     <span class="font-bold">{{ strtoupper($memo->property_location) }}</span> BY 
+                                     <span class="font-bold">{{ strtoupper($memo->applicant_name) }}</span>
                                </span>
                          </div>
                   </div>
@@ -65,13 +65,13 @@
                          The physical site inspection conducted revealed that this application is accessible, conforms with existing land use, and has shared common boundaries.
                     </p>
                     <p class="mb-4">
-                         The property is sub-divided into <span class="underline">{{ $measurements->count() }}</span> portions. 
+                         The property is sub-divided into <span class="font-bold">{{ $measurements->count() }}</span> portions. 
                          All portions are accessible, conform with existing land use, and share the following facilities: 
-                         <span class="underline">{{ $memo->shared_facilities }}</span> respective recommended measurements (See Overleat for the measurements)
+                         <span class="font-bold">{{ $memo->shared_facilities }}</span> respective recommended measurements (See Overleat for the measurements)
                     </p>
                     
                     <p>
-                         In view of the above facts and Section <span class="underline">12(3)</span> of Kano State Sectional and Systematic Land Titling Registration Law 2024 (1446AH), this application may be considered for recommendation. If you have no objection, please.
+                         In view of the above facts and Section <span class="font-bold">12(3)</span> of Kano State Sectional and Systematic Land Titling Registration Law 2024 (1446AH), this application may be considered for recommendation. If you have no objection, please.
                     </p>
                </div>
                
@@ -99,53 +99,44 @@
                     <p class="mb-4">Below are the respective recommended measurements and buyers for each section:</p>
                     
                     @php
-                    // Get conveyance data from mother_applications
-                    $buyersData = DB::connection('sqlsrv')
-                        ->table('mother_applications')
-                        ->where('id', $memo->application_id)
-                        ->value('conveyance');
-                        
-                    $buyersArray = [];
-                    if ($buyersData) {
-                        $decodedData = json_decode($buyersData, true);
-                        $buyers = isset($decodedData['records']) ? $decodedData['records'] : [];
-                        
-                        // Create an associative array with section numbers as keys
-                        foreach ($buyers as $buyer) {
-                            if (isset($buyer['sectionNo'])) {
-                                $buyersArray[$buyer['sectionNo']] = [
-                                    'title' => $buyer['buyerTitle'] ?? '',
-                                    'name' => $buyer['buyerName'] ?? 'N/A'
-                                ];
-                            }
-                        }
-                    }
+                    // Get measurements data with buyer information
+                    $measurementsWithBuyers = DB::connection('sqlsrv')
+                        ->table('st_unit_measurements as m')
+                        ->select('m.application_id', 'm.unit_no', 'm.measurement', 'm.buyer_id', 'b.buyer_title', 'b.buyer_name')
+                        ->leftJoin('buyer_list as b', function($join) {
+                            $join->on('b.id', '=', 'm.buyer_id')
+                                ->where('b.application_id', '=', DB::raw('m.application_id'));
+                        })
+                        ->where('m.application_id', $memo->application_id)
+                        ->orderBy('m.unit_no')
+                        ->orderBy('m.measurement')
+                        ->get();
                     @endphp
                     
                     <div class="my-4 border border-gray-200 rounded-md overflow-hidden">
                          <table class="min-w-full divide-y divide-gray-200">
                               <thead class="bg-gray-50">
                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Section/Unit No</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Measurement (sqm)</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buyer</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit No</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Measurement (sqm)</th>
                                    </tr>
                               </thead>
                               <tbody class="bg-white divide-y divide-gray-200">
-                                   @foreach($measurements as $measurement)
+                                   @foreach($measurementsWithBuyers as $item)
                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $measurement->section_no }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $measurement->measurement }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            @if(isset($buyersArray[$measurement->section_no]))
-                                                @if(!empty($buyersArray[$measurement->section_no]['title']))
-                                                    {{ $buyersArray[$measurement->section_no]['title'] }} 
+                                            @if(!empty($item->buyer_name))
+                                                @if(!empty($item->buyer_title))
+                                                    {{ $item->buyer_title }} 
                                                 @endif
-                                                {{ $buyersArray[$measurement->section_no]['name'] }}
+                                                {{ $item->buyer_name }}
                                             @else
                                                 N/A
                                             @endif
                                         </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->unit_no }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->measurement }}</td>
                                    </tr>
                                    @endforeach
                               </tbody>
