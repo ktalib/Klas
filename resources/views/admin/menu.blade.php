@@ -458,7 +458,7 @@
         </div>
         
         <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stGis">
-          <a href="/sectional-titling/gis/attribution" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <a href="{{route('gis.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('gis.index') ? 'active' : '' }}">
             <i data-lucide="database" class="h-3.5 w-3.5"></i>
             <span>Attribution</span>
           </a>

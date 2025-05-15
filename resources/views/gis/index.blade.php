@@ -5,6 +5,13 @@
 
 @include('sectionaltitling.partials.assets.css')
 @section('content')
+<style>
+    /* Required for proper z-index stacking and overflow */
+    .dropdown-wrapper { position: relative; }
+    .dropdown-menu { z-index: 1000; }
+    /* Ensure overflow is visible */
+    .overflow-x-auto { overflow-y: visible !important; }
+</style>
 <div class="flex-1 overflow-auto">
     <!-- Header -->
     @include('admin.header')
@@ -41,57 +48,105 @@
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MLSF No</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KANGIS File No</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">New KANGIS File No</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plot No</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Block No</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approved Plan No</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TP Plan No</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Old Title Serial No</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Old Title Page No</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Old Title Volume No</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                        <tr class="text-xs">
+                            <th class="table-header text-green-500">MLSF No</th>
+                            <th class="table-header text-green-500">KANGIS File No</th>
+                            <th class="table-header text-green-500">New KANGIS File No</th>
+                            <th class="table-header text-green-500">Plot No</th>
+                            <th class="table-header text-green-500">Block No</th>
+                            <th class="table-header text-green-500">Approved Plan No</th>
+                            <th class="table-header text-green-500">TP Plan No</th>
+                            <th class="table-header text-green-500">Old Title Serial No</th>
+                            <th class="table-header text-green-500">Old Title Page No</th>
+                            <th class="table-header text-green-500">Old Title Volume No</th>
+                            <th class="table-header text-green-500">Created At</th>
+                            <th class="table-header text-green-500">Action</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach($gisData as $data)
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $data->mlsfNo ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $data->kangisFileNo ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $data->NewKANGISFileno ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $data->plotNo ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $data->blockNo ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $data->approvedPlanNo ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $data->tpPlanNo ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $data->oldTitleSerialNo ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $data->oldTitlePageNo ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $data->oldTitleVolumeNo ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $data->created_at ? date('d M, Y', strtotime($data->created_at)) : 'N/A' }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <div class="relative" x-data="{ open: false }">
-                                    <button @click="open = !open" class="text-blue-600 hover:text-blue-900 focus:outline-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                        </svg>
+                        <tr class="text-xs">
+                            <td class="table-cell px-1 py-1 truncate">{{ $data->mlsfNo ?? 'N/A' }}</td>
+                            <td class="table-cell px-1 py-1 truncate">{{ $data->kangisFileNo ?? 'N/A' }}</td>
+                            <td class="table-cell px-1 py-1 truncate">{{ $data->NewKANGISFileno ?? 'N/A' }}</td>
+                            <td class="table-cell px-1 py-1 truncate">{{ $data->plotNo ?? 'N/A' }}</td>
+                            <td class="table-cell px-1 py-1 truncate">{{ $data->blockNo ?? 'N/A' }}</td>
+                            <td class="table-cell px-1 py-1 truncate">{{ $data->approvedPlanNo ?? 'N/A' }}</td>
+                            <td class="table-cell px-1 py-1 truncate">{{ $data->tpPlanNo ?? 'N/A' }}</td>
+                            <td class="table-cell px-1 py-1 truncate">{{ $data->oldTitleSerialNo ?? 'N/A' }}</td>
+                            <td class="table-cell px-1 py-1 truncate">{{ $data->oldTitlePageNo ?? 'N/A' }}</td>
+                            <td class="table-cell px-1 py-1 truncate">{{ $data->oldTitleVolumeNo ?? 'N/A' }}</td>
+                            <td class="table-cell px-1 py-1 truncate">{{ $data->created_at ? date('d M, Y', strtotime($data->created_at)) : 'N/A' }}</td>
+                            <td class="table-cell px-1 py-1 truncate">
+                                <div class="dropdown-wrapper" x-data="{ 
+                                    open: false,
+                                    toggle() {
+                                        this.open = !this.open;
+                                        if (this.open) {
+                                            this.$nextTick(() => {
+                                                // Get elements
+                                                const button = this.$refs.button;
+                                                const dropdown = this.$refs.dropdown;
+                                                const buttonRect = button.getBoundingClientRect();
+                                                
+                                                // Calculate appropriate position
+                                                const dropdownWidth = dropdown.offsetWidth;
+                                                
+                                                // Position dropdown to appear on the right of the button, not the left edge
+                                                // This ensures it's not at the screen edge
+                                                dropdown.style.position = 'fixed';
+                                                
+                                                // Align right edge of dropdown with right edge of the viewport, 
+                                                // but not further right than button position
+                                                const rightEdge = Math.min(window.innerWidth - 10, buttonRect.right + 10);
+                                                dropdown.style.left = (rightEdge - dropdownWidth) + 'px';
+                                                
+                                                // Decide whether to show above or below
+                                                const spaceBelow = window.innerHeight - buttonRect.bottom;
+                                                const dropdownHeight = dropdown.offsetHeight;
+                                                const showAbove = spaceBelow < dropdownHeight;
+                                                
+                                                if (showAbove) {
+                                                    dropdown.style.bottom = (window.innerHeight - buttonRect.top) + 'px';
+                                                    dropdown.style.top = 'auto';
+                                                } else {
+                                                    dropdown.style.top = buttonRect.bottom + 'px';
+                                                    dropdown.style.bottom = 'auto';
+                                                }
+                                            });
+                                        }
+                                    }
+                                }">
+                                    <button 
+                                        x-ref="button" 
+                                        @click.prevent="toggle()" 
+                                        class="text-gray-600 hover:text-blue-600 p-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ml-auto block">
+                                        <i data-lucide="more-vertical" class="h-5 w-5"></i>
                                     </button>
-                                    <div x-show="open" 
-                                         @click.away="open = false" 
-                                         class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                                        <div class="py-1" role="menu" aria-orientation="vertical">
-                                            <a href="{{ route('gis.view', $data->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
+                                    
+                                    <div 
+                                        x-ref="dropdown"
+                                        x-show="open" 
+                                        @click.away="open = false"
+                                        x-transition
+                                        class="dropdown-menu w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                                        style="display: none; z-index: 9999;"
+                                    >
+                                        <div class="py-1">
+                                            <a href="{{ route('gis.view', $data->id) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                <i data-lucide="eye" class="h-4 w-4 mr-2 text-gray-500"></i>
                                                 View
                                             </a>
-                                            <a href="{{ route('gis.edit', $data->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
-                                                Update
+                                            <a href="{{ route('gis.edit', $data->id) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                <i data-lucide="edit" class="h-4 w-4 mr-2 text-gray-500"></i>
+                                                Edit
                                             </a>
-                                            <form action="{{ route('gis.destroy', $data->id) }}" method="POST" class="inline">
+                                            <form action="{{ route('gis.destroy', $data->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" onclick="return confirm('Are you sure you want to delete this record?')" 
-                                                    class="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-gray-100" role="menuitem">
+                                                    class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                                    <i data-lucide="trash" class="h-4 w-4 mr-2 text-red-500"></i>
                                                     Delete
                                                 </button>
                                             </form>
@@ -113,4 +168,10 @@
 
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js" defer></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
 @endsection

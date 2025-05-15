@@ -100,10 +100,7 @@
                         <input type="text" id="districtName" name="districtName" class="w-full p-2 border border-gray-300 rounded-md text-sm">
                     </div>
                     
-                    <div class="space-y-2">
-                        <label for="lgaName" class="block text-sm font-medium text-gray-700">LGA Name</label>
-                        <input type="text" id="lgaName" name="lgaName" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
+                     @include('components.lga')
                     
                     <div class="space-y-2">
                         <label for="StateName" class="block text-sm font-medium text-gray-700">State Name</label>
