@@ -412,49 +412,6 @@
   <script>
     // Initialize Lucide icons
     lucide.createIcons();
-    
-    // Add click event listeners to sidebar items
-    document.querySelectorAll('.sidebar-item').forEach(item => {
-      item.addEventListener('click', () => {
-        // Remove active class from all items
-        document.querySelectorAll('.sidebar-item').forEach(i => {
-          i.classList.remove('active');
-          i.querySelector('[data-lucide="chevron-down"]')?.setAttribute('data-lucide', 'chevron-right');
-          lucide.createIcons();
-        });
-        
-        // Add active class to clicked item
-        item.classList.add('active');
-        item.querySelector('[data-lucide="chevron-right"]')?.setAttribute('data-lucide', 'chevron-down');
-        lucide.createIcons();
-      });
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.has-submenu').forEach(function (item) {
-      item.addEventListener('click', function () {
-        const submenu = this.nextElementSibling;
-        if (submenu.classList.contains('hidden')) {
-          submenu.classList.remove('hidden');
-        } else {
-          submenu.classList.add('hidden');
-        }
-      });
-    });
-  });
-
-        // Add event listeners for the back buttons
-    document.addEventListener('DOMContentLoaded', function() {
-    // Footer back button
-    document.getElementById('back').addEventListener('click', function() {
-    window.history.back();
-    });
-
-    // Header close button
-    document.getElementById('closePaymentBtn').addEventListener('click', function() {
-    window.history.back();
-    });
-    });
   </script>
   @yield('footer-scripts')
   <script>
