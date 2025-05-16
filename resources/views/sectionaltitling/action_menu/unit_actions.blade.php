@@ -18,17 +18,17 @@
          <span>Edit Record</span>
          </button>
       </li>
-      <li>
+      {{-- <li>
          <a href="{{ route('programmes.generate_memo', $app->id) }}"  class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2"
             data-id="{{ $app->id }}" onclick="generateMemo('{{ $app->id }}')">
          <i data-lucide="file-text" class="w-4 h-4 text-indigo-500"></i>
-         <span>Generate Memo</span>
+         <span>Generate ST Memo</span>
          </a>
-      </li>
+      </li> --}}
       <li>
-         <a href="{{ route('programmes.generate_memo', $app->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+         <a href="{{ route('programmes.view_memo_primary', $app->mother_id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
          <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
-         <span>View Memo</span>
+         <span>View ST Memo</span>
          </a>
       </li>
       <li> 

@@ -201,34 +201,20 @@ class PrimaryActionsController extends Controller
     public function getConveyance($applicationId)
     {
         try {
-            $application = DB::connection('sqlsrv')
-                ->table('mother_applications')
-                ->where('id', $applicationId)
-                ->first();
-
-            // Initialize records array
-            $records = [];
-
-            if ($application && $application->conveyance) {
-                $conveyanceData = json_decode($application->conveyance, true);
-
-                // Handle both old and new data formats
-                if (isset($conveyanceData['records']) && is_array($conveyanceData['records'])) {
-                    $records = $conveyanceData['records'];
-                } elseif (isset($conveyanceData['buyerName']) && isset($conveyanceData['sectionNo'])) {
-                    // Convert old format to new format
-                    $records = [[
-                        'buyerName' => $conveyanceData['buyerName'],
-                        'sectionNo' => $conveyanceData['sectionNo']
-                    ]];
-                }
-            }
+            // Query the buyer_list table instead of relying on the JSON field
+            $records = DB::connection('sqlsrv')
+                ->table('buyer_list')
+                ->where('application_id', $applicationId)
+                ->select('id', 'buyer_title', 'buyer_name', 'unit_no', 'unit_measurement_id')
+                ->get()
+                ->toArray();
 
             return response()->json([
                 'success' => true,
                 'records' => $records
             ]);
         } catch (\Exception $e) {
+            Log::error('Error retrieving buyers: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -250,69 +236,51 @@ class PrimaryActionsController extends Controller
                 'records.*.buyerTitle' => 'nullable|string',
             ]);
 
-            // Fetch current conveyance data
-            $application = DB::connection('sqlsrv')
-                ->table('mother_applications')
-                ->where('id', $validated['application_id'])
-                ->select('conveyance')
-                ->first();
+            $applicationId = $validated['application_id'];
 
-            $existingRecords = [];
-
-            if ($application && $application->conveyance) {
-                $decoded = json_decode($application->conveyance, true);
-                if (isset($decoded['records']) && is_array($decoded['records'])) {
-                    $existingRecords = $decoded['records'];
-                }
-            }
-
-            // Create a set of existing "buyerName|sectionNo" combinations to avoid duplicates
-            $existingKeys = collect($existingRecords)->map(function ($item) {
-                return strtolower(trim($item['buyerName'])) . '|' . trim($item['sectionNo']);
-            })->toArray();
-
-            // Merge in new records without duplication
+            // Process each record
             foreach ($validated['records'] as $record) {
-                $key = strtolower(trim($record['buyerName'])) . '|' . trim($record['sectionNo']);
-                if (!in_array($key, $existingKeys)) {
-                    $existingRecords[] = [
-                        'buyerTitle' => $record['buyerTitle'] ?? '',
-                        'buyerName'  => $record['buyerName'],
-                        'sectionNo'  => $record['sectionNo'],
-                    ];
-                    $existingKeys[] = $key;
+                // Check if this buyer already exists (by buyer name and unit no)
+                $existing = DB::connection('sqlsrv')
+                    ->table('buyer_list')
+                    ->where('application_id', $applicationId)
+                    ->where('buyer_name', $record['buyerName'])
+                    ->where('unit_no', $record['sectionNo'])
+                    ->first();
+
+                if (!$existing) {
+                    // Insert new record
+                    DB::connection('sqlsrv')->table('buyer_list')->insert([
+                        'application_id' => $applicationId,
+                        'buyer_title' => $record['buyerTitle'] ?? '',
+                        'buyer_name' => $record['buyerName'],
+                        'unit_no' => $record['sectionNo'],
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
                 }
             }
 
-            // Save updated conveyance
-            $updated = DB::connection('sqlsrv')
-                ->table('mother_applications')
-                ->where('id', $validated['application_id'])
-                ->update([
-                    'conveyance' => json_encode(['records' => $existingRecords]),
-                    'updated_at' => now()
-                ]);
-
-            if ($updated) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Conveyance data updated successfully',
-                    'records' => $existingRecords
-                ]);
-            }
+            // Get updated records list for response
+            $updatedRecords = DB::connection('sqlsrv')
+                ->table('buyer_list')
+                ->where('application_id', $applicationId)
+                ->select('id', 'buyer_title', 'buyer_name', 'unit_no', 'unit_measurement_id')
+                ->get();
 
             return response()->json([
-                'success' => false,
-                'message' => 'Failed to update record or record not found'
+                'success' => true,
+                'message' => 'Conveyance data updated successfully',
+                'records' => $updatedRecords
             ]);
         } catch (\Exception $e) {
+            Log::error('Error updating buyers: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
             ], 500);
         }
     }
-
 
     /**
      * Add a single buyer to the conveyance data
@@ -328,79 +296,49 @@ class PrimaryActionsController extends Controller
                 'records.*.buyerTitle' => 'nullable|string',
             ]);
 
-            // Validate sectionNo against an existing table (e.g., `sections`)
-            $invalidSections = collect($validated['records'])
-                ->pluck('sectionNo')
-                ->unique()
-                ->reject(function ($sectionNo) {
-                    return DB::connection('sqlsrv')
-                        ->table('sections') // <-- Replace with your actual table name
-                        ->where('section_no', $sectionNo)
-                        ->exists();
-                });
+            $applicationId = $validated['application_id'];
+            $insertedCount = 0;
 
-            if ($invalidSections->isNotEmpty()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid section numbers found: ' . $invalidSections->implode(', ')
-                ], 422);
-            }
-
-            // Get current conveyance value
-            $application = DB::connection('sqlsrv')
-                ->table('mother_applications')
-                ->where('id', $validated['application_id'])
-                ->select('conveyance')
-                ->first();
-
-            $existingRecords = [];
-
-            if ($application && $application->conveyance) {
-                $decoded = json_decode($application->conveyance, true);
-                if (isset($decoded['records']) && is_array($decoded['records'])) {
-                    $existingRecords = $decoded['records'];
-                }
-            }
-
-            // Prevent duplicates
-            $existingSet = collect($existingRecords)->map(function ($item) {
-                return strtolower(trim($item['buyerName'])) . '|' . trim($item['sectionNo']);
-            })->toArray();
-
+            // Process each buyer
             foreach ($validated['records'] as $record) {
-                $key = strtolower(trim($record['buyerName'])) . '|' . trim($record['sectionNo']);
-                if (!in_array($key, $existingSet)) {
-                    $existingRecords[] = [
-                        'buyerTitle' => $record['buyerTitle'] ?? '',
-                        'buyerName' => $record['buyerName'],
-                        'sectionNo' => $record['sectionNo'],
-                    ];
-                    $existingSet[] = $key; // Prevent duplicates within the same batch
+                // Check if this buyer already exists
+                $exists = DB::connection('sqlsrv')
+                    ->table('buyer_list')
+                    ->where('application_id', $applicationId)
+                    ->where('buyer_name', $record['buyerName'])
+                    ->where('unit_no', $record['sectionNo'])
+                    ->exists();
+
+                if (!$exists) {
+                    // Insert the new buyer
+                    DB::connection('sqlsrv')->table('buyer_list')->insert([
+                        'application_id' => $applicationId,
+                        'buyer_title' => $record['buyerTitle'] ?? '',
+                        'buyer_name' => $record['buyerName'],
+                        'unit_no' => $record['sectionNo'],
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                    
+                    $insertedCount++;
                 }
             }
 
-            // Update the DB
-            $updated = DB::connection('sqlsrv')
-                ->table('mother_applications')
-                ->where('id', $validated['application_id'])
-                ->update([
-                    'conveyance' => json_encode(['records' => $existingRecords]),
-                    'updated_at' => now()
-                ]);
-
-            if ($updated) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Buyers added successfully (duplicates skipped)',
-                    'records' => $existingRecords
-                ]);
-            }
+            // Get all records for the response
+            $allRecords = DB::connection('sqlsrv')
+                ->table('buyer_list')
+                ->where('application_id', $applicationId)
+                ->select('id', 'buyer_title', 'buyer_name', 'unit_no', 'unit_measurement_id')
+                ->get();
 
             return response()->json([
-                'success' => false,
-                'message' => 'Failed to add buyers'
+                'success' => true,
+                'message' => "Buyers added successfully ($insertedCount new, " . 
+                             (count($validated['records']) - $insertedCount) . " duplicates skipped)",
+                'records' => $allRecords
             ]);
         } catch (\Exception $e) {
+            Log::error('Error adding buyers: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -416,56 +354,91 @@ class PrimaryActionsController extends Controller
         try {
             $validated = $request->validate([
                 'application_id' => 'required|integer',
-                'index'          => 'required|integer',
+                'buyer_id'       => 'required|integer',
             ]);
 
-            $application = DB::connection('sqlsrv')
-                ->table('mother_applications')
-                ->where('id', $validated['application_id'])
-                ->first();
+            // Delete the buyer record
+            $deleted = DB::connection('sqlsrv')
+                ->table('buyer_list')
+                ->where('id', $validated['buyer_id'])
+                ->where('application_id', $validated['application_id'])
+                ->delete();
 
-            if (!$application || !$application->conveyance) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No conveyance data found'
-                ]);
-            }
-
-            $conveyanceData = json_decode($application->conveyance, true);
-            $records = $conveyanceData['records'] ?? [];
-
-            if (!isset($records[$validated['index']])) {
+            if (!$deleted) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Buyer not found'
+                ], 404);
+            }
+
+            // Get remaining records
+            $records = DB::connection('sqlsrv')
+                ->table('buyer_list')
+                ->where('application_id', $validated['application_id'])
+                ->select('id', 'buyer_title', 'buyer_name', 'unit_no', 'unit_measurement_id')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Buyer deleted successfully',
+                'records' => $records
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error deleting buyer: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Finalize the conveyance agreement for an application
+     */
+    public function finalizeConveyance(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'application_id' => 'required|integer',
+                'status' => 'required|string|in:completed,pending',
+            ]);
+
+            // Check if the application has buyers
+            $buyersCount = DB::connection('sqlsrv')
+                ->table('buyer_list')
+                ->where('application_id', $validated['application_id'])
+                ->count();
+
+            if ($buyersCount === 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please add at least one buyer before finalizing the conveyance agreement'
                 ]);
             }
 
-            // Remove the buyer at the specified index
-            array_splice($records, $validated['index'], 1);
-
-            // Save the updated records
+            // Update the application status
             $updated = DB::connection('sqlsrv')
                 ->table('mother_applications')
                 ->where('id', $validated['application_id'])
                 ->update([
-                    'conveyance' => json_encode(['records' => $records]),
+                    'conveyance_status' => $validated['status'],
+                    'conveyance_date' => now(),
                     'updated_at' => now()
                 ]);
 
             if ($updated) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Buyer deleted successfully',
-                    'records' => $records
+                    'message' => 'Final Conveyance Agreement submitted successfully'
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete buyer'
+                'message' => 'Failed to update record or record not found'
             ]);
         } catch (\Exception $e) {
+            Log::error('Error finalizing conveyance: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -641,69 +614,44 @@ class PrimaryActionsController extends Controller
     }
 
     /**
-     * Finalize the conveyance agreement for an application
+     * Update a single buyer
      */
-    public function finalizeConveyance(Request $request)
+    public function updateSingleBuyer(Request $request)
     {
         try {
             $validated = $request->validate([
                 'application_id' => 'required|integer',
-                'status' => 'required|string|in:completed,pending',
+                'buyer_id'       => 'required|integer',
+                'buyer_title'    => 'nullable|string',
+                'buyer_name'     => 'required|string',
+                'unit_no'        => 'required|string',
             ]);
 
-            // First, check if the application has buyers
-            $application = DB::connection('sqlsrv')
-                ->table('mother_applications')
-                ->where('id', $validated['application_id'])
-                ->first();
-
-            if (!$application) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Application not found'
-                ], 404);
-            }
-
-            // Check if there are buyers in the conveyance data
-            $hasBuyers = false;
-            if ($application->conveyance) {
-                $conveyanceData = json_decode($application->conveyance, true);
-                if (isset($conveyanceData['records']) && is_array($conveyanceData['records']) && count($conveyanceData['records']) > 0) {
-                    $hasBuyers = true;
-                } elseif (isset($conveyanceData['buyerName']) && isset($conveyanceData['sectionNo'])) {
-                    $hasBuyers = true;
-                }
-            }
-
-            if (!$hasBuyers) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Please add at least one buyer before finalizing the conveyance agreement'
-                ]);
-            }
-
-            // Update the application status
+            // Update the buyer record
             $updated = DB::connection('sqlsrv')
-                ->table('mother_applications')
-                ->where('id', $validated['application_id'])
+                ->table('buyer_list')
+                ->where('id', $validated['buyer_id'])
+                ->where('application_id', $validated['application_id'])
                 ->update([
-                    'conveyance_status' => $validated['status'],
-                    'conveyance_date' => now(),
-                    'updated_at' => now()
+                    'buyer_title' => $validated['buyer_title'],
+                    'buyer_name'  => $validated['buyer_name'],
+                    'unit_no'     => $validated['unit_no'],
+                    'updated_at'  => now()
                 ]);
 
-            if ($updated) {
+            if (!$updated) {
                 return response()->json([
-                    'success' => true,
-                    'message' => 'Final Conveyance Agreement submitted successfully'
+                    'success' => false,
+                    'message' => 'Buyer not found or no changes made'
                 ]);
             }
 
             return response()->json([
-                'success' => false,
-                'message' => 'Failed to update record or record not found'
+                'success' => true,
+                'message' => 'Buyer information updated successfully'
             ]);
         } catch (\Exception $e) {
+            Log::error('Error updating buyer: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()

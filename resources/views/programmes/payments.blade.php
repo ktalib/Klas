@@ -281,7 +281,7 @@
                   <th class="table-header">File No</th>
                   <th class="table-header">Unit Owner</th>
                   <th class="table-header">Scheme App Fee</th>
-                  <th class="table-header">Site Plan Fee</th>
+                  <th class="table-header">Survey Fee</th>
                   <th class="table-header">Processing Fee</th>
                   <th class="table-header">Betterment</th>
                   <th class="table-header">Unit App Fees</th>

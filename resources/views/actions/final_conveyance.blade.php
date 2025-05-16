@@ -66,15 +66,15 @@
                                 </p>
                             </div>
                             <div class="text-right">
-                                <h3 class="text-sm font-medium">
-    @if($application->applicant_type == 'individual')
-    {{$application->applicant_title }} {{$application->first_name }} {{$application->surname }}
-    @elseif($application->applicant_type == 'corporate')
-    {{$application->rc_number }} {{$application->corporate_name }}
-    @elseif($application->applicant_type == 'multiple')
-    {{$application->multiple_owners_names }}
-    @endif
-</h3>
+                     <h3 class="text-sm font-medium">
+                    @if($application->applicant_type == 'individual')
+                    {{$application->applicant_title }} {{$application->first_name }} {{$application->surname }}
+                    @elseif($application->applicant_type == 'corporate')
+                    {{$application->rc_number }} {{$application->corporate_name }}
+                    @elseif($application->applicant_type == 'multiple')
+                    {{$application->multiple_owners_names }}
+                    @endif
+                      </h3>
                                 <p class="text-xs text-gray-500">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                         {{$application->land_use }}
@@ -85,11 +85,11 @@
                     
                         <!-- Tabs Navigation -->
                         <div class="grid grid-cols-3 gap-2 mb-4">
-                            <button class="tab-button active" data-tab="initial">
+                            {{-- <button class="tab-button active" data-tab="initial">
                                 <i data-lucide="banknote" class="w-3.5 h-3.5 mr-1.5"></i>
                                 Add Buyers
-                            </button>
-                            <button class="tab-button" data-tab="detterment">
+                            </button> --}}
+                            <button class="tab-button active" data-tab="detterment">
                                 <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
                                 Buyers List
                             </button>
@@ -101,7 +101,7 @@
                         </div>
                     
                         <!-- Add Buyers Tab -->
-                        <div id="initial-tab" class="tab-content active" x-data="{ buyers: [{}] }">
+                        <div id="initial-tab" class="tab-content" x-data="{ buyers: [{}] }">
                             <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                                 <div class="p-4 border-b">
                                     <h3 class="text-sm font-medium">Add Buyers</h3>
@@ -189,7 +189,7 @@
                         </div>
                     
                         <!-- Buyers List Tab -->
-                        <div id="detterment-tab" class="tab-content">
+                        <div id="detterment-tab" class="tab-content active">
                             <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                                 <div class="p-4 border-b">
                                     <h3 class="text-sm font-medium">Buyers List</h3>
@@ -324,6 +324,9 @@
             }
             
             // ...existing tab button code...
+            // Auto-load buyers list on page load
+            loadBuyersList();
+
             tabButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const tabId = this.getAttribute('data-tab');
@@ -388,8 +391,7 @@
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SN</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buyer Name</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit No.</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
+                        
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                 `;
@@ -398,13 +400,10 @@
                     html += `
                     <tr class="hover:bg-gray-50" data-index="${index}">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${index + 1}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.buyerTitle || ''} ${record.buyerName || ''}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.sectionNo || ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.buyer_title || ''} ${record.buyer_name || ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.unit_no || ''}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button class="edit-buyer text-blue-600 hover:text-blue-900 mr-2" data-index="${index}">
-                            <i data-lucide="edit" class="w-4 h-4"></i>
-                        </button>
-                       
+                      
                         </td>
                     </tr>
                     `;
@@ -427,91 +426,87 @@
                 // Edit buyer
                 document.querySelectorAll('.edit-buyer').forEach(button => {
                     button.addEventListener('click', function() {
-                    const index = this.getAttribute('data-index');
-                    const record = records[index];
-                    
-                    Swal.fire({
-                        title: 'Edit Buyer',
-                        html: `
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                            <select id="buyer-title" class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm">
-                            <option value="Mr." ${record.buyerTitle === 'Mr.' ? 'selected' : ''}>Mr.</option>
-                            <option value="Mrs." ${record.buyerTitle === 'Mrs.' ? 'selected' : ''}>Mrs.</option>
-                            <option value="Chief" ${record.buyerTitle === 'Chief' ? 'selected' : ''}>Chief</option>
-                            <option value="Miss" ${record.buyerTitle === 'Miss' ? 'selected' : ''}>Miss</option>
-                            <option value="Dr." ${record.buyerTitle === 'Dr.' ? 'selected' : ''}>Dr.</option>
-                            <option value="Prof" ${record.buyerTitle === 'Prof' ? 'selected' : ''}>Prof</option>
-                            </select>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Buyer Name</label>
-                            <input id="buyer-name"  name="buyer_name[]" type="text" class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm" value="${record.buyerName || ''}">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Unit No</label>
-                            <input id="unit-no" name="unit_no[]" type="text" class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm" value="${record.sectionNo || ''}">
-                        </div>
-                        `,
-                        showCancelButton: true,
-                        confirmButtonText: 'Update',
-                        confirmButtonColor: '#10B981',
-                        preConfirm: () => {
-                        const buyerTitle = document.getElementById('buyer-title').value;
-                        const buyerName = document.getElementById('buyer-name').value;
-                        const unitNo = document.getElementById('unit-no').value;
+                        const buyerId = this.getAttribute('data-id');
+                        const record = records.find(r => r.id == buyerId);
                         
-                        if (!buyerName || !unitNo) {
-                            Swal.showValidationMessage('Buyer name and unit number are required');
-                            return false;
+                        if (!record) {
+                            console.error('Record not found for ID:', buyerId);
+                            return;
                         }
                         
-                        return { buyerTitle, buyerName, unitNo };
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                        // Update the record
-                        records[index] = {
-                            buyerTitle: result.value.buyerTitle,
-                            buyerName: result.value.buyerName,
-                            sectionNo: result.value.unitNo
-                        };
-                        
-                        // Save the updated records
-                        updateBuyersData(records);
-                        }
-                    });
+                        Swal.fire({
+                            title: 'Edit Buyer',
+                            html: `
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                                <select id="buyer-title" class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm">
+                                <option value="Mr." ${record.buyer_title === 'Mr.' ? 'selected' : ''}>Mr.</option>
+                                <option value="Mrs." ${record.buyer_title === 'Mrs.' ? 'selected' : ''}>Mrs.</option>
+                                <option value="Chief" ${record.buyer_title === 'Chief' ? 'selected' : ''}>Chief</option>
+                                <option value="Miss" ${record.buyer_title === 'Miss' ? 'selected' : ''}>Miss</option>
+                                <option value="Dr." ${record.buyer_title === 'Dr.' ? 'selected' : ''}>Dr.</option>
+                                <option value="Prof" ${record.buyer_title === 'Prof' ? 'selected' : ''}>Prof</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Buyer Name</label>
+                                <input id="buyer-name" type="text" class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm" value="${record.buyer_name || ''}">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Unit No</label>
+                                <input id="unit-no" type="text" class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm" value="${record.unit_no || ''}">
+                            </div>
+                            <input id="buyer-id" type="hidden" value="${record.id}">
+                            `,
+                            showCancelButton: true,
+                            confirmButtonText: 'Update',
+                            confirmButtonColor: '#10B981',
+                            preConfirm: () => {
+                                const buyerTitle = document.getElementById('buyer-title').value;
+                                const buyerName = document.getElementById('buyer-name').value;
+                                const unitNo = document.getElementById('unit-no').value;
+                                const buyerId = document.getElementById('buyer-id').value;
+                                
+                                if (!buyerName || !unitNo) {
+                                    Swal.showValidationMessage('Buyer name and unit number are required');
+                                    return false;
+                                }
+                                
+                                return { buyerTitle, buyerName, unitNo, buyerId };
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Send update request to server
+                                updateBuyer(result.value);
+                            }
+                        });
                     });
                 });
                 
                 // Delete buyer
                 document.querySelectorAll('.delete-buyer').forEach(button => {
                     button.addEventListener('click', function() {
-                    const index = this.getAttribute('data-index');
-                    
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        text: "This buyer will be removed from the list.",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#EF4444',
-                        cancelButtonColor: '#6B7280',
-                        confirmButtonText: 'Yes, delete it!'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                        // Remove the record
-                        records.splice(index, 1);
+                        const buyerId = this.getAttribute('data-id');
                         
-                        // Save the updated records
-                        updateBuyersData(records);
-                        }
-                    });
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "This buyer will be removed from the list.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#EF4444',
+                            cancelButtonColor: '#6B7280',
+                            confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                deleteBuyer(buyerId);
+                            }
+                        });
                     });
                 });
             }
             
-            // Function to update buyers data
-            function updateBuyersData(records) {
+            // Function to update a buyer
+            function updateBuyer(data) {
                 const applicationId = document.getElementById('application_id').value;
                 
                 // Show loading state
@@ -524,8 +519,8 @@
                     }
                 });
                 
-                // Send AJAX request - ensure we're sending the proper format
-                fetch('{{ route("conveyance.update") }}', {
+                // Send AJAX request
+                fetch('{{ route("conveyance.update.buyer") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -533,7 +528,10 @@
                     },
                     body: JSON.stringify({
                         application_id: applicationId,
-                        records: records // This is sent as an array of objects with buyerName, buyerTitle, sectionNo
+                        buyer_id: data.buyerId,
+                        buyer_title: data.buyerTitle,
+                        buyer_name: data.buyerName,
+                        unit_no: data.unitNo
                     })
                 })
                 .then(response => response.json())
@@ -542,15 +540,69 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Success!',
-                            text: 'Buyers information updated successfully'
+                            text: 'Buyer information updated successfully'
                         });
                         // Refresh the buyers list
-                        renderBuyersList(records);
+                        loadBuyersList();
                     } else {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: data.message || 'Failed to update buyers information'
+                            text: data.message || 'Failed to update buyer information'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An unexpected error occurred'
+                    });
+                });
+            }
+            
+            // Function to delete a buyer
+            function deleteBuyer(buyerId) {
+                const applicationId = document.getElementById('application_id').value;
+                
+                // Show loading state
+                Swal.fire({
+                    title: 'Deleting...',
+                    html: 'Please wait...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Send AJAX request
+                fetch('{{ route("conveyance.delete.buyer") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        application_id: applicationId,
+                        buyer_id: buyerId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Buyer deleted successfully'
+                        });
+                        // Refresh the buyers list
+                        loadBuyersList();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'Failed to delete buyer'
                         });
                     }
                 })
@@ -575,3 +627,10 @@
         });
     </script>
 @endsection
+  {{-- <button class="edit-buyer text-blue-600 hover:text-blue-900 mr-2" data-id="${record.id}">
+                            <i data-lucide="edit" class="w-4 h-4"></i>
+                        </button>
+                        
+                        <button class="delete-buyer text-red-600 hover:text-red-900" data-id="${record.id}">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button> --}}

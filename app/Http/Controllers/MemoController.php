@@ -274,7 +274,7 @@ class MemoController extends Controller
    
     public function viewMemoPrimary($id)
     {
-        $PageTitle = 'Memo';
+        $PageTitle = 'ST Memo';
         $PageDescription = '';
  
         try {

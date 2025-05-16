@@ -221,53 +221,46 @@
                 </section>
                 
                 <!-- Final Conveyance Records Section starts on a new page -->
-                @if (isset($application) && $application->conveyance)
+                <div class="page-break"></div>
+                
+                <div class="mt-4 p-4 bg-white shadow conveyance-records-section">
+                    <h3 class="text-lg font-bold mb-2">BUYERS LIST</h3>
+
                     @php
-                        $conveyanceData = json_decode($application->conveyance, true);
+                        $buyers = DB::connection('sqlsrv')
+                            ->table('buyer_list')
+                            ->where('application_id', $application->id)
+                            ->select('buyer_title', 'buyer_name', 'unit_no')
+                            ->get();
                     @endphp
                     
-                    @if ((isset($conveyanceData['records']) && is_array($conveyanceData['records']) && count($conveyanceData['records']) > 0) || 
-                         (isset($conveyanceData['buyerName']) && isset($conveyanceData['sectionNo'])))
-                        <!-- Only add page break if there are records to display -->
-                        <div class="page-break"></div>
-                        
-                        <div class="mt-4 p-4 bg-white shadow conveyance-records-section">
-                            <h3 class="text-lg font-bold mb-2">BUYS LIST</h3>
-
-                            @if (isset($conveyanceData['records']) && is_array($conveyanceData['records']))
-                                <table class="w-full border-collapse mb-4">
-                                    <thead>
-                                        <tr>
-                                            <th class="border border-gray-400 p-2 text-left">SN</th>
-                                            <th class="border border-gray-400 p-2 text-left">BUYER NAME</th>
-                                            <th class="border border-gray-400 p-2 text-left">UNIT NO.</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($conveyanceData['records'] as $index => $record)
-                                            <tr>
-                                                <td class="border border-gray-400 p-2">{{ $index + 1 }}</td>
-                                                <td class="border border-gray-400 p-2">
-                                                    {{ isset($record['buyerTitle']) ? $record['buyerTitle'] . ' ' : '' }}.{{ $record['buyerName'] ?? '' }}
-                                                </td>
-                                                <td class="border border-gray-400 p-2">{{ $record['sectionNo'] ?? '' }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            @elseif(isset($conveyanceData['buyerName']) && isset($conveyanceData['sectionNo']))
-                                <!-- Fallback for the old single-record format -->
-                                <p><strong>Buyer Name:</strong> {{ $conveyanceData['buyerName'] }}</p>
-                                <p><strong>Section No:</strong> {{ $conveyanceData['sectionNo'] }}</p>
-                            @endif
-                        </div>
+                    @if(count($buyers) > 0)
+                        <table class="w-full border-collapse mb-4">
+                            <thead>
+                                <tr>
+                                    <th class="border border-gray-400 p-2 text-left">SN</th>
+                                    <th class="border border-gray-400 p-2 text-left">BUYER NAME</th>
+                                    <th class="border border-gray-400 p-2 text-left">UNIT NO.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($buyers as $index => $buyer)
+                                    <tr>
+                                        <td class="border border-gray-400 p-2">{{ $index + 1 }}</td>
+                                        <td class="border border-gray-400 p-2">
+                                            {{ $buyer->buyer_title ? $buyer->buyer_title . ' ' : '' }}{{ $buyer->buyer_name }}
+                                        </td>
+                                        <td class="border border-gray-400 p-2">{{ $buyer->unit_no }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     @else
                         <div class="mt-4 p-4 bg-white shadow">
-                            <p>No buys list found.</p>
+                            <p>No buyers found.</p>
                         </div>
                     @endif
-                @endif
+                </div>
             </main>
         </div>
 

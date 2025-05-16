@@ -296,8 +296,13 @@
                               <span>View Application</span>
                             </a>
                           </li>
+                            <li>
+                                <a href="{{ route('actions.recommendation', ['id' => $application->id]) }}?url=phy_planning" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                                    <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i>
+                                    <span>Planning Recommendation Approval</span>
+                                </a>
                              <li>
-                                <a href="{{ route('actions.recommendation', ['id' => $application->id]) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                                <a href="{{ route('actions.recommendation', ['id' => $application->id]) }}?url=recommendation" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                     <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
                                     <span>View Planning Recommendation</span>
                                 </a>
@@ -399,6 +404,11 @@
                           <span>View Unit Application</span>
                         </a>
                       </li>
+                      <li>
+                        <a href="{{ route('sub-actions.recommendation', ['id' => $unitApplication->id]) }}?url=phy_planning" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                          <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i>
+                          <span>Planning Recommendation Approval</span>
+                        </a>
                       <li>  
                         <a href="{{ route('sub-actions.recommendation', ['id' => $unitApplication->id]) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                           <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>

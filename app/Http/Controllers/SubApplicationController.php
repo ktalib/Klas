@@ -382,6 +382,7 @@ class SubApplicationController extends Controller
                 'mother.land_use as mother_land_use',
                 'mother.plot_size as mother_plot_size',
                 'mother.fileno as mother_fileno',
+                 'mother.id as mother_id',
                 'mother.property_house_no as mother_property_house_no',
                 'mother.property_plot_no as mother_property_plot_no',
                 'mother.property_street_name as mother_property_street_name',

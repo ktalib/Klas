@@ -40,7 +40,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/conveyance/update', [PrimaryActionsController::class, 'updateConveyance'])->name('conveyance.update');
     Route::post('/conveyance/finalize', [PrimaryActionsController::class, 'finalizeConveyance'])->name('conveyance.finalize');
     Route::post('/conveyance/add-buyer', [PrimaryActionsController::class, 'addBuyer'])->name('conveyance.add-buyer');
-    Route::post('/conveyance/delete-buyer', [PrimaryActionsController::class, 'deleteBuyer'])->name('conveyance.delete-buyer');
+    Route::post('/conveyance/delete-buyer', [PrimaryActionsController::class, 'deleteBuyer'])->name('conveyance.delete.buyer');
+    Route::post('/conveyance/update-buyer', [PrimaryActionsController::class, 'updateSingleBuyer'])->name('conveyance.update.buyer');
     Route::post('/render-buyers-list', [PrimaryActionsController::class, 'renderBuyersList'])->name('render-buyers-list');
 
     Route::get('/primaryform', [PrimaryFormController::class, 'index'])->name('primaryform.index');

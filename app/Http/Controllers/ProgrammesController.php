@@ -462,13 +462,13 @@ class ProgrammesController extends Controller
         // Calculate statistics for primary applications
         $totalPrimaryApplications = count($applications);
         $approvedPrimaryApplications = collect($applications)->where('planning_recommendation_status', 'Approved')->count();
-        $rejectedPrimaryApplications = collect($applications)->where('planning_recommendation_status', 'rejected')->count();
+        $rejectedPrimaryApplications = collect($applications)->where('planning_recommendation_status', 'Declined')->count();
         $pendingPrimaryApplications = $totalPrimaryApplications - $approvedPrimaryApplications - $rejectedPrimaryApplications;
 
         // Calculate statistics for unit applications
         $totalUnitApplications = count($unitApplications);
         $approvedUnitApplications = collect($unitApplications)->where('planning_recommendation_status', 'Approved')->count();
-        $rejectedUnitApplications = collect($unitApplications)->where('planning_recommendation_status', 'rejected')->count();
+        $rejectedUnitApplications = collect($unitApplications)->where('planning_recommendation_status', 'Declined')->count();
         $pendingUnitApplications = $totalUnitApplications - $approvedUnitApplications - $rejectedUnitApplications;
 
         return view('programmes.approvals.planning_recomm', compact(
@@ -525,13 +525,13 @@ class ProgrammesController extends Controller
         // Calculate statistics for primary applications
         $totalPrimaryApplications = count($applications);
         $approvedPrimaryApplications = collect($applications)->where('application_status', 'Approved')->count();
-        $rejectedPrimaryApplications = collect($applications)->where('application_status', 'rejected')->count();
+        $rejectedPrimaryApplications = collect($applications)->where('application_status', 'Declined')->count();
         $pendingPrimaryApplications = $totalPrimaryApplications - $approvedPrimaryApplications - $rejectedPrimaryApplications;
 
         // Calculate statistics for unit applications
         $totalUnitApplications = count($unitApplications);
         $approvedUnitApplications = collect($unitApplications)->where('application_status', 'Approved')->count();
-        $rejectedUnitApplications = collect($unitApplications)->where('application_status', 'rejected')->count();
+        $rejectedUnitApplications = collect($unitApplications)->where('application_status', 'Declined')->count();
         $pendingUnitApplications = $totalUnitApplications - $approvedUnitApplications - $rejectedUnitApplications;
 
         return view('programmes.approvals.director', compact(
@@ -607,16 +607,16 @@ class ProgrammesController extends Controller
         $totalApplications = count($primaryApplications);
         $approvedApplications = collect($primaryApplications)->where('application_status', 'Approved')->count();
         $pendingApplications = collect($primaryApplications)->where('application_status', '!=', 'Approved')
-            ->where('application_status', '!=', 'rejected')
+            ->where('application_status', '!=', 'Declined')
             ->count();
-        $rejectedApplications = collect($primaryApplications)->where('application_status', 'rejected')->count();
+        $rejectedApplications = collect($primaryApplications)->where('application_status', 'Declined')->count();
 
         // Planning recommendation stats
         $approvedPlanningRecommendations = collect($primaryApplications)->where('planning_recommendation_status', 'Approved')->count();
         $pendingPlanningRecommendations = collect($primaryApplications)->where('planning_recommendation_status', '!=', 'Approved')
-            ->where('planning_recommendation_status', '!=', 'rejected')
+            ->where('planning_recommendation_status', '!=', 'Declined')
             ->count();
-        $rejectedPlanningRecommendations = collect($primaryApplications)->where('planning_recommendation_status', 'rejected')->count();
+        $rejectedPlanningRecommendations = collect($primaryApplications)->where('planning_recommendation_status', 'Declined')->count();
 
         // Group applications by LGA for geo chart
         $applicationsByLGA = collect($primaryApplications)
@@ -702,16 +702,16 @@ class ProgrammesController extends Controller
         $totalUnitApplications = count($unitApplications);
         $approvedUnitApplications = collect($unitApplications)->where('application_status', 'Approved')->count();
         $pendingUnitApplications = collect($unitApplications)->where('application_status', '!=', 'Approved')
-            ->where('application_status', '!=', 'rejected')
+            ->where('application_status', '!=', 'Declined')
             ->count();
-        $rejectedUnitApplications = collect($unitApplications)->where('application_status', 'rejected')->count();
+        $rejectedUnitApplications = collect($unitApplications)->where('application_status', 'Declined')->count();
 
         // Planning recommendation stats for unit applications
         $approvedUnitPlanningRecommendations = collect($unitApplications)->where('planning_recommendation_status', 'Approved')->count();
         $pendingUnitPlanningRecommendations = collect($unitApplications)->where('planning_recommendation_status', '!=', 'Approved')
-            ->where('planning_recommendation_status', '!=', 'rejected')
+            ->where('planning_recommendation_status', '!=', 'Declined')
             ->count();
-        $rejectedUnitPlanningRecommendations = collect($unitApplications)->where('planning_recommendation_status', 'rejected')->count();
+        $rejectedUnitPlanningRecommendations = collect($unitApplications)->where('planning_recommendation_status', 'Declined')->count();
 
         // Group unit applications by LGA for geo chart
         $unitApplicationsByLGA = collect($unitApplications)

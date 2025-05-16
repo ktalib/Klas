@@ -64,7 +64,26 @@
                           </p>
                         </div>
                         <div class="text-right">
-                          <h3 class="text-sm font-medium">{{$application->applicant_title }} {{$application->first_name }} {{$application->surname }}</h3>
+                          <h3 class="text-sm font-medium">
+                                         @if ($application->applicant_type == 'individual')
+                          {{ $application->applicant_title }} {{ $application->first_name }}
+                          {{ $application->surname }}
+                        @elseif($application->applicant_type == 'corporate')
+                          {{ $application->rc_number }} {{ $application->corporate_name }}
+                        @elseif($application->applicant_type == 'multiple')
+                          @php
+                            $names = @json_decode($application->multiple_owners_names, true);
+                            if (is_array($names) && count($names) > 0) {
+                              echo implode(', ', $names);
+                            } else {
+                              echo $application->multiple_owners_names;
+                            }
+                          @endphp
+                        @endif
+    
+
+                          
+                          </h3>
                           <p class="text-xs text-gray-500">
                           <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                             {{$application->land_use }}

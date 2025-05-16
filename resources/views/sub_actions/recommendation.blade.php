@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('page-title')
-    {{ __('SECTIONAL TITLING  MODULE') }}
+    {{ __('Planning Recommendation') }}
 @endsection
 
 <style>
@@ -59,27 +59,28 @@
             <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
               
           @php
-              $surveyRecord = DB::connection('sqlsrv')->table('surveyCadastralRecord')
-                ->where('application_id', $application->id)
-                ->first();
-                
-            $statusClass = match(strtolower($application->planning_recommendation_status ?? '')) {
-              'approve' => 'bg-green-100 text-green-800',
-              'approved' => 'bg-green-100 text-green-800',
-              'pending' => 'bg-yellow-100 text-yellow-800',
-              'decline' => 'bg-red-100 text-red-800',
-              'declined' => 'bg-red-100 text-red-800',
-              default => 'bg-gray-100 text-gray-800'
-            };
-            
-            $statusIcon = match(strtolower($application->planning_recommendation_status ?? '')) {
-              'approve' => 'check-circle',
-              'approved' => 'check-circle',
-              'pending' => 'clock',
-              'decline' => 'x-circle',
-              'declined' => 'x-circle',
-              default => 'help-circle'
-            };
+                     $surveyRecord = DB::connection('sqlsrv')
+                        ->table('surveyCadastralRecord')
+                        ->where('application_id', $application->id)
+                        ->first();
+
+                    $statusClass = match (strtolower($application->planning_recommendation_status ?? '')) {
+                        'approve' => 'bg-green-100 text-green-800',
+                        'approved' => 'bg-green-100 text-green-800',
+                        'pending' => 'bg-yellow-100 text-yellow-800',
+                        'decline' => 'bg-red-100 text-red-800',
+                        'declined' => 'bg-red-100 text-red-800',
+                        default => 'bg-gray-100 text-gray-800',
+                    };
+
+                    $statusIcon = match (strtolower($application->planning_recommendation_status ?? '')) {
+                        'approve' => 'check-circle',
+                        'approved' => 'check-circle',
+                        'pending' => 'clock',
+                        'decline' => 'x-circle',
+                        'declined' => 'x-circle',
+                        default => 'help-circle',
+                    };
           @endphp
     
 
@@ -108,7 +109,25 @@
                           </span>
                         </div>
                         <div class="text-right">
-                          <h3 class="text-sm font-medium">{{$application->applicant_title }} {{$application->first_name }} {{$application->surname }}</h3>
+                          <h3 class="text-sm font-medium">
+                                          @if ($application->applicant_type == 'individual')
+                          {{ $application->applicant_title }} {{ $application->first_name }}
+                          {{ $application->surname }}
+                        @elseif($application->applicant_type == 'corporate')
+                          {{ $application->rc_number }} {{ $application->corporate_name }}
+                        @elseif($application->applicant_type == 'multiple')
+                          @php
+                            $names = @json_decode($application->multiple_owners_names, true);
+                            if (is_array($names) && count($names) > 0) {
+                              echo implode(', ', $names);
+                            } else {
+                              echo $application->multiple_owners_names;
+                            }
+                          @endphp
+                        @endif
+    
+
+                          </h3>
                           <p class="text-xs text-gray-500">
                           <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                             {{$application->land_use }}
@@ -167,18 +186,18 @@
                                   <div class="flex items-center space-x-4">
                                     
                                     <label class="inline-flex items-center">
-                                      <input type="radio" name="decision" value="approve" class="form-radio" onchange="toggleReasonContainer(this)">
+                                      <input type="radio" name="decision" value="Approved" class="form-radio" onchange="toggleReasonContainer(this)">
                                       <span class="ml-2 text-sm">Approve</span>
                                     </label>
                                     <label class="inline-flex items-center">
-                                      <input type="radio" name="decision" value="decline" class="form-radio" onchange="toggleReasonContainer(this)">
+                                      <input type="radio" name="decision" value="Declined" class="form-radio" onchange="toggleReasonContainer(this)">
                                       <span class="ml-2 text-sm">Decline</span>
                                     </label>
 
                   <script>
                     function toggleReasonContainer(radio) {
                     const reasonContainer = document.getElementById('reasonContainer');
-                    if (radio.value === 'decline') {
+                    if (radio.value === 'Declined') {
                       reasonContainer.style.display = 'block';
                     } else {
                       reasonContainer.style.display = 'none';
@@ -281,7 +300,7 @@
     const reasonContainer = document.getElementById('reasonContainer');
     decisionRadios.forEach(radio => {
       radio.addEventListener('change', function() {
-        reasonContainer.style.display = (this.value === 'decline') ? 'block' : 'none';
+        reasonContainer.style.display = (this.value === 'Declined') ? 'block' : 'none';
       });
     });
   });
@@ -371,7 +390,7 @@
                       
                 
                       <!-- Final Bill Tab -->
-                        <div id="final-tab" class="tab-content {{ request()->query('url') != 'phy_planning' ? 'active' : '' }}">
+                        <div id="final-tab" class="tab-content">
 
 
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
@@ -472,7 +491,7 @@
     const reasonContainer = document.getElementById('reasonContainer');
     decisionRadios.forEach(radio => {
       radio.addEventListener('change', function() {
-        reasonContainer.style.display = (this.value === 'decline') ? 'block' : 'none';
+        reasonContainer.style.display = (this.value === 'Declined') ? 'block' : 'none';
       });
     });
 

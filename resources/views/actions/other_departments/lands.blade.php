@@ -27,9 +27,22 @@
                             <input
                                 id="file-name"
                                 type="text"
-                                placeholder="Enter File Name"
-                                class="w-full p-2 border border-gray-300 rounded-md text-sm"
-                            >
+                               value="@if ($application->applicant_type == 'individual')
+                          {{ $application->applicant_title }}{{ $application->first_name }}{{ $application->surname }}
+                        @elseif($application->applicant_type == 'corporate')
+                          {{ $application->rc_number }} {{ $application->corporate_name }}
+                        @elseif($application->applicant_type == 'multiple')
+                          @php
+                            $names = @json_decode($application->multiple_owners_names, true);
+                            if (is_array($names) && count($names) > 0) {
+                              echo implode(', ', $names);
+                            } else {
+                              echo $application->multiple_owners_names;
+                            }
+                          @endphp
+                        @endif"
+                                class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 text-gray-500 cursor-not-allowed"
+                            disabled>
                         </div>
                     </div>
 
@@ -72,8 +85,7 @@
                                 Back
                             </a>
                             <button
-                                class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-sky-900 hover:bg-gray-50"
-                            >
+                                class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-sky-900 hover:bg-gray-50">
                                 <i data-lucide="folder-git-2" class="w-3.5 h-3.5 mr-1.5"></i>
                                 EDMS
                             </button>

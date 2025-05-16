@@ -185,7 +185,7 @@ class SubActionsController extends Controller
         try {
             $validated = $request->validate([
                 'application_id' => 'required|integer',
-                'status' => 'required|string|in:approve,decline',
+                'status' => 'required|string|in:Approved,Declined',
                 'approval_date' => 'required|date',
                 'comments' => 'nullable|string'
             ]);
@@ -219,7 +219,7 @@ class SubActionsController extends Controller
         try {
             $validated = $request->validate([
                 'application_id' => 'required|integer',
-                'status' => 'required|string|in:approve,decline',
+                'status' => 'required|string|in:Approved,Declined',
                 'approval_date' => 'required|date',
                 'comments' => 'nullable|string'
             ]);
