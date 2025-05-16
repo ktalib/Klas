@@ -112,7 +112,7 @@
                                 <th class="table-header text-green-500">Land Use</th>
                                 <th class="table-header text-green-500">Owner</th>
                                 <th class="table-header text-green-500">Units</th>
-                                <th class="table-header text-green-500">ST Memo</th>
+                                <th class="table-header text-green-500">Physical Planning Memo</th>
                                 <th class="table-header text-green-500">Site Plan</th>
                                 <th class="table-header text-green-500">Approval</th>
                                 <th class="table-header text-green-500">Planning Recommendation</th>

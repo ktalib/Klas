@@ -26,10 +26,10 @@ class STTransferOfTitleController extends Controller
         $PageTitle = 'Assignments ';
         $PageDescription = '';
 
-        // Fetch all approved applications with SectionalCofOReg data
+        // Fetch all approved applications with Sectional_title_transfer data
         $approvedApplications = DB::connection('sqlsrv')->table('mother_applications')
-            ->leftJoin('SectionalCofOReg', 'mother_applications.id', '=', 'SectionalCofOReg.application_id')
-            ->leftJoin('users', 'SectionalCofOReg.created_by', '=', 'users.id')
+            ->leftJoin('Sectional_title_transfer', 'mother_applications.id', '=', 'Sectional_title_transfer.application_id')
+            ->leftJoin('users', 'Sectional_title_transfer.created_by', '=', 'users.id')
             ->where('mother_applications.planning_recommendation_status', 'Approved')
             ->where('mother_applications.application_status', 'Approved')
             ->select(
@@ -54,21 +54,21 @@ class STTransferOfTitleController extends Controller
                 'mother_applications.property_street_name',
                 'mother_applications.property_district',
                 'mother_applications.property_state',
-                'SectionalCofOReg.Sectional_Title_File_No',
-                'SectionalCofOReg.STM_Ref', 
-                'SectionalCofOReg.Applicant_Name',
-                'SectionalCofOReg.Tenure_Period',
-                'SectionalCofOReg.Deeds_Transfer',
-                'SectionalCofOReg.Deeds_Serial_No',
-                'SectionalCofOReg.Current_Owner',
-                'SectionalCofOReg.Occupation',
-                'SectionalCofOReg.serial_no',
-                'SectionalCofOReg.page_no as reg_page_no',
-                'SectionalCofOReg.volume_no',
-                'SectionalCofOReg.deeds_time',
-                'SectionalCofOReg.deeds_date',
-                'SectionalCofOReg.created_by as reg_created_by',
-                'SectionalCofOReg.status as reg_status',
+                'Sectional_title_transfer.Sectional_Title_File_No',
+                'Sectional_title_transfer.STM_Ref', 
+                'Sectional_title_transfer.Applicant_Name',
+                'Sectional_title_transfer.Tenure_Period',
+                'Sectional_title_transfer.Deeds_Transfer',
+                'Sectional_title_transfer.Deeds_Serial_No',
+                'Sectional_title_transfer.Current_Owner',
+                'Sectional_title_transfer.Occupation',
+                'Sectional_title_transfer.serial_no',
+                'Sectional_title_transfer.page_no as reg_page_no',
+                'Sectional_title_transfer.volume_no',
+                'Sectional_title_transfer.deeds_time',
+                'Sectional_title_transfer.deeds_date',
+                'Sectional_title_transfer.created_by as reg_created_by',
+                'Sectional_title_transfer.status as reg_status',
                 DB::raw("CONCAT(users.first_name, ' ', users.last_name) as reg_creator_name")
             )
             ->get();
@@ -90,9 +90,9 @@ class STTransferOfTitleController extends Controller
                 $application->owner_name = trim($application->applicant_title . ' ' . $application->first_name . ' ' . $application->surname);
             }
             
-            // Determine status from SectionalCofOReg
+            // Determine status from Sectional_title_transfer
             if (!empty($application->reg_status)) {
-                // If it has a SectionalCofOReg entry
+                // If it has a Sectional_title_transfer entry
                 if (strtolower($application->reg_status) === 'rejected') {
                     $application->status = 'rejected';
                     $rejectedCount++;
@@ -101,7 +101,7 @@ class STTransferOfTitleController extends Controller
                     $registeredCount++;
                 }
             } else {
-                // No SectionalCofOReg entry - so it's pending
+                // No Sectional_title_transfer entry - so it's pending
                 $application->status = 'pending';
                 $pendingCount++;
             }
@@ -217,15 +217,15 @@ class STTransferOfTitleController extends Controller
         try {
             // Use application_id instead of sub_application_id
             $application = DB::connection('sqlsrv')->table('mother_applications')
-                ->leftJoin('SectionalCofOReg', 'mother_applications.id', '=', 'SectionalCofOReg.application_id')
-                ->leftJoin('users', 'SectionalCofOReg.created_by', '=', 'users.id')
+                ->leftJoin('Sectional_title_transfer', 'mother_applications.id', '=', 'Sectional_title_transfer.application_id')
+                ->leftJoin('users', 'Sectional_title_transfer.created_by', '=', 'users.id')
                 ->select(
                     'mother_applications.*',
-                    'SectionalCofOReg.*',
+                    'Sectional_title_transfer.*',
                     'mother_applications.id as mother_id',
-                    'SectionalCofOReg.page_no as reg_page_no',
-                    'SectionalCofOReg.created_by as reg_created_by',
-                    'SectionalCofOReg.status as reg_status',
+                    'Sectional_title_transfer.page_no as reg_page_no',
+                    'Sectional_title_transfer.created_by as reg_created_by',
+                    'Sectional_title_transfer.status as reg_status',
                     DB::raw("CONCAT(users.first_name, ' ', users.last_name) as reg_creator_name")
                 )
                 ->where('mother_applications.id', $id)
@@ -263,7 +263,7 @@ class STTransferOfTitleController extends Controller
     {
         try {
             // Get the latest volume and page numbers
-            $latestRecord = DB::connection('sqlsrv')->table('SectionalCofOReg')
+            $latestRecord = DB::connection('sqlsrv')->table('Sectional_title_transfer')
                 ->select('volume_no', 'page_no', 'serial_no')
                 ->orderBy('volume_no', 'desc')
                 ->orderBy('page_no', 'desc')
@@ -328,7 +328,7 @@ class STTransferOfTitleController extends Controller
             
             $request->validate([
                 'mother_application_id' => 'required|integer',
-                'sectional_title_file_no' => 'required|string|unique:sqlsrv.SectionalCofOReg,Sectional_Title_File_No',
+                'sectional_title_file_no' => 'required|string|unique:sqlsrv.Sectional_title_transfer,Sectional_Title_File_No',
                 'applicant_name' => 'required|string',
                 'tenure_period' => 'required',
                 'current_owner' => 'required|string',
@@ -360,7 +360,7 @@ class STTransferOfTitleController extends Controller
                 
                 // Generate STM reference number in format STM-YYYY-XXX
                 $year = date('Y');
-                $lastRef = DB::connection('sqlsrv')->table('SectionalCofOReg')
+                $lastRef = DB::connection('sqlsrv')->table('Sectional_title_transfer')
                     ->where('STM_Ref', 'like', "STM-$year-%")
                     ->orderBy('id', 'desc')
                     ->value('STM_Ref');
@@ -377,8 +377,8 @@ class STTransferOfTitleController extends Controller
                 // Ensure we have a valid user ID
                 $userId = Auth::id() ?: 1; // Default to ID 1 if not authenticated
                 
-                // Create SectionalCofOReg record
-                DB::connection('sqlsrv')->table('SectionalCofOReg')->insert([
+                // Create Sectional_title_transfer record
+                DB::connection('sqlsrv')->table('Sectional_title_transfer')->insert([
                     'application_id' => $request->mother_application_id,
                     'Sectional_Title_File_No' => $request->sectional_title_file_no,
                     'STM_Ref' => $stmRef,
@@ -467,7 +467,7 @@ class STTransferOfTitleController extends Controller
                 $fileNos[] = $entry['sectional_title_file_no'];
                 
                 // Check for existing records
-                $existing = DB::connection('sqlsrv')->table('SectionalCofOReg')
+                $existing = DB::connection('sqlsrv')->table('Sectional_title_transfer')
                     ->where('Sectional_Title_File_No', $entry['sectional_title_file_no'])
                     ->first();
                     
@@ -478,7 +478,7 @@ class STTransferOfTitleController extends Controller
             
             // Generate base STM reference
             $year = date('Y');
-            $lastRef = DB::connection('sqlsrv')->table('SectionalCofOReg')
+            $lastRef = DB::connection('sqlsrv')->table('Sectional_title_transfer')
                 ->where('STM_Ref', 'like', "STM-$year-%")
                 ->orderBy('id', 'desc')
                 ->value('STM_Ref');
@@ -507,7 +507,7 @@ class STTransferOfTitleController extends Controller
                 ];
                 
                 // Insert record
-                DB::connection('sqlsrv')->table('SectionalCofOReg')->insert([
+                DB::connection('sqlsrv')->table('Sectional_title_transfer')->insert([
                     'application_id' => $entry['application_id'],
                     'Sectional_Title_File_No' => $entry['sectional_title_file_no'],
                     'STM_Ref' => $stmRef,
@@ -557,8 +557,8 @@ class STTransferOfTitleController extends Controller
         try {
             DB::connection('sqlsrv')->beginTransaction();
             
-            // Update or insert a record in SectionalCofOReg with status 'rejected'
-            DB::connection('sqlsrv')->table('SectionalCofOReg')->updateOrInsert(
+            // Update or insert a record in Sectional_title_transfer with status 'rejected'
+            DB::connection('sqlsrv')->table('Sectional_title_transfer')->updateOrInsert(
                 ['application_id' => $request->application_id],
                 [
                     'status' => 'rejected',

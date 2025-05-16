@@ -271,6 +271,295 @@
   }
 </script>
 
+<!-- Auto Logout Script and Toast -->
+<style>
+  /* Toast Container Styles */
+  #autoLogoutToast {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 16px 20px;
+    display: none;
+    z-index: 9999;
+    width: 320px;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  
+  /* Toast Header */
+  .toast-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  /* Toast Title */
+  .toast-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #212121;
+  }
+  
+  /* Toast Close Button */
+  .toast-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #aaa;
+    font-size: 18px;
+  }
+  
+  /* Toast Content */
+  .toast-content {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Toast Message */
+  .toast-message {
+    flex-grow: 1;
+    font-size: 14px;
+    color: #555;
+    margin-right: 15px;
+  }
+  
+  /* Progress Circle Container */
+  .progress-circle-container {
+    position: relative;
+    width: 44px;
+    height: 44px;
+  }
+  
+  /* Progress Circle */
+  .progress-circle {
+    transform: rotate(-90deg);
+    width: 44px;
+    height: 44px;
+  }
+  
+  /* Progress Circle Background */
+  .progress-circle-bg {
+    fill: none;
+    stroke: #f3f3f3;
+    stroke-width: 4;
+  }
+  
+  /* Progress Circle Indicator */
+  .progress-circle-indicator {
+    fill: none;
+    stroke: #D42E12;
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s ease;
+  }
+  
+  /* Countdown Text */
+  .countdown-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    font-weight: 700;
+    color: #D42E12;
+  }
+  
+  /* Toast Actions */
+  .toast-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+  }
+  
+  /* Continue Button */
+  .continue-btn {
+    background-color: #107C41;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .continue-btn:hover {
+    background-color: #0c6a38;
+  }
+</style>
+
+<!-- Auto Logout Toast -->
+<div id="autoLogoutToast">
+  <div class="toast-header">
+    <div class="toast-title">Session Timeout</div>
+    <button class="toast-close" id="closeAutoLogoutToast">&times;</button>
+  </div>
+  <div class="toast-content">
+    <div class="toast-message">
+      Your session is about to expire due to inactivity.
+    </div>
+    <div class="progress-circle-container">
+      <svg class="progress-circle" viewBox="0 0 36 36">
+        <circle class="progress-circle-bg" cx="18" cy="18" r="16"></circle>
+        <circle class="progress-circle-indicator" cx="18" cy="18" r="16" 
+                stroke-dasharray="100" stroke-dashoffset="0"></circle>
+      </svg>
+      <div class="countdown-text" id="countdownText">30</div>
+    </div>
+  </div>
+  <div class="toast-actions">
+    <button class="continue-btn" id="continueSessionBtn">Continue Session</button>
+  </div>
+</div>
+
+<script>
+// Auto Logout Configuration
+const AUTO_LOGOUT_CONFIG = {
+  idleTime: 1000000, // 3 minutes in seconds
+  warningTime: 30, // Show warning 30 seconds before logout
+  checkInterval: 1000, // Check every second
+};
+
+// User activity tracking
+let lastActivityTime = Date.now();
+let autoLogoutTimer = null;
+let countdownTimer = null;
+let warningShown = false;
+
+// Toast and countdown elements
+const autoLogoutToast = document.getElementById('autoLogoutToast');
+const countdownText = document.getElementById('countdownText');
+const progressCircle = document.querySelector('.progress-circle-indicator');
+const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * 16; // 2πr where r=16 (from SVG)
+
+// Set the circle's length
+progressCircle.style.strokeDasharray = CIRCLE_CIRCUMFERENCE;
+progressCircle.style.strokeDashoffset = '0';
+
+// Function to update user's last activity time
+function updateActivity() {
+  lastActivityTime = Date.now();
+  
+  // Hide warning toast if it's visible
+  if (warningShown) {
+    hideLogoutWarning();
+  }
+}
+
+// Function to check if user is idle
+function checkUserIdle() {
+  const currentTime = Date.now();
+  const idleTime = (currentTime - lastActivityTime) / 1000; // Convert to seconds
+  
+  // If user has been idle for longer than the warning threshold but warning not shown yet
+  if (idleTime >= (AUTO_LOGOUT_CONFIG.idleTime - AUTO_LOGOUT_CONFIG.warningTime) && !warningShown) {
+    showLogoutWarning();
+  }
+  
+  // If user has been idle for longer than the idle threshold
+  if (idleTime >= AUTO_LOGOUT_CONFIG.idleTime) {
+    performAutoLogout();
+  }
+}
+
+// Show the logout warning and start countdown
+function showLogoutWarning() {
+  warningShown = true;
+  let countdownSeconds = AUTO_LOGOUT_CONFIG.warningTime;
+  
+  // Show the toast
+  autoLogoutToast.style.display = 'block';
+  
+  // Set initial countdown
+  countdownText.textContent = countdownSeconds;
+  
+  // Start countdown timer
+  countdownTimer = setInterval(() => {
+    countdownSeconds--;
+    
+    // Update text countdown
+    countdownText.textContent = countdownSeconds;
+    
+    // Update circular progress
+    const progressPercentage = (countdownSeconds / AUTO_LOGOUT_CONFIG.warningTime) * 100;
+    const dashOffset = CIRCLE_CIRCUMFERENCE * (1 - progressPercentage / 100);
+    progressCircle.style.strokeDashoffset = dashOffset;
+    
+    // If countdown finished
+    if (countdownSeconds <= 0) {
+      clearInterval(countdownTimer);
+    }
+  }, 1000);
+}
+
+// Hide the logout warning and reset countdown
+function hideLogoutWarning() {
+  warningShown = false;
+  autoLogoutToast.style.display = 'none';
+  
+  // Clear the countdown timer
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+  }
+  
+  // Reset circular progress
+  progressCircle.style.strokeDashoffset = '0';
+}
+
+// Function to perform the actual logout
+function performAutoLogout() {
+  // Clear all timers
+  if (autoLogoutTimer) {
+    clearInterval(autoLogoutTimer);
+  }
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
+  }
+  
+  // Submit the logout form
+  const logoutForm = document.getElementById('autoLogoutForm');
+  if (logoutForm) {
+    logoutForm.submit();
+  } else {
+    // Fallback if logout form not found
+    window.location.href = "{{ route('logout') }}";
+  }
+}
+
+// Start monitoring user activity
+document.addEventListener('DOMContentLoaded', function() {
+  // Register activity events
+  const activityEvents = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'];
+  
+  activityEvents.forEach(event => {
+    document.addEventListener(event, updateActivity, true);
+  });
+  
+  // Set up timer to periodically check for inactivity
+  autoLogoutTimer = setInterval(checkUserIdle, AUTO_LOGOUT_CONFIG.checkInterval);
+  
+  // Set initial activity timestamp
+  updateActivity();
+  
+  // Set up continue session button
+  const continueSessionBtn = document.getElementById('continueSessionBtn');
+  if (continueSessionBtn) {
+    continueSessionBtn.addEventListener('click', updateActivity);
+  }
+  
+  // Set up close button
+  const closeToastBtn = document.getElementById('closeAutoLogoutToast');
+  if (closeToastBtn) {
+    closeToastBtn.addEventListener('click', updateActivity);
+  }
+});
+</script>
+
 <!-- Set last login time in session -->
 @php
     if (!session()->has('last_login_time')) {

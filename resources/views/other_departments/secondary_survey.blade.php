@@ -60,7 +60,7 @@
                                 <th class="table-header text-green-500">SchemeNo</th>
                                 <th class="table-header text-green-500">Mother FileNo</th>
                                 <th class="table-header text-green-500">STFileNo</th>
-                                <th class="table-header text-green-500">RegNo</th>
+                                <th class="table-header text-green-500">CofO Reg Particular</th>
                                 <th class="table-header text-green-500">Land Use</th>
                                 <th class="table-header text-green-500">Original Owner</th>
                                 <th class="table-header text-green-500">Unit Owner</th>

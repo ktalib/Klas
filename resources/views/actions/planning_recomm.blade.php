@@ -352,14 +352,7 @@
     </table>
   </div>
 
-  <!-- Signature Section -->
-  <div class="mt-8">
-    <div class="border-t border-gray-500 w-48"></div>
-    <p class="text-sm mt-1">Abdullahi Usman Adam</p>
-    <p class="text-sm">(ACTPP)</p>
-    <p class="text-sm">For Director</p>
-  </div>
-
+ 
   <!-- Dimension Modal - Completely rebuilt -->
   <div x-cloak x-show="showDimensionModal" class="alpine-modal" x-transition>
     <div class="alpine-modal-content" @click.outside="showDimensionModal = false">
@@ -514,6 +507,15 @@
         @endif
       </tbody>
     </table>
+  </div>
+
+
+   <!-- Signature Section -->
+  <div class="mt-8">
+    <div class="border-t border-gray-500 w-48"></div>
+    <p class="text-sm mt-1">Abdullahi Usman Adam</p>
+    <p class="text-sm">(ACTPP)</p>
+    <p class="text-sm">For Director</p>
   </div>
 
   <script>

@@ -19,7 +19,7 @@
                     class="flex items-center gap-2 px-4 py-2 text-sm {{ $stMemoGenerated ? 'text-gray-400 cursor-not-allowed bg-gray-50' : 'text-gray-700 hover:bg-gray-100' }}"
                     @if ($stMemoGenerated) tabindex="-1" aria-disabled="true" @endif>
                     <i data-lucide="check" class="w-4 h-4 {{ $stMemoGenerated ? 'text-gray-400' : 'text-red-500' }}"></i>
-                    Generate ST Memo
+                    Generate Physical Planning Memo
                 </a>
             </li>
             <li>
@@ -27,7 +27,7 @@
                     class="flex items-center gap-2 px-4 py-2 text-sm {{ $stMemoGenerated ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-400 cursor-not-allowed bg-gray-50' }}"
                     @if (!$stMemoGenerated) tabindex="-1" aria-disabled="true" onclick="return false;" @endif>
                     <i data-lucide="eye" class="w-4 h-4 {{ $stMemoGenerated ? 'text-blue-500' : 'text-gray-400' }}"></i>
-                    View ST Memo
+                    View Physical Planning Memo
                 </a>
             </li>
             <!-- Site Plan -->

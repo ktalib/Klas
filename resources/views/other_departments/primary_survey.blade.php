@@ -50,14 +50,15 @@
 
                     </div>
                 </div>
-
+ 
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr class="text-xs">
                                 <th class="table-header text-green-500">ID</th>
                                 <th class="table-header text-green-500">File No</th>
-                                  <th class="table-header text-green-500">RegNo</th>
+                                  <th class="table-header text-green-500">CofO Reg Particulars</th>
+                                <th class="table-header text-green-500">Assignment Reg Particulars</th>
                                 <th class="table-header text-green-500">Property</th>
                                 <th class="table-header text-green-500">Type</th>
                                 <th class="table-header text-green-500">Land Use</th>
@@ -84,6 +85,25 @@
                                         @if($cofo)
                                       
                                           {{ $cofo->serial_no ?? 'N/A' }}/{{ $cofo->page_no ?? 'N/A' }}/{{ $cofo->volume_no ?? 'N/A' }}</span>
+                                          
+                                         </div>
+                                        @else
+                                        <span class="text-gray-400">N/A</span>
+                                        @endif
+                                    </td>
+
+
+                                      <td class="table-cell px-1 py-1 truncate">
+                                      
+                                       @php
+                                        $assignment = \DB::connection('sqlsrv')->table('Sectional_title_transfer')
+                                          ->where('application_id', $PrimaryApplication->id)
+                                          ->select('serial_no', 'page_no', 'volume_no')
+                                          ->first();
+                                        @endphp
+                                        @if($assignment)
+                                      
+                                          {{ $assignment->serial_no ?? 'N/A' }}/{{ $assignment->page_no ?? 'N/A' }}/{{$assignment->volume_no ?? 'N/A' }}</span>
                                           
                                          </div>
                                         @else
