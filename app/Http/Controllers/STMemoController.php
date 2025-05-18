@@ -467,7 +467,7 @@ class STMemoController extends Controller
             'sections' => 'required|array',
             'shared_facilities' => 'required'
         ], [
-            'sections.required' => 'Unit Measurements Required'
+            'sections.required' => 'Buyers list and Unit Measurements are Required'
         ]);
         
         // Generate next memo number
@@ -522,7 +522,7 @@ class STMemoController extends Controller
         // Get the memo details
         $memo = DB::connection('sqlsrv')->table('memos')
             ->where('application_id', $id)
-            ->where('memo_type', 'st_memo')
+            ->where('memo_type', 'physical_planning')
             ->first();
         if (!$memo) {
             return redirect()->route('stmemo.siteplan')->with('error', 'Memo not found');

@@ -84,7 +84,11 @@
      
       @if((!request()->has('url') || request()->get('url') !== 'phy_planning') && request()->get('url') !== 'recommendation')
       <li>
-         <a href="{{ route('sub-actions.director-approval', $app->id) }}?url=view" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+         <a href="{{ route('sub-actions.director-approval', $app->id) }}?url=view" 
+         class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2
+         @if(!in_array($app->application_status ?? '', ['Approved'])) 
+           pointer-events-none opacity-50 
+         @endif">
          <i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>
          <span>View Director's Approval</span>
          </a>

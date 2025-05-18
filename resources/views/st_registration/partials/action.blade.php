@@ -16,7 +16,7 @@
   
     @if($app->status == 'pending')
     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" @click="open = false; openSingleRegisterModalWithData({{ $app->sub_id }})">
-      <i data-lucide="file-text" class="inline w-4 h-4 mr-1 text-blue-500"></i>Register Title 
+      <i data-lucide="file-text" class="inline w-4 h-4 mr-1 text-blue-500"></i>Register CofO 
     </a>
     
     <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100" @click="open = false; declineRegistration({{ $app->sub_id }})">
@@ -24,7 +24,7 @@
     </a>
     @else
     <a href="#" class="block px-4 py-2 text-sm text-gray-400 cursor-not-allowed">
-      <i data-lucide="file-text" class="inline w-4 h-4 mr-1 text-gray-400"></i>Register Title 
+      <i data-lucide="file-text" class="inline w-4 h-4 mr-1 text-gray-400"></i>Register CofO 
     </a>
     
     <a href="#" class="block px-4 py-2 text-sm text-gray-400 cursor-not-allowed">

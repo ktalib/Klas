@@ -25,15 +25,11 @@
            
             
           </div>
-          <div class="dropdown">
-            <button onclick="toggleDropdown()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2">
-             Transfer of ST Title <i class="fas fa-chevron-down text-xs"></i>
-            </button>
-            <div id="registerDropdown" class="dropdown-content">
-              <a href="#" onclick="openSingleRegisterModal()" class="whitespace-nowrap"><i class="fas fa-file-alt mr-2"></i>Transfer of ST Title</a>
-              <a href="#" onclick="openBatchRegisterModal()" class="whitespace-nowrap"><i class="fas fa-upload mr-2"></i> Batch Transfer of ST Title </a>
+            <div>
+            <a href="#" onclick="openBatchRegisterModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2">
+              Batch Assignment
+            </a>
             </div>
-          </div>
         </div>
     
         <!-- Stats Cards -->

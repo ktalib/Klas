@@ -123,6 +123,8 @@
 
                       <div class="grid grid-cols-3 gap-2 mb-4">
                      
+                     
+                      
                       <button class="tab-button active" data-tab="detterment">
                         <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
                         DOCUMENTS
@@ -132,7 +134,10 @@
                         <i data-lucide="banknote" class="w-3.5 h-3.5 mr-1.5"></i>
                         APPROVAL
                       </button>
-
+                           <button class="tab-button" data-tab="summary">
+                        <i data-lucide="user" class="w-3.5 h-3.5 mr-1.5"></i>
+                        SUMMARY
+                      </button>
                         {{-- <button class="tab-button {{ (strtolower($application->application_status ?? '') !== 'approved' || strtolower($application->planning_recommendation_status ?? '') !== 'approved') ? 'opacity-50 cursor-not-allowed bg-gray-100' : '' }}" 
                         data-tab="final"
                         {{ (strtolower($application->application_status ?? '') !== 'approved' || strtolower($application->planning_recommendation_status ?? '') !== 'approved') ? 'disabled' : '' }}>
@@ -142,6 +147,251 @@
 
                       </div>
                   
+                      <!-- Summary Tab -->
+                      <div id="summary-tab" class="tab-content">
+                        <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                          <div class="p-4 border-b">
+                            <h3 class="text-sm font-medium">Applicant Summary</h3>
+                            <p class="text-xs text-gray-500">Application overview and details</p>
+                          </div>
+                          <div class="p-4 space-y-4">
+                            <!-- Applicant Information -->
+                            <div class="mb-6">
+                              <h4 class="text-sm font-semibold text-gray-800 mb-3 pb-2 border-b">Applicant Information</h4>
+                              
+                              @if ($application->applicant_type == 'individual')
+                                <!-- Individual Applicant -->
+                                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                  <div class="flex items-center">
+                                    <div class="mr-4">
+                                      @if (isset($application->passport) && !empty($application->passport))
+                                        <img src="{{ asset('storage/app/public/' . $application->passport) }}"
+                                          alt="Applicant" class="w-16 h-16 object-cover rounded-full border border-gray-300">
+                                      @else
+                                        <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+                                          <i data-lucide="user" class="w-8 h-8 text-gray-400"></i>
+                                        </div>
+                                      @endif
+                                    </div>
+                                    <div>
+                                      <p class="text-gray-900 font-medium">
+                                        {{ $application->applicant_title ?? '' }}
+                                        {{ $application->first_name ?? '' }}
+                                        {{ $application->middle_name ?? '' }}
+                                        {{ $application->surname ?? '' }}
+                                      </p>
+                                      <p class="text-gray-600 text-sm">{{ $application->email ?? 'N/A' }}</p>
+                                      <p class="text-gray-600 text-sm">{{ $application->phone_number ?? 'N/A' }}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              @elseif($application->applicant_type == 'corporate')
+                                <!-- Corporate Applicant -->
+                                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                  <div class="flex items-center">
+                                    <div class="mr-4">
+                                      <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                                        <i data-lucide="building-2" class="w-8 h-8 text-blue-500"></i>
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <p class="text-gray-900 font-medium">{{ $application->corporate_name ?? 'N/A' }}</p>
+                                      <p class="text-gray-600 text-sm">RC Number: {{ $application->rc_number ?? 'N/A' }}</p>
+                                      <p class="text-gray-600 text-sm">{{ $application->email ?? 'N/A' }}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              @elseif($application->applicant_type == 'multiple')
+                                <!-- Multiple Owners -->
+                                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                  <h5 class="text-sm font-medium mb-3">Multiple Owners</h5>
+                                  <div class="space-y-2">
+                                    @php
+                                      $ownerNames = is_array($application->multiple_owners_names)
+                                        ? $application->multiple_owners_names
+                                        : (is_string($application->multiple_owners_names) 
+                                            ? json_decode($application->multiple_owners_names, true) 
+                                            : []);
+                                      
+                                      if (json_last_error() !== JSON_ERROR_NONE) {
+                                        $ownerNames = [];
+                                      }
+                                    @endphp
+                                    
+                                    @foreach(array_slice($ownerNames, 0, 3) as $index => $ownerName)
+                                      <div class="flex items-center">
+                                        <div class="mr-2 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 text-sm font-medium">
+                                          {{ $index + 1 }}
+                                        </div>
+                                        <span>{{ $ownerName }}</span>
+                                      </div>
+                                    @endforeach
+                                    
+                                    @if(count($ownerNames) > 3)
+                                      <div class="pl-10 text-blue-600 text-sm">
+                                        + {{ count($ownerNames) - 3 }} more owners
+                                      </div>
+                                    @endif
+                                  </div>
+                                </div>
+                              @endif
+                              
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                  <p class="text-xs text-gray-600 font-medium">Address:</p>
+                                  <p class="text-sm">{{ $application->address ?? 'N/A' }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                  <p class="text-xs text-gray-600 font-medium">Contact:</p>
+                                  <p class="text-sm">
+                                    {{ $application->phone_number ?? 'N/A' }}
+                                    @if(isset($application->email) && !empty($application->email))
+                                      <br>{{ $application->email }}
+                                    @endif
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <!-- Property Information -->
+                            <div class="mb-6">
+                              <h4 class="text-sm font-semibold text-gray-800 mb-3 pb-2 border-b">Property Information</h4>
+                              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                  <p class="text-xs text-gray-600 font-medium">Land Use:</p>
+                                  <p class="text-sm">{{ ucfirst($application->land_use ?? 'N/A') }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                  <p class="text-xs text-gray-600 font-medium">Plot Size:</p>
+                                  <p class="text-sm">{{ $application->plot_size ?? 'N/A' }} sqm</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                  <p class="text-xs text-gray-600 font-medium">Location:</p>
+                                  <p class="text-sm">
+                                    @if(isset($application->property_house_no) || isset($application->property_plot_no) || isset($application->property_street_name))
+                                      {{ $application->property_house_no ?? '' }} 
+                                      {{ $application->property_plot_no ?? '' }}
+                                      {{ $application->property_street_name ? ', '.$application->property_street_name : '' }}
+                                    @else
+                                      N/A
+                                    @endif
+                                  </p>
+                                </div>
+                              </div>
+                              
+                              <!-- Sectional Titling Specific Info (if available) -->
+                              @if(isset($application->block_number) || isset($application->floor_number) || isset($application->unit_number))
+                              <div class="mt-3 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-lg">
+                                <h5 class="text-sm font-medium text-blue-800 mb-2">Sectional Titling Unit Information</h5>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                  <div>
+                                    <p class="text-xs text-gray-600 font-medium">Block Number:</p>
+                                    <p class="text-sm">{{ $application->block_number ?? 'N/A' }}</p>
+                                  </div>
+                                  <div>
+                                    <p class="text-xs text-gray-600 font-medium">Floor Number:</p>
+                                    <p class="text-sm">{{ $application->floor_number ?? 'N/A' }}</p>
+                                  </div>
+                                  <div>
+                                    <p class="text-xs text-gray-600 font-medium">Unit Number:</p>
+                                    <p class="text-sm">{{ $application->unit_number ?? 'N/A' }}</p>
+                                  </div>
+                                </div>
+                                
+                                @if(isset($application->shared_areas) && !empty($application->shared_areas))
+                                <div class="mt-2">
+                                  <p class="text-xs text-gray-600 font-medium">Shared Areas:</p>
+                                  <div class="flex flex-wrap gap-1 mt-1">
+                                    @php
+                                      $sharedAreas = is_string($application->shared_areas) 
+                                        ? json_decode($application->shared_areas, true) 
+                                        : (is_array($application->shared_areas) ? $application->shared_areas : []);
+                                      
+                                      if (json_last_error() !== JSON_ERROR_NONE) {
+                                        $sharedAreas = [];
+                                      }
+                                    @endphp
+                                    
+                                    @foreach($sharedAreas as $area)
+                                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                        {{ ucfirst($area) }}
+                                      </span>
+                                    @endforeach
+                                  </div>
+                                </div>
+                                @endif
+                              </div>
+                              @endif
+                            </div>
+                            
+                            <!-- Application Status -->
+                            <div class="mb-6">
+                              <h4 class="text-sm font-semibold text-gray-800 mb-3 pb-2 border-b">Application Status</h4>
+                              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                  <p class="text-xs text-gray-600 font-medium">Application Status:</p>
+                                  <p class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                    {{ $statusClass }}">
+                                    <i data-lucide="{{ $statusIcon }}" class="w-3 h-3 mr-1"></i>
+                                    {{ $application->application_status ?? 'Pending' }}
+                                  </p>
+                                </div>
+                                
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                  <p class="text-xs text-gray-600 font-medium">Planning Recommendation:</p>
+                                  <p class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    {{ $application->planning_recommendation_status == 'Approved' ? 'bg-green-100 text-green-800' : 
+                                       ($application->planning_recommendation_status == 'Declined' || $application->planning_recommendation_status == 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                    {{ $application->planning_recommendation_status ?? 'Pending' }}
+                                  </p>
+                                </div>
+                                
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                  <p class="text-xs text-gray-600 font-medium">Approval Date:</p>
+                                  <p class="text-sm">{{ $application->approval_date ? \Carbon\Carbon::parse($application->approval_date)->format('Y-m-d') : 'Pending' }}</p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <!-- Financial Information -->
+                            <div>
+                              <h4 class="text-sm font-semibold text-gray-800 mb-3 pb-2 border-b">Financial Information</h4>
+                              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                  <p class="text-xs text-gray-600 font-medium">Application Fee:</p>
+                                  <p class="text-sm">₦{{ number_format($application->application_fee ?? 0, 2) }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                  <p class="text-xs text-gray-600 font-medium">Processing Fee:</p>
+                                  <p class="text-sm">₦{{ number_format($application->processing_fee ?? 0, 2) }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                  <p class="text-xs text-gray-600 font-medium">Site Plan Fee:</p>
+                                  <p class="text-sm">₦{{ number_format($application->site_plan_fee ?? 0, 2) }}</p>
+                                </div>
+                              </div>
+                              
+                              <div class="mt-3 p-3 bg-green-50 rounded-lg">
+                                <div class="flex justify-between items-center">
+                                  <p class="text-sm font-medium text-gray-600">Total Initial Bill:</p>
+                                  <p class="text-lg font-bold text-green-700">
+                                    ₦{{ number_format(($application->application_fee ?? 0) + ($application->processing_fee ?? 0) + ($application->site_plan_fee ?? 0), 2) }}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex justify-between items-center pt-4 mt-6 border-t border-gray-200">
+                              <button type="button" onclick="window.history.back()" class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-white hover:bg-gray-50">
+                                <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
+                                Back
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
                       <!-- Survey Tab -->
                
                 

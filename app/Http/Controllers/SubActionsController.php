@@ -21,6 +21,7 @@ class SubActionsController extends Controller
                 'mother_applications.first_name as primary_first_name',
                 'mother_applications.surname as primary_surname',
                 'mother_applications.applicant_title as primary_applicant_title',
+                'mother_applications.id as primary_id',
                 'mother_applications.application_status as primary_application_status',
                 'mother_applications.land_use as primary_land_use',
                 'mother_applications.id as main_application_id',

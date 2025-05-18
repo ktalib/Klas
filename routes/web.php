@@ -575,15 +575,3 @@ Route::post('/mark-welcome-popup-shown', function () {
     return response()->json(['success' => true]);
 })->middleware('auth')->name('markWelcomePopupShown');
 
-// Add this with your other planning-tables routes
-Route::get('/planning-tables/debug-shared-areas/{applicationId}', [PlanningRecommendationController::class, 'debugSharedAreas']);
-
-// Planning Recommendation Table Routes
-Route::get('planning-tables/dimensions/{id}', [\App\Http\Controllers\PlanningRecommendationController::class, 'getSitePlanDimensions'])->name('planning-tables.dimensions');
-Route::get('planning-tables/utilities/{id}', [\App\Http\Controllers\PlanningRecommendationController::class, 'getSharedUtilities'])->name('planning-tables.utilities');
-Route::post('planning-tables/save-dimension', [\App\Http\Controllers\PlanningRecommendationController::class, 'saveSitePlanDimension'])->name('planning-tables.save-dimension');
-Route::post('planning-tables/save-utility', [\App\Http\Controllers\PlanningRecommendationController::class, 'saveSharedUtility'])->name('planning-tables.save-utility');
-Route::delete('planning-tables/delete-dimension', [\App\Http\Controllers\PlanningRecommendationController::class, 'deleteSitePlanDimension'])->name('planning-tables.delete-dimension');
-Route::delete('planning-tables/delete-utility', [\App\Http\Controllers\PlanningRecommendationController::class, 'deleteSharedUtility'])->name('planning-tables.delete-utility');
-Route::get('planning-tables/debug-shared-areas/{id}', [\App\Http\Controllers\PlanningRecommendationController::class, 'debugSharedAreas'])->name('planning-tables.debug-shared-areas');
-Route::post('planning-tables/batch-update-utilities', [\App\Http\Controllers\PlanningRecommendationController::class, 'batchUpdateUtilities'])->name('planning-tables.batch-update-utilities')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);

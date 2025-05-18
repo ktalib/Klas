@@ -652,7 +652,7 @@
                                 <th class="table-header">SchemeNo</th>
                                 <th class="table-header">Unit Owner</th>
                                 <th class="table-header">LGA</th>
-                                <th class="table-header">Block/Floor/Unit</th>
+                                <th class="table-header"> Unit</th>
                                 <th class="table-header">Land Use</th>
                                 <th class="table-header">Actions</th>
                             </tr>
@@ -693,7 +693,7 @@
                                         @endif
                                     </td>
                                     <td class="table-cell">{{ $unitApplication->property_lga ?? 'N/A' }}</td>
-                                    <td class="table-cell">{{ $unitApplication->block_number ?? '' }}/{{ $unitApplication->floor_number ?? '' }}/{{ $unitApplication->unit_number ?? '' }}</td>
+                                    <td class="table-cell"> {{ $unitApplication->unit_number ?? '' }}</td>
                                     <td class="table-cell">{{ $unitApplication->land_use ?? 'N/A' }}</td>
                                     <td class="table-cell relative">
                                         <!-- Dropdown Toggle Button -->
@@ -710,17 +710,14 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                                                    <i data-lucide="pencil" class="w-4 h-4 text-amber-600"></i>
-                                                    <span>Edit Record</span>
-                                                </a>
+                                                
                                             </li>
-                                            <li>
+                                            {{-- <li>
                                                 <a href="{{ route('programmes.generate_memo', $unitApplication->main_application_id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                                     <i data-lucide="file-plus" class="w-4 h-4 text-indigo-600"></i>
                                                     <span>Generate Memo</span>
                                                 </a>
-                                            </li>
+                                            </li> --}}
                                         </ul>
                                     </td>
                                 </tr>
@@ -816,7 +813,7 @@
                                 <th class="table-header">SchemeNo</th>
                                 <th class="table-header">Unit Owner</th>
                                 <th class="table-header">LGA</th>
-                                <th class="table-header">Block/Floor/Unit</th>
+                                <th class="table-header">Unit</th>
                                 <th class="table-header">Land Use</th>
                                 <th class="table-header">Actions</th>
                             </tr>
@@ -858,7 +855,7 @@
                                         @endif
                                     </td>
                                     <td class="table-cell">{{ $unitApplication->property_lga ?? 'N/A' }}</td>
-                                    <td class="table-cell">{{ $unitApplication->block_number ?? '' }}/{{ $unitApplication->floor_number ?? '' }}/{{ $unitApplication->unit_number ?? '' }}</td>
+                                    <td class="table-cell"> {{ $unitApplication->unit_number ?? '' }}</td>
                                     <td class="table-cell">{{ $unitApplication->land_use ?? 'N/A' }}</td>
                                     <td class="table-cell relative">
                                         <!-- Dropdown Toggle Button -->
@@ -881,7 +878,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="{{ route('programmes.view_memo_primary', $unitApplication->main_application_id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                                                <a href="{{ route('programmes.view_memo_primary', $unitApplication->main_application_id) }}?url=unit={{ $unitApplication->unit_number ?? '' }}&unit_id={{$unitApplication->id ?? ''}}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                                     <i data-lucide="clipboard" class="w-4 h-4 text-amber-600"></i>
                                                     <span>View Memo</span>
                                                 </a>

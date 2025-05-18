@@ -23,7 +23,7 @@ use App\Http\Controllers\STMemoController;
 use App\Http\Controllers\STTransferOfTitleController;
 use App\Http\Controllers\DeedsDepartmentController;
 use App\Http\Controllers\LandsDepartmentController;
-
+use App\Http\Controllers\SubPlanningRecommendationController;
 // Public routes
 Route::get('/primary-applications/{id}', [PrimaryActionsController::class, 'show']);
 
@@ -210,6 +210,16 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/utilities', [PlanningRecommendationController::class, 'saveSharedUtility'])->name('planning-tables.save-utility');
         Route::delete('/dimensions', [PlanningRecommendationController::class, 'deleteSitePlanDimension'])->name('planning-tables.delete-dimension');
         Route::delete('/utilities', [PlanningRecommendationController::class, 'deleteSharedUtility'])->name('planning-tables.delete-utility');
+        Route::get('/debug-shared-areas/{applicationId}', [PlanningRecommendationController::class, 'debugSharedAreas'])->name('planning-tables.debug-shared-areas');
+        
+        // Sub application routes
+        Route::get('/sub/dimensions/{subApplicationId}', [SubPlanningRecommendationController::class, 'getSitePlanDimensions'])->name('sub-planning-tables.get-dimensions');
+        Route::get('/sub/utilities/{subApplicationId}', [SubPlanningRecommendationController::class, 'getSharedUtilities'])->name('sub-planning-tables.get-utilities');
+        Route::post('/sub/dimensions', [SubPlanningRecommendationController::class, 'saveSitePlanDimension'])->name('sub-planning-tables.save-dimension');
+        Route::post('/sub/utilities', [SubPlanningRecommendationController::class, 'saveSharedUtility'])->name('sub-planning-tables.save-utility');
+        Route::delete('/sub/dimensions', [SubPlanningRecommendationController::class, 'deleteSitePlanDimension'])->name('sub-planning-tables.delete-dimension');
+        Route::delete('/sub/utilities', [SubPlanningRecommendationController::class, 'deleteSharedUtility'])->name('sub-planning-tables.delete-utility');
+        Route::get('/sub/debug-shared-areas/{subApplicationId}', [SubPlanningRecommendationController::class, 'debugSharedAreas'])->name('sub-planning-tables.debug-shared-areas');
     });
 
     // Survey routes

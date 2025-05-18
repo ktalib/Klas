@@ -32,11 +32,13 @@ class GisDataController extends Controller
     
     public function store(Request $request)
     {
-        // Validate the request data
+        // Validate the request data, including only the actual database column names
         $validated = $request->validate([
-            'mlsfNo' => 'nullable|string',
+            'gis_type' => 'nullable|string',
+            'mlsFNo' => 'nullable|string',
             'kangisFileNo' => 'nullable|string',
             'NewKANGISFileno' => 'nullable|string',
+            'fileno' => 'nullable|string',
             'plotNo' => 'nullable|string',
             'blockNo' => 'nullable|string',
             'approvedPlanNo' => 'nullable|string',
@@ -74,7 +76,6 @@ class GisDataController extends Controller
             'emailAddress' => 'nullable|email',
             'occupation' => 'nullable|string',
             'nationality' => 'nullable|string',
-            'landUse' => 'nullable|string',
             'specifically' => 'nullable|string',
             'streetName' => 'nullable|string',
             'houseNo' => 'nullable|string',
@@ -98,10 +99,50 @@ class GisDataController extends Controller
             'newspaperAdvert' => 'nullable|file',
             'picture' => 'nullable|file',
             'SurveyPlan' => 'nullable|file',
+            // Track active tab but don't include preview fields in validation
+            'activeFileTab' => 'nullable|string',
+            // Add new unit form fields
+            'PrimaryGISID' => 'nullable|string',
+            'STFileNo' => 'nullable|string',
+            'app_id' => 'nullable|string',
+            'scheme_no' => 'nullable|string',
+            'section_no' => 'nullable|string',
+            'block_no' => 'nullable|string',
+            'unit_no' => 'nullable|string',
+            'landuse' => 'nullable|string',
+            'height' => 'nullable|string',
+            'unit_id' => 'nullable|string',
+            'section_attribute' => 'nullable|string',
+            'base' => 'nullable|string',
+            'floor' => 'nullable|string',
+            'tpreport' => 'nullable|string',
+            'UnitControlBeaconNo' => 'nullable|string',
+            'UnitControlBeaconX' => 'nullable|string',
+            'UnitControlBeaconY' => 'nullable|string',
+            'UnitSize' => 'nullable|string',
+            'UnitDemsion' => 'nullable|string',
+            'UnitPosition' => 'nullable|string',
+            'main_application_id' => 'nullable|integer',
         ]);
         
-        // Prepare data array with validated fields
+        // Start with only the validated database fields
         $data = $validated;
+        
+        // Make sure we've completely removed preview fields
+        unset($data['activeFileTab']);
+        
+        // Prevent any preview fields from getting into the database
+        $previewFields = [
+            'mlsPreviewFileNumber', 'kangisPreviewFileNumber', 'newKangisPreviewFileNumber',
+            'hiddenFileNumber', 'mlsFileNoPrefix', 'mlsFileNumber',
+            'kangisFileNoPrefix', 'kangisFileNumber', 'newKangisFileNoPrefix',
+            'newKangisFileNumber', 'file_prefix', 'file_year', 'serial_number',
+            'scheme_no_preview', 'section_no_preview', 'block_no_preview', 'unit_no_preview'
+        ];
+        
+        foreach ($previewFields as $field) {
+            unset($data[$field]);
+        }
         
         // Handle file uploads - each file gets stored in its own column
         $fileFields = [
@@ -126,6 +167,9 @@ class GisDataController extends Controller
             $data['created_at'] = now();
             $data['updated_at'] = now();
             
+            // Log the final data array for debugging (ONLY the keys)
+            Log::info('GIS Data keys before insert: ', array_keys($data));
+            
             // Store in database using SQL Server connection
             $id = DB::connection('sqlsrv')->table('gisDataCapture')->insertGetId($data);
             
@@ -133,7 +177,7 @@ class GisDataController extends Controller
             
         } catch (\Exception $e) {
             Log::error('GIS Data Save Error: ' . $e->getMessage());
-            return back()->withInput()->with('error', 'Failed to save GIS data. Please try again.');
+            return back()->withInput()->with('error', 'Failed to save GIS data. Error: ' . $e->getMessage());
         }
     }
     public function show($id)
@@ -170,9 +214,11 @@ class GisDataController extends Controller
     {
         // Validate the request data
         $validated = $request->validate([
+            'gis_type' => 'nullable|string',
             'mlsfNo' => 'nullable|string',
             'kangisFileNo' => 'nullable|string',
             'NewKANGISFileno' => 'nullable|string',
+            'fileno' =>      'nullable|string',
             'plotNo' => 'nullable|string',
             'blockNo' => 'nullable|string',
             'approvedPlanNo' => 'nullable|string',
@@ -210,7 +256,6 @@ class GisDataController extends Controller
             'emailAddress' => 'nullable|email',
             'occupation' => 'nullable|string',
             'nationality' => 'nullable|string',
-            'landUse' => 'nullable|string',
             'specifically' => 'nullable|string',
             'streetName' => 'nullable|string',
             'houseNo' => 'nullable|string',
@@ -234,6 +279,28 @@ class GisDataController extends Controller
             'newspaperAdvert' => 'nullable|file',
             'picture' => 'nullable|file',
             'SurveyPlan' => 'nullable|file',
+            // Add new unit form fields
+            'PrimaryGISID' => 'nullable|string',
+            'STFileNo' => 'nullable|string',
+            'app_id' => 'nullable|string',
+            'scheme_no' => 'nullable|string',
+            'section_no' => 'nullable|string',
+            'block_no' => 'nullable|string',
+            'unit_no' => 'nullable|string',
+            'landuse' => 'nullable|string',
+            'height' => 'nullable|string',
+            'unit_id' => 'nullable|string',
+            'section_attribute' => 'nullable|string',
+            'base' => 'nullable|string',
+            'floor' => 'nullable|string',
+            'tpreport' => 'nullable|string',
+            'UnitControlBeaconNo' => 'nullable|string',
+            'UnitControlBeaconX' => 'nullable|string',
+            'UnitControlBeaconY' => 'nullable|string',
+            'UnitSize' => 'nullable|string',
+            'UnitDemsion' => 'nullable|string',
+            'UnitPosition' => 'nullable|string',
+            'main_application_id' => 'nullable|integer',
         ]);
         
         // Get the current record data
@@ -317,5 +384,106 @@ class GisDataController extends Controller
             Log::error('GIS Data Delete Error: ' . $e->getMessage());
             return redirect()->route('gis.index')->with('error', 'Failed to delete GIS data. Please try again.');
         }
+    }
+
+    public function searchFiles(Request $request)
+    {
+        $search = $request->input('search');
+        $initial = $request->input('initial', false);
+        
+        // For initial load, get the 10 most recent files
+        if ($initial) {
+            $files = DB::connection('sqlsrv')
+                ->table('gisDataCapture')
+                ->select(
+                    'id', 'mlsfNo', 'kangisFileNo', 'NewKANGISFileno', 
+                    'plotNo', 'blockNo', 'approvedPlanNo', 'tpPlanNo', 'areaInHectares',
+                    'landUse', 'specifically', 'layoutName', 'districtName', 'lgaName', 
+                    'StateName', 'streetName', 'houseNo', 'houseType', 'tenancy',
+                    'oldTitleSerialNo', 'oldTitlePageNo', 'oldTitleVolumeNo', 
+                    'deedsDate', 'deedsTime', 'certificateDate', 'titleIssuedYear', 'CofOSerialNo',
+                    'originalAllottee', 'addressOfOriginalAllottee', 'changeOfOwnership', 
+                    'reasonForChange', 'currentAllottee', 'addressOfCurrentAllottee', 
+                    'titleOfCurrentAllottee', 'phoneNo', 'emailAddress', 
+                    'occupation', 'nationality', 'CompanyRCNo'
+                )
+                ->orderBy('created_at', 'desc')
+                ->limit(10)
+                ->get();
+                
+            return response()->json($files);
+        }
+        
+        // If not initial and no search term, return empty
+        if (empty($search)) {
+            return response()->json([]);
+        }
+        
+        // Search for files matching the search term
+        $files = DB::connection('sqlsrv')
+            ->table('gisDataCapture')
+            ->where(function($query) use ($search) {
+                $query->where('mlsfNo', 'like', '%' . $search . '%')
+                    ->orWhere('kangisFileNo', 'like', '%' . $search . '%')
+                    ->orWhere('NewKANGISFileno', 'like', '%' . $search . '%');
+            })
+            ->select(
+                'id', 'mlsfNo', 'kangisFileNo', 'NewKANGISFileno', 
+                'plotNo', 'blockNo', 'approvedPlanNo', 'tpPlanNo', 'areaInHectares',
+                'landUse', 'specifically', 'layoutName', 'districtName', 'lgaName', 
+                'StateName', 'streetName', 'houseNo', 'houseType', 'tenancy',
+                'oldTitleSerialNo', 'oldTitlePageNo', 'oldTitleVolumeNo', 
+                'deedsDate', 'deedsTime', 'certificateDate', 'titleIssuedYear', 'CofOSerialNo',
+                'originalAllottee', 'addressOfOriginalAllottee', 'changeOfOwnership', 
+                'reasonForChange', 'currentAllottee', 'addressOfCurrentAllottee', 
+                'titleOfCurrentAllottee', 'phoneNo', 'emailAddress', 
+                'occupation', 'nationality', 'CompanyRCNo'
+            )
+            ->limit(10)
+            ->get();
+        
+        return response()->json($files);
+    }
+
+    /**
+     * Get unit file numbers for a given mother application
+     */
+    public function getUnits(Request $request)
+    {
+        $motherId = $request->input('mother_id');
+        
+        if (!$motherId) {
+            return response()->json([]);
+        }
+        
+        // Get the units for this mother application with additional fields
+        $units = DB::connection('sqlsrv')
+            ->table('subapplications')
+            ->where('main_application_id', $motherId)
+            ->select(
+                'subapplications.id', 
+                'subapplications.fileno', 
+                'subapplications.scheme_no', 
+                'subapplications.floor_number', 
+                'subapplications.block_number', 
+                'subapplications.unit_number', 
+                'subapplications.land_use' // Include land_use
+            )
+            ->orderBy('subapplications.fileno')
+            ->get();
+        
+        // Fetch the unit_id for each unit from st_unit_measurements
+        foreach ($units as $unit) {
+            // Get the unit_id from st_unit_measurements based on unit_number
+            $unitMeasurement = DB::connection('sqlsrv')
+                ->table('st_unit_measurements')
+                ->where('unit_no', $unit->unit_number)
+                ->select('id')
+                ->first();
+                
+            $unit->unit_id = $unitMeasurement ? $unitMeasurement->id : null;
+        }
+        
+        return response()->json($units);
     }
 }

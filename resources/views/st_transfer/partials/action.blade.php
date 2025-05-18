@@ -16,13 +16,13 @@
   
     @if($app->status == 'pending')
     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" @click="open = false; openSingleRegisterModalWithData({{ $app->mother_id }})">
-      <i data-lucide="file-text" class="inline w-4 h-4 mr-1 text-blue-500"></i>Transfer Title 
+      <i data-lucide="file-text" class="inline w-4 h-4 mr-1 text-blue-500"></i>Register Assignment
     </a>
     
      
     @else
     <a href="#" class="block px-4 py-2 text-sm text-gray-400 cursor-not-allowed">
-      <i data-lucide="file-text" class="inline w-4 h-4 mr-1 text-gray-400"></i>Transfer Title 
+      <i data-lucide="file-text" class="inline w-4 h-4 mr-1 text-gray-400"></i>Register Assignment 
     </a>
        <a href="{{ route('st_transfer.view', $app->mother_id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
       <i data-lucide="eye" class="inline w-4 h-4 mr-1 text-green-500"></i> View Details

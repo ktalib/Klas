@@ -298,13 +298,15 @@
                             </a>
                           </li>
                           <li>
-                            <a href="{{ route('actions.director-approval', ['id' => $application->id]) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                            <a href="{{ route('actions.director-approval', ['id' => $application->id]) }}" 
+                               class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2 {{ $application->application_status == 'Approved' ? 'cursor-not-allowed opacity-50' : '' }}">
                               <i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>
                               <span>Approve</span>
                             </a>
                           </li>
                              <li>
-                                <a href="{{ route('actions.director-approval', ['id' => $application->id]) }}?url=view" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                                <a href="{{ $application->application_status == 'Approved' ? route('actions.director-approval', ['id' => $application->id]) . '?url=view' : '#' }}" 
+                                   class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2 {{ $application->application_status != 'Approved' ? 'cursor-not-allowed opacity-50' : '' }}">
                                     <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
                                     <span>View approval</span>
                                 </a>
@@ -408,13 +410,15 @@
                         </a>
                       </li>
                       <li>
-                        <a href="{{ route('sub-actions.director-approval', ['id' => $unitApplication->id]) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                        <a href="{{ route('sub-actions.director-approval', ['id' => $unitApplication->id]) }}" 
+                           class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2 {{ $unitApplication->application_status == 'Approved' ? 'cursor-not-allowed opacity-50' : '' }}">
                           <i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>
                           <span>Approve</span>
                         </a>
                       </li>
                       <li>
-                        <a href="{{ route('sub-actions.director-approval', ['id' => $unitApplication->id]) }}?url=view" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                        <a href="{{ $unitApplication->application_status == 'Approved' ? route('sub-actions.director-approval', ['id' => $unitApplication->id]) . '?url=view' : '#' }}" 
+                           class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2 {{ $unitApplication->application_status != 'Approved' ? 'cursor-not-allowed opacity-50' : '' }}">
                           <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
                           <span>View approval</span>
                         </a>

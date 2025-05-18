@@ -1,6 +1,6 @@
 <!-- architecturaldesign Bill Tab -->
-@if(request()->query('url') != 'phy_planning' && request()->query('url') != 'recommendation')
-<div id="detterment-tab" class="tab-content  ">
+@if (request()->query('url') !== 'phy_planning' || request()->query('url') == 'recommendation')
+    <div id="detterment-tab" class="tab-content active">
     <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
         <div class="p-4 border-b">
             <h3 class="text-sm font-medium"> Architectural Design</h3>
@@ -75,6 +75,7 @@
                     </div>
 
                     <!-- Upload New Design Button -->
+                      @if(request()->query('url') == 'recommendation')
                     <div class="mt-4 text-center">
                         <label for="architectural_design_upload"
                             class="inline-flex items-center px-3 py-2 text-xs bg-indigo-50 text-indigo-600 rounded-md hover:bg-indigo-100 cursor-pointer">
@@ -83,6 +84,7 @@
                         </label>
                         <input type="file" id="architectural_design_upload" class="hidden" accept="image/*,.pdf">
                     </div>
+                    @endif
                 </div>
             </div>
 

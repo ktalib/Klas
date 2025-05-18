@@ -22,14 +22,41 @@
             <!-- Header with actions -->
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold">GIS Data Records</h2>
-                <div>
-                    <a href="{{ route('gis.create') }}" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center inline-flex">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Add New Record
-                    </a>
-                </div>
+               <div class="relative inline-block text-left">
+              <button id="survey-dropdown-button" class="flex items-center space-x-2 px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>Add New Record</span>
+              <i data-lucide="chevron-down" class="w-4 h-4"></i>
+              </button>
+              <div id="survey-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+              <div class="py-1">
+              <a href="{{ route('gis.create', ['is' => 'primary']) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i data-lucide="file-plus" class="w-4 h-4 mr-2"></i>
+                Create Primary GIS
+              </a>
+              <a href="{{ route('gis.create', ['is' => 'secondary']) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i data-lucide="layers" class="w-4 h-4 mr-2"></i>
+                Create Unit GIS
+              </a>
+              </div>
+              </div>
+            </div>
+            <script>
+              document.addEventListener('DOMContentLoaded', function() {
+              const dropdownButton = document.getElementById('survey-dropdown-button');
+              const dropdownMenu = document.getElementById('survey-dropdown-menu');
+              
+              dropdownButton.addEventListener('click', function() {
+              dropdownMenu.classList.toggle('hidden');
+              });
+              
+              document.addEventListener('click', function(event) {
+              if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+              dropdownMenu.classList.add('hidden');
+              }
+              });
+              });
+            </script>
             </div>
 
             @if(session('success'))

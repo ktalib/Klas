@@ -81,7 +81,7 @@
                 <!-- Header -->
                 <div class="flex items-center justify-between p-4 border-b">
                     <h3 class="text-lg font-semibold">Payment Management</h3>
-                    <button type="button" class="text-gray-400 hover:text-gray-500" id="closePaymentBtn">
+                    <button type="button" class="text-gray-400 hover:text-gray-500" onclick="window.history.back()">
                         <span class="sr-only">Close</span>
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -393,7 +393,7 @@
                 <div class="flex justify-end p-4 border-t">
                     <button type="button"
                         class="mr-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-                        id="back">Back</button>
+                        onclick="window.history.back()">Back</button>
                 </div>
 
             </div>

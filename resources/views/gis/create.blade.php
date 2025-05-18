@@ -13,34 +13,38 @@
       <!-- GIS Data Capture Form -->
       <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-bold">GIS Data Capture</h2>
+          <h2 class="text-xl font-bold">
+            @if(request()->get('is') == 'secondary')
+              {{ __('Capture Unit GIS Data') }}
+            @elseif(request()->get('is') == 'primary')
+              {{ __('Capture Primary GIS Data') }}
+            @else
+              {{ __('GIS Data Capture') }}
+            @endif
+          </h2>
         </div>
         
         <form action="{{ route('gis.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
             @csrf
             
-            <!-- File Information Section -->
-            <div class="bg-gray-50 p-4 rounded-lg">
-                <h3 class="text-lg font-semibold mb-4 text-gray-700">File Information</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="space-y-2">
-                        <label for="mlsfNo" class="block text-sm font-medium text-gray-700">MLSF Number</label>
-                        <input type="text" id="mlsfNo" name="mlsfNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label for="kangisFileNo" class="block text-sm font-medium text-gray-700">KANGIS File Number</label>
-                        <input type="text" id="kangisFileNo" name="kangisFileNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label for="NewKANGISFileno" class="block text-sm font-medium text-gray-700">New KANGIS File Number</label>
-                        <input type="text" id="NewKANGISFileno" name="NewKANGISFileno" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
-                </div>
-            </div>
+            <!-- Include the file summary header -->
+            @include('gis.file_summary_header')
             
+            <!-- File Information Section -->
+            @if(request()->get('is') == 'secondary')
+                <!-- Unit File Information Section -->
+                @include('gis.secondary_fileno')
+                <!-- Unit Form Section -->
+                @include('gis.unit_form')
+            @elseif(request()->get('is') == 'primary')
+                <!-- Primary File Information Section -->
+                @include('primaryform.gis_fileno')
+            @else
+                <!-- Default File Information Section -->
+                @include('gis.secondary_fileno')
+            @endif
             <!-- Plot Information Section -->
+            <input type="hidden" name="gis_type" value="{{ request()->get('is') == 'secondary' ? 'Unit GIS' : 'Primary GIS' }}" class="">
             <div class="bg-gray-50 p-4 rounded-lg">
                 <h3 class="text-lg font-semibold mb-4 text-gray-700">Plot Information</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -121,16 +125,14 @@
                         <label for="houseType" class="block text-sm font-medium text-gray-700">House Type</label>
                         <input type="text" id="houseType" name="houseType" class="w-full p-2 border border-gray-300 rounded-md text-sm">
                     </div>
-                    
-                    <div class="space-y-2">
+
+                       <div class="space-y-2">
                         <label for="tenancy" class="block text-sm font-medium text-gray-700">Tenancy</label>
-                        <select id="tenancy" name="tenancy" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                            <option value="">Select tenancy type</option>
-                            <option value="Owner Occupied">Owner Occupied</option>
-                            <option value="Rented">Rented</option>
-                            <option value="Leased">Leased</option>
-                        </select>
+                        <input type="text" id="tenancy" name="tenancy" class="w-full p-2 border border-gray-300 rounded-md text-sm">
                     </div>
+                    
+                     
+                 
                 </div>
             </div>
             
@@ -226,7 +228,7 @@
                     
                     <div class="space-y-2">
                         <label for="deedsTime" class="block text-sm font-medium text-gray-700">Deeds Time</label>
-                        <input type="time" id="deedsTime" name="deedsTime" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <input type="text" id="deedsTime" name="deedsTime" class="w-full p-2 border border-gray-300 rounded-md text-sm">
                     </div>
                     
                     <div class="space-y-2">
@@ -461,6 +463,14 @@
                 </div>
             </div>
             
+            <!-- Debug form fields -->
+            <div class="bg-gray-50 p-4 rounded-lg mt-4 hidden">
+                <h3 class="text-lg font-semibold mb-4 text-gray-700">Debug Information</h3>
+                <div class="p-2 bg-gray-100 rounded">
+                    <pre id="formDebug" class="whitespace-pre-wrap text-xs"></pre>
+                </div>
+            </div>
+
             <!-- Submit Button -->
             <div class="flex justify-end space-x-3">
                 <button type="button" onclick="window.history.back()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
@@ -477,28 +487,5 @@
     @include('admin.footer')
   </div>
 </div>
-@endsection
-
-@section('scripts')
-<script>
-    // Show the reason for change field only when change of ownership is Yes
-    document.addEventListener('DOMContentLoaded', function() {
-        const changeOfOwnershipSelect = document.getElementById('changeOfOwnership');
-        const reasonForChangeField = document.getElementById('reasonForChange').parentNode;
-        
-        function toggleReasonField() {
-            if (changeOfOwnershipSelect.value === 'Yes') {
-                reasonForChangeField.style.display = 'block';
-            } else {
-                reasonForChangeField.style.display = 'none';
-            }
-        }
-        
-        // Initialize on page load
-        toggleReasonField();
-        
-        // Listen for changes
-        changeOfOwnershipSelect.addEventListener('change', toggleReasonField);
-    });
-</script>
+ @include('gis.script                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ')
 @endsection

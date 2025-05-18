@@ -225,20 +225,98 @@
         <div class="mb-4 border-b border-gray-200">
             <ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
                 <li class="mr-2">
-                    <button id="generated-tab" onclick="showRofoTab('generated')" class="inline-block p-4 border-b-2 border-green-600 rounded-t-lg active text-green-600">
-                        Generated RoFO
+                    <button id="not-generated-tab" onclick="showRofoTab('not-generated')" class="inline-block p-4 border-b-2 border-green-600 rounded-t-lg active text-green-600">
+                        Not Generated RoFO
                     </button>
                 </li>
                 <li class="mr-2">
-                    <button id="not-generated-tab" onclick="showRofoTab('not-generated')" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
-                        Not Generated RoFO
+                    <button id="generated-tab" onclick="showRofoTab('generated')" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
+                        Generated RoFO
                     </button>
                 </li>
             </ul>
         </div>
         
+        <!-- Not Generated RoFO Table -->
+        <div id="not-generated-table" >
+          <table id="notGeneratedRofoTable" class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr class="text-xs">
+                <th class="table-header">ST FileNo</th>
+                <th class="table-header">SchemeNo</th>
+                <th class="table-header">Unit Owner</th>
+                <th class="table-header">LGA</th>
+                <th class="table-header">Block/Floor/Unit</th>
+                <th class="table-header">Land Use</th>
+                <th class="table-header">Date Created</th>
+                <th class="table-header">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              @forelse($subapplications->filter(function($app) { return empty($app->rofo_no); }) as $unitApplication)
+              <tr data-land-use="{{ strtolower($unitApplication->land_use ?? '') }}" data-date="{{ $unitApplication->created_at ? date('Y-m-d', strtotime($unitApplication->created_at)) : '' }}" class="text-xs">
+                <td class="table-cell">{{ $unitApplication->fileno ?? 'N/A' }}</td>
+                <td class="table-cell">{{ $unitApplication->scheme_no ?? 'N/A' }}</td>
+                <td class="table-cell">
+                      @if(!empty($unitApplication->multiple_owners_names) && json_decode($unitApplication->multiple_owners_names))
+                          @php
+                              $owners = json_decode($unitApplication->multiple_owners_names);
+                              $firstOwner = isset($owners[0]) ? $owners[0] : 'N/A';
+                              $allOwners = json_encode($owners);
+                          @endphp
+                          {{ $firstOwner }}
+                          <span class="info-icon" onclick="showOwners({{ $allOwners }})">i</span>
+                      @else
+                          {{ $unitApplication->owner_name ?? 'N/A' }}
+                      @endif
+                </td>
+                <td class="table-cell">{{ $unitApplication->property_lga ?? 'N/A' }}</td>
+                <td class="table-cell">{{ $unitApplication->block_number ?? '' }}/{{ $unitApplication->floor_number ?? '' }}/{{ $unitApplication->unit_number ?? '' }}</td>
+                <td class="table-cell">{{ $unitApplication->land_use ?? 'N/A' }}</td>
+                <td class="table-cell">{{ $unitApplication->created_at ? date('d-m-Y', strtotime($unitApplication->created_at)) : 'N/A' }}</td>
+                <td class="table-cell relative">
+                    <!-- Dropdown Toggle Button -->
+                    <button type="button" class="p-2 hover:bg-gray-100 focus:outline-none rounded-full" onclick="customToggleDropdown(this, event)">
+                      <i data-lucide="more-horizontal" class="w-5 h-5"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu for Not Generated RoFO -->
+                    <ul class="action-menu z-50 bg-white border rounded-lg shadow-lg hidden w-56">
+                      <li>
+                        <a href="{{ route('sectionaltitling.viewrecorddetail_sub', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                          <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
+                          <span>View Record</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                          <i data-lucide="edit" class="w-4 h-4 text-green-600"></i>
+                          <span>Edit Record</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="{{ route('programmes.generate_rofo', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                          <i data-lucide="file-plus" class="w-4 h-4 text-indigo-600"></i>
+                          <span>Generate RoFO</span>
+                        </a>
+                      </li>
+                    </ul>
+                </td>
+              </tr>
+              @empty
+              <tr id="noRecordsNotGeneratedRow" class="hidden">
+                <td colspan="8" class="table-cell text-center py-4 text-gray-500">No matching records found</td>
+              </tr>
+              <tr id="emptyNotGeneratedRow">
+                <td colspan="8" class="table-cell text-center py-4 text-gray-500">No records pending RoFO generation</td>
+              </tr>
+              @endforelse
+            </tbody>
+          </table>
+        </div>
+
         <!-- Generated RoFO Table -->
-        <div id="generated-table" >
+        <div id="generated-table" class="overflow-x-auto hidden">
           <table id="generatedRofoTable" class="min-w-full divide-y divide-gray-200">
             <thead>
               <tr class="text-xs">
@@ -317,84 +395,6 @@
               </tr>
               <tr id="emptyGeneratedRow">
                 <td colspan="9" class="table-cell text-center py-4 text-gray-500">No generated RoFO applications found</td>
-              </tr>
-              @endforelse
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Not Generated RoFO Table -->
-        <div id="not-generated-table" class="overflow-x-auto hidden">
-          <table id="notGeneratedRofoTable" class="min-w-full divide-y divide-gray-200">
-            <thead>
-              <tr class="text-xs">
-                <th class="table-header">ST FileNo</th>
-                <th class="table-header">SchemeNo</th>
-                <th class="table-header">Unit Owner</th>
-                <th class="table-header">LGA</th>
-                <th class="table-header">Block/Floor/Unit</th>
-                <th class="table-header">Land Use</th>
-                <th class="table-header">Date Created</th>
-                <th class="table-header">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              @forelse($subapplications->filter(function($app) { return empty($app->rofo_no); }) as $unitApplication)
-              <tr data-land-use="{{ strtolower($unitApplication->land_use ?? '') }}" data-date="{{ $unitApplication->created_at ? date('Y-m-d', strtotime($unitApplication->created_at)) : '' }}" class="text-xs">
-                <td class="table-cell">{{ $unitApplication->fileno ?? 'N/A' }}</td>
-                <td class="table-cell">{{ $unitApplication->scheme_no ?? 'N/A' }}</td>
-                <td class="table-cell">
-                      @if(!empty($unitApplication->multiple_owners_names) && json_decode($unitApplication->multiple_owners_names))
-                          @php
-                              $owners = json_decode($unitApplication->multiple_owners_names);
-                              $firstOwner = isset($owners[0]) ? $owners[0] : 'N/A';
-                              $allOwners = json_encode($owners);
-                          @endphp
-                          {{ $firstOwner }}
-                          <span class="info-icon" onclick="showOwners({{ $allOwners }})">i</span>
-                      @else
-                          {{ $unitApplication->owner_name ?? 'N/A' }}
-                      @endif
-                </td>
-                <td class="table-cell">{{ $unitApplication->property_lga ?? 'N/A' }}</td>
-                <td class="table-cell">{{ $unitApplication->block_number ?? '' }}/{{ $unitApplication->floor_number ?? '' }}/{{ $unitApplication->unit_number ?? '' }}</td>
-                <td class="table-cell">{{ $unitApplication->land_use ?? 'N/A' }}</td>
-                <td class="table-cell">{{ $unitApplication->created_at ? date('d-m-Y', strtotime($unitApplication->created_at)) : 'N/A' }}</td>
-                <td class="table-cell relative">
-                    <!-- Dropdown Toggle Button -->
-                    <button type="button" class="p-2 hover:bg-gray-100 focus:outline-none rounded-full" onclick="customToggleDropdown(this, event)">
-                      <i data-lucide="more-horizontal" class="w-5 h-5"></i>
-                    </button>
-                    
-                    <!-- Dropdown Menu for Not Generated RoFO -->
-                    <ul class="action-menu z-50 bg-white border rounded-lg shadow-lg hidden w-56">
-                      <li>
-                        <a href="{{ route('sectionaltitling.viewrecorddetail_sub', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                          <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
-                          <span>View Record</span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                          <i data-lucide="edit" class="w-4 h-4 text-green-600"></i>
-                          <span>Edit Record</span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="{{ route('programmes.generate_rofo', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                          <i data-lucide="file-plus" class="w-4 h-4 text-indigo-600"></i>
-                          <span>Generate RoFO</span>
-                        </a>
-                      </li>
-                    </ul>
-                </td>
-              </tr>
-              @empty
-              <tr id="noRecordsNotGeneratedRow" class="hidden">
-                <td colspan="8" class="table-cell text-center py-4 text-gray-500">No matching records found</td>
-              </tr>
-              <tr id="emptyNotGeneratedRow">
-                <td colspan="8" class="table-cell text-center py-4 text-gray-500">No records pending RoFO generation</td>
               </tr>
               @endforelse
             </tbody>
@@ -675,7 +675,7 @@
     // ...existing DOMContentLoaded code...
     
     // Ensure the tab buttons and filter functionality are properly initialized
-    showRofoTab('generated');
+    showRofoTab('not-generated');
   });
   </script>
 @endsection

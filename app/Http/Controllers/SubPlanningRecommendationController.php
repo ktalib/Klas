@@ -6,32 +6,32 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class PlanningRecommendationController extends Controller
+class SubPlanningRecommendationController extends Controller
 {
-    public function getSitePlanDimensions($applicationId)
+    public function getSitePlanDimensions($subApplicationId)
     {
         $dimensions = DB::connection('sqlsrv')
             ->table('site_plan_dimensions')
-            ->where('application_id', $applicationId)
+            ->where('sub_application_id', $subApplicationId)
             ->orderBy('order')
             ->get();
         
         return response()->json($dimensions);
     }
     
-    public function getSharedUtilities($applicationId)
+    public function getSharedUtilities($subApplicationId)
     {
         // First get existing shared utilities from the database
         $existingUtilities = DB::connection('sqlsrv')
             ->table('shared_utilities')
-            ->where('application_id', $applicationId)
+            ->where('sub_application_id', $subApplicationId)
             ->orderBy('order')
             ->get();
         
-        // Get shared areas from mother_applications
+        // Get shared areas from subapplications
         $application = DB::connection('sqlsrv')
-            ->table('mother_applications')
-            ->where('id', $applicationId)
+            ->table('subapplications')
+            ->where('id', $subApplicationId)
             ->first();
         
         if (!$application) {
@@ -64,7 +64,7 @@ class PlanningRecommendationController extends Controller
         // Get physical planning data
         $physicalPlanningData = DB::connection('sqlsrv')
             ->table('physicalPlanning')
-            ->where('application_id', $applicationId)
+            ->where('sub_application_id', $subApplicationId)
             ->get();
         
         // Convert to collection and key by utility type
@@ -86,7 +86,7 @@ class PlanningRecommendationController extends Controller
             // Create new utility entry from shared_area
             $newUtility = (object)[
                 'id' => null,
-                'application_id' => $applicationId,
+                'sub_application_id' => $subApplicationId,
                 'utility_type' => $area,
                 'dimension' => 0,
                 'count' => 1,  // Default to 1 count
@@ -107,7 +107,7 @@ class PlanningRecommendationController extends Controller
         if ($result->isEmpty() && !empty($sharedAreas)) {
             $result->push((object)[
                 'id' => null,
-                'application_id' => $applicationId,
+                'sub_application_id' => $subApplicationId,
                 'utility_type' => $sharedAreas[0] ?? 'Common Area',
                 'dimension' => 0,
                 'count' => 1,
@@ -121,7 +121,7 @@ class PlanningRecommendationController extends Controller
     public function saveSitePlanDimension(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'application_id' => 'required|integer',
+            'sub_application_id' => 'required|integer',
             'description' => 'required|string|max:255',
             'dimension' => 'required|numeric',
             'order' => 'nullable|integer'
@@ -133,7 +133,7 @@ class PlanningRecommendationController extends Controller
         
         $id = $request->input('id');
         $data = [
-            'application_id' => $request->input('application_id'),
+            'sub_application_id' => $request->input('sub_application_id'),
             'description' => $request->input('description'),
             'dimension' => $request->input('dimension'),
             'order' => $request->input('order', 0)
@@ -168,7 +168,7 @@ class PlanningRecommendationController extends Controller
     public function saveSharedUtility(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'application_id' => 'required|integer',
+            'sub_application_id' => 'required|integer',
             'utility_type' => 'required|string|max:255',
             'dimension' => 'required|numeric',
             'count' => 'required|integer',
@@ -180,14 +180,14 @@ class PlanningRecommendationController extends Controller
         }
         
         $id = $request->input('id');
-        $applicationId = $request->input('application_id');
+        $subApplicationId = $request->input('sub_application_id');
         $utilityType = $request->input('utility_type');
         $dimension = $request->input('dimension');
         $count = $request->input('count');
         $order = $request->input('order', 0);
         
         $data = [
-            'application_id' => $applicationId,
+            'sub_application_id' => $subApplicationId,
             'utility_type' => $utilityType,
             'dimension' => $dimension,
             'count' => $count,
@@ -222,7 +222,7 @@ class PlanningRecommendationController extends Controller
         try {
             $existingPP = DB::connection('sqlsrv')
                 ->table('physicalPlanning')
-                ->where('application_id', $applicationId)
+                ->where('sub_application_id', $subApplicationId)
                 ->where('Shared_Utilities_List', $utilityType)
                 ->first();
                 
@@ -242,7 +242,7 @@ class PlanningRecommendationController extends Controller
                 DB::connection('sqlsrv')
                     ->table('physicalPlanning')
                     ->insertGetId([
-                        'application_id' => $applicationId,
+                        'sub_application_id' => $subApplicationId,
                         'Shared_Utilities_List' => $utilityType,
                         'Recommended_Size' => $dimension,
                         'count' => $count,
@@ -254,104 +254,6 @@ class PlanningRecommendationController extends Controller
         }
         
         return response()->json(['success' => true, 'utility' => $utility]);
-    }
-    
-    /**
-     * Batch update utilities and sync with physicalPlanning table
-     */
-    public function batchUpdateUtilities(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'application_id' => 'required|integer',
-            'utilities' => 'required|array',
-            'utilities.*.utility_type' => 'required|string|max:255',
-            'utilities.*.dimension' => 'required|numeric',
-            'utilities.*.count' => 'required|integer',
-        ]);
-        
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-        
-        $applicationId = $request->input('application_id');
-        $utilities = $request->input('utilities');
-        $updatedUtilities = [];
-        
-        foreach ($utilities as $utilityData) {
-            $id = $utilityData['id'] ?? null;
-            $utilityType = $utilityData['utility_type'];
-            $dimension = $utilityData['dimension'];
-            $count = $utilityData['count'];
-            
-            $data = [
-                'application_id' => $applicationId,
-                'utility_type' => $utilityType,
-                'dimension' => $dimension,
-                'count' => $count,
-                'order' => $utilityData['order'] ?? 0
-            ];
-            
-            // Update or create in shared_utilities table
-            if ($id) {
-                DB::connection('sqlsrv')
-                    ->table('shared_utilities')
-                    ->where('id', $id)
-                    ->update($data);
-                    
-                $utility = DB::connection('sqlsrv')
-                    ->table('shared_utilities')
-                    ->where('id', $id)
-                    ->first();
-            } else {
-                $id = DB::connection('sqlsrv')
-                    ->table('shared_utilities')
-                    ->insertGetId($data);
-                    
-                $utility = DB::connection('sqlsrv')
-                    ->table('shared_utilities')
-                    ->where('id', $id)
-                    ->first();
-            }
-            
-            // Update or create in physicalPlanning table
-            try {
-                $existingPP = DB::connection('sqlsrv')
-                    ->table('physicalPlanning')
-                    ->where('application_id', $applicationId)
-                    ->where('Shared_Utilities_List', $utilityType)
-                    ->first();
-                    
-                if ($existingPP) {
-                    DB::connection('sqlsrv')
-                        ->table('physicalPlanning')
-                        ->where('id', $existingPP->id)
-                        ->update([
-                            'Recommended_Size' => $dimension,
-                            'count' => $count,
-                        ]);
-                } else {
-                    DB::connection('sqlsrv')
-                        ->table('physicalPlanning')
-                        ->insertGetId([
-                            'application_id' => $applicationId,
-                            'Shared_Utilities_List' => $utilityType,
-                            'Recommended_Size' => $dimension,
-                            'count' => $count,
-                            'Area_Under_Application' => 'Auto-generated from batch update'
-                        ]);
-                }
-            } catch (\Exception $e) {
-                // Continue without failing
-            }
-            
-            $updatedUtilities[] = $utility;
-        }
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'All utilities updated successfully',
-            'utilities' => $updatedUtilities
-        ]);
     }
     
     public function deleteSitePlanDimension(Request $request)
@@ -381,18 +283,18 @@ class PlanningRecommendationController extends Controller
     /**
      * Debug endpoint to view shared areas data
      */
-    public function debugSharedAreas($applicationId)
+    public function debugSharedAreas($subApplicationId)
     {
         // Get application data
         $application = DB::connection('sqlsrv')
-            ->table('mother_applications')
-            ->where('id', $applicationId)
+            ->table('subapplications')
+            ->where('id', $subApplicationId)
             ->first();
             
         if (!$application) {
             return response()->json([
-                'error' => 'Application not found',
-                'application_id' => $applicationId
+                'error' => 'Sub application not found',
+                'sub_application_id' => $subApplicationId
             ]);
         }
         
@@ -408,17 +310,17 @@ class PlanningRecommendationController extends Controller
         // Get all utilities for this application
         $utilities = DB::connection('sqlsrv')
             ->table('shared_utilities')
-            ->where('application_id', $applicationId)
+            ->where('sub_application_id', $subApplicationId)
             ->get();
             
         // Get physical planning data
         $physicalPlanning = DB::connection('sqlsrv')
             ->table('physicalPlanning')
-            ->where('application_id', $applicationId)
+            ->where('sub_application_id', $subApplicationId)
             ->get();
         
         return response()->json([
-            'application_id' => $applicationId,
+            'sub_application_id' => $subApplicationId,
             'shared_areas_raw' => $sharedAreasRaw,
             'shared_areas_parsed' => $sharedAreasParsed,
             'utilities_count' => count($utilities),

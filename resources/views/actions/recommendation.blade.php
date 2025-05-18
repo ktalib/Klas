@@ -305,19 +305,18 @@
                                                 Back
                                             </button>
 
-                                            <button type="button" id="print-planning-recommendation"
-                                                class="flex items-center px-3 py-1 text-xs bg-green-700 text-white rounded-md hover:bg-gray-800">
-                                                <i data-lucide="printer-check" class="w-3.5 h-3.5 mr-1.5"></i>
-                                                Print
-                                            </button>
+                                          
 
                                             <!-- Fallback Print Link -->
-                                            <a href="{{ url('planning-recommendation/print') }}/{{ $application->id }}?url=print"
-                                                target="_blank"
-                                                class="flex items-center px-3 py-1 text-xs bg-blue-700 text-white rounded-md hover:bg-blue-800">
-                                                <i data-lucide="external-link" class="w-3.5 h-3.5 mr-1.5"></i>
-                                                Print
-                                            </a>
+                                            @if(strtolower($application->planning_recommendation_status ?? '') == 'approve' || 
+                                                strtolower($application->planning_recommendation_status ?? '') == 'approved')
+                                                <a href="{{ url('planning-recommendation/print') }}/{{ $application->id }}?url=print"
+                                                    target="_blank"
+                                                    class="flex items-center px-3 py-1 text-xs bg-blue-700 text-white rounded-md hover:bg-blue-800">
+                                                    <i data-lucide="external-link" class="w-3.5 h-3.5 mr-1.5"></i>
+                                                    Print
+                                                </a>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

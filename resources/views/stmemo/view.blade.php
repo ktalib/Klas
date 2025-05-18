@@ -31,6 +31,13 @@
           </div>
           
           <div id="printSection">
+                  <!-- Date and Reference Info -->
+                  <div class="text-right text-sm text-gray-500 mb-5">
+                       <p>Generated on: {{ \Carbon\Carbon::parse($memo->created_at)->format('d F, Y') }}</p>
+                       <p>Reference: {{ $memo->memo_no }}</p>
+                  </div>
+                  
+                  <!-- Department Header -->
                   <div class="flex items-center justify-between mb-8">
                          <div>
                                <h2 class="text-xl font-bold text-gray-700 uppercase tracking-wide">PHYSICAL PLANNING DEPARTMENT</h2>
@@ -44,10 +51,13 @@
                                <div class="mb-2 md:mb-0">
                                      <span class="font-semibold text-gray-600 uppercase text-sm">FROM:</span>
                                      <span class="ml-2 text-gray-800 font-medium uppercase">DIRECTOR PHYSICAL PLANNING</span>
+                                      <br>
+                                     <br>
+                                      <span class="font-semibold text-gray-600 uppercase text-sm">TO:</span>
+                                     <span class="ml-2 text-gray-800 font-medium uppercase">PERMANENT SECRETARY</span>
                                </div>
                                <div>
-                                     <span class="font-semibold text-gray-600 uppercase text-sm">TO:</span>
-                                     <span class="ml-2 text-gray-800 font-medium uppercase">PERMANENT SECRETARY</span>
+                                    
                                </div>
                          </div>
                          <div class="mt-3">
@@ -86,11 +96,6 @@
                          <span class="block border-t border-gray-400 w-48 mx-auto"></span>
                          <span class="block mt-2 text-gray-700 font-semibold">Permanent Secretary</span>
                     </div>
-               </div>
-               
-               <div class="mt-8 text-sm text-gray-500">
-                    <p>Generated on: {{ \Carbon\Carbon::parse($memo->created_at)->format('d F, Y') }}</p>
-                    <p>Reference: {{ $memo->memo_no }}</p>
                </div>
                
                <!-- New Page for Measurements -->
@@ -232,13 +237,26 @@ document.addEventListener('DOMContentLoaded', function() {
                         .text-center {
                             text-align: center;
                         }
+                        .text-right {
+                            text-align: right;
+                        }
                         .mt-10 {
                             margin-top: 20pt;
+                        }
+                        .mb-5 {
+                            margin-bottom: 15pt;
                         }
                         .signature-line {
                             border-top: 1px solid #000;
                             width: 200px;
                             margin: 40pt auto 5pt;
+                        }
+                        /* Styles for reference info */
+                        .reference-info {
+                            text-align: right;
+                            margin-bottom: 15pt;
+                            font-size: 10pt;
+                            color: #333;
                         }
                     </style>
                 </head>

@@ -304,6 +304,7 @@ class MemoController extends Controller
                 $memo = $application; // Base data from application
                 
                 // Override with saved memo data
+                $memo->application_id = $memoData->application_id;
                 $memo->memo_no = $memoData->memo_no;
                 $memo->page_no = $memoData->page_no;
                 $memo->arc_design_page_no = $memoData->arc_design_page_no;

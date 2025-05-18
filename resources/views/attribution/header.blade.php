@@ -16,10 +16,17 @@
             <span class="inline-flex items-center gap-1">
                 <i data-lucide="folder" class="w-4 h-4"></i>
                 <span class="font-medium text-gray-700">
-
                     {{ isset($isSecondary) && $isSecondary ? 'ST FileNo: ' . ($application->fileno ?? 'N/A') : 'FileNo: ' . ($application->fileno ?? 'N/A') }}
                 </span>
             </span>
+            @if(isset($isSecondary) && $isSecondary && isset($application->scheme_no))
+            <span class="inline-flex items-center gap-1">
+                <i data-lucide="layout" class="w-4 h-4"></i>
+                <span class="font-medium text-gray-700">
+                    Scheme No: {{ $application->scheme_no }}
+                </span>
+            </span>
+            @endif
         </div>
     </div>
     <div class="flex-1 text-right">

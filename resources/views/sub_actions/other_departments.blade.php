@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('page-title')
-    {{ __('SECTIONAL TITLING  MODULE') }}
+    {{ __('Other Departments') }}
 @endsection
 
 <style>
@@ -56,41 +56,90 @@
                     </div>
                     
                     <div class="py-2">
-                      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
                         <!-- Primary Application Info (First, as requested) -->
                         <div class="flex items-center mb-3">
                           <div class="bg-blue-100 text-blue-800 rounded-full p-1 mr-2">
-                            <i data-lucide="file-check" class="w-4 h-4"></i>
+                          <i data-lucide="file-check" class="w-4 h-4"></i>
                           </div>
                           <div>
-                            <h3 class="text-sm font-medium text-blue-800">Primary Application</h3>
-                            <p class="text-xs text-gray-700">
-                              {{ $application->primary_applicant_title ?? '' }} {{ $application->primary_first_name ?? '' }} {{ $application->primary_surname ?? '' }}
-                              <span class="inline-flex items-center px-2 py-0.5 ml-1 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                                <i data-lucide="link" class="w-3 h-3 mr-1"></i>File No: {{ $application->primary_fileno ?? 'N/A' }}
-                              </span>
-                            </p>
+                          <h3 class="text-sm font-medium text-blue-800">Primary Application</h3>
+                          <p class="text-xs text-gray-700">
+                            {{ $application->primary_applicant_title ?? '' }} {{ $application->primary_first_name ?? '' }} {{ $application->primary_surname ?? '' }}
+                            <span class="inline-flex items-center px-2 py-0.5 ml-1 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                            <i data-lucide="link" class="w-3 h-3 mr-1"></i>File No: {{ $application->primary_fileno ?? 'N/A' }}
+                            </span>
+                          </p>
                           </div>
                         </div>
                         
                         <!-- Current Application Info -->
                         <div class="flex justify-between items-center border-t border-gray-200 pt-3">
                           <div>
-                            <h3 class="text-sm font-medium">{{ $application->land_use ?? 'Property' }}</h3>
-                            <p class="text-xs text-gray-600 mt-1">
-                              File No: <span class="font-medium">{{ $application->fileno ?? 'N/A' }}</span>
-                            </p>
+                          <h3 class="text-sm font-medium">{{ $application->land_use ?? 'Property' }}</h3>
+                          <p class="text-xs text-gray-600 mt-1">
+                            File No: <span class="font-medium">{{ $application->fileno ?? 'N/A' }}</span>
+                          </p>
                           </div>
+
+                          {{-- ....... --}}
+                          <div>
+                          <h3 class="text-sm font-medium">Assignment Reg Particulars</h3>
+                          <p class="text-xs text-gray-600 mt-1">
+                              @php
+                          $assignment = \DB::connection('sqlsrv')
+                            ->table('Sectional_title_transfer')
+                            ->where('application_id', $application->primary_id)
+                            ->select('serial_no', 'page_no', 'volume_no')
+                              ->first();
+                          @endphp
+                          @if ($assignment)
+                            {{ $assignment->serial_no ?? 'N/A' }}/{{ $assignment->page_no ?? 'N/A' }}/{{ $assignment->volume_no ?? 'N/A' }} 
+                          @else
+                             
+                            <span class="inline-flex items-center px-2 py-0.5 ml-1 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-200">
+                              Not Registered
+                            </span>
+                          @endif
+                          </p>
+                          </div>
+
+                          <div>
+                          <h3 class="text-sm font-medium">CofO Reg Particular</h3>
+                          <p class="text-xs text-gray-600 mt-1">
+                            <span class="font-medium">    @php
+                           $cofo = \DB::connection('sqlsrv')
+                          ->table('SectionalCofOReg')
+                          ->where('sub_application_id', $application->id)
+                          ->select('serial_no', 'page_no', 'volume_no')
+                          ->first();
+                          @endphp
+                          @if ($cofo)
+                            
+                          
+                              {{ $cofo->serial_no ?? '' }}/{{ $cofo->page_no ?? '' }}/{{ $cofo->volume_no ?? '' }}
+                           
+                           
+                          @else
+                          <span class="inline-flex items-center px-2 py-0.5 ml-1 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-200">
+                              Not Registered
+                            </span>
+                          @endif
+                        </span>
+                        </p>
+                        </div>
+                          {{-- ..... --}}
+
                           <div class="text-right">
-                            <h3 class="text-sm font-medium">{{ $application->applicant_title ?? '' }} {{ $application->surname ?? '' }} {{ $application->first_name ?? '' }}</h3>
-                            <p class="text-xs text-gray-600 mt-1">Applicant</p>
+                          <h3 class="text-sm font-medium">{{ $application->applicant_title ?? '' }} {{ $application->surname ?? '' }} {{ $application->first_name ?? '' }}</h3>
+                          <p class="text-xs text-gray-600 mt-1">Applicant</p>
                           </div>
                         </div>
-                      </div>
+                        </div>
                 
                       <!-- Tabs Navigation -->
-                      
-                  
+              
+
 
                       <div class="grid grid-cols-3 gap-2 mb-4">
                         <button class="tab-button active" data-tab="initial">

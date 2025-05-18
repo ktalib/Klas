@@ -18,10 +18,12 @@
                     <h3 class="text-lg font-medium">
                         Create A {{ request()->query('is') == 'secondary' ? 'Unit' : 'Primary' }} Survey
                     </h3>
-                    <button type="button" id="search-file-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center">
-                        <i data-lucide="search" class="w-4 h-4 mr-2"></i>
-                        Search File No
-                    </button>
+                    <div class="w-80">
+                        <label for="fileno-select" class="block text-sm font-medium text-gray-700 mb-1">Select File Number</label>
+                        <select id="fileno-select" class="w-full p-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">-- Select File Number --</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div id="application-info" class="hidden">
@@ -41,6 +43,14 @@
                             <input id="block_no" name="block_no" type="text" value="{{ old('block_no') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" disabled>
                         </div>
                     </div>
+                    @if(request()->query('is') == 'secondary')
+                    <div class="grid grid-cols-1 gap-4 mt-3" style="display: none;">
+                        <div>
+                            <label for="scheme_no" class="block text-sm font-medium text-gray-700">Scheme No</label>
+                            <input id="scheme_no" name="scheme_no" type="text" value="{{ old('scheme_no') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" disabled>
+                        </div>
+                    </div>
+                    @endif
                     <div class="grid grid-cols-2 gap-4 mt-3">
                         <div>
                             <label for="approved_plan_no" class="block text-sm font-medium text-gray-700">Approved Plan No</label>
@@ -172,73 +182,16 @@
     </div>
 </div>
 
-<!-- Search Modal -->
-<div id="search-modal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
-    <div class="fixed inset-0 bg-black bg-opacity-50"></div>
-    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md relative z-10">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-medium">Search for File Number</h3>
-            <button type="button" id="close-modal" class="text-gray-400 hover:text-gray-500">
-                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
-        
-        <div class="mb-4">
-            <label for="fileno-search" class="block text-sm font-medium text-gray-700 mb-2">Enter File Number</label>
-            <div class="flex">
-                <input type="text" id="fileno-search" class="flex-1 p-2.5 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., ST-COM-2025-005">
-                <button type="button" id="search-fileno-btn" class="px-4 py-2.5 bg-blue-600 text-white rounded-r-md hover:bg-blue-700">
-                    Search
-                </button>
-            </div>
-        </div>
-        
-        <div id="search-results" class="mt-4 hidden">
-            <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                <h4 class="font-medium text-green-700 mb-2" id="result-title"></h4>
-                <div id="result-details" class="text-sm space-y-2"></div>
-            </div>
-            
-            <div class="mt-4 flex justify-end">
-                <button type="button" id="select-application-btn" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-                    Select This Application
-                </button>
-            </div>
-        </div>
-        
-        <div id="search-loading" class="text-center py-4 hidden">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-            <p class="mt-2 text-gray-600">Searching...</p>
-        </div>
-        
-        <div id="search-not-found" class="mt-4 text-center py-4 hidden">
-            <svg class="mx-auto h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p class="mt-2 text-gray-600" id="not-found-message">No application found with this file number.</p>
-        </div>
-    </div>
-</div>
+<!-- Include Select2 CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
  
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Get all form inputs and disable them initially
     const formInputs = document.querySelectorAll('#update-survey-form input:not([type="hidden"]):not([type="submit"])');
     
-    // Search modal elements
-    const searchModal = document.getElementById('search-modal');
-    const searchFileBtn = document.getElementById('search-file-btn');
-    const closeModalBtn = document.getElementById('close-modal');
-    const searchFilenoBtn = document.getElementById('search-fileno-btn');
-    const filenoSearch = document.getElementById('fileno-search');
-    const searchResults = document.getElementById('search-results');
-    const searchLoading = document.getElementById('search-loading');
-    const searchNotFound = document.getElementById('search-not-found');
-    const resultTitle = document.getElementById('result-title');
-    const resultDetails = document.getElementById('result-details');
-    const selectApplicationBtn = document.getElementById('select-application-btn');
+    const filenoSelect = document.getElementById('fileno-select');
     const saveSurveyBtn = document.getElementById('save-survey-btn');
     const applicationInfo = document.getElementById('application-info');
     
@@ -249,38 +202,79 @@ document.addEventListener('DOMContentLoaded', function() {
     formInputs.forEach(input => {
         input.disabled = true;
     });
-    
-    // Open search modal
-    searchFileBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        searchModal.classList.remove('hidden');
-        filenoSearch.focus();
-    });
-    
-    // Close search modal
-    closeModalBtn.addEventListener('click', function() {
-        searchModal.classList.add('hidden');
-        resetSearchForm();
-    });
-    
-    // Close modal when clicking outside
-    searchModal.querySelector('.fixed.inset-0').addEventListener('click', function() {
-        searchModal.classList.add('hidden');
-        resetSearchForm();
-    });
-    
-    // Handle search button click
-    searchFilenoBtn.addEventListener('click', performSearch);
-    
-    // Handle enter key in search input
-    filenoSearch.addEventListener('keyup', function(e) {
-        if (e.key === 'Enter') {
-            performSearch();
+
+    // Initialize Select2
+    $(filenoSelect).select2({
+        placeholder: "Search for a file number...",
+        allowClear: true,
+        minimumInputLength: 0, // Changed from 2 to 0 to allow initial data load
+        ajax: {
+            url: '{{ route('attribution.search-fileno') }}',
+            dataType: 'json',
+            delay: 250,
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            data: function(params) {
+                return {
+                    fileno: params.term || '', // Handle empty term for initial load
+                    type: isSecondary ? 'secondary' : 'primary',
+                    initial: params.term ? false : true // Flag for initial load
+                };
+            },
+            processResults: function(data, params) {
+                // Transform the data into Select2 format
+                let results = [];
+                
+                if (data.success && data.application) {
+                    // Single application result
+                    results.push({
+                        id: data.application.id,
+                        text: data.application.fileno,
+                        application: data.application
+                    });
+                } else if (data.success && data.applications) {
+                    // Multiple applications result
+                    results = data.applications.map(app => {
+                        return {
+                            id: app.id,
+                            text: app.fileno + (app.applicant_type === 'individual' ? 
+                                   ' - ' + app.first_name + ' ' + app.surname : 
+                                   app.applicant_type === 'corporate' ? 
+                                   ' - ' + app.corporate_name : ''),
+                            application: app
+                        };
+                    });
+                }
+                
+                return {
+                    results: results,
+                    pagination: {
+                        more: data.pagination && data.pagination.more
+                    }
+                };
+            },
+            cache: true
         }
     });
-    
-    // Select application button click
-    selectApplicationBtn.addEventListener('click', function() {
+
+    // Trigger initial data load when dropdown is opened for the first time
+    $(filenoSelect).on('select2:open', function() {
+        // Only load data if the dropdown is empty
+        if (!$(filenoSelect).data('initial-load-done')) {
+            const $search = $('.select2-search__field');
+            $search.val(''); // Ensure empty search
+            $search.trigger('input'); // Trigger search with empty string
+            $(filenoSelect).data('initial-load-done', true); // Mark as done
+        }
+    });
+
+    // Handle select change
+    $(filenoSelect).on('select2:select', function(e) {
+        const data = e.params.data;
+        selectedApplication = data.application;
+        
         if (selectedApplication) {
             // Populate hidden fields based on survey type
             if (isSecondary) {
@@ -303,12 +297,16 @@ document.addEventListener('DOMContentLoaded', function() {
             // Enable save button
             saveSurveyBtn.disabled = false;
             
+            // Populate the scheme_no field for secondary surveys if available
+            if (isSecondary && selectedApplication.scheme_no) {
+                const schemeNoInput = document.getElementById('scheme_no');
+                if (schemeNoInput) {
+                    schemeNoInput.value = selectedApplication.scheme_no;
+                }
+            }
+            
             // Render application header
             renderApplicationHeader(selectedApplication);
-            
-            // Close modal
-            searchModal.classList.add('hidden');
-            resetSearchForm();
             
             // Show success message
             Swal.fire({
@@ -319,98 +317,26 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-    
-    function performSearch() {
-        const fileno = filenoSearch.value.trim();
-        
-        if (!fileno) {
-            Swal.fire({
-                title: 'Error',
-                text: 'Please enter a file number',
-                icon: 'error'
-            });
-            return;
-        }
-        
-        // Hide previous results and show loading
-        searchResults.classList.add('hidden');
-        searchNotFound.classList.add('hidden');
-        searchLoading.classList.remove('hidden');
-        
-        // Perform AJAX request
-        fetch('{{ route('attribution.search-fileno') }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                fileno: fileno,
-                type: isSecondary ? 'secondary' : 'primary'
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            searchLoading.classList.add('hidden');
-            
-            if (data.success) {
-                selectedApplication = data.application;
-                displaySearchResults(data.application);
-            } else {
-                searchNotFound.classList.remove('hidden');
-                document.getElementById('not-found-message').textContent = data.message;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            searchLoading.classList.add('hidden');
-            Swal.fire({
-                title: 'Error',
-                text: 'An error occurred while searching. Please try again.',
-                icon: 'error'
-            });
+
+    // Handle clear event
+    $(filenoSelect).on('select2:clear', function() {
+        // Disable all form inputs
+        formInputs.forEach(input => {
+            input.disabled = true;
         });
-    }
-    
-    function displaySearchResults(application) {
-        let detailsHTML = '';
         
-        // Handle different applicant types
-        if (application.applicant_type === 'individual') {
-            resultTitle.textContent = `${application.applicant_title} ${application.first_name} ${application.surname}`;
-            detailsHTML += `<p><strong>Name:</strong> ${application.applicant_title} ${application.first_name} ${application.surname}</p>`;
-        } else if (application.applicant_type === 'corporate') {
-            resultTitle.textContent = application.corporate_name;
-            detailsHTML += `<p><strong>Company:</strong> ${application.corporate_name}</p>`;
-        } else if (application.applicant_type === 'multiple') {
-            let owners = [];
-            try {
-                owners = JSON.parse(application.multiple_owners_names);
-                resultTitle.textContent = owners[0] + (owners.length > 1 ? ` + ${owners.length - 1} others` : '');
-            } catch (e) {
-                resultTitle.textContent = 'Multiple Owners';
-            }
-            detailsHTML += `<p><strong>Owners:</strong> ${resultTitle.textContent}</p>`;
-        }
+        // Disable save button
+        saveSurveyBtn.disabled = true;
         
-        detailsHTML += `<p><strong>File No:</strong> ${application.fileno}</p>`;
-        detailsHTML += `<p><strong>Land Use:</strong> ${application.land_use}</p>`;
+        // Hide application info
+        applicationInfo.classList.add('hidden');
         
-        if (isSecondary && application.primary_fileno) {
-            detailsHTML += `<p><strong>Mother File No:</strong> ${application.primary_fileno}</p>`;
-        }
+        // Clear hidden fields
+        document.getElementById('application_id').value = '';
+        document.getElementById('sub_application_id').value = '';
         
-        resultDetails.innerHTML = detailsHTML;
-        searchResults.classList.remove('hidden');
-    }
-    
-    function resetSearchForm() {
-        filenoSearch.value = '';
-        searchResults.classList.add('hidden');
-        searchNotFound.classList.add('hidden');
-        searchLoading.classList.add('hidden');
         selectedApplication = null;
-    }
+    });
     
     function renderApplicationHeader(application) {
         // Create the header HTML
@@ -434,6 +360,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             ${application.isSecondary ? 'ST FileNo: ' + (application.fileno || 'N/A') : 'FileNo: ' + (application.fileno || 'N/A')}
                         </span>
                     </span>
+                    ${application.isSecondary && application.scheme_no ? `
+                    <span class="inline-flex items-center gap-1">
+                        <i data-lucide="layout" class="w-4 h-4"></i>
+                        <span class="font-medium text-gray-700">
+                            Scheme No: ${application.scheme_no}
+                        </span>
+                    </span>
+                    ` : ''}
                 </div>
             </div>
             <div class="flex-1 text-right">

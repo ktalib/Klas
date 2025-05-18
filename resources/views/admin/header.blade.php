@@ -419,7 +419,7 @@
 <script>
 // Auto Logout Configuration
 const AUTO_LOGOUT_CONFIG = {
-  idleTime: 1000000, // 3 minutes in seconds
+  idleTime:  6000000, // 3 minutes in seconds
   warningTime: 30, // Show warning 30 seconds before logout
   checkInterval: 1000, // Check every second
 };

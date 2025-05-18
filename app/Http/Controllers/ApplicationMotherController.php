@@ -48,6 +48,9 @@ class ApplicationMotherController extends Controller
         $landUse = request()->get('land_use');
         $prefix = '';
 
+
+     
+
         // Determine the prefix based on land use
         if (strtolower($landUse) === 'commercial') {
             $prefix = 'ST-COM';

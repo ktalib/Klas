@@ -150,8 +150,9 @@ class OtherDepartmentsController extends Controller
 
             'dbo.subapplications.passport',
             'dbo.subapplications.multiple_owners_passport',
-            'dbo.mother_applications.fileno as mother_fileno',
-           'dbo.mother_applications.passport as mother_passport',
+            'dbo.mother_applications.fileno as mother_fileno', 
+            'dbo.mother_applications.id as mother_id',
+             'dbo.mother_applications.passport as mother_passport',
             'dbo.mother_applications.multiple_owners_passport as mother_multiple_owners_passport',
             'dbo.mother_applications.applicant_title as mother_applicant_title',
             'dbo.mother_applications.first_name as mother_first_name',

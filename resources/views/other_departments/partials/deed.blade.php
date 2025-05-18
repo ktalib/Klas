@@ -105,17 +105,18 @@
                         <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
                         Back
                     </a>
-                    
-                        <button
-                            type="button"
-                            id="edit-deeds"
-                            class="flex items-center px-3 py-1 text-xs bg-blue-600 text-white p-2 border border-blue-600 rounded-md hover:bg-blue-700"
-                            onclick="enableDeedsEditing()"
-                        >
-                            <i data-lucide="edit-3" class="w-3.5 h-3.5 mr-1.5"></i>
-                            Edit Deeds
-                        </button>
-                        
+                      
+                        @if(!request()->has('is') || request()->get('is') !== 'secondary')
+                            {{-- <button
+                                type="button"
+                                id="edit-deeds"
+                                class="flex items-center px-3 py-1 text-xs bg-blue-600 text-white p-2 border border-blue-600 rounded-md hover:bg-blue-700"
+                                onclick="enableDeedsEditing()"
+                            >
+                                <i data-lucide="edit-3" class="w-3.5 h-3.5 mr-1.5"></i>
+                                Edit Deeds
+                            </button> --}}
+                        @endif
                         <button
                             type="button"
                             id="submit-deeds"

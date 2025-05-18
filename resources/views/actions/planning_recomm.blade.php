@@ -9,6 +9,8 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- Add Alpine.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Add SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
       background-color: #c6e4f9;
@@ -105,6 +107,44 @@
         margin: 0 !important;
       }
       
+      /* Logo image print styles */
+      img[src*="logo3.jpeg"] {
+        width: 80px !important;
+        height: 80px !important;
+        object-fit: contain !important;
+        display: block !important;
+        margin: 0 auto 10px !important;
+        print-color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
+      }
+      
+      /* Center the ministry header information */
+      .flex.flex-col.items-center {
+        display: block !important;
+        text-align: center !important;
+        margin-bottom: 20pt !important;
+      }
+      
+      /* Hide inputs in utilities table and show only text when printing */
+      #utilities-table input[type="text"],
+      #utilities-table input[type="number"] {
+        border: none !important;
+        background: transparent !important;
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        padding: 0 !important;
+        width: auto !important;
+        font-family: inherit !important;
+        font-size: inherit !important;
+        color: black !important;
+        pointer-events: none !important;
+      }
+      
+      /* Hide hidden inputs completely */
+      #utilities-table input[type="hidden"] {
+        display: none !important;
+      }
+      
       /* Hide all admin/control elements */
       .admin-controls, #toggle-edit-mode, button, .btn, 
       th.admin-controls, td.admin-controls {
@@ -194,10 +234,20 @@
         .then(response => {
           this.showDimensionModal = false;
           this.loadDimensions();
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Dimension saved successfully',
+            timer: 1500
+          });
         })
         .catch(error => {
           console.error('Error saving dimension:', error);
-          alert('Failed to save dimension. Please try again.');
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to save dimension. Please try again.'
+          });
         });
     },
     
@@ -211,41 +261,91 @@
         .then(response => {
           this.showUtilityModal = false;
           this.loadUtilities();
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Utility saved successfully',
+            timer: 1500
+          });
         })
         .catch(error => {
           console.error('Error saving utility:', error);
-          alert('Failed to save utility. Please try again.');
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to save utility. Please try again.'
+          });
         });
     },
     
     deleteDimension(id) {
-      if (confirm('Are you sure you want to delete this dimension?')) {
-        axios.delete('{{ route('planning-tables.delete-dimension') }}', {
-          data: { id }
-        })
-          .then(response => {
-            this.loadDimensions();
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You want to delete this dimension?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios.delete('{{ route('planning-tables.delete-dimension') }}', {
+            data: { id }
           })
-          .catch(error => {
-            console.error('Error deleting dimension:', error);
-            alert('Failed to delete dimension. Please try again.');
-          });
-      }
+            .then(response => {
+              this.loadDimensions();
+              Swal.fire({
+                icon: 'success',
+                title: 'Deleted!',
+                text: 'Dimension has been deleted.',
+                timer: 1500
+              });
+            })
+            .catch(error => {
+              console.error('Error deleting dimension:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to delete dimension. Please try again.'
+              });
+            });
+        }
+      });
     },
     
     deleteUtility(id) {
-      if (confirm('Are you sure you want to delete this utility?')) {
-        axios.delete('{{ route('planning-tables.delete-utility') }}', {
-          data: { id }
-        })
-          .then(response => {
-            this.loadUtilities();
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You want to delete this utility?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios.delete('{{ route('planning-tables.delete-utility') }}', {
+            data: { id }
           })
-          .catch(error => {
-            console.error('Error deleting utility:', error);
-            alert('Failed to delete utility. Please try again.');
-          });
-      }
+            .then(response => {
+              this.loadUtilities();
+              Swal.fire({
+                icon: 'success',
+                title: 'Deleted!',
+                text: 'Utility has been deleted.',
+                timer: 1500
+              });
+            })
+            .catch(error => {
+              console.error('Error deleting utility:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to delete utility. Please try again.'
+              });
+            });
+        }
+      });
     },
     
     debugSharedAreas() {
@@ -253,11 +353,22 @@
       axios.get(url)
         .then(response => {
           console.log('Shared areas debug data:', response.data);
-          alert(`Shared Areas Data:\n\n${JSON.stringify(response.data, null, 2)}`);
+          Swal.fire({
+            icon: 'info',
+            title: 'Shared Areas Data',
+            text: JSON.stringify(response.data, null, 2),
+            customClass: {
+              content: 'text-left'
+            }
+          });
         })
         .catch(error => {
           console.error('Error fetching debug data:', error);
-          alert('Error fetching shared areas debug data. See console for details.');
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error fetching shared areas debug data. See console for details.'
+          });
         });
     }
   }"
@@ -324,6 +435,12 @@
 
   <!-- Table A Section -->  
   <div class="mb-6">
+     @if(request()->query('url') == 'recommendation')
+    <div class="flex justify-between items-center mb-2">
+      <button @click="openDimensionModal()" class="btn btn-primary">Add Dimension</button>
+    </div>
+    @endif
+  <div class="mb-6">
     <div class="flex justify-between items-center mb-2">
       <p class="text-sm font-bold">TABLE A: APPROVED SITE PLAN DIMENSIONS</p>
     </div>
@@ -372,10 +489,8 @@
           <input type="number" x-model="currentDimension.dimension" step="0.01" class="w-full p-2 border border-gray-300 rounded">
         </div>
         
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Display Order:</label>
-          <input type="number" x-model="currentDimension.order" class="w-full p-2 border border-gray-300 rounded">
-        </div>
+        <!-- Display Order field removed -->
+        <input type="hidden" x-model="currentDimension.order" value="0">
         
         <div class="flex justify-end space-x-2">
           <button type="button" @click="showDimensionModal = false" class="px-4 py-2 bg-gray-200 text-gray-700 rounded">Cancel</button>
@@ -385,42 +500,6 @@
     </div>
   </div>
 
-  <!-- Utility Modal - Completely rebuilt -->
-  <div x-cloak x-show="showUtilityModal" class="alpine-modal" x-transition>
-    <div class="alpine-modal-content" @click.outside="showUtilityModal = false">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold">Add/Edit Shared Utility</h2>
-        <button @click="showUtilityModal = false" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-      </div>
-      
-      <form @submit.prevent="saveUtility()">
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Utility Type:</label>
-          <input type="text" x-model="currentUtility.utility_type" class="w-full p-2 border border-gray-300 rounded">
-        </div>
-        
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Dimension (m²):</label>
-          <input type="number" x-model="currentUtility.dimension" step="0.001" class="w-full p-2 border border-gray-300 rounded">
-        </div>
-        
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Count:</label>
-          <input type="number" x-model="currentUtility.count" class="w-full p-2 border border-gray-300 rounded">
-        </div>
-        
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Display Order:</label>
-          <input type="number" x-model="currentUtility.order" class="w-full p-2 border border-gray-300 rounded">
-        </div>
-        
-        <div class="flex justify-end space-x-2">
-          <button type="button" @click="showUtilityModal = false" class="px-4 py-2 bg-gray-200 text-gray-700 rounded">Cancel</button>
-          <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded">Save</button>
-        </div>
-      </form>
-    </div>
-  </div>
 
   <!-- Table B Section (Display-only version) -->
   <div class="mb-8">
@@ -428,89 +507,125 @@
       <p class="text-sm font-bold">TABLE B: ARC DESIGN SHARED UTILITIES</p>
     </div>
     
-    <!-- Fallback server-rendered utilities table -->
+    <!-- Initialize server utilities data BEFORE rendering the table -->
     @php
     $serverUtilities = [];
     try {
-      // Get existing utilities from the database
+      // Get existing utilities from the database - log to debug
+      \Log::info("Retrieving utilities for application: {$application->id}");
+      
+      // Direct query using DB facade for maximum compatibility
       $dbUtilities = DB::connection('sqlsrv')
           ->table('shared_utilities')
           ->where('application_id', $application->id)
           ->orderBy('order')
           ->get();
       
-      // Get shared areas from mother_applications
-      $sharedAreas = [];
-      $sharedAreasJson = DB::connection('sqlsrv')
-          ->table('mother_applications')
-          ->where('id', $application->id)
-          ->value('shared_areas');
+      \Log::info("Retrieved " . count($dbUtilities) . " utilities");
       
-      if (!empty($sharedAreasJson) && is_string($sharedAreasJson)) {
-          $sharedAreas = json_decode($sharedAreasJson, true) ?: [];
+      // Manually convert to array of objects to avoid collection method issues
+      $serverUtilities = [];
+      foreach ($dbUtilities as $util) {
+          $serverUtilities[] = (object)[
+              'id' => $util->id,
+              'application_id' => $util->application_id,
+              'utility_type' => $util->utility_type,
+              'dimension' => $util->dimension, // Don't format here, keep raw value
+              'count' => $util->count,
+              'order' => $util->order ?? 0
+          ];
       }
       
-      // Combine existing utilities with shared areas
-      $serverUtilities = $dbUtilities->toArray();
+      \Log::info("Converted utilities to array: " . count($serverUtilities) . " items");
       
-      // Create temporary objects for shared areas not in the DB
-      foreach ($sharedAreas as $area) {
-          $exists = false;
-          foreach ($serverUtilities as $util) {
-              if ($util->utility_type == $area) {
-                  $exists = true;
-                  break;
-              }
-          }
-          
-          if (!$exists) {
-              $serverUtilities[] = (object)[
-                  'id' => null,
-                  'application_id' => $application->id,
-                  'utility_type' => $area,
-                  'dimension' => 0,
-                  'count' => 1,
-                  'order' => count($serverUtilities) + 1
-              ];
-          }
+      // If no utilities found, check for shared_areas
+      if (empty($serverUtilities)) {
+        \Log::info("No utilities found, checking shared_areas");
+        
+        $sharedAreasJson = DB::connection('sqlsrv')
+            ->table('mother_applications')
+            ->where('id', $application->id)
+            ->value('shared_areas');
+        
+        $sharedAreas = [];
+        if (!empty($sharedAreasJson) && is_string($sharedAreasJson)) {
+            $sharedAreas = json_decode($sharedAreasJson, true) ?: [];
+            \Log::info("Found shared_areas: " . json_encode($sharedAreas));
+        }
+        
+        // Create temporary utility objects from shared areas
+        foreach ($sharedAreas as $index => $area) {
+            if (!empty($area)) {
+                $serverUtilities[] = (object)[
+                    'id' => null,
+                    'application_id' => $application->id,
+                    'utility_type' => $area,
+                    'dimension' => 0,
+                    'count' => 1,
+                    'order' => $index + 1
+                ];
+            }
+        }
+        
+        \Log::info("Created " . count($serverUtilities) . " temporary utilities from shared_areas");
       }
     } catch (\Exception $e) {
       // Log the error but continue
-      \Log::error("Error loading utilities for fallback table: " . $e->getMessage());
+      \Log::error("Error loading utilities: " . $e->getMessage());
+      \Log::error($e->getTraceAsString());
+      $serverUtilities = [];
     }
     @endphp
     
-    <!-- Simplified display-only table -->
-    <table class="w-full" id="utilities-table">
-      <thead>
-        <tr class="bg-gray-200">
-          <th class="w-1/6">SN</th>
-          <th class="w-1/3">UTILITY TYPE</th>
-          <th class="w-1/4">DIMENSION (m²)</th>
-          <th class="w-1/4">COUNT</th>
-        </tr>
-      </thead>
-      <tbody>
-        @if(count($serverUtilities) > 0)
-          @foreach($serverUtilities as $index => $utility)
-          <tr class="utility-row">
-            <td>{{ $index + 1 }}</td>
-            <td>{{ $utility->utility_type }}</td>
-            <td>{{ number_format((float)$utility->dimension, 3) }}</td>
-            <td>{{ $utility->count }}</td>
+    <!-- Functional form for utilities table -->
+    <form id="utilities-form">
+      <input type="hidden" name="application_id" value="{{ $application->id }}">
+      <table class="w-full" id="utilities-table">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="w-1/6">SN</th>
+            <th class="w-1/3">UTILITY TYPE</th>
+            <th class="w-1/4">DIMENSION (m²)</th>
+            <th class="w-1/4">COUNT</th>
           </tr>
-          @endforeach
-        @else
-          <tr>
-            <td colspan="4" class="text-center py-4">No utilities added yet.</td>
-          </tr>
-        @endif
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @if(!empty($serverUtilities))
+            @foreach($serverUtilities as $index => $utility)
+            <tr class="utility-row">
+              <td>{{ $index + 1 }}</td>
+                <td>
+                <input type="text" name="utilities[{{ $index }}][utility_type]" value="{{ $utility->utility_type }}" {{ request()->query('url') != 'recommendation' ? 'readonly' : '' }}>
+                <input type="hidden" name="utilities[{{ $index }}][id]" value="{{ $utility->id }}">
+                </td>
+                <td>
+                <input type="number" name="utilities[{{ $index }}][dimension]" value="{{ $utility->dimension }}" step="0.001" {{ request()->query('url') != 'recommendation' ? 'readonly' : '' }}>
+                </td>
+                <td>
+                <input type="number" name="utilities[{{ $index }}][count]" value="{{ $utility->count }}" {{ request()->query('url') != 'recommendation' ? 'readonly' : '' }}>
+                </td>
+            </tr>
+            @endforeach
+          @else
+            <tr>
+              <td colspan="4" class="text-center py-4">No utilities added yet.</td>
+            </tr>
+          @endif
+        </tbody>
+      </table>
+      @if(request()->query('url') == 'recommendation')
+        <div class="mt-4 flex items-center">
+          <button type="button" id="update-utilities-btn" class="px-4 py-2 bg-blue-500 text-white rounded">Update Utility Dimensions</button>
+          <span id="utilities-update-message" class="ml-4 text-green-500 hidden">Utilities updated successfully!</span>
+        </div>
+      @endif
+    </form>
   </div>
 
+  <!-- Remove the utility modal which is no longer needed -->
+  <!-- Utility Modal removed -->
 
-   <!-- Signature Section -->
+  <!-- Signature Section -->
   <div class="mt-8">
     <div class="border-t border-gray-500 w-48"></div>
     <p class="text-sm mt-1">Abdullahi Usman Adam</p>
@@ -521,36 +636,15 @@
   <script>
     // Auto-print if this is opened as a print page
     if (window.location.search.includes('url=print')) {
-      console.log('Auto-print triggered');
       setTimeout(function() {
         window.print();
       }, 500);
     }
     
-    // Debug helper to ensure Alpine is working
-    document.addEventListener('alpine:init', () => {
-      console.log('Alpine.js initialized successfully');
-      
-      // Add a custom route for debugging shared areas
-      Alpine.addRoutes({
-        'planning-tables/debug-shared-areas/:id': {
-          get({ params }) {
-            return fetch(`{{ url('planning-tables/utilities') }}/${params.id}`)
-              .then(response => response.json());
-          }
-        }
-      });
-    });
-    
     // Setup an observer to watch for table updates
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM loaded, setting up observer');
-      
       const tableObserver = new MutationObserver((mutations) => {
-        console.log('Table mutation detected');
-        for(let mutation of mutations) {
-          console.log('Table updated:', mutation);
-        }
+        // Silent observer
       });
       
       const utilitiesTable = document.getElementById('utilities-table');
@@ -564,24 +658,125 @@
   </script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Add debug method to Alpine data
-    document.addEventListener('alpine:init', () => {
-      Alpine.data('utilityData', () => ({
-        debugSharedAreas() {
-          // Fetch raw shared_areas from mother_applications for the current application
-          fetch(`/planning-tables/debug-shared-areas/${this.applicationId}`)
-            .then(response => response.json())
-            .then(data => {
-              console.log('Shared areas debug data:', data);
-              alert(`Shared Areas Data:\n\n${JSON.stringify(data, null, 2)}`);
-            })
-            .catch(error => {
-              console.error('Error fetching debug data:', error);
-              alert('Error fetching shared areas debug data. See console for details.');
-            });
+    // Add event listener to the update button
+    const updateButton = document.getElementById('update-utilities-btn');
+    if (updateButton) {
+      updateButton.addEventListener('click', function() {
+        updateUtilities();
+      });
+    }
+    
+    // Function to update utilities via AJAX
+    function updateUtilities() {
+      const form = document.getElementById('utilities-form');
+      const formData = new FormData(form);
+      const applicationId = formData.get('application_id');
+      
+      // Convert form data to JSON structure for the API
+      const utilities = [];
+      const rows = document.querySelectorAll('.utility-row');
+      
+      rows.forEach((row, index) => {
+        const idInput = row.querySelector(`input[name="utilities[${index}][id]"]`);
+        const typeInput = row.querySelector(`input[name="utilities[${index}][utility_type]"]`);
+        const dimensionInput = row.querySelector(`input[name="utilities[${index}][dimension]"]`);
+        const countInput = row.querySelector(`input[name="utilities[${index}][count]"]`);
+        
+        if (typeInput && dimensionInput && countInput) {
+          utilities.push({
+            id: idInput ? idInput.value : null,
+            utility_type: typeInput.value,
+            dimension: parseFloat(dimensionInput.value) || 0,
+            count: parseInt(countInput.value) || 1,
+            order: index + 1,
+            application_id: applicationId
+          });
         }
-      }));
-    });
+      });
+      
+      // Send each utility as a separate request to save
+      const savePromises = utilities.map(utility => {
+        return axios.post('{{ route('planning-tables.save-utility') }}', utility)
+          .then(response => {
+            return response.data;
+          })
+          .catch(error => {
+            throw error;
+          });
+      });
+      
+      // Process all save operations
+      Promise.all(savePromises)
+        .then(results => {
+          // Show success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Utilities updated successfully!',
+            timer: 1500,
+            showConfirmButton: false
+          });
+          
+          // Hide message after 3 seconds
+          setTimeout(() => {
+            messageElement.classList.add('hidden');
+          }, 3000);
+          
+          // Refresh the table
+          refreshUtilitiesTable(applicationId);
+        })
+        .catch(error => {
+          alert('An error occurred while saving. Please check the console for details.');
+        });
+    }
+    
+    // Function to refresh the utilities table
+    function refreshUtilitiesTable(applicationId) {
+      axios.get(`{{ url('planning-tables/utilities') }}/${applicationId}`)
+        .then(response => {
+          // Get the table body
+          const tableBody = document.querySelector('#utilities-table tbody');
+          if (!tableBody) return;
+          
+          // Clear existing rows
+          tableBody.innerHTML = '';
+          
+          // If no utilities, show empty message
+          if (response.data.length === 0) {
+            tableBody.innerHTML = `
+              <tr>
+                <td colspan="4" class="text-center py-4">No utilities added yet.</td>
+              </tr>
+            `;
+            return;
+          }
+          
+          // Add updated rows
+          response.data.forEach((utility, index) => {
+            const row = document.createElement('tr');
+            row.className = 'utility-row';
+            
+            row.innerHTML = `
+              <td>${index + 1}</td>
+              <td>
+                <input type="text" name="utilities[${index}][utility_type]" value="${utility.utility_type}">
+                <input type="hidden" name="utilities[${index}][id]" value="${utility.id || ''}">
+              </td>
+              <td>
+                <input type="number" name="utilities[${index}][dimension]" value="${parseFloat(utility.dimension).toFixed(3)}" step="0.001">
+              </td>
+              <td>
+                <input type="number" name="utilities[${index}][count]" value="${utility.count}">
+              </td>
+            `;
+            
+            tableBody.appendChild(row);
+          });
+        })
+        .catch(error => {
+          // Silent error
+        });
+    }
   });
 </script>
 </body>

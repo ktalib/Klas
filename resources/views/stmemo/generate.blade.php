@@ -232,13 +232,13 @@
                 <!-- Tabs -->
                 <div class="border-b border-gray-200 mb-6">
                     <nav class="-mb-px flex space-x-8">
-                        <button type="button"
-                            class="tab-btn active border-b-2 border-blue-500 py-3 px-1 text-sm font-medium text-blue-600"
+                        {{-- <button type="button"
+                            class="tab-btn   border-b-2 border-blue-500 py-3 px-1 text-sm font-medium text-blue-600"
                             data-tab="measurements">
                             Unit Measurements
-                        </button>
+                        </button> --}}
                         <button type="button"
-                            class="tab-btn border-b-2 border-transparent py-3 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                            class="tab-btn  active border-b-2 border-transparent py-3 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
                             data-tab="buyers">
                             Buyer List
                         </button>
@@ -251,7 +251,7 @@
                 </div>
 
                 <!-- Tab Contents -->
-                <div class="tab-content" id="measurements-tab">
+                <div class="tab-content hidden" id="measurements-tab">
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Shared Facilities</label>
                         @php
@@ -328,29 +328,46 @@
                     </div>
                 </div>
 
-                <div class="tab-content hidden" id="buyers-tab">
+                <div class="tab-content  " id="buyers-tab">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Buyer Name</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Unit No</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Measurement (sqm)</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @if (count($conveyanceData) > 0)
                                     @foreach ($conveyanceData as $buyer)
+                                        @php
+                                            // Find measurement for this unit if exists
+                                            $unitMeasurement = '';
+                                            if(isset($unitMeasurements)) {
+                                                foreach($unitMeasurements as $measurement) {
+                                                    // Match both unit_no and buyer_id to get the correct measurement
+                                                    if($measurement->unit_no == $buyer->unit_no && 
+                                                      (isset($measurement->buyer_id) && isset($buyer->id) && $measurement->buyer_id == $buyer->id)) {
+                                                        $unitMeasurement = $measurement->measurement;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        @endphp
                                         <tr>
-                                             
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 {{ $buyer->buyer_title ?? 'N/A' }} {{ $buyer->buyer_name ?? 'N/A' }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {{ $buyer->unit_no ?? 'N/A' }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{ $unitMeasurement ?: 'N/A' }}</td>
                                         </tr>
                                     @endforeach
                                 @else
@@ -379,149 +396,12 @@
                     </button>
                 </div>
             </form>
-               @include('stmemo.siteplan_tab')
+            @include('stmemo.siteplan_tab')
         </div>
 
         <!-- Footer -->
         @include('admin.footer')
     </div>
 
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tab switching
-            const tabs = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
-            const mainFormButtons = document.getElementById('main-form-buttons');
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    // Remove active class from all tabs
-                    tabs.forEach(t => t.classList.remove('active', 'border-blue-500',
-                        'text-blue-600'));
-                    tabs.forEach(t => t.classList.add('border-transparent', 'text-gray-500'));
-
-                    // Add active class to clicked tab
-                    tab.classList.add('active', 'border-blue-500', 'text-blue-600');
-                    tab.classList.remove('border-transparent', 'text-gray-500');
-
-                    // Hide all tab contents
-                    tabContents.forEach(content => content.classList.add('hidden'));
-
-                    // Show the corresponding tab content
-                    const tabId = tab.dataset.tab;
-                    document.getElementById(`${tabId}-tab`).classList.remove('hidden');
-                    
-                    // Hide/show main form buttons based on active tab
-                    if (tabId === 'notes') {
-                        mainFormButtons.classList.add('hidden');
-                    } else {
-                        mainFormButtons.classList.remove('hidden');
-                    }
-                });
-            });
-
-            // Hide the site plan tab form buttons initially if needed
-            document.querySelectorAll('.hide-in-notes-tab').forEach(el => {
-                el.style.display = 'none';
-            });
-
-            // Add measurement row
-            document.getElementById('addMeasurement').addEventListener('click', function() {
-                const container = document.getElementById('measurements-container');
-                const newRow = document.createElement('div');
-                newRow.className =
-                    'measurement-row grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-md bg-gray-50';
-                newRow.innerHTML = `
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Section/Unit No</label>
-                <input type="text" name="sections[]" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Measurement (sqm)</label>
-                <input type="text" name="measurements[]" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-            
-        `;
-                container.appendChild(newRow);
-
-                // Initialize Lucide icons
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
-
-                // Add event listener to the new remove button
-                attachRemoveEventListeners();
-            });
-
-            // Function to attach remove event listeners
-            function attachRemoveEventListeners() {
-                document.querySelectorAll('.remove-measurement').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const container = document.getElementById('measurements-container');
-                        const row = this.closest('.measurement-row');
-
-                        // Only remove if there's more than one measurement row
-                        if (container.querySelectorAll('.measurement-row').length > 1) {
-                            container.removeChild(row);
-                        } else {
-                            // Clear the inputs instead of removing
-                            row.querySelectorAll('input').forEach(input => {
-                                input.value = '';
-                            });
-                        }
-                    });
-                });
-            }
-
-            // Initial attachment of remove event listeners
-            attachRemoveEventListeners();
-
-            // Form validation
-            document.getElementById('stMemoForm').addEventListener('submit', function(e) {
-                const sections = document.querySelectorAll('input[name="sections[]"]');
-                const measurements = document.querySelectorAll('input[name="measurements[]"]');
-                const sharedFacilities = document.querySelector('textarea[name="shared_facilities"]');
-
-                let valid = true;
-                let errorMessage = '';
-
-                if (!sharedFacilities.value.trim()) {
-                    valid = false;
-                    errorMessage = 'Please enter shared facilities';
-                    sharedFacilities.classList.add('border-red-500');
-                } else {
-                    sharedFacilities.classList.remove('border-red-500');
-                }
-
-                sections.forEach((section, index) => {
-                    if (!section.value.trim()) {
-                        valid = false;
-                        errorMessage = 'Please enter all section/unit numbers';
-                        section.classList.add('border-red-500');
-                    } else {
-                        section.classList.remove('border-red-500');
-                    }
-
-                    if (!measurements[index].value.trim()) {
-                        valid = false;
-                        errorMessage = 'Please enter all measurements';
-                        measurements[index].classList.add('border-red-500');
-                    } else {
-                        measurements[index].classList.remove('border-red-500');
-                    }
-                });
-
-                if (!valid) {
-                    e.preventDefault();
-                    Swal.fire({
-                        title: 'Validation Error',
-                        text: errorMessage,
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            });
-        });
-    </script>
+    @include('stmemo.partials.form_scripts')
 @endsection

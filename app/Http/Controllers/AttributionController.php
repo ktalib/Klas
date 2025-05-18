@@ -135,50 +135,80 @@ class  AttributionController extends Controller
     {
         $fileNo = $request->input('fileno');
         $type = $request->input('type', 'primary'); // default to primary
-        
-        if (empty($fileNo)) {
-            return response()->json(['success' => false, 'message' => 'Please enter a file number']);
-        }
+        $isInitial = $request->input('initial', false); // Flag for initial load
+        $page = $request->input('page', 1); // For pagination
+        $limit = 20; // Number of records per page
+        $offset = ($page - 1) * $limit;
         
         if ($type === 'primary') {
             // Search in mother_applications
-            $application = DB::connection('sqlsrv')->table('mother_applications')
+            $query = DB::connection('sqlsrv')->table('mother_applications')
                 ->select('id', 'applicant_title', 'first_name', 'surname', 'fileno', 
-                         'corporate_name', 'multiple_owners_names', 'land_use', 'applicant_type')
-                ->where('fileno', $fileNo)
-                ->first();
+                         'corporate_name', 'multiple_owners_names', 'land_use', 'applicant_type');
+            
+            // Apply search filter or get initial records
+            if (!empty($fileNo)) {
+                $query->where('fileno', 'LIKE', '%' . $fileNo . '%');
+            } else if ($isInitial) {
+                // For initial load, order by most recent
+                $query->orderBy('id', 'desc');
+            }
+            
+            // Get total count for pagination
+            $total = $query->count();
+            
+            // Apply pagination
+            $applications = $query->skip($offset)->take($limit)->get();
                 
-            if ($application) {
+            if ($applications && count($applications) > 0) {
                 return response()->json([
                     'success' => true,
-                    'application' => $application,
-                    'message' => 'Application found'
+                    'applications' => $applications,
+                    'pagination' => [
+                        'more' => ($offset + $limit) < $total
+                    ],
+                    'message' => 'Applications found'
                 ]);
             }
         } else {
             // Search in subapplications
-            $application = DB::connection('sqlsrv')->table('subapplications')
+            $query = DB::connection('sqlsrv')->table('subapplications')
                 ->select('subapplications.id', 'subapplications.applicant_title', 'subapplications.first_name', 
                          'subapplications.surname', 'subapplications.fileno', 'subapplications.corporate_name', 
                          'subapplications.multiple_owners_names', 'subapplications.land_use', 
                          'subapplications.main_application_id', 'subapplications.applicant_type',
-                         'mother_applications.fileno as primary_fileno')
-                ->leftJoin('mother_applications', 'subapplications.main_application_id', '=', 'mother_applications.id')
-                ->where('subapplications.fileno', $fileNo)
-                ->first();
+                         'mother_applications.fileno as primary_fileno', 'subapplications.scheme_no')
+                ->leftJoin('mother_applications', 'subapplications.main_application_id', '=', 'mother_applications.id');
+            
+            // Apply search filter or get initial records
+            if (!empty($fileNo)) {
+                $query->where('subapplications.fileno', 'LIKE', '%' . $fileNo . '%');
+            } else if ($isInitial) {
+                // For initial load, order by most recent
+                $query->orderBy('subapplications.id', 'desc');
+            }
+            
+            // Get total count for pagination
+            $total = $query->count();
+            
+            // Apply pagination
+            $applications = $query->skip($offset)->take($limit)->get();
                 
-            if ($application) {
+            if ($applications && count($applications) > 0) {
                 return response()->json([
                     'success' => true,
-                    'application' => $application,
-                    'message' => 'Application found'
+                    'applications' => $applications,
+                    'pagination' => [
+                        'more' => ($offset + $limit) < $total
+                    ],
+                    'message' => 'Applications found'
                 ]);
             }
         }
         
         return response()->json([
             'success' => false,
-            'message' => 'No application found with the given file number'
+            'message' => $isInitial ? 'No file numbers available' : 'No application found with the given file number'
         ]);
     }
 }

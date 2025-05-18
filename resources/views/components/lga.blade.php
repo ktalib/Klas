@@ -1,4 +1,4 @@
-   <div class="space-y-2">
+                  <div class="space-y-2">
                         <label for="lgaName" class="block text-sm font-medium text-gray-700">LGA Name</label>
                         <select id="lgaName" name="lgaName" class="w-full p-2 border border-gray-300 rounded-md text-sm">
                             <option value="">Select LGA</option>

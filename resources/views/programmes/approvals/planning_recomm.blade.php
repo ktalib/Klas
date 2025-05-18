@@ -44,6 +44,15 @@
       padding: 0.75rem 1rem;
       border-bottom: 1px solid #e5e7eb;
     }
+    .disabled-link {
+        color: #9ca3af !important;
+        cursor: not-allowed;
+        pointer-events: none;
+        opacity: 0.6;
+    }
+    .disabled-icon {
+        color: #9ca3af !important;
+    }
   </style>
 
 <!-- Add the script at the beginning of the content section to ensure it's loaded before the buttons -->
@@ -296,18 +305,50 @@
                               <span>View Application</span>
                             </a>
                           </li>
+                          @if(request()->query('url') != 'view')
                             <li>
+                                @if($application->planning_recommendation_status == 'Approved')
+                                <div class="block w-full text-left px-4 py-2 flex items-center space-x-2 disabled-link">
+                                    <i data-lucide="check-circle" class="w-4 h-4 disabled-icon"></i>
+                                    <span>Planning Recommendation Approval</span>
+                                </div>
+                                @else
                                 <a href="{{ route('actions.recommendation', ['id' => $application->id]) }}?url=phy_planning" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                     <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i>
                                     <span>Planning Recommendation Approval</span>
                                 </a>
-                             <li>
+                                @endif
+                            </li>
+
+                            <li>
+                                @if($application->planning_recommendation_status == 'Approved')
                                 <a href="{{ route('actions.recommendation', ['id' => $application->id]) }}?url=recommendation" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                     <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
-                                    <span>View Planning Recommendation</span>
+                                    <span>View Planning Recommendation </span>
                                 </a>
+                                @else
+                                <div class="block w-full text-left px-4 py-2 flex items-center space-x-2 disabled-link">
+                                    <i data-lucide="check-circle" class="w-4 h-4 disabled-icon"></i>
+                                    <span>View Planning Recommendation </span>
+                                </div>
+                                @endif
                             </li>
-                    
+                          @endif
+                            @if(request()->query('url') == 'view')
+                          <li>
+                                @if($application->planning_recommendation_status == 'Approved')
+                                <a href="{{ route('actions.recommendation', ['id' => $application->id]) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
+                                    <span>View Planning Recommendation </span>
+                                </a>
+                                @else
+                                <div class="block w-full text-left px-4 py-2 flex items-center space-x-2 disabled-link">
+                                    <i data-lucide="check-circle" class="w-4 h-4 disabled-icon"></i>
+                                    <span>View Planning Recommendation </span>
+                                </div>
+                                @endif
+                            </li>
+                               @endif
                         </ul>
                       </td>
                     </tr>
@@ -344,11 +385,7 @@
               <i data-lucide="chevron-down" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
             </div>
             
-            <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
-              <i data-lucide="upload" class="w-4 h-4 text-gray-600"></i>
-              <span>Import</span>
-            </button>
-            
+         
             <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
               <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
               <span>Export</span>
@@ -404,18 +441,50 @@
                           <span>View Unit Application</span>
                         </a>
                       </li>
+                      @if(request()->query('url') != 'view')
                       <li>
+                        @if($unitApplication->planning_recommendation_status == 'Approved')
+                        <div class="block w-full text-left px-4 py-2 flex items-center space-x-2 disabled-link">
+                          <i data-lucide="check-circle" class="w-4 h-4 disabled-icon"></i>
+                          <span>Planning Recommendation Approval</span>
+                        </div>
+                        @else
                         <a href="{{ route('sub-actions.recommendation', ['id' => $unitApplication->id]) }}?url=phy_planning" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                           <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i>
                           <span>Planning Recommendation Approval</span>
                         </a>
+                        @endif
+                      </li>
+
                       <li>  
+                        @if($unitApplication->planning_recommendation_status == 'Approved')
+                        <a href="{{ route('sub-actions.recommendation', ['id' => $unitApplication->id]) }}?url=recommendation" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                          <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
+                          <span>View Planning Recommendation </span>
+                        </a>
+                        @else
+                        <div class="block w-full text-left px-4 py-2 flex items-center space-x-2 disabled-link">
+                          <i data-lucide="check-circle" class="w-4 h-4 disabled-icon"></i>
+                          <span>View Planning Recommendation </span>
+                        </div>
+                        @endif
+                      </li>
+                      @endif
+                       @if(request()->query('url') == 'view')
+                      <li>  
+                        @if($unitApplication->planning_recommendation_status == 'Approved')
                         <a href="{{ route('sub-actions.recommendation', ['id' => $unitApplication->id]) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                           <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
-                          <span>View Planning Recommendation</span>
+                          <span>View Planning Recommendation </span>
                         </a>
+                        @else
+                        <div class="block w-full text-left px-4 py-2 flex items-center space-x-2 disabled-link">
+                          <i data-lucide="check-circle" class="w-4 h-4 disabled-icon"></i>
+                          <span>View Planning Recommendation </span>
+                        </div>
+                        @endif
                       </li>
-                     
+                      @endif
                     </ul>
                   </td>
                 </tr>

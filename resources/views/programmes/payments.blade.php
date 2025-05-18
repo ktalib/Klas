@@ -217,7 +217,7 @@
                   <th class="table-header">Penalty</th>
                  
                   <th class="table-header">Date</th>
-                  <th class="table-header">Status</th>
+                  
                   
                 </tr>
               </thead>
@@ -235,11 +235,7 @@
                   <td class="table-cell">₦{{ number_format($payment->Penalty_Fees, 2) }}</td>
                 
                   <td class="table-cell">{{ \Carbon\Carbon::parse($payment->created_at)->format('Y-m-d') }}</td>
-                  <td class="table-cell">
-                    <span class="badge badge-{{ strtolower($payment->Payment_Status) === 'paid' ? 'approved' : (strtolower($payment->Payment_Status) === 'pending' ? 'pending' : 'declined') }}">
-                      {{ $payment->Payment_Status }}
-                    </span>
-                  </td>
+                 
                 </tr>
                 @empty
                 <tr>
@@ -289,7 +285,7 @@
                   <th class="table-header">Penalty</th>
                 
                   <th class="table-header">Date</th>
-                  <th class="table-header">Status</th>
+                  
                  
                 </tr>
               </thead>
@@ -307,11 +303,7 @@
                   <td class="table-cell">₦{{ number_format($payment->Penalty_Fees, 2) }}</td>
              
                   <td class="table-cell">{{ \Carbon\Carbon::parse($payment->created_at)->format('Y-m-d') }}</td>
-                  <td class="table-cell">
-                    <span class="badge badge-{{ strtolower($payment->Payment_Status) === 'paid' ? 'approved' : (strtolower($payment->Payment_Status) === 'pending' ? 'pending' : 'declined') }}">
-                      {{ $payment->Payment_Status }}
-                    </span>
-                  </td>
+                 
                 </tr>
                 @empty
                 <tr>

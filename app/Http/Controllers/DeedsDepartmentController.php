@@ -17,6 +17,7 @@ class DeedsDepartmentController extends Controller
                 'subapplications.id as applicationID', // Add alias for applicationID
                 'subapplications.main_application_id as main_application_id', // Add main_application_id if it exists
                 'mother_applications.fileno as primary_fileno',
+                'mother_applications.fileno as primary_id',
                 'mother_applications.first_name as primary_first_name',
                 'mother_applications.surname as primary_surname',
                 'mother_applications.applicant_title as primary_applicant_title',
@@ -52,6 +53,7 @@ class DeedsDepartmentController extends Controller
                 'dbo.subapplications.id as id',
                 'dbo.subapplications.id as applicationID', // Add alias for applicationID
                 'dbo.mother_applications.fileno as primary_fileno', // Changed alias to primary_fileno
+                'dbo.mother_applications.id as primary_id', // Changed alias to primary_id
                 'dbo.mother_applications.passport as mother_passport',
                 'dbo.mother_applications.multiple_owners_passport as mother_multiple_owners_passport',
                 'dbo.mother_applications.applicant_title as primary_applicant_title', // Changed alias to primary_applicant_title
@@ -149,6 +151,7 @@ class DeedsDepartmentController extends Controller
             'dbo.subapplications.passport',
             'dbo.subapplications.multiple_owners_passport',
             'dbo.mother_applications.fileno as mother_fileno',
+            'dbo.mother_applications.id as mother_application_id',
            'dbo.mother_applications.passport as mother_passport',
             'dbo.mother_applications.multiple_owners_passport as mother_multiple_owners_passport',
             'dbo.mother_applications.applicant_title as mother_applicant_title',

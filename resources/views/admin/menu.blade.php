@@ -228,7 +228,7 @@
         
         <a href="{{route('st_transfer.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('st_transfer.index') ? 'active' : '' }}">
           <i data-lucide="calendar-sync" class="h-4 w-4 text-amber-500"></i>
-          <span>ST Transfer Of Title</span>
+          <span>ST Assignment (Transfer of Title)</span>
         </a>
 
        
@@ -354,12 +354,238 @@
       </div>
     </div>
 
-    <!-- 7. Sectional Titling -->
+    <!-- 7. Lands -->
+    <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
+      <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="lands">
+        <div class="flex items-center gap-2">
+          <i data-lucide="file-input" class="h-5 w-5"></i>
+          <span class="text-sm font-bold uppercase tracking-wider">7. Lands</span>
+        </div>
+        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="lands"></i>
+      </div>
+
+      <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="lands">
+        <a href="/file-digital-registry/archive" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="file-archive" class="h-4 w-4"></i>
+          <span>File Digital Archive – Doc-WARE</span>
+        </a>
+        <a href="/file-digital-registry/tracker" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="file-search" class="h-4 w-4"></i>
+          <span>File Tracker/Tracking - RFID</span>
+        </a>
+        
+        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="edms">
+          <div class="flex items-center gap-2">
+            <i data-lucide="folder" class="h-4 w-4"></i>
+            <span>EDMS</span>
+          </div>
+          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="edms"></i>
+        </div>
+
+        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="edms">
+          <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="indexing">
+            <div class="flex items-center gap-2">
+              <i data-lucide="file-text" class="h-3.5 w-3.5"></i>
+              <span>Indexing</span>
+            </div>
+            <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="indexing"></i>
+          </div>
+
+          <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="indexing">
+            <a href="/file-digital-registry/indexing-assistant" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+              <span>File Indexing Assistant</span>
+            </a>
+            <a href="/file-digital-registry/print-labels" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+              <span>Print File Labels</span>
+            </a>
+          </div>
+          
+          <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="scanning">
+            <div class="flex items-center gap-2">
+              <i data-lucide="scan" class="h-3.5 w-3.5"></i>
+              <span>Scanning</span>
+            </div>
+            <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="scanning"></i>
+          </div>
+          
+          <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="scanning">
+            <a href="/file-digital-registry/upload" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+              <i data-lucide="file-up" class="h-3.5 w-3.5"></i>
+              <span>Upload</span>
+            </a>
+            <a href="/file-digital-registry/download" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+              <i data-lucide="file-down" class="h-3.5 w-3.5"></i>
+              <span>Download</span>
+            </a>
+          </div>
+          
+          <a href="/file-digital-registry/page-typing" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="file-text" class="h-3.5 w-3.5"></i>
+            <span>PageTyping</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Physical Planning -->
+    <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
+      <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="physicalPlanning">
+      <div class="flex items-center gap-2">
+        <i data-lucide="ruler" class="h-5 w-5"></i>
+        <span class="text-sm font-bold uppercase tracking-wider">8. Physical Planning</span>
+      </div>
+      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="physicalPlanning"></i>
+      </div>
+
+      <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="physicalPlanning">
+      <!-- a. Regular Applications -->
+      <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="regularApplications">
+        <div class="flex items-center gap-2">
+        <i data-lucide="clipboard-list" class="h-4 w-4"></i>
+        <span>Regular Applications</span>
+        </div>
+        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="regularApplications"></i>
+      </div>
+      
+      <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="regularApplications">
+        <a href="/physical-planning/regular/planning-recommendation" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
+        <span>Planning Recommendation</span>
+        </a>
+      </div>
+      
+      <!-- b. ST Applications -->
+      <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stApplications">
+        <div class="flex items-center gap-2">
+        <i data-lucide="clipboard-list" class="h-4 w-4"></i>
+        <span>ST Applications</span>
+        </div>
+        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="stApplications"></i>
+      </div>
+      
+      <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stApplications">
+        <a href="{{route('programmes.approvals.planning_recomm')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.planning_recomm') ? 'active' : '' }}">
+        <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
+        <span>Planning Recommendation</span>
+        </a>
+      </div>
+      
+      <!-- c. SLTR Applications -->
+      <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="sltrApplications">
+        <div class="flex items-center gap-2">
+        <i data-lucide="clipboard-list" class="h-4 w-4"></i>
+        <span>SLTR Applications</span>
+        </div>
+        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="sltrApplications"></i>
+      </div>
+      
+      <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="sltrApplications">
+        <a href="/physical-planning/sltr/planning-recommendation" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
+        <span>Planning Recommendation</span>
+        </a>
+      </div>
+      
+      <!-- d. PP Reports -->
+      <a href="/physical-planning/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
+        <span>PP Reports</span>
+      </a>
+      </div>
+    </div>
+
+    <!-- 9. Survey -->
+    <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
+      <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="survey">
+        <div class="flex items-center gap-2">
+          <i data-lucide="compass" class="h-5 w-5"></i>
+          <span class="text-sm font-bold uppercase tracking-wider">9. Survey</span>
+        </div>
+        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="survey"></i>
+      </div>
+
+      <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="survey">
+        <a href="{{route('survey_records.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('survey_records.index') ? 'active' : '' }}">
+          <i data-lucide="clipboard" class="h-4 w-4"></i>
+          <span>Records</span>
+        </a>
+        <a href="/survey/gis" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="map" class="h-4 w-4"></i>
+          <span>GIS</span>
+        </a>
+        <a href="/survey/approvals" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="check-circle" class="h-4 w-4"></i>
+          <span>Approvals</span>
+        </a>
+        <a href="/survey/e-registry" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="database" class="h-4 w-4"></i>
+          <span>E-Registry</span>
+        </a>
+        <a href="/survey/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
+          <span>Survey Reports</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 10. Cadastral -->
+    <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
+      <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="cadastral">
+        <div class="flex items-center gap-2">
+          <i data-lucide="map" class="h-5 w-5"></i>
+          <span class="text-sm font-bold uppercase tracking-wider">10. Cadastral</span>
+        </div>
+        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="cadastral"></i>
+      </div>
+
+      <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="cadastral">
+        <a href="/cadastral/records" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="clipboard" class="h-4 w-4"></i>
+          <span>Records</span>
+        </a>
+        <a href="/cadastral/gis" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="map" class="h-4 w-4"></i>
+          <span>GIS</span>
+        </a>
+        <a href="/cadastral/approvals" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="check-circle" class="h-4 w-4"></i>
+          <span>Approvals</span>
+        </a>
+        <a href="/cadastral/e-registry" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="database" class="h-4 w-4"></i>
+          <span>E-Registry</span>
+        </a>
+        <a href="/cadastral/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
+          <span>Cadastral Reports</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 11. GIS -->
+    <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
+      <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="gis">
+        <div class="flex items-center gap-2"> 
+          <i data-lucide="map" class="h-5 w-5"></i>
+          <span class="text-sm font-bold uppercase tracking-wider">11. GIS</span>
+        </div>
+        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="gis"></i>
+      </div>
+
+      <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="gis">
+        <a href="#" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="database-zap" class="h-4 w-4"></i>
+          <span>GIS Attribution</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 12. Sectional Titling -->
     <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
       <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="sectionalTitling">
         <div class="flex items-center gap-2">
           <i data-lucide="building-2" class="h-5 w-5"></i>
-          <span class="text-sm font-bold uppercase tracking-wider">7. Sectional Titling</span>
+          <span class="text-sm font-bold uppercase tracking-wider">12. Sectional Titling</span>
         </div>
         <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="sectionalTitling"></i>
       </div>
@@ -400,7 +626,7 @@
             <i data-lucide="building-2" class="h-3.5 w-3.5"></i>
             <span>Other Departments</span>
           </a>
-          <a href="{{route('programmes.approvals.planning_recomm')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.planning_recomm') ? 'active' : '' }}">
+          <a href="{{route('programmes.approvals.planning_recomm')}}?url=view" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.planning_recomm') && request()->query('url') == 'view' ? 'active' : '' }}">
             <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
             <span>Planning Recommendation</span>
           </a>
@@ -490,12 +716,12 @@
       </div>
     </div>
 
-    <!-- 8. SLTR/First Registration -->
+    <!-- 13. SLTR/First Registration -->
     <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
       <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="sltr">
         <div class="flex items-center gap-2">
           <i data-lucide="file-search" class="h-5 w-5"></i>
-          <span class="text-sm font-bold uppercase tracking-wider">8. SLTR/First Registration</span>
+          <span class="text-sm font-bold uppercase tracking-wider">13. SLTR/First Registration</span>
         </div>
         <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="sltr"></i>
       </div>
@@ -648,207 +874,6 @@
       </div>
     </div>
 
-    <!-- 9. Lands -->
-    <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
-      <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="lands">
-        <div class="flex items-center gap-2">
-          <i data-lucide="file-input" class="h-5 w-5"></i>
-          <span class="text-sm font-bold uppercase tracking-wider">9. Lands</span>
-        </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="lands"></i>
-      </div>
-
-      <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="lands">
-        <a href="/file-digital-registry/archive" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="file-archive" class="h-4 w-4"></i>
-          <span>File Digital Archive – Doc-WARE</span>
-        </a>
-        <a href="/file-digital-registry/tracker" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="file-search" class="h-4 w-4"></i>
-          <span>File Tracker/Tracking - RFID</span>
-        </a>
-        
-        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="edms">
-          <div class="flex items-center gap-2">
-            <i data-lucide="folder" class="h-4 w-4"></i>
-            <span>EDMS</span>
-          </div>
-          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="edms"></i>
-        </div>
-
-        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="edms">
-          <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="indexing">
-            <div class="flex items-center gap-2">
-              <i data-lucide="file-text" class="h-3.5 w-3.5"></i>
-              <span>Indexing</span>
-            </div>
-            <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="indexing"></i>
-          </div>
-
-          <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="indexing">
-            <a href="/file-digital-registry/indexing-assistant" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-              <span>File Indexing Assistant</span>
-            </a>
-            <a href="/file-digital-registry/print-labels" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-              <span>Print File Labels</span>
-            </a>
-          </div>
-          
-          <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="scanning">
-            <div class="flex items-center gap-2">
-              <i data-lucide="scan" class="h-3.5 w-3.5"></i>
-              <span>Scanning</span>
-            </div>
-            <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="scanning"></i>
-          </div>
-          
-          <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="scanning">
-            <a href="/file-digital-registry/upload" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-              <i data-lucide="file-up" class="h-3.5 w-3.5"></i>
-              <span>Upload</span>
-            </a>
-            <a href="/file-digital-registry/download" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-              <i data-lucide="file-down" class="h-3.5 w-3.5"></i>
-              <span>Download</span>
-            </a>
-          </div>
-          
-          <a href="/file-digital-registry/page-typing" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-            <i data-lucide="file-text" class="h-3.5 w-3.5"></i>
-            <span>PageTyping</span>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- 10. Physical Planning -->
-    <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
-      <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="physicalPlanning">
-      <div class="flex items-center gap-2">
-        <i data-lucide="ruler" class="h-5 w-5"></i>
-        <span class="text-sm font-bold uppercase tracking-wider">10. Physical Planning</span>
-      </div>
-      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="physicalPlanning"></i>
-      </div>
-
-      <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="physicalPlanning">
-     
- 
-
-      <a href="#" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 ">
-        <i data-lucide="check-circle" class="h-4 w-4"></i>
-        <span>Regular Applications</span>
-      </a>
-      
-      <a href="{{route('stmemo.siteplan')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('stmemo.siteplan') ? 'active' : '' }}">
-        <i data-lucide="clipboard-check" class="h-4 w-4"></i>
-        <span>ST Applications</span>
-      </a>
-       
-      <a href="/physical-planning/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-        <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
-        <span>SLTR Applications</span>
-      </a>
-
-       <a href="/physical-planning/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-        <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
-        <span>PP Reports</span>
-      </a>
-
-      </div>
-
-      
-      
-
-     
-    </div>
-
-    <!-- 11. Survey -->
-    <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
-      <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="survey">
-        <div class="flex items-center gap-2">
-          <i data-lucide="compass" class="h-5 w-5"></i>
-          <span class="text-sm font-bold uppercase tracking-wider">11. Survey</span>
-        </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="survey"></i>
-      </div>
-
-      <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="survey">
-        <a href="{{route('survey_records.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('survey_records.index') ? 'active' : '' }}">
-          <i data-lucide="clipboard" class="h-4 w-4"></i>
-          <span>Records</span>
-        </a>
-        <a href="/survey/gis" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="map" class="h-4 w-4"></i>
-          <span>GIS</span>
-        </a>
-        <a href="/survey/approvals" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="check-circle" class="h-4 w-4"></i>
-          <span>Approvals</span>
-        </a>
-        <a href="/survey/e-registry" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="database" class="h-4 w-4"></i>
-          <span>E-Registry</span>
-        </a>
-        <a href="/survey/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
-          <span>Survey Reports</span>
-        </a>
-      </div>
-    </div>
-
-    <!-- 12. Cadastral -->
-    <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
-      <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="cadastral">
-        <div class="flex items-center gap-2">
-          <i data-lucide="map" class="h-5 w-5"></i>
-          <span class="text-sm font-bold uppercase tracking-wider">12. Cadastral</span>
-        </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="cadastral"></i>
-      </div>
-
-      <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="cadastral">
-        <a href="/cadastral/records" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="clipboard" class="h-4 w-4"></i>
-          <span>Records</span>
-        </a>
-        <a href="/cadastral/gis" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="map" class="h-4 w-4"></i>
-          <span>GIS</span>
-        </a>
-        <a href="/cadastral/approvals" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="check-circle" class="h-4 w-4"></i>
-          <span>Approvals</span>
-        </a>
-        <a href="/cadastral/e-registry" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="database" class="h-4 w-4"></i>
-          <span>E-Registry</span>
-        </a>
-        <a href="/cadastral/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
-          <span>Cadastral Reports</span>
-        </a>
-      </div>
-    </div>
-
-    <!-- 13. GIS -->
-    <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
-      <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="gis">
-        <div class="flex items-center gap-2"> 
-          <i data-lucide="map" class="h-5 w-5"></i>
-          <span class="text-sm font-bold uppercase tracking-wider">13. GIS</span>
-        </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="gis"></i>
-      </div>
-
-      <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="gis">
-        <a href="#" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="database-zap" class="h-4 w-4"></i>
-          <span>GIS Attribution</span>
-        </a>
-      </div>
-    </div>
-
     <!-- 14. Systems -->
     <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
       <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="systems">
@@ -921,8 +946,8 @@
         </div>
       </div>
       <div class="flex flex-col">
-        <span class="text-sm font-medium">Admin User</span>
-        <span class="text-xs text-gray-500">admin@kangis.gov</span>
+        <span class="text-sm font-medium">User</span>
+        <span class="text-xs text-gray-500">{{ auth()->user()->email }}</span>
       </div>
       <div class="relative ml-auto">
         <button class="p-1.5 rounded-md hover:bg-gray-100" id="userMenuButton">
