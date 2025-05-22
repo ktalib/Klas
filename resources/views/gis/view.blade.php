@@ -126,7 +126,13 @@
         <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
             <!-- Header with actions -->
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-bold">View GIS Data</h2>
+                <h2 class="text-xl font-bold">
+                    @if($gisData->gis_type == 'Unit GIS')
+                        View Unit GIS Data
+                    @else
+                        View Primary GIS Data
+                    @endif
+                </h2>
                 <div class="flex items-center space-x-3">
                     <a href="{{ route('gis.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 flex items-center no-print">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -154,6 +160,86 @@
                 <!-- File Information Section -->
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <h3 class="text-lg font-semibold mb-4 text-gray-700 border-b pb-2">File Information</h3>
+                    
+                    @if($gisData->gis_type == 'Unit GIS')
+                    <!-- Unit GIS File Information -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">ST File Number</p>
+                            <p class="text-sm font-semibold">{{ $gisData->STFileNo ?? 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Primary GIS ID</p>
+                            <p class="text-sm font-semibold">{{ $gisData->PrimaryGISID ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Unit-specific Information -->
+                    <div class="mt-4 border-t pt-4">
+                        <h4 class="text-md font-semibold mb-3 text-gray-700">Unit Details</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Scheme Number</p>
+                                <p class="text-sm font-semibold">{{ $gisData->scheme_no ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Section Number</p>
+                                <p class="text-sm font-semibold">{{ $gisData->section_no ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Block Number</p>
+                                <p class="text-sm font-semibold">{{ $gisData->block_no ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Unit Number</p>
+                                <p class="text-sm font-semibold">{{ $gisData->unit_no ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Land Use</p>
+                                <p class="text-sm font-semibold">{{ $gisData->landuse ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Height</p>
+                                <p class="text-sm font-semibold">{{ $gisData->height ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Unit ID</p>
+                                <p class="text-sm font-semibold">{{ $gisData->unit_id ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Unit Size</p>
+                                <p class="text-sm font-semibold">{{ $gisData->UnitSize ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Unit Dimension</p>
+                                <p class="text-sm font-semibold">{{ $gisData->UnitDemsion ?? 'N/A' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Unit Beacon Information if available -->
+                    @if($gisData->UnitControlBeaconNo || $gisData->UnitControlBeaconX || $gisData->UnitControlBeaconY)
+                    <div class="mt-4 border-t pt-4">
+                        <h4 class="text-md font-semibold mb-3 text-gray-700">Unit Control Beacon Information</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Control Beacon Number</p>
+                                <p class="text-sm font-semibold">{{ $gisData->UnitControlBeaconNo ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Control Beacon X</p>
+                                <p class="text-sm font-semibold">{{ $gisData->UnitControlBeaconX ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Control Beacon Y</p>
+                                <p class="text-sm font-semibold">{{ $gisData->UnitControlBeaconY ?? 'N/A' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    
+                    @else
+                    <!-- Primary GIS File Information -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <p class="text-sm font-medium text-gray-500">MLSF Number</p>
@@ -168,6 +254,7 @@
                             <p class="text-sm font-semibold">{{ $gisData->NewKANGISFileno ?? 'N/A' }}</p>
                         </div>
                     </div>
+                    @endif
                 </div>
 
                 <!-- Plot Information Section -->
@@ -243,61 +330,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Survey Information Section -->
-                {{-- <div class="bg-gray-50 p-4 rounded-lg">
-                    <h3 class="text-lg font-semibold mb-4 text-gray-700 border-b pb-2">Survey Information</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Surveyed By</p>
-                            <p class="text-sm font-semibold">{{ $gisData->surveyedBy ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Drawn By</p>
-                            <p class="text-sm font-semibold">{{ $gisData->drawnBy ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Checked By</p>
-                            <p class="text-sm font-semibold">{{ $gisData->checkedBy ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Passed By</p>
-                            <p class="text-sm font-semibold">{{ $gisData->passedBy ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Beacon Control Name</p>
-                            <p class="text-sm font-semibold">{{ $gisData->beaconControlName ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Beacon Control X</p>
-                            <p class="text-sm font-semibold">{{ $gisData->beaconControlX ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Beacon Control Y</p>
-                            <p class="text-sm font-semibold">{{ $gisData->beaconControlY ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Metric Sheet Index</p>
-                            <p class="text-sm font-semibold">{{ $gisData->metricSheetIndex ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Metric Sheet Number</p>
-                            <p class="text-sm font-semibold">{{ $gisData->metricSheetNo ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Imperial Sheet</p>
-                            <p class="text-sm font-semibold">{{ $gisData->imperialSheet ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Imperial Sheet Number</p>
-                            <p class="text-sm font-semibold">{{ $gisData->imperialSheetNo ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Surveyor General Signature Date</p>
-                            <p class="text-sm font-semibold">{{ $gisData->SurveyorGeneralSignatureDate ? date('d M, Y', strtotime($gisData->SurveyorGeneralSignatureDate)) : 'N/A' }}</p>
-                        </div>
-                    </div>
-                </div> --}}
 
                 <!-- Title Information Section -->
                 <div class="bg-gray-50 p-4 rounded-lg">

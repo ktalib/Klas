@@ -14,22 +14,45 @@
             <input type="hidden" name="application_id" id="application_id" value="">
             <input type="hidden" name="sub_application_id" id="sub_application_id" value="">
             <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 space-y-6">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-lg font-medium">
-                        Create A {{ request()->query('is') == 'secondary' ? 'Unit' : 'Primary' }} Survey
-                    </h3>
-                    <div class="w-80">
-                        <label for="fileno-select" class="block text-sm font-medium text-gray-700 mb-1">Select File Number</label>
-                        <select id="fileno-select" class="w-full p-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">-- Select File Number --</option>
-                        </select>
-                    </div>
-                </div>
-
                 <div id="application-info" class="hidden">
                     <!-- Application header will be rendered dynamically -->
                 </div>
                 
+                
+                <div>
+                    <h3 class="text-lg font-medium mb-4">
+                        Create A {{ request()->query('is') == 'secondary' ? 'Unit' : 'Primary' }} Survey
+                    </h3>
+                    
+                    <!-- Selection Grid - 2x2 layout -->
+                    <div class="border border-gray-200 rounded-lg p-4 bg-gray-50 mb-4">
+                        <div class="grid grid-cols-2 gap-4">
+                        
+                            <!-- Primary Survey Selection (only for unit surveys) -->
+                            @if(request()->query('is') == 'secondary')
+                            <div>
+                                <label for="primary-survey-select" class="block text-sm font-medium text-gray-700 mb-1">Select Primary Survey</label>
+                                <select id="primary-survey-select" class="w-full p-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">-- Select Primary Survey FileNo --</option>
+                                </select>
+                            </div>
+                            @endif
+
+
+                                <!-- File Number Selection -->
+                            <div>
+                                <label for="fileno-select" class="block text-sm font-medium text-gray-700 mb-1">Select File Number</label>
+                                <select id="fileno-select" class="w-full p-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">-- Select File Number --</option>
+                                </select>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+            @include('attribution.unit_form')
                 <!-- Property Identification -->
                 <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
                     <h4 class="text-sm font-medium mb-3">Property Identification</h4>
@@ -65,18 +88,26 @@
 
                 <!-- Control Beacon Information -->
                 <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <h4 class="text-sm font-medium mb-3">{{ request()->query('is') == 'secondary' ? 'Unit Control Information' : 'Control Beacon Information' }}</h4>
+                    <h4 class="text-sm font-medium mb-3">
+                        Control Beacon Information
+                    </h4>
                     <div class="grid grid-cols-3 gap-4">
                         <div>
-                            <label for="beacon_control_name" class="block text-sm font-medium text-gray-700">{{ request()->query('is') == 'secondary' ? 'Unit Control Name' : 'Control Beacon Name' }}</label>
+                            <label for="beacon_control_name" class="block text-sm font-medium text-gray-700">
+                               Control Beacon Name
+                            </label>
                             <input id="beacon_control_name" name="beacon_control_name" type="text" value="{{ old('beacon_control_name') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
                         </div>
                         <div>
-                            <label for="Control_Beacon_Coordinate_X" class="block text-sm font-medium text-gray-700">{{ request()->query('is') == 'secondary' ? 'Unit Control X' : 'Control Beacon X' }}</label>
+                            <label for="Control_Beacon_Coordinate_X" class="block text-sm font-medium text-gray-700">
+                               Control Beacon X
+                            </label>
                             <input id="Control_Beacon_Coordinate_X" name="Control_Beacon_Coordinate_X" type="text" value="{{ old('Control_Beacon_Coordinate_X') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
                         </div>
                         <div>
-                            <label for="Control_Beacon_Coordinate_Y" class="block text-sm font-medium text-gray-700">{{ request()->query('is') == 'secondary' ? 'Unit Control Y' : 'Control Beacon Y' }}</label>
+                            <label for="Control_Beacon_Coordinate_Y" class="block text-sm font-medium text-gray-700">
+                               Control Beacon Y
+                            </label>
                             <input id="Control_Beacon_Coordinate_Y" name="Control_Beacon_Coordinate_Y" type="text" value="{{ old('Control_Beacon_Coordinate_Y') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
                         </div>
                     </div>
@@ -282,6 +313,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('sub_application_id').value = selectedApplication.id;
                 document.getElementById('application_id').value = '';
                 selectedApplication.isSecondary = true;
+                
+                // Auto-populate unit information fields
+                populateUnitInformation(selectedApplication);
             } else {
                 // For primary survey, use the application_id only
                 document.getElementById('application_id').value = selectedApplication.id;
@@ -337,6 +371,75 @@ document.addEventListener('DOMContentLoaded', function() {
         
         selectedApplication = null;
     });
+    
+    // Function to populate unit information fields
+    function populateUnitInformation(application) {
+        // Populate scheme number
+        if (application.scheme_no) {
+            const schemeNoInput = document.getElementById('scheme_no');
+            if (schemeNoInput) {
+                schemeNoInput.value = application.scheme_no;
+            }
+        }
+        
+        // Populate floor/section number
+        if (application.floor_number) {
+            const floorInput = document.getElementById('floor_number');
+            if (floorInput) {
+                floorInput.value = application.floor_number;
+            }
+        }
+        
+     
+        
+        // Populate unit number
+        if (application.unit_number) {
+            const unitNoInput = document.getElementById('unit_number');
+            if (unitNoInput) {
+                unitNoInput.value = application.unit_number;
+            }
+        }
+        
+        // Populate land use
+        if (application.land_use) {
+            const landUseInput = document.getElementById('landuse');
+            if (landUseInput) {
+                landUseInput.value = application.land_use;
+            }
+        }
+        
+        // Populate app_id (application ID)
+        if (application.app_id) {
+            const appIdInput = document.getElementById('app_id');
+            if (appIdInput) {
+                appIdInput.value = application.app_id;
+            }
+        }
+        
+        // Populate unit_id
+        if (application.unit_id) {
+            const unitIdInput = document.getElementById('unit_id');
+            if (unitIdInput) {
+                unitIdInput.value = application.unit_id;
+            }
+        }
+        
+        // Populate PrimarysurveyId
+        if (application.primary_fileno) {
+            const primarySurveyInput = document.getElementById('PrimarysurveyId');
+            if (primarySurveyInput) {
+                primarySurveyInput.value = application.primary_fileno;
+            }
+        }
+        
+        // Populate STFileNo
+        if (application.fileno) {
+            const stFileNoInput = document.getElementById('STFileNo');
+            if (stFileNoInput) {
+                stFileNoInput.value = application.fileno;
+            }
+        }
+    }
     
     function renderApplicationHeader(application) {
         // Create the header HTML
@@ -408,6 +511,315 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         return 'Applicant';
+    }
+
+    // Initialize Primary Survey Select2 (only for secondary/unit surveys)
+    if (isSecondary) {
+        const primarySurveySelect = document.getElementById('primary-survey-select');
+        
+        if (primarySurveySelect) {
+            $(primarySurveySelect).select2({
+                placeholder: "Search for a Primary Survey FileNo...",
+                allowClear: true,
+                minimumInputLength: 0,
+                ajax: {
+                    url: '{{ route('attribution.fetch-primary-surveys') }}',
+                    dataType: 'json',
+                    delay: 250,
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    data: function(params) {
+                        return {
+                            search: params.term || '',
+                            initial: params.term ? false : true
+                        };
+                    },
+                    processResults: function(data, params) {
+                        let results = [];
+                        
+                        // Debug logging
+                        console.log('Primary Survey Data:', data);
+                        
+                        if (data.success && data.surveys && data.surveys.length > 0) {
+                            results = data.surveys.map(survey => {
+                                // Create a more descriptive text for each survey option
+                                let displayText = survey.fileno || 'No File No';
+                                
+                                // Add survey type if available
+                                if (survey.survey_type) {
+                                    displayText += ' | ' + survey.survey_type;
+                                }
+                                
+                                // Add layout and location if available
+                                if (survey.layout_name) {
+                                    displayText += ' | ' + survey.layout_name;
+                                }
+                                
+                                // Add plot and block info
+                                displayText += ' | Plot: ' + (survey.plot_no || 'N/A');
+                                displayText += ' | Block: ' + (survey.block_no || 'N/A');
+                                
+                                return {
+                                    id: survey.ID,
+                                    text: displayText,
+                                    survey: survey
+                                };
+                            });
+                        } else {
+                            console.warn('No primary surveys found or data structure issue:', data);
+                        }
+                        
+                        return {
+                            results: results,
+                            pagination: {
+                                more: data.pagination && data.pagination.more
+                            }
+                        };
+                    },
+                    cache: true
+                }
+            });
+            
+            // Trigger initial data load when dropdown is opened
+            $(primarySurveySelect).on('select2:open', function() {
+                if (!$(primarySurveySelect).data('initial-load-done')) {
+                    const $search = $('.select2-search__field');
+                    $search.val('');
+                    $search.trigger('input');
+                    $(primarySurveySelect).data('initial-load-done', true);
+                }
+            });
+            
+            // Handle Primary Survey selection
+            $(primarySurveySelect).on('select2:select', function(e) {
+                const data = e.params.data;
+                const surveyId = data.id;
+                
+                // Fetch detailed survey data
+                fetch(`{{ url('attribution/primary-survey-details') }}/${surveyId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.survey) {
+                            // Auto-populate form fields from Primary Survey
+                            populateFromPrimarySurvey(data.survey);
+                            
+                            // Show success message as a toast notification
+                            Swal.fire({
+                                title: 'Primary Survey Selected',
+                                text: 'Form fields have been populated based on the selected Primary Survey.',
+                                icon: 'success',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching survey details:', error);
+                    });
+            });
+            
+            // Handle Primary Survey clear
+            $(primarySurveySelect).on('select2:clear', function() {
+                // Clear Primary Survey related fields
+                clearPrimarySurveyFields();
+            });
+        }
+    }
+
+    // Function to populate form fields from Primary Survey
+    function populateFromPrimarySurvey(survey) {
+        // Set Primary Survey ID
+        const primarySurveyIdInput = document.getElementById('PrimarysurveyId');
+        if (primarySurveyIdInput) {
+            primarySurveyIdInput.value = survey.fileno || '';
+        }
+        
+        // Populate common fields
+        if (survey.scheme_no) {
+            const schemeNoInput = document.getElementById('scheme_no');
+            if (schemeNoInput) {
+                schemeNoInput.value = survey.scheme_no;
+            }
+        }
+        
+        // Populate control beacon information
+        if (survey.beacon_control_name) {
+            const beaconControlNameInput = document.getElementById('beacon_control_name');
+            if (beaconControlNameInput) {
+                beaconControlNameInput.value = survey.beacon_control_name;
+            }
+        }
+        
+        if (survey.Control_Beacon_Coordinate_X) {
+            const beaconXInput = document.getElementById('Control_Beacon_Coordinate_X');
+            if (beaconXInput) {
+                beaconXInput.value = survey.Control_Beacon_Coordinate_X;
+            }
+        }
+        
+        if (survey.Control_Beacon_Coordinate_Y) {
+            const beaconYInput = document.getElementById('Control_Beacon_Coordinate_Y');
+            if (beaconYInput) {
+                beaconYInput.value = survey.Control_Beacon_Coordinate_Y;
+            }
+        }
+        
+        // Populate sheet information
+        if (survey.Metric_Sheet_Index) {
+            const metricSheetIndexInput = document.getElementById('Metric_Sheet_Index');
+            if (metricSheetIndexInput) {
+                metricSheetIndexInput.value = survey.Metric_Sheet_Index;
+            }
+        }
+        
+        if (survey.Metric_Sheet_No) {
+            const metricSheetNoInput = document.getElementById('Metric_Sheet_No');
+            if (metricSheetNoInput) {
+                metricSheetNoInput.value = survey.Metric_Sheet_No;
+            }
+        }
+        
+        if (survey.Imperial_Sheet) {
+            const imperialSheetInput = document.getElementById('Imperial_Sheet');
+            if (imperialSheetInput) {
+                imperialSheetInput.value = survey.Imperial_Sheet;
+            }
+        }
+        
+        if (survey.Imperial_Sheet_No) {
+            const imperialSheetNoInput = document.getElementById('Imperial_Sheet_No');
+            if (imperialSheetNoInput) {
+                imperialSheetNoInput.value = survey.Imperial_Sheet_No;
+            }
+        }
+        
+        // Populate location information
+        if (survey.layout_name) {
+            const layoutNameInput = document.getElementById('layout_name');
+            if (layoutNameInput) {
+                layoutNameInput.value = survey.layout_name;
+            }
+        }
+        
+        if (survey.district_name) {
+            const districtNameInput = document.getElementById('district_name');
+            if (districtNameInput) {
+                districtNameInput.value = survey.district_name;
+            }
+        }
+        
+        if (survey.lga_name) {
+            const lgaNameInput = document.getElementById('lga_name');
+            if (lgaNameInput) {
+                lgaNameInput.value = survey.lga_name;
+            }
+        }
+        
+        // Also populate the property identification fields
+        if (survey.plot_no) {
+            const plotNoInput = document.getElementById('plot_no');
+            if (plotNoInput) {
+                plotNoInput.value = survey.plot_no;
+                plotNoInput.disabled = false;
+            }
+        }
+        
+        if (survey.block_no) {
+            const blockNoInput = document.getElementById('block_no');
+            if (blockNoInput) {
+                blockNoInput.value = survey.block_no;
+                blockNoInput.disabled = false;
+            }
+        }
+        
+        // Populate Personnel Information
+        if (survey.survey_by) {
+            const surveyByInput = document.getElementById('survey_by');
+            if (surveyByInput) {
+                surveyByInput.value = survey.survey_by;
+            }
+        }
+        
+        if (survey.survey_by_date) {
+            const surveyByDateInput = document.getElementById('survey_by_date');
+            if (surveyByDateInput) {
+                surveyByDateInput.value = survey.survey_by_date;
+            }
+        }
+        
+        if (survey.drawn_by) {
+            const drawnByInput = document.getElementById('drawn_by');
+            if (drawnByInput) {
+                drawnByInput.value = survey.drawn_by;
+            }
+        }
+        
+        if (survey.drawn_by_date) {
+            const drawnByDateInput = document.getElementById('drawn_by_date');
+            if (drawnByDateInput) {
+                drawnByDateInput.value = survey.drawn_by_date;
+            }
+        }
+        
+        if (survey.checked_by) {
+            const checkedByInput = document.getElementById('checked_by');
+            if (checkedByInput) {
+                checkedByInput.value = survey.checked_by;
+            }
+        }
+        
+        if (survey.checked_by_date) {
+            const checkedByDateInput = document.getElementById('checked_by_date');
+            if (checkedByDateInput) {
+                checkedByDateInput.value = survey.checked_by_date;
+            }
+        }
+        
+        if (survey.approved_by) {
+            const approvedByInput = document.getElementById('approved_by');
+            if (approvedByInput) {
+                approvedByInput.value = survey.approved_by;
+            }
+        }
+        
+        if (survey.approved_by_date) {
+            const approvedByDateInput = document.getElementById('approved_by_date');
+            if (approvedByDateInput) {
+                approvedByDateInput.value = survey.approved_by_date;
+            }
+        }
+
+        // Populate Approved Plan No
+        if (survey.approved_plan_no) {
+            const approvedPlanNoInput = document.getElementById('approved_plan_no');
+            if (approvedPlanNoInput) {
+                approvedPlanNoInput.value = survey.approved_plan_no;
+            }
+        }
+        
+        // Populate TP Plan No
+        if (survey.tp_plan_no) {
+            const tpPlanNoInput = document.getElementById('tp_plan_no');
+            if (tpPlanNoInput) {
+                tpPlanNoInput.value = survey.tp_plan_no;
+            }
+        }
+    }
+    
+    // Function to clear Primary Survey related fields
+    function clearPrimarySurveyFields() {
+        const primarySurveyIdInput = document.getElementById('PrimarysurveyId');
+        if (primarySurveyIdInput) {
+            primarySurveyIdInput.value = '';
+        }
+        
+        // Note: We're not clearing all fields here to avoid overriding data that might have been
+        // entered by the user or populated from other sources like the subapplication
     }
 });
 

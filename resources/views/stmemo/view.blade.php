@@ -87,7 +87,8 @@
                
                <div class="flex justify-between mt-10">
                     <div class="text-center">
-                         <div class="h-8"></div>
+                        <p>AUWALU RABIU</p>
+                         <div class="h-4"></div>
                          <span class="block border-t border-gray-400 w-48 mx-auto"></span>
                          <span class="block mt-2 text-gray-700 font-semibold">Director Physical Planning</span>
                     </div>

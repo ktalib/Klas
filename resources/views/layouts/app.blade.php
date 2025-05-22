@@ -422,5 +422,6 @@
       }
     });
   </script>
+  <script src="{{ asset('js/tailwind-modal.js') }}"></script>
 </body>
 </html>

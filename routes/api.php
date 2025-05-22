@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileIndexingController;
+use App\Http\Controllers\InstrumentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,3 +62,6 @@ Route::post('/file-records/search', [FileIndexingController::class, 'searchRecor
 // New API endpoints for CofO and Property Transaction data
 Route::get('/cofo-record/{fileNo}', [FileIndexingController::class, 'getCofORecord']);
 Route::get('/property-transaction', [FileIndexingController::class, 'getPropertyTransactionRecord']);
+
+// Instruments API Routes - Not requiring authentication for now to fix the immediate issue
+Route::post('/instruments/generate-particulars', [InstrumentController::class, 'generateParticulars']);

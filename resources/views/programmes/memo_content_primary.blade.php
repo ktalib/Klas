@@ -109,6 +109,10 @@
             .no-print {
                 display: none !important;
             }
+            
+            #not_unit {
+                page-break-before: always;
+            }
         }
     </style>
 </head>
@@ -144,12 +148,40 @@
             <p>
                 {{ $memo->planner_recommendation ?? 'The application was referred to Physical Planning Department for planning, engineering as well as architectural views. Subsequently, the planners recommended the application, because the application is feasible, and the shops meet the minimum requirements for commercial titles. Moreover, the proposal is accessible and conforms with the existing commercial development in the area.' }}
             </p>
-    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var overleafText = document.getElementById("overleafText");  
+            if (overleafText) {
+                // Check if URL contains unit and unit_id parameters
+                var url = window.location.href;
+                var shouldHide = url.includes("unit=") && url.includes("unit_id=");
+                
+                // Only hide if URL matches the pattern
+                overleafText.style.display = shouldHide ? "none" : "inline";
+                
+                window.onbeforeprint = function() {
+                    if (overleafText) {
+                        overleafText.style.display = "inline"; // Show when printing
+                    }
+                };
+                
+                window.onafterprint = function() {
+                    if (overleafText) {
+                        // Return to previous state based on URL
+                        overleafText.style.display = shouldHide ? "none" : "inline";
+                    }
+                };
+            }
+        });
+    </script>
             <p>
                 However, the recommendation is based on the recommended site plan at <span class="highlight">page {{ $memo->page_no ?? ($landAdmin->page_no ?? 'N/A') }}</span> and architectural design at <span class="highlight">page 
-                    {{ $memo->arc_design_page_no ?? ($landAdmin->arc_design_page_no ?? 'N/A') }}</span> and back cover with the following measurements:
+                {{ $memo->arc_design_page_no ?? ($landAdmin->arc_design_page_no ?? 'N/A') }}</span>
+                <span id="overleafText"> and overleaf</span> with the following measurements:
             </p>
+             <div id=unit>
               @include('programmes.buyer_list', ['buyers' => $memo->buyers ?? []])
+             </div>
             <div class="my-6"></div>
     
             <p>
@@ -206,6 +238,37 @@
                     <p class="border-t border-black pt-1 text-center w-64">HONOURABLE COMMISSIONER.</p>
                 </div>
             </div>
+             <div id="unit" style="display: none;">
+              @include('programmes.buyer_list', ['buyers' => $memo->buyers ?? []])
+             </div>
+             <div id="not_unit" style="display: none;">
+              @include('programmes.buyer_list', ['buyers' => $memo->buyers ?? []])
+             </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    // Check if URL contains both unit and unit_id parameters
+                    var url = window.location.href;
+                    var hasUnitParams = url.includes("unit=") && url.includes("unit_id=");
+                    
+                    // Show the appropriate div based on URL parameters
+                    document.getElementById("unit").style.display = hasUnitParams ? "block" : "none";
+                    document.getElementById("not_unit").style.display = hasUnitParams ? "none" : "block";
+                    
+                    // Handle printing behavior
+                    window.onbeforeprint = function() {
+                        // Only show one table when printing, based on URL parameters
+                        document.getElementById("unit").style.display = hasUnitParams ? "block" : "none";
+                        document.getElementById("not_unit").style.display = hasUnitParams ? "none" : "block";
+                    };
+                    
+                    window.onafterprint = function() {
+                        // Return to the same state (no change needed)
+                        document.getElementById("unit").style.display = hasUnitParams ? "block" : "none";
+                        document.getElementById("not_unit").style.display = hasUnitParams ? "none" : "block";
+                    };
+                });
+            </script>
             
             <!-- Print Button - Hidden when printing -->
             <div class="mt-12 text-center no-print">

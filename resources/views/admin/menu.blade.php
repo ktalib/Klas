@@ -430,67 +430,79 @@
     <!-- 8. Physical Planning -->
     <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
       <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="physicalPlanning">
-      <div class="flex items-center gap-2">
-        <i data-lucide="ruler" class="h-5 w-5"></i>
-        <span class="text-sm font-bold uppercase tracking-wider">8. Physical Planning</span>
-      </div>
-      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="physicalPlanning"></i>
+        <div class="flex items-center gap-2">
+          <i data-lucide="ruler" class="h-5 w-5"></i>
+          <span class="text-sm font-bold uppercase tracking-wider">8. Physical Planning</span>
+        </div>
+        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="physicalPlanning"></i>
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="physicalPlanning">
-      <!-- a. Regular Applications -->
-      <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="regularApplications">
-        <div class="flex items-center gap-2">
-        <i data-lucide="clipboard-list" class="h-4 w-4"></i>
-        <span>Regular Applications</span>
+        <!-- a. Regular Applications -->
+        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="regularApplications">
+          <div class="flex items-center gap-2">
+            <i data-lucide="clipboard-list" class="h-4 w-4"></i>
+            <span>Regular Applications</span>
+          </div>
+          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="regularApplications"></i>
         </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="regularApplications"></i>
-      </div>
-      
-      <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="regularApplications">
-        <a href="/physical-planning/regular/planning-recommendation" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-        <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
-        <span>Planning Recommendation</span>
-        </a>
-      </div>
-      
-      <!-- b. ST Applications -->
-      <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stApplications">
-        <div class="flex items-center gap-2">
-        <i data-lucide="clipboard-list" class="h-4 w-4"></i>
-        <span>ST Applications</span>
+        
+        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="regularApplications">
+          <a href="/physical-planning/regular/memo" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
+            <span>Memo</span>
+          </a>
+          <a href="/physical-planning/regular/planning-recommendation" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
+            <span>Planning Recommendation</span>
+          </a>
         </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="stApplications"></i>
-      </div>
-      
-      <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stApplications">
-        <a href="{{route('programmes.approvals.planning_recomm')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.planning_recomm') ? 'active' : '' }}">
-        <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
-        <span>Planning Recommendation</span>
-        </a>
-      </div>
-      
-      <!-- c. SLTR Applications -->
-      <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="sltrApplications">
-        <div class="flex items-center gap-2">
-        <i data-lucide="clipboard-list" class="h-4 w-4"></i>
-        <span>SLTR Applications</span>
+        
+        <!-- b. ST Applications -->
+        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stApplications">
+          <div class="flex items-center gap-2">
+            <i data-lucide="clipboard-list" class="h-4 w-4"></i>
+            <span>ST Applications</span>
+          </div>
+          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="stApplications"></i>
         </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="sltrApplications"></i>
-      </div>
-      
-      <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="sltrApplications">
-        <a href="/physical-planning/sltr/planning-recommendation" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-        <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
-        <span>Planning Recommendation</span>
+        
+        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stApplications">
+          <a href="{{route('stmemo.siteplan')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200" {{ request()->routeIs('stmemo.siteplan') ? 'active' : '' }}>
+            <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
+            <span>Memo</span>
+          </a>
+          <a href="{{route('programmes.approvals.planning_recomm')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.planning_recomm') ? 'active' : '' }}">
+            <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
+            <span>Planning Recommendation</span>
+          </a>
+        </div>
+        
+        <!-- c. SLTR Applications -->
+        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="sltrApplications">
+          <div class="flex items-center gap-2">
+            <i data-lucide="clipboard-list" class="h-4 w-4"></i>
+            <span>SLTR Applications</span>
+          </div>
+          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="sltrApplications"></i>
+        </div>
+        
+        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="sltrApplications">
+          <a href="/physical-planning/sltr/memo" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
+            <span>Memo</span>
+          </a>
+          <a href="/physical-planning/sltr/planning-recommendation" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
+            <span>Planning Recommendation</span>
+          </a>
+        </div>
+        
+        <!-- d. PP Reports -->
+        <a href="/physical-planning/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
+          <span>PP Reports</span>
         </a>
-      </div>
-      
-      <!-- d. PP Reports -->
-      <a href="/physical-planning/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-        <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
-        <span>PP Reports</span>
-      </a>
       </div>
     </div>
 
@@ -505,13 +517,13 @@
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="survey">
-        <a href="{{route('survey_records.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('survey_records.index') ? 'active' : '' }}">
+        <a href="{{route('survey_record.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('survey_record.index') ? 'active' : '' }}">
           <i data-lucide="clipboard" class="h-4 w-4"></i>
           <span>Records</span>
         </a>
         <a href="/survey/gis" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
           <i data-lucide="map" class="h-4 w-4"></i>
-          <span>GIS</span>
+          <span>GIS Reports</span>
         </a>
         <a href="/survey/approvals" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
           <i data-lucide="check-circle" class="h-4 w-4"></i>
@@ -539,13 +551,13 @@
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="cadastral">
-        <a href="/cadastral/records" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <a href="{{route('survey_cadastral.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('survey_cadastral.index') ? 'active' : '' }}">
           <i data-lucide="clipboard" class="h-4 w-4"></i>
           <span>Records</span>
         </a>
         <a href="/cadastral/gis" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
           <i data-lucide="map" class="h-4 w-4"></i>
-          <span>GIS</span>
+          <span>GIS Reports</span>
         </a>
         <a href="/cadastral/approvals" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
           <i data-lucide="check-circle" class="h-4 w-4"></i>
@@ -565,18 +577,34 @@
     <!-- 11. GIS -->
     <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
       <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="gis">
-        <div class="flex items-center gap-2"> 
-          <i data-lucide="map" class="h-5 w-5"></i>
-          <span class="text-sm font-bold uppercase tracking-wider">11. GIS</span>
-        </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="gis"></i>
+      <div class="flex items-center gap-2"> 
+        <i data-lucide="map" class="h-5 w-5"></i>
+        <span class="text-sm font-bold uppercase tracking-wider">11. GIS</span>
+      </div>
+      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="gis"></i>
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="gis">
-        <a href="#" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="database-zap" class="h-4 w-4"></i>
-          <span>GIS Attribution</span>
-        </a>
+      <a href="{{route('gis_record.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('gis_record.index') ? 'active' : '' }}">
+        <i data-lucide="clipboard" class="h-4 w-4"></i>
+        <span>Records</span>
+      </a>
+      <a href="" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 ">
+        <i data-lucide="map" class="h-4 w-4"></i>
+        <span>GIS Reports</span>
+      </a>
+      <a href="/gis/approvals" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="check-circle" class="h-4 w-4"></i>
+        <span>Approvals</span>
+      </a>
+      <a href="/gis/e-registry" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="database" class="h-4 w-4"></i>
+        <span>E-Registry</span>
+      </a>
+      <a href="/gis/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
+        <span>Survey Reports</span>
+      </a>
       </div>
     </div>
 
@@ -595,11 +623,11 @@
           <i data-lucide="file-text" class="h-4 w-4"></i>
           <span>Overview</span>
         </a>
-        <a href="{{ route('sectionaltitling.primary') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sectionaltitling.primary') && !in_array(request()->query('url'), ['recommendation', 'phy_planning']) ? 'active' : '' }}">
+        <a href="{{ route('sectionaltitling.primary') }}?url=infopro" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sectionaltitling.primary') && request()->query('url') === 'infopro' ? 'active' : '' }}">
           <i data-lucide="file-plus" class="h-4 w-4"></i>
           <span>Primary Applications</span>
         </a>
-        <a href="{{ route('sectionaltitling.secondary') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sectionaltitling.secondary') && !in_array(request()->query('url'), ['recommendation', 'phy_planning']) ? 'active' : '' }}">
+        <a href="{{ route('sectionaltitling.units') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sectionaltitling.units') && !in_array(request()->query('url'), ['recommendation', 'phy_planning']) ? 'active' : '' }}">
           <i data-lucide="file-plus-2" class="h-4 w-4"></i>
           <span>Unit Applications</span>
         </a>
@@ -925,7 +953,7 @@
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="admin">
-        <a href="/admin/user-account" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <a href="{{route('users.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('users.index') ? 'active' : '' }}">
           <i data-lucide="user-cog" class="h-4 w-4"></i>
           <span>User Account</span>
         </a>
@@ -946,7 +974,11 @@
         </div>
       </div>
       <div class="flex flex-col">
-        <span class="text-sm font-medium">User</span>
+        @if(strtolower(trim(auth()->user()->email)) =='ict_director@klas.com.ng')
+          <span class="text-sm font-medium">Supper Admin</span>
+        @else
+          <span class="text-sm font-medium">User</span>
+        @endif
         <span class="text-xs text-gray-500">{{ auth()->user()->email }}</span>
       </div>
       <div class="relative ml-auto">

@@ -13,7 +13,13 @@
       <!-- GIS Data Edit Form -->
       <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-bold">Edit GIS Data</h2>
+          <h2 class="text-xl font-bold">
+            @if($gisData->gis_type == 'Unit GIS')
+                Edit Unit GIS Data
+            @else
+                Edit Primary GIS Data
+            @endif
+          </h2>
         </div>
         
         <form action="{{ route('gis.update', $gisData->id) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
@@ -23,6 +29,88 @@
             <!-- File Information Section -->
             <div class="bg-gray-50 p-4 rounded-lg">
                 <h3 class="text-lg font-semibold mb-4 text-gray-700">File Information</h3>
+                
+                @if($gisData->gis_type == 'Unit GIS')
+                <!-- Unit GIS File Information -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <input type="hidden" name="gis_type" value="Unit GIS">
+                    
+                    <div class="space-y-2">
+                        <label for="STFileNo" class="block text-sm font-medium text-gray-700">ST File Number</label>
+                        <input type="text" id="STFileNo" name="STFileNo" value="{{ $gisData->STFileNo ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label for="PrimaryGISID" class="block text-sm font-medium text-gray-700">Primary GIS ID</label>
+                        <input type="text" id="PrimaryGISID" name="PrimaryGISID" value="{{ $gisData->PrimaryGISID ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                    </div>
+                </div>
+                
+                <!-- Unit-specific Information -->
+                <div class="mt-4 border-t pt-4">
+                    <h4 class="text-md font-semibold mb-3 text-gray-700">Unit Details</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="space-y-2">
+                            <label for="scheme_no" class="block text-sm font-medium text-gray-700">Scheme Number</label>
+                            <input type="text" id="scheme_no" name="scheme_no" value="{{ $gisData->scheme_no ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="section_no" class="block text-sm font-medium text-gray-700">Section Number</label>
+                            <input type="text" id="section_no" name="section_no" value="{{ $gisData->section_no ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="block_no" class="block text-sm font-medium text-gray-700">Block Number</label>
+                            <input type="text" id="block_no" name="block_no" value="{{ $gisData->block_no ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="unit_no" class="block text-sm font-medium text-gray-700">Unit Number</label>
+                            <input type="text" id="unit_no" name="unit_no" value="{{ $gisData->unit_no ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="landuse" class="block text-sm font-medium text-gray-700">Land Use</label>
+                            <input type="text" id="landuse" name="landuse" value="{{ $gisData->landuse ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="height" class="block text-sm font-medium text-gray-700">Height</label>
+                            <input type="text" id="height" name="height" value="{{ $gisData->height ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="unit_id" class="block text-sm font-medium text-gray-700">Unit ID</label>
+                            <input type="text" id="unit_id" name="unit_id" value="{{ $gisData->unit_id ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="UnitSize" class="block text-sm font-medium text-gray-700">Unit Size</label>
+                            <input type="text" id="UnitSize" name="UnitSize" value="{{ $gisData->UnitSize ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="UnitDemsion" class="block text-sm font-medium text-gray-700">Unit Dimension</label>
+                            <input type="text" id="UnitDemsion" name="UnitDemsion" value="{{ $gisData->UnitDemsion ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Unit Beacon Information -->
+                <div class="mt-4 border-t pt-4">
+                    <h4 class="text-md font-semibold mb-3 text-gray-700">Unit Control Beacon Information</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="space-y-2">
+                            <label for="UnitControlBeaconNo" class="block text-sm font-medium text-gray-700">Control Beacon Number</label>
+                            <input type="text" id="UnitControlBeaconNo" name="UnitControlBeaconNo" value="{{ $gisData->UnitControlBeaconNo ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="UnitControlBeaconX" class="block text-sm font-medium text-gray-700">Control Beacon X</label>
+                            <input type="text" id="UnitControlBeaconX" name="UnitControlBeaconX" value="{{ $gisData->UnitControlBeaconX ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="UnitControlBeaconY" class="block text-sm font-medium text-gray-700">Control Beacon Y</label>
+                            <input type="text" id="UnitControlBeaconY" name="UnitControlBeaconY" value="{{ $gisData->UnitControlBeaconY ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        </div>
+                    </div>
+                </div>
+                
+                @else
+                <!-- Primary GIS File Information -->
+                <input type="hidden" name="gis_type" value="Primary GIS">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="space-y-2">
                         <label for="mlsfNo" class="block text-sm font-medium text-gray-700">MLSF Number</label>
@@ -39,6 +127,7 @@
                         <input type="text" id="NewKANGISFileno" name="NewKANGISFileno" value="{{ $gisData->NewKANGISFileno ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
                     </div>
                 </div>
+                @endif
             </div>
             
             <!-- Plot Information Section -->

@@ -160,22 +160,22 @@
                         <div style="display:{{ $is_view }}">
 
                             <div class="grid grid-cols-3 gap-2 mb-4">
+                              <button class="tab-button active" data-tab="summary">
+                                    <i data-lucide="user" class="w-3.5 h-3.5 mr-1.5"></i>
+                                    SUMMARY
+                                </button>
+                                 <button class="tab-button" data-tab="initial">
+                                    <i data-lucide="banknote" class="w-3.5 h-3.5 mr-1.5"></i>
+                                    APPROVAL
+                                </button>
 
-                                
-
-                                <button class="tab-button active" data-tab="detterment">
+                                <button class="tab-button " data-tab="detterment">
                                     <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
                                     DOCUMENTS
                                 </button>
 
-                                <button class="tab-button" data-tab="initial">
-                                    <i data-lucide="banknote" class="w-3.5 h-3.5 mr-1.5"></i>
-                                    APPROVAL
-                                </button>
-                                <button class="tab-button" data-tab="summary">
-                                    <i data-lucide="user" class="w-3.5 h-3.5 mr-1.5"></i>
-                                    SUMMARY
-                                </button>
+                               
+                                
                                 {{-- <button class="tab-button" data-tab="final">
                         <i data-lucide="file-check" class="w-3.5 h-3.5 mr-1.5"></i>
                         FINAL BILL
@@ -183,7 +183,7 @@
                             </div>
 
                             <!-- Summary Tab -->
-                            <div id="summary-tab" class="tab-content">
+                            <div id="summary-tab" class="tab-content active">
                                 <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                                     <div class="p-4 border-b">
                                         <h3 class="text-sm font-medium">Application Summary</h3>
@@ -366,7 +366,7 @@
                                                         <p class="text-sm">{{ $application->block_number ?? 'N/A' }}</p>
                                                     </div>
                                                     <div>
-                                                        <p class="text-xs text-gray-600 font-medium">Floor Number:</p>
+                                                        <p class="text-xs text-gray-600 font-medium">Section Number:</p>
                                                         <p class="text-sm">{{ $application->floor_number ?? 'N/A' }}</p>
                                                     </div>
                                                     <div>
@@ -443,7 +443,7 @@
                                                     <p class="text-sm">₦{{ number_format($application->processing_fee ?? 0, 2) }}</p>
                                                 </div>
                                                 <div class="bg-gray-50 p-3 rounded-lg">
-                                                    <p class="text-xs text-gray-600 font-medium">Site Plan Fee:</p>
+                                                    <p class="text-xs text-gray-600 font-medium">Survey Fee:</p>
                                                     <p class="text-sm">₦{{ number_format($application->site_plan_fee ?? 0, 2) }}</p>
                                                 </div>
                                             </div>
@@ -472,7 +472,7 @@
                             <!-- Survey Tab -->
                             <!-- Detterment Bill Tab -->
                              
-                                <div id="detterment-tab" class="tab-content active">
+                                <div id="detterment-tab" class="tab-content ">
                                     <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                                         <div class="p-4 border-b">
                                             <h3 class="text-sm font-medium">Documents</h3>

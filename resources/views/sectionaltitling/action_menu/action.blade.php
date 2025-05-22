@@ -142,12 +142,21 @@
                </a>
             </li>
          @else
-            <li >
-               <a href="{{ route('actions.recommendation', ['id' => $PrimaryApplication->id]) }}" class="w-full text-left px-4 py-2 flex items-center space-x-2">
-                  <i data-lucide="clipboard-check" class="w-4 h-4 text-blue-500"></i>
-                  <span>Planning Recommendation</span>
+            @if($PrimaryApplication->application_status == 'Approved')
+            <li>
+               <a href="{{ route('actions.recommendation', ['id' => $PrimaryApplication->id]) }}" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                 <i data-lucide="clipboard-check" class="w-4 h-4 text-blue-500"></i>
+                 <span>Planning Recommendation</span>
                </a>
             </li>
+            @else
+            <li class="opacity-50 cursor-not-allowed">
+               <a href="#" class="w-full text-left px-4 py-2 flex items-center space-x-2">
+                 <i data-lucide="clipboard-check" class="w-4 h-4 text-gray-500"></i>
+                 <span>View Planning Recommendation</span>
+               </a>
+            </li>
+            @endif
          @endif
 
          @if(!request()->has('url') || (request()->get('url') !== 'phy_planning' && request()->get('url') !== 'recommendation'))
@@ -167,59 +176,7 @@
          </a>
       </li>
       @endif
-      @if(!($PrimaryApplication->planning_recommendation_status == 'Pending' || 
-         $PrimaryApplication->planning_recommendation_status == 'Declined' || 
-         $PrimaryApplication->application_status == 'Pending' || 
-         $PrimaryApplication->application_status == 'Declined'))
-      <li>
-        <a href="{{ route('actions.final-conveyance', ['id' => $PrimaryApplication->id]) }}" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-         <i data-lucide="file-text" class="w-4 h-4 text-orange-500"></i>
-         <span>Final Conveyance</span>
-        </a>
-      </li>
-      @else
-      <li class="opacity-50 cursor-not-allowed">
-        <a href="#" class="w-full text-left px-4 py-2 flex items-center space-x-2">
-         <i data-lucide="file-text" class="w-4 h-4 text-gray-500"></i>
-         <span>Final Conveyance</span>
-        </a>
-      </li>
+     @endif
       @endif
-       </li>
-      @if ($PrimaryApplication->application_status == 'Approved' && $PrimaryApplication->planning_recommendation_status == 'Approved')
-       <li>
-           <a href="{{ route('sectionaltitling.sub_application', [
-             'application_id' => $PrimaryApplication->id,
-             'land_use' => $PrimaryApplication->land_use,
-             ]) }}" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-           <i data-lucide="plus-square" class="w-4 h-4 text-green-500"></i>
-           <span>Create Unit Application</span>
-           </a>
-       </li>
-       @else
-       <li class="opacity-50 cursor-not-allowed">
-          <a href="#" class="w-full text-left px-4 py-2 flex items-center space-x-2">
-          <i data-lucide="plus-square" class="w-4 h-4 text-gray-500"></i>
-          <span>Create Unit Application</span>
-          </a>
-       </li>
-       @endif
-      @if(($PrimaryApplication->planning_recommendation_status == 'Pending' && $PrimaryApplication->application_status == 'Pending') || !isset($PrimaryApplication->sub_applications) || count($PrimaryApplication->sub_applications) === 0)
-      <li class="opacity-50 cursor-not-allowed">
-         <a href="#" class="w-full text-left px-4 py-2 flex items-center space-x-2">
-         <i data-lucide="list" class="w-4 h-4 text-gray-500"></i>
-         <span>View Unit Application(s)</span>
-         </a>
-      </li>
-      @else
-      <li>
-         <a href="{{ route('sectionaltitling.sub_applications') }}?main_application_id={{ $PrimaryApplication->id }}" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-         <i data-lucide="list" class="w-4 h-4 text-blue-600"></i>
-         <span>View Unit Application(s)</span>
-         </a>
-      </li>
-      @endif
-       @endif
-        @endif
    </ul>
  </div>

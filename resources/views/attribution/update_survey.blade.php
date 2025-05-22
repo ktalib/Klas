@@ -13,7 +13,13 @@
             @csrf
             <input type="hidden" name="id" value="{{ $survey->ID }}">
             <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 space-y-6">
-                <h3 class="text-lg font-medium">Update Survey Details</h3>
+                <h3 class="text-lg font-medium">
+                    Update {{ $survey->survey_type ?? 'Survey' }} Details
+                </h3>
+                
+                @if(isset($survey->survey_type) && $survey->survey_type == 'Unit Survey')
+                    @include('attribution.unit_form', ['survey' => $survey])
+                @endif
                 
                 <!-- Property Identification -->
                 <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">

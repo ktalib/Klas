@@ -1,4 +1,43 @@
 <script>
+    // Immediately check and disable fields if on secondary GIS page
+    (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const isSecondary = urlParams.get('is') === 'secondary';
+        console.log('URL Check - Is Secondary:', isSecondary);
+        
+        if (isSecondary) {
+            console.log('Secondary GIS mode detected - fields should be disabled');
+            // Run after a small delay to ensure DOM is fully loaded
+            setTimeout(function() {
+                disablePrimaryGISFields();
+                // Add notice at the top of the form
+                addFormNotice();
+            }, 100);
+        }
+    })();
+
+    // Function to add a notice at the top of the form
+    function addFormNotice() {
+        const formElement = document.querySelector('form');
+        const headerElement = document.querySelector('form .bg-gray-50');
+        
+        // Remove any existing notice first
+        const existingNotice = document.querySelector('form .bg-blue-50');
+        if (existingNotice) {
+            existingNotice.remove();
+        }
+        
+        if (headerElement && formElement) {
+            const noticeDiv = document.createElement('div');
+            noticeDiv.className = 'bg-blue-50 text-blue-700 p-3 rounded-md mb-4';
+            noticeDiv.innerHTML = '<p class="text-sm"><strong>Note:</strong> Primary GIS fields are read-only. Only Unit-specific information can be edited.</p>';
+            formElement.insertBefore(noticeDiv, headerElement);
+            console.log('Notice added to form');
+        } else {
+            console.warn('Could not find form header element to add notice');
+        }
+    }
+
     // Show the reason for change field only when change of ownership is Yes
     document.addEventListener('DOMContentLoaded', function() {
         const changeOfOwnershipSelect = document.getElementById('changeOfOwnership');
@@ -17,6 +56,15 @@
         
         // Listen for changes
         changeOfOwnershipSelect.addEventListener('change', toggleReasonField);
+
+        // Also check and disable fields again to be sure
+        const urlParams = new URLSearchParams(window.location.search);
+        const isSecondary = urlParams.get('is') === 'secondary';
+        if (isSecondary) {
+            console.log('DOMContentLoaded: Disabling primary fields for secondary GIS');
+            disablePrimaryGISFields();
+            addFormNotice();
+        }
     });
 
     // Debug form data
@@ -41,6 +89,29 @@
             // Uncomment to stop form submission for debugging
             // e.preventDefault();
         });
+    });
+
+    // Automatically disable primary fields on Unit GIS page
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if we're on the unit GIS page (is=secondary in URL)
+        const urlParams = new URLSearchParams(window.location.search);
+        const isSecondary = urlParams.get('is') === 'secondary';
+        
+        if (isSecondary) {
+            // Add notice at the top of the form
+            const formElement = document.querySelector('form');
+            const headerElement = document.querySelector('form .bg-gray-50');
+            
+            if (headerElement && formElement) {
+                const noticeDiv = document.createElement('div');
+                noticeDiv.className = 'bg-blue-50 text-blue-700 p-3 rounded-md mb-4';
+                noticeDiv.innerHTML = '<p class="text-sm"><strong>Note:</strong> Primary GIS fields are read-only. Only Unit-specific information can be edited.</p>';
+                formElement.insertBefore(noticeDiv, headerElement);
+            }
+            
+            // Disable all primary GIS fields
+            disablePrimaryGISFields();
+        }
     });
 
     // Primary file select functionality for unit GIS
@@ -139,17 +210,18 @@
             // Set primary GIS ID
             document.getElementById('PrimaryGISID').value = data.id;
             
-            // Update the text in the select itself (in case it doesn't display properly)
+            // Get the selected text
             const selectedText = e.params.data.text || 'File #' + data.id;
             
-            // Create a new option with the selected data if it doesn't exist
-            if ($(primaryFileSelect).find(`option[value="${data.id}"]`).length === 0) {
-                const newOption = new Option(selectedText, data.id, true, true);
-                $(primaryFileSelect).append(newOption).trigger('change');
-            } else {
-                // Just ensure it's selected
-                $(primaryFileSelect).val(data.id).trigger('change');
-            }
+            // Clear existing options and add the selected one to ensure it shows properly
+            $(primaryFileSelect).empty();
+            
+            // Create and add the selected option
+            const newOption = new Option(selectedText, data.id, true, true);
+            $(primaryFileSelect).append(newOption);
+            
+            // This forces Select2 to use our option as the visible selection
+            $(primaryFileSelect).val(data.id).trigger('change');
             
             // Update the summary header for primary file
             updatePrimaryFileSummary(data);
@@ -158,7 +230,18 @@
             populateFormWithPrimaryData(data);
             
             // Show toast notification
-            showToast('Primary GIS data loaded successfully');
+            // showToast('Primary GIS data loaded successfully');
+
+                Swal.fire({
+                                title: 'Primary GIS Selected',
+                                text: 'Primary GIS data loaded successfully.',
+                                icon: 'success',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true
+                            });
         });
 
         // Function to update the summary header for primary file
@@ -206,33 +289,93 @@
                 document.getElementById('PrimaryGISID').value = data.id;
             }
             
-            // Only update STFileNo in the unit form - this links the unit to the primary file
-            // if (document.getElementById('STFileNo')) {
-            //     // Set STFileNo to whichever file number is available (in order of preference)
-            //     if (data.mlsfNo) document.getElementById('STFileNo').value = data.mlsfNo;
-            //     else if (data.kangisFileNo) document.getElementById('STFileNo').value = data.kangisFileNo;
-            //     else if (data.NewKANGISFileno) document.getElementById('STFileNo').value = data.NewKANGISFileno;
-            // }
-            
-            // The rest of the data should go to the main form fields, not the unit form
-            
             // Plot Information (main form)
-            if (data.plotNo && document.getElementById('plotNo')) document.getElementById('plotNo').value = data.plotNo;
-            if (data.blockNo && document.getElementById('blockNo')) document.getElementById('blockNo').value = data.blockNo;
-            if (data.approvedPlanNo && document.getElementById('approvedPlanNo')) document.getElementById('approvedPlanNo').value = data.approvedPlanNo;
-            if (data.tpPlanNo && document.getElementById('tpPlanNo')) document.getElementById('tpPlanNo').value = data.tpPlanNo;
-            if (data.areaInHectares && document.getElementById('areaInHectares')) document.getElementById('areaInHectares').value = data.areaInHectares;
-            if (data.landUse && document.getElementById('landUse')) document.getElementById('landUse').value = data.landUse;
-            if (data.specifically && document.getElementById('specifically')) document.getElementById('specifically').value = data.specifically;
+            if (data.plotNo && document.getElementById('plotNo')) {
+                const plotField = document.getElementById('plotNo');
+                plotField.value = data.plotNo;
+                plotField.readOnly = true;
+                plotField.classList.add('bg-gray-100');
+            }
+            if (data.blockNo && document.getElementById('blockNo')) {
+                const blockField = document.getElementById('blockNo');
+                blockField.value = data.blockNo;
+                blockField.readOnly = true;
+                blockField.classList.add('bg-gray-100');
+            }
+            if (data.approvedPlanNo && document.getElementById('approvedPlanNo')) {
+                const planField = document.getElementById('approvedPlanNo');
+                planField.value = data.approvedPlanNo;
+                planField.readOnly = true;
+                planField.classList.add('bg-gray-100');
+            }
+            if (data.tpPlanNo && document.getElementById('tpPlanNo')) {
+                const tpField = document.getElementById('tpPlanNo');
+                tpField.value = data.tpPlanNo;
+                tpField.readOnly = true;
+                tpField.classList.add('bg-gray-100');
+            }
+            if (data.areaInHectares && document.getElementById('areaInHectares')) {
+                const areaField = document.getElementById('areaInHectares');
+                areaField.value = data.areaInHectares;
+                areaField.readOnly = true;
+                areaField.classList.add('bg-gray-100');
+            }
+            if (data.landUse && document.getElementById('landUse')) {
+                const landUseField = document.getElementById('landUse');
+                landUseField.value = data.landUse;
+                landUseField.disabled = true;
+                landUseField.classList.add('bg-gray-100');
+            }
+            if (data.specifically && document.getElementById('specifically')) {
+                const specField = document.getElementById('specifically');
+                specField.value = data.specifically;
+                specField.readOnly = true;
+                specField.classList.add('bg-gray-100');
+            }
             
             // Location Information (main form)
-            if (data.layoutName && document.getElementById('layoutName')) document.getElementById('layoutName').value = data.layoutName;
-            if (data.districtName && document.getElementById('districtName')) document.getElementById('districtName').value = data.districtName;
-            if (data.StateName && document.getElementById('StateName')) document.getElementById('StateName').value = data.StateName;
-            if (data.streetName && document.getElementById('streetName')) document.getElementById('streetName').value = data.streetName;
-            if (data.houseNo && document.getElementById('houseNo')) document.getElementById('houseNo').value = data.houseNo;
-            if (data.houseType && document.getElementById('houseType')) document.getElementById('houseType').value = data.houseType;
-            if (data.tenancy && document.getElementById('tenancy')) document.getElementById('tenancy').value = data.tenancy;
+            if (data.layoutName && document.getElementById('layoutName')) {
+                const layoutField = document.getElementById('layoutName');
+                layoutField.value = data.layoutName;
+                layoutField.readOnly = true;
+                layoutField.classList.add('bg-gray-100');
+            }
+            if (data.districtName && document.getElementById('districtName')) {
+                const districtField = document.getElementById('districtName');
+                districtField.value = data.districtName;
+                districtField.readOnly = true;
+                districtField.classList.add('bg-gray-100');
+            }
+            if (data.StateName && document.getElementById('StateName')) {
+                const stateField = document.getElementById('StateName');
+                stateField.value = data.StateName;
+                stateField.readOnly = true;
+                stateField.classList.add('bg-gray-100');
+            }
+            if (data.streetName && document.getElementById('streetName')) {
+                const streetField = document.getElementById('streetName');
+                streetField.value = data.streetName;
+                streetField.readOnly = true;
+                streetField.classList.add('bg-gray-100');
+            }
+            if (data.houseNo && document.getElementById('houseNo')) {
+                const houseNoField = document.getElementById('houseNo');
+                houseNoField.value = data.houseNo;
+                houseNoField.readOnly = true;
+                houseNoField.classList.add('bg-gray-100');
+            }
+            if (data.houseType && document.getElementById('houseType')) {
+                const houseTypeField = document.getElementById('houseType');
+                houseTypeField.value = data.houseType;
+                houseTypeField.readOnly = true;
+                houseTypeField.classList.add('bg-gray-100');
+            }
+            if (data.tenancy && document.getElementById('tenancy')) {
+                const tenancyField = document.getElementById('tenancy');
+                tenancyField.value = data.tenancy;
+                tenancyField.readOnly = true;
+                tenancyField.classList.add('bg-gray-100');
+            }
             
             // LGA selection
             if (data.lgaName) {
@@ -244,77 +387,216 @@
                             break;
                         }
                     }
+                    lgaSelectElement.disabled = true;
+                    lgaSelectElement.classList.add('bg-gray-100');
                 }
             }
             
             // Title Information (main form)
-            if (data.oldTitleSerialNo && document.getElementById('oldTitleSerialNo')) 
-                document.getElementById('oldTitleSerialNo').value = data.oldTitleSerialNo;
-            if (data.oldTitlePageNo && document.getElementById('oldTitlePageNo')) 
-                document.getElementById('oldTitlePageNo').value = data.oldTitlePageNo;
-            if (data.oldTitleVolumeNo && document.getElementById('oldTitleVolumeNo')) 
-                document.getElementById('oldTitleVolumeNo').value = data.oldTitleVolumeNo;
-            if (data.deedsDate && document.getElementById('deedsDate')) 
-                document.getElementById('deedsDate').value = data.deedsDate;
-            if (data.deedsTime && document.getElementById('deedsTime')) 
-                document.getElementById('deedsTime').value = data.deedsTime;
-            if (data.certificateDate && document.getElementById('certificateDate')) 
-                document.getElementById('certificateDate').value = data.certificateDate;
-            if (data.CofOSerialNo && document.getElementById('CofOSerialNo')) 
-                document.getElementById('CofOSerialNo').value = data.CofOSerialNo;
-            if (data.titleIssuedYear && document.getElementById('titleIssuedYear')) 
-                document.getElementById('titleIssuedYear').value = data.titleIssuedYear;
+            if (data.oldTitleSerialNo && document.getElementById('oldTitleSerialNo')) {
+                const serialField = document.getElementById('oldTitleSerialNo');
+                serialField.value = data.oldTitleSerialNo;
+                serialField.readOnly = true;
+                serialField.classList.add('bg-gray-100');
+            }
+            if (data.oldTitlePageNo && document.getElementById('oldTitlePageNo')) {
+                const pageField = document.getElementById('oldTitlePageNo');
+                pageField.value = data.oldTitlePageNo;
+                pageField.readOnly = true;
+                pageField.classList.add('bg-gray-100');
+            }
+            if (data.oldTitleVolumeNo && document.getElementById('oldTitleVolumeNo')) {
+                const volumeField = document.getElementById('oldTitleVolumeNo');
+                volumeField.value = data.oldTitleVolumeNo;
+                volumeField.readOnly = true;
+                volumeField.classList.add('bg-gray-100');
+            }
+            if (data.deedsDate && document.getElementById('deedsDate')) {
+                const deedsDateField = document.getElementById('deedsDate');
+                deedsDateField.value = data.deedsDate;
+                deedsDateField.readOnly = true;
+                deedsDateField.classList.add('bg-gray-100');
+            }
+            if (data.deedsTime && document.getElementById('deedsTime')) {
+                const deedsTimeField = document.getElementById('deedsTime');
+                deedsTimeField.value = data.deedsTime;
+                deedsTimeField.readOnly = true;
+                deedsTimeField.classList.add('bg-gray-100');
+            }
+            if (data.certificateDate && document.getElementById('certificateDate')) {
+                const certDateField = document.getElementById('certificateDate');
+                certDateField.value = data.certificateDate;
+                certDateField.readOnly = true;
+                certDateField.classList.add('bg-gray-100');
+            }
+            if (data.CofOSerialNo && document.getElementById('CofOSerialNo')) {
+                const cofOField = document.getElementById('CofOSerialNo');
+                cofOField.value = data.CofOSerialNo;
+                cofOField.readOnly = true;
+                cofOField.classList.add('bg-gray-100');
+            }
+            if (data.titleIssuedYear && document.getElementById('titleIssuedYear')) {
+                const yearField = document.getElementById('titleIssuedYear');
+                yearField.value = data.titleIssuedYear;
+                yearField.readOnly = true;
+                yearField.classList.add('bg-gray-100');
+            }
             
             // Owner Information (main form)
-            if (data.originalAllottee && document.getElementById('originalAllottee')) 
-                document.getElementById('originalAllottee').value = data.originalAllottee;
-            if (data.addressOfOriginalAllottee && document.getElementById('addressOfOriginalAllottee')) 
-                document.getElementById('addressOfOriginalAllottee').value = data.addressOfOriginalAllottee;
-            if (data.changeOfOwnership && document.getElementById('changeOfOwnership')) 
-                document.getElementById('changeOfOwnership').value = data.changeOfOwnership;
-            if (data.reasonForChange && document.getElementById('reasonForChange')) 
-                document.getElementById('reasonForChange').value = data.reasonForChange;
-            if (data.currentAllottee && document.getElementById('currentAllottee')) 
-                document.getElementById('currentAllottee').value = data.currentAllottee;
-            if (data.addressOfCurrentAllottee && document.getElementById('addressOfCurrentAllottee')) 
-                document.getElementById('addressOfCurrentAllottee').value = data.addressOfCurrentAllottee;
-            if (data.titleOfCurrentAllottee && document.getElementById('titleOfCurrentAllottee')) 
-                document.getElementById('titleOfCurrentAllottee').value = data.titleOfCurrentAllottee;
-            if (data.phoneNo && document.getElementById('phoneNo')) 
-                document.getElementById('phoneNo').value = data.phoneNo;
-            if (data.emailAddress && document.getElementById('emailAddress')) 
-                document.getElementById('emailAddress').value = data.emailAddress;
-            if (data.occupation && document.getElementById('occupation')) 
-                document.getElementById('occupation').value = data.occupation;
-            if (data.nationality && document.getElementById('nationality')) 
-                document.getElementById('nationality').value = data.nationality;
-            if (data.CompanyRCNo && document.getElementById('CompanyRCNo')) 
-                document.getElementById('CompanyRCNo').value = data.CompanyRCNo;
+            if (data.originalAllottee && document.getElementById('originalAllottee')) {
+                const originalField = document.getElementById('originalAllottee');
+                originalField.value = data.originalAllottee;
+                originalField.readOnly = true;
+                originalField.classList.add('bg-gray-100');
+            }
+            if (data.addressOfOriginalAllottee && document.getElementById('addressOfOriginalAllottee')) {
+                const addressField = document.getElementById('addressOfOriginalAllottee');
+                addressField.value = data.addressOfOriginalAllottee;
+                addressField.readOnly = true;
+                addressField.classList.add('bg-gray-100');
+            }
+            if (data.changeOfOwnership && document.getElementById('changeOfOwnership')) {
+                const changeField = document.getElementById('changeOfOwnership');
+                changeField.value = data.changeOfOwnership;
+                changeField.disabled = true;
+                changeField.classList.add('bg-gray-100');
+            }
+            if (data.reasonForChange && document.getElementById('reasonForChange')) {
+                const reasonField = document.getElementById('reasonForChange');
+                reasonField.value = data.reasonForChange;
+                reasonField.readOnly = true;
+                reasonField.classList.add('bg-gray-100');
+            }
+            if (data.currentAllottee && document.getElementById('currentAllottee')) {
+                const currentField = document.getElementById('currentAllottee');
+                currentField.value = data.currentAllottee;
+                currentField.readOnly = true;
+                currentField.classList.add('bg-gray-100');
+            }
+            if (data.addressOfCurrentAllottee && document.getElementById('addressOfCurrentAllottee')) {
+                const currentAddressField = document.getElementById('addressOfCurrentAllottee');
+                currentAddressField.value = data.addressOfCurrentAllottee;
+                currentAddressField.readOnly = true;
+                currentAddressField.classList.add('bg-gray-100');
+            }
+            if (data.titleOfCurrentAllottee && document.getElementById('titleOfCurrentAllottee')) {
+                const titleField = document.getElementById('titleOfCurrentAllottee');
+                titleField.value = data.titleOfCurrentAllottee;
+                titleField.readOnly = true;
+                titleField.classList.add('bg-gray-100');
+            }
+            if (data.phoneNo && document.getElementById('phoneNo')) {
+                const phoneField = document.getElementById('phoneNo');
+                phoneField.value = data.phoneNo;
+                phoneField.readOnly = true;
+                phoneField.classList.add('bg-gray-100');
+            }
+            if (data.emailAddress && document.getElementById('emailAddress')) {
+                const emailField = document.getElementById('emailAddress');
+                emailField.value = data.emailAddress;
+                emailField.readOnly = true;
+                emailField.classList.add('bg-gray-100');
+            }
+            if (data.occupation && document.getElementById('occupation')) {
+                const occupationField = document.getElementById('occupation');
+                occupationField.value = data.occupation;
+                occupationField.readOnly = true;
+                occupationField.classList.add('bg-gray-100');
+            }
+            if (data.nationality && document.getElementById('nationality')) {
+                const nationalityField = document.getElementById('nationality');
+                nationalityField.value = data.nationality;
+                nationalityField.readOnly = true;
+                nationalityField.classList.add('bg-gray-100');
+            }
+            if (data.CompanyRCNo && document.getElementById('CompanyRCNo')) {
+                const rcNoField = document.getElementById('CompanyRCNo');
+                rcNoField.value = data.CompanyRCNo;
+                rcNoField.readOnly = true;
+                rcNoField.classList.add('bg-gray-100');
+            }
             
             // Show the reason for change field if Change of Ownership is "Yes"
             if (data.changeOfOwnership === 'Yes' && document.getElementById('reasonForChange')) {
                 const reasonForChangeField = document.getElementById('reasonForChange').parentNode;
                 reasonForChangeField.style.display = 'block';
             }
-        }
-
-        // Toast notification function
-        function showToast(message) {
-            // Create toast element
-            const toast = document.createElement('div');
-            toast.className = 'fixed top-4 right-4 bg-green-600 text-white py-2 px-4 rounded-md shadow-lg z-50 transform transition-transform duration-300 translate-y-0';
-            toast.innerHTML = message;
-            document.body.appendChild(toast);
             
-            // Fade out and remove after 3 seconds
-            setTimeout(() => {
-                toast.classList.add('translate-y-[-100%]', 'opacity-0');
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 300);
-            }, 3000);
+            // Add a notice at the top of the form that primary data is read-only
+            const formElement = document.querySelector('form');
+            const noticeDiv = document.createElement('div');
+            noticeDiv.className = 'bg-blue-50 text-blue-700 p-3 rounded-md mb-4';
+            noticeDiv.innerHTML = '<p class="text-sm"><strong>Note:</strong> Fields populated from Primary GIS data are read-only. Only Unit-specific information can be edited.</p>';
+            
+            // Insert the notice after the form header but before the first section
+            const headerElement = document.querySelector('form .bg-gray-50');
+            if (headerElement && formElement) {
+                formElement.insertBefore(noticeDiv, headerElement);
+            }
         }
     });
+
+    // Function to disable all primary GIS fields
+    function disablePrimaryGISFields() {
+        console.log('Running disablePrimaryGISFields()');
+        // Plot Information fields
+        const primaryFields = [
+            'plotNo', 'blockNo', 'approvedPlanNo', 'tpPlanNo', 'areaInHectares', 
+            'landUse', 'specifically', 
+            'layoutName', 'districtName', 'lgaName', 'StateName', 'streetName', 
+            'houseNo', 'houseType', 'tenancy', 
+            'oldTitleSerialNo', 'oldTitlePageNo', 'oldTitleVolumeNo', 'deedsDate', 
+            'deedsTime', 'certificateDate', 'CofOSerialNo', 'titleIssuedYear', 
+            'originalAllottee', 'addressOfOriginalAllottee', 'changeOfOwnership', 
+            'reasonForChange', 'currentAllottee', 'addressOfCurrentAllottee', 
+            'titleOfCurrentAllottee', 'phoneNo', 'emailAddress', 'occupation', 
+            'nationality', 'CompanyRCNo'
+        ];
+        
+        let fieldsDisabled = 0;
+        primaryFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                if (field.tagName === 'SELECT') {
+                    field.disabled = true;
+                } else {
+                    field.readOnly = true;
+                }
+                field.classList.add('bg-gray-100');
+                fieldsDisabled++;
+            }
+        });
+        
+        console.log(`Fields disabled: ${fieldsDisabled} of ${primaryFields.length}`);
+        
+        // Hide the reason for change field regardless of changeOfOwnership value
+        const reasonForChangeField = document.getElementById('reasonForChange');
+        if (reasonForChangeField) {
+            reasonForChangeField.parentNode.style.display = 'none';
+        }
+    }
+</script>
+
+<script>
+    // Run one final check after page is fully loaded
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const isSecondary = urlParams.get('is') === 'secondary';
+        if (isSecondary) {
+            console.log('Window onload: Final check for disabling primary fields');
+            disablePrimaryGISFields();
+            addFormNotice();
+            
+            // Also check if fields were properly disabled
+            setTimeout(function() {
+                const plotField = document.getElementById('plotNo');
+                if (plotField && !plotField.readOnly) {
+                    console.warn('Fields were not properly disabled - trying again');
+                    disablePrimaryGISFields();
+                }
+            }, 500);
+        }
+    };
 </script>
 
 <!-- Include required libraries for Select2 -->

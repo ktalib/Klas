@@ -229,7 +229,12 @@
                                     @endif
 
                                     <td class="table-cell overflow-visible relative">
+                                    @if(request()->has('url') && request()->get('url') === 'infopro')
+                                        @include('sectionaltitling.action_menu.info_pro_action')
+                                    @else
+                                       
                                         @include('sectionaltitling.action_menu.action')
+                                    @endif
                                     </td>
                                 </tr>
                             @endforeach

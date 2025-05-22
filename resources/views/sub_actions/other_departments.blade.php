@@ -82,10 +82,7 @@
                           </p>
                           </div>
 
-                          {{-- ....... --}}
-                          <div>
-                          <h3 class="text-sm font-medium">Assignment Reg Particulars</h3>
-                          <p class="text-xs text-gray-600 mt-1">
+                       
                               @php
                           $assignment = \DB::connection('sqlsrv')
                             ->table('Sectional_title_transfer')
@@ -93,42 +90,12 @@
                             ->select('serial_no', 'page_no', 'volume_no')
                               ->first();
                           @endphp
-                          @if ($assignment)
-                            {{ $assignment->serial_no ?? 'N/A' }}/{{ $assignment->page_no ?? 'N/A' }}/{{ $assignment->volume_no ?? 'N/A' }} 
-                          @else
-                             
-                            <span class="inline-flex items-center px-2 py-0.5 ml-1 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-200">
-                              Not Registered
-                            </span>
-                          @endif
-                          </p>
+                        
+                        
                           </div>
 
-                          <div>
-                          <h3 class="text-sm font-medium">CofO Reg Particular</h3>
-                          <p class="text-xs text-gray-600 mt-1">
-                            <span class="font-medium">    @php
-                           $cofo = \DB::connection('sqlsrv')
-                          ->table('SectionalCofOReg')
-                          ->where('sub_application_id', $application->id)
-                          ->select('serial_no', 'page_no', 'volume_no')
-                          ->first();
-                          @endphp
-                          @if ($cofo)
-                            
-                          
-                              {{ $cofo->serial_no ?? '' }}/{{ $cofo->page_no ?? '' }}/{{ $cofo->volume_no ?? '' }}
-                           
-                           
-                          @else
-                          <span class="inline-flex items-center px-2 py-0.5 ml-1 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-200">
-                              Not Registered
-                            </span>
-                          @endif
-                        </span>
-                        </p>
-                        </div>
-                          {{-- ..... --}}
+                       
+                        
 
                           <div class="text-right">
                           <h3 class="text-sm font-medium">{{ $application->applicant_title ?? '' }} {{ $application->surname ?? '' }} {{ $application->first_name ?? '' }}</h3>
@@ -167,74 +134,197 @@
                         @php
                         use Illuminate\Support\Facades\DB;
                         $deeds = DB::connection('sqlsrv')->table('SectionalCofOReg')->where('sub_application_id', $application->id)->first(); // Fetch SectionalCofOReg data for the application
+                        $assignment = DB::connection('sqlsrv')
+                            ->table('Sectional_title_transfer')
+                            ->where('application_id', $application->primary_id)
+                            ->first();
                         @endphp
                         <form id="deeds-form" method="POST">
                         @csrf
                         <div id="detterment-tab" class="tab-content">
                           <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
-                          <div class="p-4 border-b">
-                          <h3 class="text-sm font-medium">Deeds</h3>
-                          <p class="text-xs text-gray-500"> </p>
-                          </div>
-                          <input type="hidden" name="application_id" value="{{$application->id}}">
-                          <input type="hidden" name="fileno" value="{{$application->fileno}}">
-                          <div class="p-4 space-y-4">
-                          <div class="grid grid-cols-3 gap-4">
-                          <div class="space-y-2">
-                            <label for="serial-no" class="text-xs font-medium block">
-                            Serial No
-                            </label>
-                            <input id="serial-no" name="serial_no" type="text" 
-                            class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $deeds->serial_no ?? '' }}" readonly>
-                          </div>
-                          <div class="space-y-2">
-                            <label for="page-no" class="text-xs font-medium block">
-                            Page No
-                            </label>
-                            <input id="page-no" name="page_no" type="text"   
-                            class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $deeds->page_no ?? '' }}" readonly>
-                          </div>
-                          <div class="space-y-2">
-                            <label for="volume-no" class="text-xs font-medium block">
-                            Volume No
-                            </label>
-                            <input id="volume-no" name="volume_no" type="text"  
-                            class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $deeds->volume_no ?? '' }}" readonly>
-                          </div>
-                          </div>
-
-                          <div class="grid grid-cols-2 gap-4">
-                          <div class="space-y-2">
-                            <label for="deeds-time" class="text-xs font-medium block">
-                            Deeds Time
-                            </label>
-                            <input id="deeds-time" name="deeds_time" type="text" 
-                            class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $deeds->deeds_time ?? '' }}" readonly>
-                          </div>
-                          <div class="space-y-2">
-                            <label for="deeds-date" class="text-xs font-medium block">
-                            Deeds Date
-                            </label>
-                            <input id="deeds-date" name="deeds_date" type="date" 
-                            class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $deeds->deeds_date ?? '' }}" readonly>
-                          </div>
-                          </div>
-                          <hr class="my-4">
-
-                          <div class="flex justify-between items-center">
-                          <div class="flex gap-2">
-                            <a href="{{route('sectionaltitling.secondary')}}" class="flex items-center px-3 py-1 text-xs bg-white text-black p-2 border border-gray-500 rounded-md hover:bg-gray-800">
-                            <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
-                            Back
-                            </a>
+                            <div class="p-4 border-b">
+                              <h3 class="text-sm font-medium">Deeds</h3>
+                              <p class="text-xs text-gray-500"> </p>
+                            </div>
+                            <input type="hidden" name="application_id" value="{{$application->id}}">
+                            <input type="hidden" name="fileno" value="{{$application->fileno}}">
                             
-                           
-                          </div>
-                          </div>
-                          </div>
+                            <!-- Nested Tab Navigation -->
+                            <div class="flex border-b px-4 pt-2 space-x-2">
+                              <button type="button" class="nested-tab-button active px-4 py-2 text-xs font-medium border-b-2 border-blue-500 text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" data-nested-tab="assignment-content">
+                              Assignment Reg Particulars
+                              </button>
+                              <button type="button" class="nested-tab-button px-4 py-2 text-xs font-medium border-b-2 border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300" data-nested-tab="cofo-content">
+                              CofO Reg Particular
+                              </button>
+                            </div>
+                            <br>
+                            <!-- Assignment Reg Particulars Tab Content -->
+                            <div id="assignment-content" class="nested-tab-content active">
+                              <div class="p-4 space-y-4">
+                                <div class="grid grid-cols-3 gap-4">
+                                  <div class="space-y-2">
+                                    <label for="assignment-serial-no" class="text-xs font-medium block">
+                                      Serial No
+                                    </label>
+                                    <input id="assignment-serial-no" name="assignment_serial_no" type="text" 
+                                    class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $assignment->serial_no ?? '' }}" readonly>
+                                  </div>
+                                  <div class="space-y-2">
+                                    <label for="assignment-page-no" class="text-xs font-medium block">
+                                      Page No
+                                    </label>
+                                    <input id="assignment-page-no" name="assignment_page_no" type="text"   
+                                    class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $assignment->page_no ?? '' }}" readonly>
+                                  </div>
+                                  <div class="space-y-2">
+                                    <label for="assignment-volume-no" class="text-xs font-medium block">
+                                      Volume No
+                                    </label>
+                                    <input id="assignment-volume-no" name="assignment_volume_no" type="text"  
+                                    class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $assignment->volume_no ?? '' }}" readonly>
+                                  </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                 
+                                  <div class="space-y-2">
+                                    <label for="assignment-reg-time" class="text-xs font-medium block">
+                                      Registration Time
+                                    </label>
+                                    <input id="assignment-reg-time" name="assignment_reg_time" type="text" 
+                                    class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $assignment->deeds_time ?? '' }}" readonly>
+                                  </div>
+
+                                   <div class="space-y-2">
+                                    <label for="assignment-date" class="text-xs font-medium block">
+                                      Registration Date
+                                    </label>
+                                    <input id="assignment-date" name="assignment_date" type="date" 
+                                    class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $assignment->registration_date ?? '' }}" readonly>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <!-- CofO Reg Particular Tab Content -->
+                            <div id="cofo-content" class="nested-tab-content hidden">
+                              <div class="p-4 space-y-4">
+                                <div class="grid grid-cols-3 gap-4">
+                                  <div class="space-y-2">
+                                    <label for="serial-no" class="text-xs font-medium block">
+                                      Serial No
+                                    </label>
+                                    <input id="serial-no" name="serial_no" type="text" 
+                                    class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $deeds->serial_no ?? '' }}" readonly>
+                                  </div>
+                                  <div class="space-y-2">
+                                    <label for="page-no" class="text-xs font-medium block">
+                                      Page No
+                                    </label>
+                                    <input id="page-no" name="page_no" type="text"   
+                                    class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $deeds->page_no ?? '' }}" readonly>
+                                  </div>
+                                  <div class="space-y-2">
+                                    <label for="volume-no" class="text-xs font-medium block">
+                                      Volume No
+                                    </label>
+                                    <input id="volume-no" name="volume_no" type="text"  
+                                    class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $deeds->volume_no ?? '' }}" readonly>
+                                  </div>
+                                </div>
+                        
+                                <div class="grid grid-cols-2 gap-4">
+                                  <div class="space-y-2">
+                                    <label for="deeds-time" class="text-xs font-medium block">
+                                      Deeds Time
+                                    </label>
+                                    <input id="deeds-time" name="deeds_time" type="text" 
+                                    class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $deeds->deeds_time ?? '' }}" readonly>
+                                  </div>
+                                  <div class="space-y-2">
+                                    <label for="deeds-date" class="text-xs font-medium block">
+                                      Deeds Date
+                                    </label>
+                                    <input id="deeds-date" name="deeds_date" type="date" 
+                                    class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $deeds->deeds_date ?? '' }}" readonly>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        
+                            <hr class="my-4 mx-4">
+                        
+                            <div class="flex justify-between items-center p-4">
+                              <div class="flex gap-2">
+                                <a href="{{route('sectionaltitling.secondary')}}" class="flex items-center px-3 py-1 text-xs bg-white text-black p-2 border border-gray-500 rounded-md hover:bg-gray-800">
+                                <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
+                                Back
+                                </a>
+                              </div>
+                            </div>
                           </div>
                         </div>
                         </form>
+                        
+                        <!-- Add CSS for nested tabs -->
+                        <style>
+                          .nested-tab-content {
+                            display: none;
+                          }
+                          .nested-tab-content.active {
+                            display: block;
+                          }
+                          .nested-tab-button {
+                            position: relative;
+                            cursor: pointer;
+                            transition: background-color 0.2s;
+                          }
+                          .nested-tab-button.active {
+                            color: #1d4ed8;
+                            font-weight: 500;
+                          }
+                          .nested-tab-button:hover:not(.active) {
+                            color: #4b5563;
+                          }
+                        </style>
+                        
+                        <!-- Add JavaScript for nested tabs -->
+                        <script>
+                          document.addEventListener('DOMContentLoaded', function() {
+                            // Add nested tab functionality
+                            const nestedTabButtons = document.querySelectorAll('.nested-tab-button');
+                            const nestedTabContents = document.querySelectorAll('.nested-tab-content');
+                            
+                            nestedTabButtons.forEach(button => {
+                              button.addEventListener('click', function() {
+                                const tabId = this.getAttribute('data-nested-tab');
+                                
+                                // Deactivate all nested tabs
+                                nestedTabButtons.forEach(btn => {
+                                  btn.classList.remove('active');
+                                  btn.classList.remove('border-blue-500');
+                                  btn.classList.add('border-transparent');
+                                });
+                                nestedTabContents.forEach(content => {
+                                  content.classList.remove('active');
+                                  content.classList.add('hidden');
+                                });
+                                
+                                // Activate selected nested tab
+                                this.classList.add('active', 'border-blue-500');
+                                this.classList.remove('border-transparent');
+                                const tabContent = document.getElementById(tabId);
+                                if (tabContent) {
+                                  tabContent.classList.add('active');
+                                  tabContent.classList.remove('hidden');
+                                }
+                              });
+                            });
+                          });
+                        </script>
+                        
                       <!-- Final Bill Tab -->
                       <div id="final-tab" class="tab-content">
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm">

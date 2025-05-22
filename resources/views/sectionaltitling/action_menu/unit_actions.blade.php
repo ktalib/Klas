@@ -6,9 +6,15 @@
    <!-- Dropdown Menu -->
    <ul class="fixed action-menu z-50 bg-white border rounded-lg shadow-lg hidden w-56">
       <li> 
-         <a href="#" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+         <a href="{{ route('sectionaltitling.viewrecorddetail_sub', $app->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
          <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
          <span>View Record</span>
+         </a>
+      </li>
+      <li>
+         <a href="{{ route('sub-actions.payments', $app->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+         <i data-lucide="credit-card" class="w-4 h-4 text-green-500"></i>
+         <span>Payments</span>
          </a>
       </li>
       <li>

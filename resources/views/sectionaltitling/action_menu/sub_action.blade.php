@@ -12,12 +12,12 @@
          </a>
       </li>
       @if((!request()->has('url') || request()->get('url') !== 'phy_planning') && request()->get('url') !== 'recommendation')
-      <li>
+      {{-- <li>
          <a href="{{ route('sub-actions.payments', $app->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
          <i data-lucide="credit-card" class="w-4 h-4 text-green-500"></i>
          <span>Payments</span>
          </a>
-      </li>
+      </li> --}}
       <li>
          <a href="{{ route('sub-actions.other-departments', $app->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
          <i data-lucide="layout-grid" class="w-4 h-4 text-red-500"></i>
@@ -57,7 +57,7 @@
            pointer-events-none opacity-50 
          @endif">
          <i data-lucide="clipboard-check" class="w-4 h-4 text-blue-500"></i>
-         <span>Planning Recommendation</span>
+         <span>View Planning Recommendation</span>
          </a>
       </li>
       @else
@@ -69,7 +69,7 @@
                      @if(request()->has('url') && request()->get('url') === 'phy_planning')
                        Planning Recommendation Approval
                      @else
-                       Planning Recommendation
+                      Planning Recommendation
                      @endif
                     </span>
             </a>

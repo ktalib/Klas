@@ -39,7 +39,8 @@ use App\Http\Controllers\FileScanningController;
 use App\Http\Controllers\ScannerController;
 use App\Http\Controllers\PageTypingController;
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\PlanningRecommendationController;
+ 
+use App\Http\Controllers\GisController;
 
 /*
 |--------------------------------------------------------------------------
@@ -359,18 +360,18 @@ Route::get('page/{slug}', [PageController::class, 'page'])->name('page');
 
 use App\Http\Controllers\InstrumentController;
 
-Route::get('/instruments', [InstrumentController::class, 'index'])->name('instruments.index');
-Route::get('/instruments/powerOfAttorney', [InstrumentController::class, 'powerOfAttorney'])->name('instruments.powerOfAttorney');
-Route::get('/instruments/DeedOfMortgage', [InstrumentController::class, 'DeedOfMortgage'])->name('instruments.DeedOfMortgage');
+// Route::get('/instruments', [InstrumentController::class, 'index'])->name('instruments.index');
+// Route::get('/instruments/powerOfAttorney', [InstrumentController::class, 'powerOfAttorney'])->name('instruments.powerOfAttorney');
+// Route::get('/instruments/DeedOfMortgage', [InstrumentController::class, 'DeedOfMortgage'])->name('instruments.DeedOfMortgage');
 
-Route::get('/instruments/Coroi', [InstrumentController::class, 'Coroi'])->name('instruments.Coroi');
+// Route::get('/instruments/Coroi', [InstrumentController::class, 'Coroi'])->name('instruments.Coroi');
 
 
 
-Route::post('/instruments', [InstrumentController::class, 'store'])->name('instruments.store');
-Route::get('/instruments/{id}/edit', [InstrumentController::class, 'edit']);
-Route::post('/instruments/{id}', [InstrumentController::class, 'update'])->name('instruments.update');
-Route::delete('/instruments/{id}', [InstrumentController::class, 'destroy']);
+// Route::post('/instruments', [InstrumentController::class, 'store'])->name('instruments.store');
+// Route::get('/instruments/{id}/edit', [InstrumentController::class, 'edit']);
+// Route::post('/instruments/{id}', [InstrumentController::class, 'update'])->name('instruments.update');
+// Route::delete('/instruments/{id}', [InstrumentController::class, 'destroy']);
 
 // Application Mother routes
 Route::get('/sectionaltitling', [ApplicationMotherController::class, 'index'])->name('sectionaltitling.index');
@@ -574,4 +575,16 @@ Route::post('/mark-welcome-popup-shown', function () {
     session(['show_welcome_popup' => false]);
     return response()->json(['success' => true]);
 })->middleware('auth')->name('markWelcomePopupShown');
+
+// Add this route wherever your other GIS routes are defined
+Route::get('/gis/get-all-units', [GisController::class, 'getAllUnits'])->name('gis.get-all-units');
+
+// Instrument routes
+Route::group(['middleware' => ['auth'], 'prefix' => 'instruments'], function () {
+    Route::get('/', [App\Http\Controllers\InstrumentController::class, 'index'])->name('instruments.index');
+    Route::post('/store', [App\Http\Controllers\InstrumentController::class, 'store'])->name('instruments.store');
+    Route::get('/power-of-attorney', [App\Http\Controllers\InstrumentController::class, 'powerOfAttorney'])->name('instruments.powerOfAttorney');
+    Route::get('/deed-of-mortgage', [App\Http\Controllers\InstrumentController::class, 'deedOfMortgage'])->name('instruments.deedOfMortgage');
+    Route::get('/coroi', [App\Http\Controllers\InstrumentController::class, 'Coroi'])->name('instruments.coroi');
+});
 

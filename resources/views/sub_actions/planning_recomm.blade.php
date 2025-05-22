@@ -600,7 +600,7 @@
   <!-- Signature Section -->
   <div class="mt-8">
     <div class="border-t border-gray-500 w-48"></div>
-    <p class="text-sm mt-1">Abdullahi Usman Adam</p>
+    <p class="text-sm mt-1">AUWALU RABIU</p>
     <p class="text-sm">(ACTPP)</p>
     <p class="text-sm">For Director</p>
   </div>

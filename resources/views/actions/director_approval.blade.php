@@ -124,20 +124,22 @@
                       <div class="grid grid-cols-3 gap-2 mb-4">
                      
                      
-                      
-                      <button class="tab-button active" data-tab="detterment">
-                        <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
-                        DOCUMENTS
-                      </button>
+                      <button class="tab-button active" data-tab="summary">
+                        <i data-lucide="user" class="w-3.5 h-3.5 mr-1.5"></i>
+                        SUMMARY
+                      </button> 
 
                       <button class="tab-button " data-tab="initial">
                         <i data-lucide="banknote" class="w-3.5 h-3.5 mr-1.5"></i>
                         APPROVAL
                       </button>
-                           <button class="tab-button" data-tab="summary">
-                        <i data-lucide="user" class="w-3.5 h-3.5 mr-1.5"></i>
-                        SUMMARY
+                      <button class="tab-button " data-tab="detterment">
+                        <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
+                        DOCUMENTS
                       </button>
+
+                    
+                    
                         {{-- <button class="tab-button {{ (strtolower($application->application_status ?? '') !== 'approved' || strtolower($application->planning_recommendation_status ?? '') !== 'approved') ? 'opacity-50 cursor-not-allowed bg-gray-100' : '' }}" 
                         data-tab="final"
                         {{ (strtolower($application->application_status ?? '') !== 'approved' || strtolower($application->planning_recommendation_status ?? '') !== 'approved') ? 'disabled' : '' }}>
@@ -148,7 +150,7 @@
                       </div>
                   
                       <!-- Summary Tab -->
-                      <div id="summary-tab" class="tab-content">
+                      <div id="summary-tab" class="tab-content active">
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                           <div class="p-4 border-b">
                             <h3 class="text-sm font-medium">Applicant Summary</h3>
@@ -239,7 +241,21 @@
                               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                                 <div class="bg-gray-50 p-3 rounded-lg">
                                   <p class="text-xs text-gray-600 font-medium">Address:</p>
-                                  <p class="text-sm">{{ $application->address ?? 'N/A' }}</p>
+                                  <p class="text-sm">
+                                    @if(isset($application->address_house_no) || isset($application->address_plot_no) || isset($application->address_street_name) || isset($application->address_lga) || isset($application->address_state))
+                                      {{ $application->address_house_no ?? '' }}
+                                      {{ !empty($application->address_house_no) && !empty($application->address_plot_no) ? ',' : '' }}
+                                      {{ $application->address_plot_no ?? '' }}
+                                      {{ (!empty($application->address_house_no) || !empty($application->address_plot_no)) && !empty($application->address_street_name) ? ', ' : '' }}
+                                      {{ $application->address_street_name ?? '' }}
+                                      {{ (!empty($application->address_house_no) || !empty($application->address_plot_no) || !empty($application->address_street_name)) && !empty($application->address_lga) ? ', ' : '' }}
+                                      {{ $application->address_lga ?? '' }}
+                                      {{ (!empty($application->address_house_no) || !empty($application->address_plot_no) || !empty($application->address_street_name) || !empty($application->address_lga)) && !empty($application->address_state) ? ', ' : '' }}
+                                      {{ $application->address_state ?? '' }}
+                                    @else
+                                      N/A
+                                    @endif
+                                  </p>
                                 </div>
                                 <div class="bg-gray-50 p-3 rounded-lg">
                                   <p class="text-xs text-gray-600 font-medium">Contact:</p>
@@ -271,7 +287,9 @@
                                     @if(isset($application->property_house_no) || isset($application->property_plot_no) || isset($application->property_street_name))
                                       {{ $application->property_house_no ?? '' }} 
                                       {{ $application->property_plot_no ?? '' }}
-                                      {{ $application->property_street_name ? ', '.$application->property_street_name : '' }}
+                                      {{ $application->property_street_name ? ', '.$application->property_street_name : '' }} 
+                                      {{ $application->property_lga ? ', '.$application->property_lga : '' }} 
+                                      {{ $application->property_state ? ', '.$application->property_state : '' }}
                                     @else
                                       N/A
                                     @endif
@@ -396,7 +414,7 @@
                
                 
                       <!-- Detterment Bill Tab -->
-                        <div id="detterment-tab" class="tab-content active">
+                        <div id="detterment-tab" class="tab-content">
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                           <div class="p-4 border-b">
                           <h3 class="text-sm font-medium">Documents</h3>

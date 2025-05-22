@@ -1,0 +1,101 @@
+-- Create instrument_registration table
+CREATE TABLE instrument_registration (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    MLSFileNo NVARCHAR(255) NULL,
+    KAGISFileNO NVARCHAR(255) NULL,
+    NewKANGISFileNo NVARCHAR(255) NULL,
+    particularsRegistrationNumber NVARCHAR(255) NULL,
+    instrument_type NVARCHAR(255) NOT NULL,
+    Grantor NVARCHAR(255) NOT NULL,
+    GrantorAddress NVARCHAR(MAX) NOT NULL,
+    Grantee NVARCHAR(255) NOT NULL,
+    GranteeAddress NVARCHAR(MAX) NOT NULL,
+    mortgagor NVARCHAR(255) NULL,
+    mortgagorAddress NVARCHAR(MAX) NULL,
+    mortgagee NVARCHAR(255) NULL,
+    mortgageeAddress NVARCHAR(MAX) NULL,
+    loanAmount DECIMAL(15, 2) NULL,
+    interestRate DECIMAL(5, 2) NULL,
+    duration NVARCHAR(255) NULL,
+    assignor NVARCHAR(255) NULL,
+    assignorAddress NVARCHAR(MAX) NULL,
+    assignee NVARCHAR(255) NULL,
+    assigneeAddress NVARCHAR(MAX) NULL,
+    lessor NVARCHAR(255) NULL,
+    lessorAddress NVARCHAR(MAX) NULL,
+    lessee NVARCHAR(255) NULL,
+    lesseeAddress NVARCHAR(MAX) NULL,
+    leasePeriod NVARCHAR(255) NULL,
+    leaseTerms NVARCHAR(MAX) NULL,
+    propertyDescription NVARCHAR(MAX) NULL,
+    propertyAddress NVARCHAR(MAX) NULL,
+    originalPlotDetails NVARCHAR(MAX) NULL,
+    newSubDividedPlotDetails NVARCHAR(MAX) NULL,
+    mergedPlotInformation NVARCHAR(MAX) NULL,
+    surrenderingPartyName NVARCHAR(255) NULL,
+    receivingPartyName NVARCHAR(255) NULL,
+    propertyDetails NVARCHAR(MAX) NULL,
+    considerationAmount DECIMAL(15, 2) NULL,
+    changesVariations NVARCHAR(MAX) NULL,
+    heirBeneficiaryDetails NVARCHAR(MAX) NULL,
+    originalPropertyOwnerDetails NVARCHAR(MAX) NULL,
+    assentTerms NVARCHAR(MAX) NULL,
+    releasorName NVARCHAR(255) NULL,
+    releaseeName NVARCHAR(255) NULL,
+    releaseTerms NVARCHAR(MAX) NULL,
+    instrumentDate DATE NOT NULL,
+    solicitorName NVARCHAR(255) NULL,
+    solicitorAddress NVARCHAR(MAX) NULL,
+    surveyPlanNo NVARCHAR(255) NULL,
+    lga NVARCHAR(255) NULL,
+    district NVARCHAR(255) NULL,
+    size NVARCHAR(255) NULL,
+    plotNumber NVARCHAR(255) NULL,
+    typeForm NVARCHAR(255) NULL,
+    surrenderee NVARCHAR(255) NULL,
+    surrenderor NVARCHAR(255) NULL,
+    subLease NVARCHAR(255) NULL,
+    thirdParty NVARCHAR(255) NULL,
+    landUseType NVARCHAR(255) NULL,
+    titleType NVARCHAR(255) NULL,
+    assignment NVARCHAR(255) NULL,
+    batchNumber NVARCHAR(255) NULL,
+    grantLease NVARCHAR(255) NULL,
+    statutory NVARCHAR(255) NULL,
+    customer NVARCHAR(255) NULL,
+    categoryCode NVARCHAR(255) NULL,
+    mortgage NVARCHAR(255) NULL,
+    assignorName NVARCHAR(255) NULL,
+    batchNo NVARCHAR(255) NULL,
+    plotNo NVARCHAR(255) NULL,
+    Period NVARCHAR(255) NULL,
+    created_at DATETIME NULL,
+    updated_at DATETIME NULL
+);
+
+-- Create particulars_registration_sequence table
+CREATE TABLE particulars_registration_sequence (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    last_serial_no INT DEFAULT 0,
+    last_page_no INT DEFAULT 0,
+    last_volume_no INT DEFAULT 1,
+    updated_at DATETIME NULL
+);
+
+-- Initialize the sequence with starting values
+INSERT INTO particulars_registration_sequence (last_serial_no, last_page_no, last_volume_no, updated_at)
+VALUES (0, 0, 1, GETDATE());
+
+-- Create instrument_particulars_log table
+CREATE TABLE instrument_particulars_log (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    instrument_id INT NULL,
+    serial_no INT NOT NULL,
+    page_no INT NOT NULL,
+    volume_no INT NOT NULL,
+    generated_particulars_number NVARCHAR(255) NOT NULL,
+    created_at DATETIME NULL,
+    updated_at DATETIME NULL,
+    CONSTRAINT FK_instrument_particulars_log_instrument_registration FOREIGN KEY (instrument_id)
+    REFERENCES instrument_registration(id) ON DELETE SET NULL
+);

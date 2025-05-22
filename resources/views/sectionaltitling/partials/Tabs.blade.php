@@ -18,6 +18,15 @@
                     <span class="text-sm font-medium {{ request()->routeIs('customer-care.index') ? 'text-green-600' : 'text-gray-700 group-hover:text-green-600' }}">Customer Care</span>
                 </a>
 
+                   {{-- Entities --}}
+                <a href="{{ route('programmes.entity') }}" class="group flex flex-col items-center py-3 px-3 {{ request()->routeIs('programmes.entity') ? 'border-b-2 border-indigo-500' : 'hover:bg-gray-50 rounded-md' }}">
+                    <div class="flex items-center justify-center w-8 h-8 {{ request()->routeIs('programmes.entity') ? 'bg-indigo-100 text-indigo-600' : 'text-indigo-500 group-hover:text-indigo-600' }} rounded-full mb-1">
+                        <i data-lucide="building" class="w-4 h-4"></i>
+                    </div>
+                    <span class="text-sm font-medium {{ request()->routeIs('programmes.entity') ? 'text-indigo-600' : 'text-gray-700 group-hover:text-indigo-600' }}">Entities</span>
+                </a>
+
+
                 {{-- Primary --}}
                 <a href="{{ route('sectionaltitling.primary') }}" class="group flex flex-col items-center py-3 px-3 {{ request()->routeIs('sectionaltitling.primary') ? 'border-b-2 border-purple-500' : 'hover:bg-gray-50 rounded-md' }}">
                     <div class="flex items-center justify-center w-8 h-8 {{ request()->routeIs('sectionaltitling.primary') ? 'bg-purple-100 text-purple-600' : 'text-purple-500 group-hover:text-purple-600' }} rounded-full mb-1">
@@ -27,15 +36,15 @@
                 </a>
 
                 {{-- Units --}}
-                <a href="{{ route('sectionaltitling.units') }}" class="group flex flex-col items-center py-3 px-3 {{ request()->routeIs('sectionaltitling.units') ? 'border-b-2 border-gray-700' : 'hover:bg-gray-50 rounded-md' }}">
+                <a href="{{ route('sectionaltitling.secondary') }}" class="group flex flex-col items-center py-3 px-3 {{ request()->routeIs('sectionaltitling.secondary') ? 'border-b-2 border-gray-700' : 'hover:bg-gray-50 rounded-md' }}">
                     <div class="flex items-center justify-center w-8 h-8 {{ request()->routeIs('sectionaltitling.secondary') ? 'bg-gray-200 text-gray-700' : 'text-gray-500 group-hover:text-gray-700' }} rounded-full mb-1">
                         <i data-lucide="files" class="w-4 h-4"></i>
                     </div>
-                    <span class="text-sm font-medium {{ request()->routeIs('sectionaltitling.units') ? 'text-gray-700' : 'text-gray-700 group-hover:text-gray-700' }}">Units</span>
+                    <span class="text-sm font-medium {{ request()->routeIs('sectionaltitling.secondary') ? 'text-gray-700' : 'text-gray-700 group-hover:text-gray-700' }}">Units</span>
                 </a>
 
                 {{-- Planning --}}
-                <a href="#" class="group flex flex-col items-center py-3 px-3 hover:bg-gray-50 rounded-md">
+                <a href="{{route('programmes.approvals.planning_recomm')}}?url=view" class="group flex flex-col items-center py-3 px-3 hover:bg-gray-50 rounded-md">
                     <div class="flex items-center justify-center w-8 h-8 text-red-500 group-hover:text-red-600 rounded-full mb-1">
                         <i data-lucide="calendar" class="w-4 h-4"></i>
                     </div>
@@ -43,28 +52,21 @@
                 </a>
 
                 {{-- Survey --}}
-                <a href="#" class="group flex flex-col items-center py-3 px-3 hover:bg-gray-50 rounded-md">
-                    <div class="flex items-center justify-center w-8 h-8 text-amber-500 group-hover:text-amber-600 rounded-full mb-1">
+                <span class="group flex flex-col items-center py-3 px-3 cursor-not-allowed opacity-60">
+                    <div class="flex items-center justify-center w-8 h-8 text-gray-400 rounded-full mb-1">
                         <i data-lucide="ruler" class="w-4 h-4"></i>
                     </div>
-                    <span class="text-sm font-medium text-gray-700 group-hover:text-amber-600">Survey</span>
-                </a>
+                    <span class="text-sm font-medium text-gray-400">Survey</span>
+                </span>
 
-                {{-- Entities --}}
-                <a href="{{ route('programmes.entity') }}" class="group flex flex-col items-center py-3 px-3 {{ request()->routeIs('programmes.entity') ? 'border-b-2 border-indigo-500' : 'hover:bg-gray-50 rounded-md' }}">
-                    <div class="flex items-center justify-center w-8 h-8 {{ request()->routeIs('programmes.entity') ? 'bg-indigo-100 text-indigo-600' : 'text-indigo-500 group-hover:text-indigo-600' }} rounded-full mb-1">
-                        <i data-lucide="building" class="w-4 h-4"></i>
-                    </div>
-                    <span class="text-sm font-medium {{ request()->routeIs('programmes.entity') ? 'text-indigo-600' : 'text-gray-700 group-hover:text-indigo-600' }}">Entities</span>
-                </a>
-
+             
                 {{-- Operations --}}
-                <a href="#" class="group flex flex-col items-center py-3 px-3 hover:bg-gray-50 rounded-md">
-                    <div class="flex items-center justify-center w-8 h-8 text-teal-500 group-hover:text-teal-600 rounded-full mb-1">
+                <span class="group flex flex-col items-center py-3 px-3 cursor-not-allowed opacity-60">
+                    <div class="flex items-center justify-center w-8 h-8 text-gray-400 rounded-full mb-1">
                         <i data-lucide="settings" class="w-4 h-4"></i>
                     </div>
-                    <span class="text-sm font-medium text-gray-700 group-hover:text-teal-600">Operations</span>
-                </a>
+                    <span class="text-sm font-medium text-gray-400">Operations</span>
+                </span>
             </nav>
         </div>
     </div>

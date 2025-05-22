@@ -31,7 +31,7 @@
         <!-- Main Content -->
         <div class="space-y-4 text-sm md:text-base">
             <p>
-                Kindly find page <span class="highlight">01</span> is an application for sectional titling in respect of a property (plaza) covered by Certificate of Occupancy No. <span class="highlight">COM/2025/0001</span> situated at Kantin Kwari market in the name of <span class="highlight">ABDULLAHI USMAN ADAMU</span>
+                Kindly find page <span class="highlight">01</span> is an application for sectional titling in respect of a property (plaza) covered by Certificate of Occupancy No. <span class="highlight">COM/2025/0001</span> situated at Kantin Kwari market in the name of <span class="highlight">AUWALU RABIUU</span>
             </p>
             <p>
                 As well as change of name to various shop owners as per attached on the application.
@@ -57,7 +57,7 @@
 
             <ol class="list-none space-y-2 pl-4 md:pl-8">
                 <li>
-                    a) Consider and approve the application for Sectional Titling over plot <span class="highlight">01</span> situated at <span class="highlight">Kantin Kwari</span> covered by Certificate of Occupancy No. <span class="highlight">COM/2025/0001</span> in Favor of <span class="highlight">ABDULLAHI USMAN ADAMU</span>
+                    a) Consider and approve the application for Sectional Titling over plot <span class="highlight">01</span> situated at <span class="highlight">Kantin Kwari</span> covered by Certificate of Occupancy No. <span class="highlight">COM/2025/0001</span> in Favor of <span class="highlight">AUWALU RABIUU</span>
                 </li>
                 <li>
                     b) Consider and approve the change of name of various shop owners as per provisions of the Bill.

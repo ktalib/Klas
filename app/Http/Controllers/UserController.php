@@ -18,14 +18,11 @@ class UserController extends Controller
 
     public function index()
     {
+        $PageTitle= __('User');
+        $PageDescription = __('User List');
         if (\Auth::user()->can('manage user')) {
-            if (\Auth::user()->type == 'super admin') {
-                $users = User::where('parent_id', parentId())->where('type', 'owner')->get();
-                return view('user.index', compact('users'));
-            } else {
-                $users = User::where('parent_id', '=', parentId())->whereNotIn('type', ['tenant', 'maintainer'])->get();
-                return view('user.index', compact('users'));
-            }
+            $users = User::all();
+            return view('user.index', compact('users', 'PageTitle', 'PageDescription'));
         } else {
             return redirect()->back()->with('error', __('Permission Denied.'));
         }

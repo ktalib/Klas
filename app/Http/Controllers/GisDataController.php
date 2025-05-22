@@ -16,10 +16,24 @@ class GisDataController extends Controller
         $PageTitle = 'GIS Data Capture';
         $PageDescription = '';
         
-        // Get GIS data list for display using SQL Server connection
-        $gisData = DB::connection('sqlsrv')->table('gisDataCapture')->orderBy('created_at', 'desc')->get();
+        // Get Primary GIS data (where gis_type is NULL or 'Primary GIS')
+        $primaryGisData = DB::connection('sqlsrv')
+            ->table('gisDataCapture')
+            ->where(function($query) {
+                $query->where('gis_type', 'Primary GIS')
+                      ->orWhereNull('gis_type');
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
         
-        return view('gis.index', compact('PageTitle', 'PageDescription', 'gisData'));
+        // Get Unit GIS data (where gis_type is 'Unit GIS')
+        $unitGisData = DB::connection('sqlsrv')
+            ->table('gisDataCapture')
+            ->where('gis_type', 'Unit GIS')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        return view('gis.index', compact('PageTitle', 'PageDescription', 'primaryGisData', 'unitGisData'));
     }  
     
     public function create()

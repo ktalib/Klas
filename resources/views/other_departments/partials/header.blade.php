@@ -21,51 +21,18 @@
              </span>
 
                     @if(request()->has('is') && request('is') === 'secondary')
-                        <div class="grid grid-cols-2 gap-4">
+               
                             <!-- Assignment Reg Particulars -->
-                            <div>
-                                <h3 class="text-sm font-medium">Assignment Reg Particulars</h3>
-                                <p class="text-xs text-gray-600 mt-1">
+                           
                                     @php
                                     $assignment = \DB::connection('sqlsrv')
                                         ->table('Sectional_title_transfer')
-                                        ->where('application_id', $application->primary_id)
+                                        ->where('application_id', $application->main_application_id)
                                         ->select('serial_no', 'page_no', 'volume_no')
                                         ->first();
                                     @endphp
-                                    @if ($assignment)
-                                        {{ $assignment->serial_no ?? 'N/A' }}/{{ $assignment->page_no ?? 'N/A' }}/{{ $assignment->volume_no ?? 'N/A' }} 
-                                    @else
-                                        <span class="inline-flex items-center px-2 py-0.5 ml-1 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-200">
-                                            Not Registered
-                                        </span>
-                                    @endif
-                                </p>
-                            </div>
-                            
-                            <!-- CofO Reg Particular -->
-                            <div>
-                                <h3 class="text-sm font-medium">CofO Reg Particular</h3>
-                                <p class="text-xs text-gray-600 mt-1">
-                                    <span class="font-medium">
-                                        @php
-                                        $cofo = \DB::connection('sqlsrv')
-                                            ->table('SectionalCofOReg')
-                                            ->where('sub_application_id', $application->id)
-                                            ->select('serial_no', 'page_no', 'volume_no')
-                                            ->first();
-                                        @endphp
-                                        @if ($cofo)
-                                            {{ $cofo->serial_no ?? '' }}/{{ $cofo->page_no ?? '' }}/{{ $cofo->volume_no ?? '' }}
-                                        @else
-                                            <span class="inline-flex items-center px-2 py-0.5 ml-1 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-200">
-                                                Not Registered
-                                            </span>
-                                        @endif
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
+                                   
+       
                     @endif
          </div>
        </div>
@@ -82,7 +49,7 @@
                          if(count($ownerNames) === 1) {
                              echo $ownerNames[0];
                          } else {
-                             echo '<span onclick="showAllOwners('.htmlspecialchars(json_encode($ownerNames), ENT_QUOTES, 'UTF-8').
+                             echo '<span onclick="showAllOwners('.htmlspecialchars(json_encode($ownerNames), ENT_QUOTES, 'UTF-8'). 
                                   ')" class="cursor-pointer text-blue-600 hover:underline">'.$ownerNames[0].' + '.(count($ownerNames) - 1).' others</span>';
                          }
                      } else {

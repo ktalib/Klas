@@ -329,4 +329,473 @@ class SubPlanningRecommendationController extends Controller
             'physical_planning' => $physicalPlanning
         ]);
     }
+
+    
+    public function ApprovalMome(Request $request)
+    {
+        $PageTitle = 'Application for planning recommendation approval';
+        $PageDescription = '';
+        
+        // Load application data if ID is provided
+        $application = null;
+        $surveyRecord = null;
+        $additionalObservations = null;
+        $motherApplication = null;
+        
+        if ($request->has('id')) {
+            $application = DB::connection('sqlsrv')
+                ->table('subapplications')
+                ->where('id', $request->get('id'))
+                ->first();
+                
+            if ($application) {
+                // Retrieve parent application to get property details
+                $motherApplication = DB::connection('sqlsrv')
+                    ->table('mother_applications')
+                    ->where('id', $application->main_application_id)
+                    ->first();
+                    
+                $surveyRecord = DB::connection('sqlsrv')
+                    ->table('surveyCadastralRecord')
+                    ->where('sub_application_id', $application->id)
+                    ->first();
+                    
+                // Retrieve additional observations
+                $additionalObservations = DB::connection('sqlsrv')
+                    ->table('planning_approval_details')
+                    ->where('sub_application_id', $application->id)
+                    ->value('additional_observations');
+            }
+        }
+        
+        return view('sub_pr_memos.approval', compact(
+            'PageTitle', 
+            'PageDescription', 
+            'application', 
+            'motherApplication',
+            'surveyRecord', 
+            'additionalObservations'
+        ));
+    }
+
+    // Update method to save additional observations
+    // public function saveAdditionalObservations(Request $request)
+    // {
+    //     // Log the incoming request for debugging
+    //     \Log::info('Save observations request received', [
+    //         'request' => $request->all()
+    //     ]);
+        
+    //     // Validate the request
+    //     $validator = Validator::make($request->all(), [
+    //         'sub_application_id' => 'required|integer',
+    //         'additional_observations' => 'nullable|string'
+    //     ]);
+        
+    //     if ($validator->fails()) {
+    //         \Log::error('Validation failed', [
+    //             'errors' => $validator->errors()->toArray()
+    //         ]);
+            
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Validation failed',
+    //             'errors' => $validator->errors()
+    //         ], 422);
+    //     }
+        
+    //     try {
+    //         // Check if record exists
+    //         $exists = DB::connection('sqlsrv')
+    //             ->table('planning_approval_details')
+    //             ->where('sub_application_id', $request->sub_application_id)
+    //             ->exists();
+            
+    //         \Log::info('Record exists check', [
+    //             'sub_application_id' => $request->sub_application_id, 
+    //             'exists' => $exists
+    //         ]);
+                
+    //         if ($exists) {
+    //             // Update existing record
+    //             DB::connection('sqlsrv')
+    //                 ->table('planning_approval_details')
+    //                 ->where('sub_application_id', $request->sub_application_id)
+    //                 ->update([
+    //                     'additional_observations' => $request->additional_observations,
+    //                     'updated_at' => now(),
+    //                     'updated_by' => auth()->user()->name ?? 'system'
+    //                 ]);
+                
+    //             \Log::info('Updated existing record');
+    //         } else {
+    //             // Create new record
+    //             DB::connection('sqlsrv')
+    //                 ->table('planning_approval_details')
+    //                 ->insert([
+    //                     'sub_application_id' => $request->sub_application_id,
+    //                     'additional_observations' => $request->additional_observations,
+    //                     'created_at' => now(),
+    //                     'updated_at' => now(),
+    //                     'created_by' => auth()->user()->name ?? 'system',
+    //                     'updated_by' => auth()->user()->name ?? 'system'
+    //                 ]);
+                
+    //             \Log::info('Created new record');
+    //         }
+            
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Additional observations saved successfully'
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         \Log::error('Error saving additional observations: ' . $e->getMessage(), [
+    //             'exception' => $e,
+    //             'trace' => $e->getTraceAsString()
+    //         ]);
+            
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Failed to save additional observations: ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+    // Update method to save additional observations
+    public function saveAdditionalObservations(Request $request)
+    {
+        // Log the incoming request for debugging
+        \Log::info('Save observations request received for sub-application', [
+            'request' => $request->all(),
+            'app_id' => $request->sub_application_id,
+            'observations' => $request->additional_observations
+        ]);
+        
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'sub_application_id' => 'required|integer',
+            'additional_observations' => 'nullable|string'
+        ]);
+        
+        if ($validator->fails()) {
+            \Log::error('Validation failed', [
+                'errors' => $validator->errors()->toArray()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed: ' . implode(', ', $validator->errors()->all()),
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        
+        try {
+            // Check if planning_approval_details table exists
+            $tableExists = \Schema::connection('sqlsrv')->hasTable('planning_approval_details');
+            
+            if (!$tableExists) {
+                // Create the table if it doesn't exist
+                \Schema::connection('sqlsrv')->create('planning_approval_details', function ($table) {
+                    $table->id();
+                    $table->unsignedBigInteger('application_id')->nullable();
+                    $table->unsignedBigInteger('sub_application_id')->nullable();
+                    $table->text('additional_observations')->nullable();
+                    $table->timestamps();
+                    $table->string('created_by', 100)->nullable();
+                    $table->string('updated_by', 100)->nullable();
+                });
+                
+                \Log::info('Created planning_approval_details table');
+            }
+            
+            // Check if record exists
+            $exists = DB::connection('sqlsrv')
+                ->table('planning_approval_details')
+                ->where('sub_application_id', $request->sub_application_id)
+                ->exists();
+            
+            \Log::info('Record exists check', [
+                'sub_application_id' => $request->sub_application_id, 
+                'exists' => $exists
+            ]);
+                
+            if ($exists) {
+                // Update existing record
+                DB::connection('sqlsrv')
+                    ->table('planning_approval_details')
+                    ->where('sub_application_id', $request->sub_application_id)
+                    ->update([
+                        'additional_observations' => $request->additional_observations,
+                        'updated_at' => now(),
+                        'updated_by' => auth()->user()->name ?? 'system'
+                    ]);
+                
+                \Log::info('Updated existing record');
+            } else {
+                // Create new record
+                DB::connection('sqlsrv')
+                    ->table('planning_approval_details')
+                    ->insert([
+                        'sub_application_id' => $request->sub_application_id,
+                        'additional_observations' => $request->additional_observations,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                        'created_by' => auth()->user()->name ?? 'system',
+                        'updated_by' => auth()->user()->name ?? 'system'
+                    ]);
+                
+                \Log::info('Created new record');
+            }
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Additional observations saved successfully'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error saving additional observations: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save additional observations: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function ApprovalMomeSave(Request $request)
+    {
+        // Validate the incoming request
+        $validator = Validator::make($request->all(), [
+            'sub_application_id' => 'required|integer',
+            'memo_date' => 'required|date',
+            'director_name' => 'required|string|max:255',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        
+        try {
+            // Update the application status if not already approved
+            $updated = DB::connection('sqlsrv')
+                ->table('subapplications')
+                ->where('id', $request->sub_application_id)
+                ->whereNotIn('planning_recommendation_status', ['approve', 'approved'])
+                ->update([
+                    'planning_recommendation_status' => 'approved',
+                    'planning_approval_date' => $request->memo_date,
+                    'updated_by' => auth()->user()->id ?? 'system',
+                    'updated_at' => now()
+                ]);
+                
+            return response()->json([
+                'success' => true,
+                'message' => 'Approval memo saved successfully',
+                'updated' => $updated > 0
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error saving approval memo: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save approval memo: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function Declination(Request $request)
+    {
+        $PageTitle = 'Declination of Planning Recommendation for Sectional Titling';
+        $PageDescription = '';
+        
+        // Load application data if ID is provided
+        $application = null;
+        $surveyRecord = null;
+        $declineReasons = null;
+        $motherApplication = null;
+        
+        if ($request->has('id')) {
+            $application = DB::connection('sqlsrv')
+                ->table('subapplications')
+                ->where('id', $request->get('id'))
+                ->first();
+                
+            if ($application) {
+                // Retrieve parent application to get property details
+                $motherApplication = DB::connection('sqlsrv')
+                    ->table('mother_applications')
+                    ->where('id', $application->main_application_id)
+                    ->first();
+                    
+                $surveyRecord = DB::connection('sqlsrv')
+                    ->table('surveyCadastralRecord')
+                    ->where('sub_application_id', $application->id)
+                    ->first();
+                    
+                $declineReasons = DB::connection('sqlsrv')
+                    ->table('planning_decline_reasons')
+                    ->where('sub_application_id', $application->id)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+            }
+        }
+        
+        return view('sub_pr_memos.declination', compact(
+            'PageTitle', 
+            'PageDescription', 
+            'application', 
+            'motherApplication', 
+            'surveyRecord', 
+            'declineReasons'
+        ));
+    }
+
+    public function DeclinationSave(Request $request)
+    {
+        // Validate the incoming request
+        $validator = Validator::make($request->all(), [
+            'sub_application_id' => 'required|integer',
+            'approval_date' => 'required|date',
+            
+            // Main reason flags
+            'accessibility_selected' => 'nullable|boolean',
+            'land_use_selected' => 'nullable|boolean',
+            'utility_selected' => 'nullable|boolean',
+            'road_reservation_selected' => 'nullable|boolean',
+            
+            // Simplified form fields for major reasons
+            'access_road_details' => 'nullable|string',
+            'pedestrian_details' => 'nullable|string',
+            'zoning_details' => 'nullable|string',
+            'density_details' => 'nullable|string',
+            'overhead_details' => 'nullable|string',
+            'underground_details' => 'nullable|string',
+            'right_of_way_details' => 'nullable|string',
+            'road_width_details' => 'nullable|string',
+            
+            // Complete formatted reason summary
+            'reason_summary' => 'nullable|string'
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        
+        try {
+            DB::connection('sqlsrv')->beginTransaction();
+            
+            // Save the decline reasons
+            $declineId = DB::connection('sqlsrv')
+                ->table('planning_decline_reasons')
+                ->insertGetId([
+                    'sub_application_id' => $request->sub_application_id,
+                    'submitted_by' => $request->submitted_by ?? auth()->id() ?? 1,
+                    'approval_date' => $request->approval_date,
+                    
+                    // Main reason flags
+                    'accessibility_selected' => $request->accessibility_selected ?? 0,
+                    'land_use_selected' => $request->land_use_selected ?? 0,
+                    'utility_selected' => $request->utility_selected ?? 0,
+                    'road_reservation_selected' => $request->road_reservation_selected ?? 0,
+                    
+                    // Simplified form fields mapped to database columns
+                    'access_road_details' => $request->access_road_details,
+                    'pedestrian_details' => $request->pedestrian_details,
+                    'zoning_details' => $request->zoning_details,
+                    'density_details' => $request->density_details,
+                    'overhead_details' => $request->overhead_details,
+                    'underground_details' => $request->underground_details,
+                    'right_of_way_details' => $request->right_of_way_details,
+                    'road_width_details' => $request->road_width_details,
+                    
+                    // Complete formatted reason text
+                    'reason_summary' => $request->reason_summary,
+                    
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                    'created_by' => auth()->user()->id ?? 'system',
+                    'updated_by' => auth()->user()->id ?? 'system'
+                ]);
+                
+            // Update the application status
+            DB::connection('sqlsrv')
+                ->table('subapplications')
+                ->where('id', $request->sub_application_id)
+                ->update([
+                    'planning_recommendation_status' => 'declined',
+                    'planning_approval_date' => $request->approval_date,
+                    'planning_recomm_comments' => $request->reason_summary,
+                    'updated_by' => auth()->user()->id ?? 'system',
+                    'updated_at' => now()
+                ]);
+                
+            DB::connection('sqlsrv')->commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Declination memo saved successfully',
+                'decline_id' => $declineId
+            ]);
+        } catch (\Exception $e) {
+            DB::connection('sqlsrv')->rollBack();
+            \Log::error('Error saving declination memo: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save declination memo: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Show recommendation page
+     */
+    public function showRecommendation(Request $request, $id)
+    {
+        // Get the sub-application
+        $application = DB::connection('sqlsrv')
+            ->table('subapplications')
+            ->where('id', $id)
+            ->first();
+            
+        if (!$application) {
+            abort(404, 'Sub-application not found');
+        }
+        
+        // Get mother application for property details
+        $motherApplication = DB::connection('sqlsrv')
+            ->table('mother_applications')
+            ->where('id', $application->main_application_id)
+            ->first();
+            
+        // Merge mother application property details with sub-application
+        if ($motherApplication) {
+            $application->property_house_no = $motherApplication->property_house_no;
+            $application->property_plot_no = $motherApplication->property_plot_no;
+            $application->property_street_name = $motherApplication->property_street_name;
+            $application->property_district = $motherApplication->property_district;
+            $application->property_lga = $motherApplication->property_lga;
+            $application->land_use = $motherApplication->land_use;
+        }
+        
+        // Add retrieving additional observations
+        $additionalObservations = DB::connection('sqlsrv')
+            ->table('planning_approval_details')
+            ->where('sub_application_id', $id)
+            ->value('additional_observations');
+            
+        return view('sub_actions.recommendation', compact(
+            'application',
+            'motherApplication',
+            'additionalObservations'
+        ));
+    }
 }

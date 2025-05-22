@@ -1,7 +1,7 @@
 <!-- Primary File Selection Section -->
 <div class="bg-gray-50 p-4 rounded-lg mb-4">
     
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-2 gap-4">
         <div class="space-y-2">
             <label for="primary_file_select" class="block text-sm font-medium text-gray-700">Select Primary GIS FileNo</label>
             <select id="primary_file_select" class="w-full p-2 border border-gray-300 rounded-md   select2-searhc">
@@ -11,30 +11,10 @@
             <div class="text-xs text-gray-500">Search by MLSF No, KANGIS File No, or New KANGIS File No</div>
         </div>
 
-        <!-- Mother Application Selection -->
-        <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">Mother FileNo</label>
-            <select id="motherApplication" name="main_application_id" class="w-full p-2 border border-gray-300 rounded-md">
-                <option value="">Select Mother Application</option>
-                @php
-                    // Fetch mother applications from the database
-                    $motherApplications = DB::connection('sqlsrv')
-                        ->table('mother_applications')
-                        ->select('id', 'fileno')
-                        ->orderBy('fileno')
-                        ->get();
-                @endphp
-                
-                @foreach($motherApplications as $app)
-                    <option value="{{ $app->id }}">{{ $app->fileno }}</option>
-                @endforeach
-            </select>
-        </div>
-
         <!-- Unit File Number Selection -->
         <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">Unit FileNo</label>
-            <select id="unitFileNo" name="STFileNo" class="w-full p-2 border border-gray-300 rounded-md" disabled>
+            <select id="unitFileNo" name="STFileNo" class="w-full p-2 border border-gray-300 rounded-md">
                 <option value="">Select Unit File Number</option>
             </select>
         </div>
@@ -52,8 +32,7 @@
         const fileNumberPreview = document.getElementById('fileNumberPreview');
         const filenoField = document.getElementById('fileno');
         
-        // Mother application and unit selection elements
-        const motherSelect = document.getElementById('motherApplication');
+        // Unit selection elements
         const unitSelect = document.getElementById('unitFileNo');
         
         // Unit information preview fields
@@ -66,30 +45,12 @@
         const unitNoPreview = document.getElementById('unit_no_preview');
         const unitNoField = document.getElementById('unit_no');
         
-        // When mother application changes, load the unit file numbers
-        motherSelect.addEventListener('change', function() {
-            const motherId = this.value;
-            const motherText = this.options[this.selectedIndex].text;
-            
-            // Reset and disable the unit select if no mother application is selected
-            if (!motherId) {
-                unitSelect.innerHTML = '<option value="">Select Unit File Number</option>';
-                unitSelect.disabled = true;
-                
-                // Hide summary if no mother app is selected
-                const summaryContainer = document.getElementById('file-summary-container');
-                if (summaryContainer) summaryContainer.classList.add('hidden');
-                return;
-            }
-            
-            // Update mother app in summary
-            updateMotherAppSummary(motherId, motherText);
-            
-            // Enable the unit select
-            unitSelect.disabled = false;
-            
-            // Fetch the units for this mother application
-            fetch(`{{ route('gis.get-units') }}?mother_id=${motherId}`)
+        // Load all units when the page loads
+        loadAllUnits();
+        
+        // Function to load all units
+        function loadAllUnits() {
+            fetch(`{{ route('gis.get-all-units') }}`)
                 .then(response => response.json())
                 .then(data => {
                     // Clear current options
@@ -104,15 +65,15 @@
                         option.dataset.section = unit.floor_number;
                         option.dataset.block = unit.block_number;
                         option.dataset.unit = unit.unit_number;
-                        option.dataset.landuse = unit.land_use; // Add land_use data attribute
-                        option.dataset.unitid = unit.unit_id;   // Add unit_id data attribute
+                        option.dataset.landuse = unit.land_use;
+                        option.dataset.unitid = unit.unit_id;
                         unitSelect.appendChild(option);
                     });
                 })
                 .catch(error => {
                     console.error('Error loading units:', error);
                 });
-        });
+        }
         
         // When unit file number changes, update the unit information preview
         unitSelect.addEventListener('change', function() {
@@ -172,36 +133,6 @@
                 console.log('Setting unit_id to:', selectedOption.dataset.unitid);
             }
         });
-        
-        // Function to update mother app summary
-        function updateMotherAppSummary(id, fileName) {
-            // Show the container
-            const summaryContainer = document.getElementById('file-summary-container');
-            if (summaryContainer) summaryContainer.classList.remove('hidden');
-            
-            // Update title
-            const summaryTitle = document.getElementById('summary-title');
-            if (summaryTitle) summaryTitle.textContent = 'Summary';
-            
-            // Show mother section, hide others
-            const primarySection = document.getElementById('primary-file-summary');
-            const motherSection = document.getElementById('mother-app-summary');
-            const unitSection = document.getElementById('unit-file-summary');
-            
-            if (primarySection) primarySection.classList.add('hidden');
-            if (motherSection) motherSection.classList.remove('hidden');
-            if (unitSection) unitSection.classList.add('hidden');
-            
-            // Update mother app details
-            if (document.getElementById('summary-motherAppFileNo')) 
-                document.getElementById('summary-motherAppFileNo').textContent = fileName || '-';
-            if (document.getElementById('summary-motherAppId')) 
-                document.getElementById('summary-motherAppId').textContent = id || '-';
-            
-            // Update note
-            if (document.getElementById('summary-note'))
-                document.getElementById('summary-note').textContent = 'Please select a unit file number to continue.';
-        }
         
         // Function to update unit file summary
         function updateUnitFileSummary(selectedOption) {

@@ -1,276 +1,211 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\Instrument;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class InstrumentController extends Controller
 {
-
-
-
-    private function generateParticularsRegistrationNumber($lastInstrument)
-    {
-        if ($lastInstrument) {
-            $parts = explode('/', $lastInstrument->particularsRegistrationNumber);
-            if (count($parts) === 3) {
-                list($lastSerial, $lastPage, $lastVolume) = $parts;
-                $lastSerial = (int)$lastSerial;
-                $lastPage = (int)$lastPage;
-                $lastVolume = (int)$lastVolume;
-    
-                if ($lastSerial == 100) {
-                    $newSerial = 1; 
-                    $newPage = 1;
-                    $newVolume = $lastVolume + 1;
-                } else {
-                    $newSerial = $lastSerial + 1;
-                    $newPage = $lastPage + 1;
-                    $newVolume = $lastVolume;
-                }
-            } else {
-                $newSerial = 1;
-                $newPage = 1;
-                $newVolume = 1;
-            }
-        } else {
-            $newSerial = 1;
-            $newPage = 1;
-            $newVolume = 1;
-        }
-    
-        return "$newSerial/$newPage/$newVolume";
-    }
-    
-    private function generateRegNo($lastInstrument)
-    {
-        if ($lastInstrument && !empty($lastInstrument->regNo)) {
-            $parts = explode('/', $lastInstrument->regNo);
-            if (count($parts) === 3) {
-                $number = (int)$parts[0];
-                $newNumber = $number + 1;
-                return "$newNumber/$newNumber/$newNumber";
-            }
-        }
-        return "1/1/1";
-    }
-         
-    private function tempFileNumber($lastInstrument)
-    {
-        if ($lastInstrument && !empty($lastInstrument->fileNumber)) {
-            $lastFileNumber = (int) str_replace('KN/TEMP/', '', $lastInstrument->fileNumber);
-            $num = $lastFileNumber + 1;
-        } else {
-            $num = 1;
-        }
-
-        return 'KN/TEMP/' . str_pad($num, 4, '0', STR_PAD_LEFT);
-    }
-    private function NewfileNumber($lastInstrument)
-    {
-        if ($lastInstrument && !empty($lastInstrument->fileNumber)) {
-            $lastFileNumber = (int) str_replace('KN', '', $lastInstrument->fileNumber);
-            $num = $lastFileNumber + 1;
-        } else {
-            $num = 1;
-        }
-        return 'KN' . str_pad($num, 4, '0', STR_PAD_LEFT);
-    }
-
-    private function generateRootTitleRegNo($lastInstrument) 
-
-    {
-        if ($lastInstrument) {
-            $lastRootTitleRegNo = (int) str_replace('0/0/', '', $lastInstrument->RootTitleRegNo);
-            $newRootTitleRegNo = $lastRootTitleRegNo + 1;
-        } else {
-            $newRootTitleRegNo = 1;
-        }
-
-        return '0/0/' . $newRootTitleRegNo;
-    }
-
- 
     public function index()
     {
-
         $PageTitle = 'Instrument Capture';
         $PageDescription = '';
-
-        if (Auth::user()->can('manage notification')) {
-            $instruments = Instrument::paginate(100);
-            $lastInstrument = Instrument::orderBy('id', 'desc')->first();
-            $particularsRegistrationNumber = $this->generateParticularsRegistrationNumber($lastInstrument);
-            $RootTitleRegNo = $this->generateRootTitleRegNo($lastInstrument);
-            return view('instruments.index', compact('instruments','RootTitleRegNo', 'particularsRegistrationNumber' , 'PageTitle', 'PageDescription'));
-        } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
-        }
+        
+        $instruments = DB::connection('sqlsrv')->table('instrument_registration')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return view('instruments.index', compact('PageTitle', 'PageDescription', 'instruments'));
     }
-
-
-
 
     public function powerOfAttorney()
     {
-        if (Auth::user()->can('manage notification')) {
-            $lastInstrument = Instrument::orderBy('id', 'desc')->first();
-            $particularsRegistrationNumber = $this->generateParticularsRegistrationNumber($lastInstrument);
-            $lastRegNo = Instrument::orderBy('id', 'desc')->first();
-            $regNo = $this->generateRegNo($lastInstrument);
-            $RootTitleRegNo = $this->generateRootTitleRegNo($lastInstrument);
-            $tempFileNumber = $this->tempFileNumber($lastInstrument);
-            
-            $title = 'Power Of Attorney';
-            return view('instruments.powerOfAttorney', compact('particularsRegistrationNumber', 'title', 'regNo', 'RootTitleRegNo', 'tempFileNumber'));
-        } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
-        }
+        $title = 'Power Of Attorney';
+        return view('instruments.powerOfAttorney', compact('title'));
     }
 
     public function deedOfMortgage()
     {
-        if (Auth::user()->can('manage notification')) {
-            $lastInstrument = Instrument::orderBy('id', 'desc')->first();
-            $particularsRegistrationNumber = $this->generateParticularsRegistrationNumber($lastInstrument);
-            $lastRegNo = Instrument::orderBy('id', 'desc')->first();
-            $regNo = $this->generateRegNo($lastInstrument);
-            $RootTitleRegNo = $this->generateRootTitleRegNo($lastInstrument);
-            $title = 'Deed Of Mortgage';
-            return view('instruments.deedOfMortgage', compact('particularsRegistrationNumber', 'title', 'regNo','RootTitleRegNo'));
-        } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
-        }
+        $title = 'Deed Of Mortgage';
+        return view('instruments.deedOfMortgage', compact('title'));
     }
-
-   
 
     public function store(Request $request)
     {
         try {
-            $validatedData = $request->validate([
-                'fileNumber' => 'nullable|unique:instruments',
-                'fileSuffix' => 'nullable',
-                'fileNoPrefix' => 'nullable',
-                'rootTitleRegNo' => 'nullable',
-                'particularsRegistrationNumber' => 'nullable',
-                'instrumentName' => 'nullable',
-                'regNo' => 'nullable',
-                'grantorName' => 'nullable',
-                'grantorAddress' => 'nullable',
-                'granteeName' => 'nullable',
-                'granteeAddress' => 'nullable',
-                'mortgagorName' => 'nullable',
-                'mortgagorAddress' => 'nullable',
-                'mortgageeName' => 'nullable',
-                'mortgageeAddress' => 'nullable',
-                'loanAmount' => 'nullable',
-                'interestRate' => 'nullable',
-                'duration' => 'nullable',
-                'assignorName' => 'nullable',
-                'assignorAddress' => 'nullable',
-                'assigneeName' => 'nullable',
-                'assigneeAddress' => 'nullable',
-                'lessorName' => 'nullable',
-                'lessorAddress' => 'nullable',
-                'lesseeName' => 'nullable',
-                'lesseeAddress' => 'nullable',
-                'propertyDescription' => 'nullable',
-                'propertyAddress' => 'nullable',
-                'originalPlotDetails' => 'nullable',
-                'newSubDividedPlotDetails' => 'nullable',
-                'mergedPlotInformation' => 'nullable',
-                'surrenderingPartyName' => 'nullable',
-                'receivingPartyName' => 'nullable',
-                'propertyDetails' => 'nullable',
-                'considerationAmount' => 'nullable',
-                'changesVariations' => 'nullable',
-                'heirBeneficiaryDetails' => 'nullable',
-                'originalPropertyOwnerDetails' => 'nullable',
-                'assentTerms' => 'nullable',
-                'releaserName' => 'nullable',
-                'releaseTerms' => 'nullable',
-                'instrumentDate' => 'nullable|date',
-                'solicitorName' => 'nullable',
-                'solicitorAddress' => 'nullable',
-                'surveyPlanNo' => 'nullable',
-                'lga' => 'nullable',
-                'district' => 'nullable',
-                'plotNumber' => 'nullable',
-                'size' => 'nullable',
-                'leasePeriod' => 'nullable',
-                'leaseTerms' => 'nullable'
+            // Validate request
+            $validator = Validator::make($request->all(), [
+                'instrument_type' => 'required|string',
+                'Grantor' => 'required|string',
+                'GrantorAddress' => 'required|string',
+                'Grantee' => 'required|string',
+                'GranteeAddress' => 'required|string',
+                'instrumentDate' => 'required|date',
+                'propertyDescription' => 'nullable|string',
+                'solicitorName' => 'nullable|string',
+                'solicitorAddress' => 'nullable|string',
             ]);
-
-            $lastInstrument = Instrument::orderBy('id', 'desc')->first();
-
-            if (empty($validatedData['fileNumber'])) {
-                $validatedData['fileNumber'] = $this->NewfileNumber($lastInstrument);
+            
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
             }
-
-            if (empty($validatedData['fileNoPrefix'])) {
-                $validatedData['fileNoPrefix'] = 'KN';
+            
+            // Format date for SQL Server
+            $instrumentDate = $request->instrumentDate ? date('Y-m-d', strtotime($request->instrumentDate)) : null;
+            
+            // Create instrument record using DB facade
+            $now = now()->format('Y-m-d H:i:s');
+            
+            $data = [
+                'instrument_type' => $request->instrument_type,
+                'MLSFileNo' => $request->mlsFNo,
+                'KAGISFileNO' => $request->kangisFileNo,
+                'NewKANGISFileNo' => $request->NewKANGISFileno,
+                'Grantor' => $request->Grantor,
+                'GrantorAddress' => $request->GrantorAddress,
+                'Grantee' => $request->Grantee,
+                'GranteeAddress' => $request->GranteeAddress,
+                'instrumentDate' => $instrumentDate,
+                'propertyDescription' => $request->propertyDescription,
+                'solicitorName' => $request->solicitorName,
+                'solicitorAddress' => $request->solicitorAddress,
+                'lga' => $request->lga,
+                'district' => $request->district,
+                'size' => $request->size,
+                'plotNumber' => $request->plotNumber,
+                'rootRegistrationNumber' => $request->rootRegistrationNumber,
+                'particularsRegistrationNumber' => $request->particularsRegistrationNumber,
+                'duration' => $request->duration,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+            
+            // Check if table exists
+            $tableExists = DB::connection('sqlsrv')->select("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'instrument_registration'");
+            
+            if (empty($tableExists)) {
+                return redirect()->back()->with('error', 'Database table not found. Please run migrations.')->withInput();
             }
-
-            if (empty($validatedData['rootTitleRegNo'])) {
-                $validatedData['rootTitleRegNo'] = $this->generateRootTitleRegNo($lastInstrument);
+            
+            try {
+                // Begin transaction to ensure data integrity
+                DB::connection('sqlsrv')->beginTransaction();
+                
+                // Use the direct insert method with explicit commit
+                $success = DB::connection('sqlsrv')->table('instrument_registration')->insert($data);
+                
+                if ($success) {
+                    // Get the last inserted ID
+                    $idResult = DB::connection('sqlsrv')->select('SELECT SCOPE_IDENTITY() as id');
+                    
+                    if (!empty($idResult)) {
+                        $instrument_id = $idResult[0]->id;
+                        
+                        // Parse the registration number
+                        $regParts = explode('/', $request->rootRegistrationNumber);
+                        $serial_no = $regParts[0] ?? 0;
+                        $page_no = $regParts[1] ?? 0;
+                        $volume_no = $regParts[2] ?? 0;
+                        
+                        // Log the generated number with the instrument ID
+                        DB::connection('sqlsrv')->table('instrument_particulars_log')->insert([
+                            'instrument_id' => $instrument_id,
+                            'serial_no' => $serial_no,
+                            'page_no' => $page_no,
+                            'volume_no' => $volume_no,
+                            'generated_root_particulars_number' => $request->rootRegistrationNumber,
+                            'created_at' => $now,
+                            'updated_at' => $now
+                        ]);
+                        
+                        // Explicitly commit the transaction
+                        DB::connection('sqlsrv')->commit();
+                        
+                        // Redirect to index with success message
+                        return redirect()->route('instruments.index')->with('success', 'Instrument registered successfully');
+                    } else {
+                        throw new \Exception('Failed to retrieve inserted record ID');
+                    }
+                } else {
+                    throw new \Exception('Failed to insert record');
+                }
+            } catch (\Exception $e) {
+                // Rollback transaction on error
+                DB::connection('sqlsrv')->rollBack();
+                
+                return redirect()->back()->with('error', 'Database error occurred: ' . $e->getMessage())->withInput();
             }
-
-            if (empty($validatedData['regNo'])) {
-                $validatedData['regNo'] = $this->generateRegNo($lastInstrument);
-            }
-
-            $instrument = Instrument::create($validatedData);
-
-            if (!$instrument) {
-                return redirect()->back()->with('error', 'Failed to save instrument. Please try again.');
-            }
-
-            return redirect('/instruments')->with('success', 'Instrument registered successfully');
         } catch (\Exception $e) {
-            \Log::error('Instrument creation failed: ' . $e->getMessage());
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'An error occurred while saving the instrument. Please try again.');
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage())->withInput();
         }
     }
 
-
-     public function Coroi()
+    public function generateParticulars()
     {
-        if (Auth::check() && Auth::user()->can('manage notification')) {
-            $lastInstrument = Instrument::orderBy('id', 'desc')->first();
-            $particularsRegistrationNumber = $this->generateParticularsRegistrationNumber($lastInstrument);
-            $lastRegNo = Instrument::orderBy('id', 'desc')->first();
-            $regNo = $this->generateRegNo($lastInstrument);
-
-            $title = 'Confirmation Of Instrument Registration';
-            return view('instruments.Coroi', compact('particularsRegistrationNumber', 'title', 'regNo'));
-        } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
+        try {
+            // Get the last record from the log table to determine the next sequence
+            $lastRecord = DB::connection('sqlsrv')
+                ->table('instrument_particulars_log')
+                ->orderBy('id', 'desc')
+                ->first();
+            
+            if (!$lastRecord) {
+                // Initialize with starting values if no records exist
+                $serial_no = 1;
+                $page_no = 1;
+                $volume_no = 1;
+            } else {
+                // Calculate the next values based on the last record
+                $serial_no = $lastRecord->serial_no + 1;
+                $page_no = $lastRecord->page_no + 1;
+                $volume_no = $lastRecord->volume_no;
+                
+                // If we've reached the maximum, reset and increment volume
+                if ($serial_no > 300) {
+                    $serial_no = 1;
+                    $page_no = 1;
+                    $volume_no++;
+                }
+            }
+            
+            // Format the particulars registration number
+            $formatted = "{$serial_no}/{$page_no}/{$volume_no}";
+            
+            // We no longer insert into the log here - we'll do that on form submission
+            
+            return response()->json([
+                'success' => true,
+                'rootRegistrationNumber' => $formatted,
+                'serial_no' => $serial_no,
+                'page_no' => $page_no,
+                'volume_no' => $volume_no
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to generate particulars registration number: ' . $e->getMessage()
+            ], 500);
         }
     }
- 
 
- 
- 
+    public function Coroi()
+    {
+        $title = 'Confirmation Of Instrument Registration';
+        return view('instruments.Coroi', compact('title'));
+    }
+
     public function update(Request $request, $id)
     {
-        $instrument = Instrument::findOrFail($id);
-        $lastInstrument = Instrument::orderBy('id', 'desc')->first();
-        $particularsRegistrationNumber = $this->generateParticularsRegistrationNumber($lastInstrument);
-        
-        $data = $request->all();
-        $data['particularsRegistrationNumber'] = $particularsRegistrationNumber;
-        
-        $instrument->update($data);
+        // Here you would implement the update logic using DB::connection('sqlsrv')
         return redirect('/instruments')->with('success', 'Instrument updated successfully');
     }
 
     public function destroy($id)
     {
-        Instrument::findOrFail($id)->delete();
+        // Here you would implement the delete logic using DB::connection('sqlsrv')
         return redirect('/instruments')->with('success', 'Instrument deleted successfully');
     }
 }

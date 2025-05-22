@@ -331,12 +331,12 @@
                                                     <span>View Record</span>
                                                 </a>
                                             </li>
-                                            <li>
+                                            {{-- <li>
                                                 <a href="" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                                     <i data-lucide="pencil" class="w-4 h-4 text-amber-600"></i>
                                                     <span>Edit Record</span>
                                                 </a>
-                                            </li>
+                                            </li> --}}
                                             <li>
                                                 <a href="{{ route('programmes.generate_memo', $application->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                                     <i data-lucide="file-plus" class="w-4 h-4 text-indigo-600"></i>
@@ -517,12 +517,12 @@
                                                     <span>View Record</span>
                                                 </a>
                                             </li>
-                                            <li>
+                                            {{-- <li>
                                                 <a href="" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                                     <i data-lucide="pencil" class="w-4 h-4 text-amber-600"></i>
                                                     <span>Edit Record</span>
                                                 </a>
-                                            </li>
+                                            </li> --}}
                                             <li>
                                                 <a href="{{ route('programmes.view_memo_primary', $application->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                                     <i data-lucide="clipboard" class="w-4 h-4 text-amber-600"></i>
@@ -871,12 +871,12 @@
                                                     <span>View Record</span>
                                                 </a>
                                             </li>
-                                            <li>
+                                            {{-- <li>
                                                 <a href="" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                                     <i data-lucide="pencil" class="w-4 h-4 text-amber-600"></i>
                                                     <span>Edit Record</span>
                                                 </a>
-                                            </li>
+                                            </li> --}}
                                             <li>
                                                 <a href="{{ route('programmes.view_memo_primary', $unitApplication->main_application_id) }}?url=unit={{ $unitApplication->unit_number ?? '' }}&unit_id={{$unitApplication->id ?? ''}}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                                     <i data-lucide="clipboard" class="w-4 h-4 text-amber-600"></i>

@@ -24,7 +24,7 @@
           </h2>
         </div>
         
-        <form action="{{ route('gis.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+        <form action="{{ route('gis.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8" onsubmit="return updateFormFileData()">
             @csrf
             
             <!-- Include the file summary header -->
@@ -36,15 +36,18 @@
                 @include('gis.secondary_fileno')
                 <!-- Unit Form Section -->
                 @include('gis.unit_form')
+                <input type="hidden" name="gis_type" value="Unit GIS">
             @elseif(request()->get('is') == 'primary')
                 <!-- Primary File Information Section -->
-                @include('primaryform.gis_fileno')
+                @include('gis.gis_fileno')
+                <input type="hidden" name="gis_type" value="Primary GIS">
             @else
                 <!-- Default File Information Section -->
                 @include('gis.secondary_fileno')
+                <input type="hidden" name="gis_type" value="Unit GIS">
             @endif
+            
             <!-- Plot Information Section -->
-            <input type="hidden" name="gis_type" value="{{ request()->get('is') == 'secondary' ? 'Unit GIS' : 'Primary GIS' }}" class="">
             <div class="bg-gray-50 p-4 rounded-lg">
                 <h3 class="text-lg font-semibold mb-4 text-gray-700">Plot Information</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -487,5 +490,5 @@
     @include('admin.footer')
   </div>
 </div>
- @include('gis.script                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ')
+@include('gis.script')
 @endsection
