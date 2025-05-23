@@ -13,7 +13,15 @@ class Pagetypingcontroller extends Controller
      */
     public function index()
     {
-        //
+        $PageTitle = 'Page Typing';
+        $PageDescription = '';
+        
+        // Fetch all records from the file_indexing table
+        // $fileIndexRecords = DB::connection('sqlsrv')->table('file_indexing')
+        //     ->orderBy('created_at', 'desc')
+        //     ->get();
+       
+       return view('pagetyping.index' , compact('PageTitle', 'PageDescription'));
     }
 
     /**

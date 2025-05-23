@@ -8,6 +8,8 @@ use App\Http\Controllers\SurveyAttributionController;
 use App\Http\Controllers\GisController;
 use App\Http\Controllers\PlanningRecommendationController;
 use App\Http\Controllers\SubPlanningRecommendationController;
+use App\Http\Controllers\FileIndexController;
+use App\Http\Controllers\PageTypingController;
 // Public routes
 Route::get('/custom-public', function () {
     return 'This is a public custom route';
@@ -113,6 +115,17 @@ Route::middleware(['auth'])->group(function () {
         
         Route::get('/declination', [SubPlanningRecommendationController::class, 'Declination'])->name('sub_pr_memos.declination');
         Route::post('/declination/store', [SubPlanningRecommendationController::class, 'DeclinationSave'])->name('sub_pr_memos.declination.store');
+    });
+
+    Route::prefix('fileindexing')->group(function () {
+        Route::get('/', [FileIndexController::class, 'index'])->name('fileindexing.index');
+        Route::get('/create', [FileIndexController::class, 'create'])->name('fileindexing.create');
+
+    });
+   
+    Route::prefix('pagetyping')->group(function () {
+        Route::get('/', [PageTypingController::class, 'index'])->name('pagetyping.index');
+        Route::get('/create', [PageTypingController::class, 'create'])->name('pagetyping.create');
     });
 
 });

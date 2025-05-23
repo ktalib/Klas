@@ -37,7 +37,7 @@ use App\Http\Controllers\SaveMainAppController;
 use App\Http\Controllers\FileIndexingController;
 use App\Http\Controllers\FileScanningController;
 use App\Http\Controllers\ScannerController;
-use App\Http\Controllers\PageTypingController;
+
 use App\Http\Controllers\LandingController;
  
 use App\Http\Controllers\GisController;
@@ -535,9 +535,7 @@ Route::get('/scanners', [ScannerController::class, 'getScanners'])->name('scanne
 Route::post('/scan', [ScannerController::class, 'scan'])->name('scanners.scan');
 Route::post('/webcam-capture', [ScannerController::class, 'captureFromWebcam'])->name('scanners.webcam');
 
-Route::get('/pagetyping/index', [PageTypingController::class, 'index'])->name('pagetyping.index');
-Route::get('/pagetyping/create', [PageTypingController::class, 'create'])->name('pagetyping.create');
-Route::post('/pagetyping/store', [PageTypingController::class, 'store'])->name('pagetyping.store');
+ 
 
 Route::get('/sectionaltitling', [\App\Http\Controllers\SectionalTitlingController::class, 'index'])->name('sectionaltitling.index');
 Route::get('/sectionaltitling/primary', [\App\Http\Controllers\SectionalTitlingController::class, 'Primary'])->name('sectionaltitling.primary');

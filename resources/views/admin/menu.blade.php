@@ -392,7 +392,7 @@
           </div>
 
           <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="indexing">
-            <a href="/file-digital-registry/indexing-assistant" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <a href="{{route('fileindexing.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('fileindexing.index') ? 'active' : '' }}">
               <span>File Indexing Assistant</span>
             </a>
             <a href="/file-digital-registry/print-labels" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
@@ -419,7 +419,7 @@
             </a>
           </div>
           
-          <a href="/file-digital-registry/page-typing" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <a href="{{route('pagetyping.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('pagetyping.index') ? 'active' : '' }}">
             <i data-lucide="file-text" class="h-3.5 w-3.5"></i>
             <span>PageTyping</span>
           </a>

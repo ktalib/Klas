@@ -1,17 +1,234 @@
 @extends('layouts.app')
 @section('page-title')
-    {{ __('SURVEY MODULE') }}
+    {{ __('Legal Search - On-Premise Official
+') }}
 @endsection
 
  
 @section('content')
+
     <!-- Main Content -->
     <div class="flex-1 overflow-auto">
         <!-- Header -->
         @include('admin.header')
         <!-- Dashboard Content -->
         <div class="p-6">
-            
+             
+  
+  <style>
+    /* Base styles */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #111827;
+      background-color: #f9fafb;
+    }
+    
+    /* Custom components */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 9999px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      line-height: 1;
+    }
+    
+    .badge-outline {
+      background-color: transparent;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .badge-destructive {
+      background-color: #ef4444;
+      color: white;
+    }
+    
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+    }
+    
+    .modal-content {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      width: 95%;
+      max-width: 95%;
+      max-height: 90vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    .search-section {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .results-section {
+      flex-grow: 1;
+      overflow: auto;
+      padding: 1.5rem;
+    }
+    
+    /* Loading spinner */
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border-left-color: #000;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    
+    /* Tab styles */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .tab {
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      color: #6b7280;
+    }
+    
+    .tab.active {
+      border-bottom-color: #000;
+      color: #000;
+      font-weight: 600;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* Table styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background-color: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    td {
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    tr:hover {
+      background-color: #f9fafb;
+    }
+    
+    /* Select dropdown fix */
+    .select-wrapper {
+      position: relative;
+      width: 100%;
+    }
+    
+    .select {
+      appearance: none;
+      width: 100%;
+      padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      background-color: white;
+    }
+    
+    .select-icon {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    
+    /* Form field styles */
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    
+    .form-label {
+      font-size: 0.875rem;
+      color: #6b7280;
+      width: 40%;
+      padding-top: 0.25rem;
+    }
+    
+    .form-value {
+      font-size: 0.875rem;
+      font-weight: 500;
+      width: 60%;
+      text-align: right;
+    }
+    
+    /* Status indicator */
+    .status-indicator {
+      display: inline-block;
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+    }
+    
+    /* Hide elements */
+    .hidden {
+      display: none;
+    }
+  </style>
+
+
   <!-- Main Content -->
   <main class="flex-1 p-6">
     <div id="dashboard-view" class="space-y-6">
@@ -575,7 +792,7 @@
             <!-- Reset Button -->
             <button id="reset-search-btn" class="ml-auto inline-flex items-center gap-1 px-3 py-1 text-sm bg-white border border-gray-300 rounded-md">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 0 01-15.357-2m15.357 2H15" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
               Reset
             </button>
@@ -588,7 +805,7 @@
             </div>
             <button id="reset-search-collapsed-btn" class="ml-auto inline-flex items-center gap-1 px-3 py-1 text-sm bg-white border border-gray-300 rounded-md">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 0 01-15.357-2m15.357 2H15" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
               Reset
             </button>
@@ -800,7 +1017,6 @@
 
     // DOM Elements
     const searchModal = document.getElementById('search-modal');
-    const newSearchBtn = document.getElementById('new-search-btn');
     const searchRecordsBtn = document.getElementById('search-records-btn');
     const toggleFiltersBtn = document.getElementById('toggle-filters-btn');
     const filtersContainer = document.getElementById('filters-container');
@@ -821,13 +1037,17 @@
     const fileHistoryView = document.getElementById('file-history-view');
     const reportsView = document.getElementById('reports-view');
     const viewReportsBtn = document.getElementById('view-reports-btn');
-    const deleteConfirmDialog = document.getElementById('delete-confirm-btn');
+    const deleteConfirmDialog = document.getElementById('delete-confirm-dialog');
     const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
     const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
     const newSearchFromDetailsBtn = document.getElementById('new-search-from-details-btn');
     const legalSearchReportView = document.getElementById('legal-search-report-view');
     const backToFileDetailsBtn = document.getElementById('back-to-file-details-btn');
     const printReportBtn = document.getElementById('print-report-btn');
+
+    // Debug statements
+    console.log("Search modal element:", searchModal);
+    console.log("Search records button:", searchRecordsBtn);
 
     // State variables
     let currentView = 'table';
@@ -887,17 +1107,23 @@
     document.addEventListener('DOMContentLoaded', initializeChart);
 
     // Event Listeners
-    newSearchBtn.addEventListener('click', () => {
-      searchModal.classList.remove('hidden');
-    });
+    // Fix for the newSearchBtn reference - it doesn't exist, remove it
+    // Instead, make sure searchRecordsBtn works properly
+    if (searchRecordsBtn) {
+      searchRecordsBtn.addEventListener('click', () => {
+        console.log("Search records button clicked");
+        searchModal.classList.remove('hidden');
+      });
+    } else {
+      console.error("Search records button not found");
+    }
 
-    newSearchFromDetailsBtn.addEventListener('click', () => {
-      searchModal.classList.remove('hidden');
-    });
-
-    searchRecordsBtn.addEventListener('click', () => {
-      searchModal.classList.remove('hidden');
-    });
+    if (newSearchFromDetailsBtn) {
+      newSearchFromDetailsBtn.addEventListener('click', () => {
+        console.log("New search from details button clicked");
+        searchModal.classList.remove('hidden');
+      });
+    }
 
     // Close modal when clicking outside
     searchModal.addEventListener('click', (e) => {
@@ -1255,15 +1481,6 @@
                 <div class="text-sm text-gray-500 mt-1">
                   KANGIS: ${file.kangisFileNo} | New KANGIS: ${file.newKangisFileNo}
                 </div>
-              </div>
-              <span class="badge ${file.caveat === 'Yes' ? 'badge-destructive' : 'badge-outline'}">
-                Caveat: ${file.caveat}
-              </span>
-            </div>
-
-            <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-              <div>
-                <span class="text-gray-500">Guarantor:</span> ${file.guarantor}
               </div>
               <div>
                 <span class="text-gray-500">Guarantee:</span> ${file.guarantee}
@@ -1855,11 +2072,14 @@
       }
     });
   </script>
+ 
+
+
         </div>
 
         <!-- Footer -->
         @include('admin.footer')
     </div>
    
- 
+
 @endsection

@@ -1,90 +1,153 @@
- 
-
-    <!-- Tab Content -->
-    <div class="border border-gray-400 bg-white p-2">
-        <div class="text-xs font-bold mb-2">Select File Number</div>
-
-        <div class="mb-4">
-            <div class="text-xs mb-1">New File Number</div>
-            <div class="flex gap-2">
-                <div class="mb-4">
-                    <label class="text-xs mb-1 block">File Number</label>
-
-                    <!-- Tab navigation - shortened buttons -->
-                    <div class="tab flex space-x-1 mb-2">
-                        <button
-                            class="tablinks active px-2 py-1 text-xs font-medium rounded-t shadow-sm border border-b-0 bg-white"
-                            onclick="openFileTab(event, 'mlsFNo')">MLS</button>
-                        <button class="tablinks px-2 py-1 text-xs font-medium rounded-t shadow-sm border border-b-0"
-                            onclick="openFileTab(event, 'kangisFileNo')">KANGIS</button>
-                        <button class="tablinks px-2 py-1 text-xs font-medium rounded-t shadow-sm border border-b-0"
-                            onclick="openFileTab(event, 'NewKANGISFileno')">New KANGIS</button>
-                    </div>
+@extends('layouts.app')
+@section('page-title')
+    {{ __('Page Typing') }}
+@endsection
 
 
-                    <!-- MLS File Number Tab -->
-                    <div id="mlsFNo" class="tabcontent active">
-                        <div class="flex mb-1">
-                            <div class="w-3/4 grid grid-cols-3 gap-1">
-                                <select class="form-select p-2" id="mlsFileNoPrefix" name="mlsFileNoPrefix">
-                                    <option value="">File Prefix</option>
-                                    @foreach (['COM', 'RES', 'CON-COM', 'CON-RES', 'CON-AG', 'CON-IND'] as $prefix)
-                                        <option value="{{ $prefix }}">{{ $prefix }}</option>
-                                    @endforeach
-                                </select>
-                                <input type="text" class="form-input p-2" id="mlsFileNumber" name="mlsFileNumber"
-                                    placeholder="e.g. 2022-572"
-                                    value="{{ isset($result) ? ($result->mlsFileNumber ?: '') : '' }}">
-                                <input type="text" class="form-input p-2" id="mlsPreviewFileNumber"
-                                    name="mlsPreviewFileNumber"
-                                    value="{{ isset($result) ? ($result->mlsFNo ?: '') : '' }}" readonly>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KANGIS File Number Tab -->
-                    <div id="kangisFileNo" class="tabcontent">
-
-                        <div class="flex mb-1">
-                            <div class="w-3/4 grid grid-cols-3 gap-1">
-                                <select class="form-select p-2" id="kangisFileNoPrefix" name="kangisFileNoPrefix">
-                                    <option value="">File Prefix</option>
-                                    @foreach (['KNML', 'MNKL', 'MLKN', 'KNGP'] as $prefix)
-                                        <option value="{{ $prefix }}">{{ $prefix }}</option>
-                                    @endforeach
-                                </select>
-                                <input type="text" class="form-input p-2" id="kangisFileNumber"
-                                    name="kangisFileNumber" placeholder="e.g. 04367"
-                                    value="{{ isset($result) ? ($result->kangisFileNumber ?: '') : '' }}">
-                                <input type="text" class="form-input p-2" id="kangisPreviewFileNumber"
-                                    name="kangisPreviewFileNumber"
-                                    value="{{ isset($result) ? ($result->kangisFileNo ?: '') : '' }}" readonly>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- New KANGIS File Number Tab -->
-                    <div id="NewKANGISFileno" class="tabcontent">
-
-                        <div class="flex mb-1">
-                            <div class="w-3/4 grid grid-cols-3 gap-1">
-                                <select class="form-select p-2" id="newKangisFileNoPrefix" name="newKangisFileNoPrefix">
-                                    <option value="">File Prefix</option>
-                                    <option value="KN">KN</option>
-                                </select>
-                                <input type="text" class="form-input p-2" id="newKangisFileNumber"
-                                    name="newKangisFileNumber" placeholder="e.g. 1586"
-                                    value="{{ isset($result) ? ($result->newKangisFileNumber ?: '') : '' }}">
-                                <input type="text" class="form-input p-2" id="newKangisPreviewFileNumber"
-                                    name="newKangisPreviewFileNumber"
-                                    value="{{ isset($result) ? ($result->NewKANGISFileno ?: '') : '' }}" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-          
-        </div>
+@section('content')
+  @include('pagetyping.css.style')
+    <!-- Main Content -->
+    <div class="flex-1 overflow-auto">
+        <!-- Header -->
+        @include('admin.header')
+        <!-- Dashboard Content -->
+        <div class="p-6">
+ <div class="container mx-auto py-6 space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col space-y-2">
+      <h1 class="text-2xl font-bold tracking-tight">Page Typing</h1>
+      <p class="text-muted-foreground">Categorize and digitize file content</p>
     </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <!-- Pending Page Typing -->
+      <div class="card">
+        <div class="p-4 pb-2">
+          <h3 class="text-sm font-medium">Pending Page Typing</h3>
+        </div>
+        <div class="p-4 pt-0">
+          <div class="text-2xl font-bold" id="pending-count">4</div>
+          <p class="text-xs text-muted-foreground mt-1">Files waiting for page typing</p>
+        </div>
+      </div>
+
+      <!-- In Progress -->
+      <div class="card">
+        <div class="p-4 pb-2">
+          <h3 class="text-sm font-medium">In Progress</h3>
+        </div>
+        <div class="p-4 pt-0">
+          <div class="text-2xl font-bold" id="in-progress-count">1</div>
+          <p class="text-xs text-muted-foreground mt-1">Files currently being typed</p>
+        </div>
+      </div>
+
+      <!-- Completed -->
+      <div class="card">
+        <div class="p-4 pb-2">
+          <h3 class="text-sm font-medium">Completed</h3>
+        </div>
+        <div class="p-4 pt-0">
+          <div class="text-2xl font-bold" id="completed-count">2</div>
+          <p class="text-xs text-muted-foreground mt-1">Files completed typing</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tabs-list grid w-full md:w-auto grid-cols-4">
+        <button class="tab" role="tab" aria-selected="true" data-tab="pending">Pending Page Typing</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="in-progress">In Progress</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="completed">Completed</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="typing" aria-disabled="true" id="typing-tab">Typing</button>
+      </div>
+
+      <!-- Pending Tab -->
+      <div class="tab-content mt-6" role="tabpanel" aria-hidden="false" data-tab-content="pending">
+        <div class="card">
+          <div class="p-6 border-b">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h2 class="text-lg font-semibold">Files Pending Page Typing</h2>
+                <p class="text-sm text-muted-foreground">Select a file to begin typing its content</p>
+              </div>
+              <div class="relative w-full md:w-64">
+                <i data-lucide="search" class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"></i>
+                <input type="search" placeholder="Search files..." class="input w-full pl-8">
+              </div>
+            </div>
+          </div>
+          <div class="p-6">
+            <div id="pending-files-list" class="rounded-md border divide-y">
+              <!-- Pending files will be added here dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- In Progress Tab -->
+      <div class="tab-content mt-6" role="tabpanel" aria-hidden="true" data-tab-content="in-progress">
+        <div class="card">
+          <div class="p-6 border-b">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h2 class="text-lg font-semibold">Files In Progress</h2>
+                <p class="text-sm text-muted-foreground">Files that are partially typed</p>
+              </div>
+              <div class="relative w-full md:w-64">
+                <i data-lucide="search" class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"></i>
+                <input type="search" placeholder="Search files..." class="input w-full pl-8">
+              </div>
+            </div>
+          </div>
+          <div class="p-6">
+            <div id="in-progress-files-list" class="rounded-md border divide-y">
+              <!-- In progress files will be added here dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completed Tab -->
+      <div class="tab-content mt-6" role="tabpanel" aria-hidden="true" data-tab-content="completed">
+        <div class="card">
+          <div class="p-6 border-b">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h2 class="text-lg font-semibold">Completed Files</h2>
+                <p class="text-sm text-muted-foreground">Files that have been fully typed</p>
+              </div>
+              <div class="relative w-full md:w-64">
+                <i data-lucide="search" class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"></i>
+                <input type="search" placeholder="Search files..." class="input w-full pl-8">
+              </div>
+            </div>
+          </div>
+          <div class="p-6">
+            <div id="completed-files-list" class="space-y-4">
+              <!-- Completed files will be added here dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Typing Tab -->
+      <div class="tab-content mt-6" role="tabpanel" aria-hidden="true" data-tab-content="typing">
+        <div class="card" id="typing-card">
+          <!-- Typing content will be added here dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+   
  
+        </div>
+
+        <!-- Footer -->
+        @include('admin.footer')
+    </div>
+    @include('pagetyping.js.javascript')
+@endsection
