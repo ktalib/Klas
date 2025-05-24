@@ -10,6 +10,8 @@ use App\Http\Controllers\PlanningRecommendationController;
 use App\Http\Controllers\SubPlanningRecommendationController;
 use App\Http\Controllers\FileIndexController;
 use App\Http\Controllers\PageTypingController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PropertyRecordController;
 // Public routes
 Route::get('/custom-public', function () {
     return 'This is a public custom route';
@@ -127,5 +129,22 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [PageTypingController::class, 'index'])->name('pagetyping.index');
         Route::get('/create', [PageTypingController::class, 'create'])->name('pagetyping.create');
     });
+    
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
+        Route::get('/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/update', [ProfileController::class, 'update'])->name('profile.update');
+    });
 
+    // Property Record Routes - Keep only these relevant routes
+        Route::prefix('propertycard')->group(function () {
+        Route::get('/', [PropertyRecordController::class, 'index'])->name('propertycard.index');
+    });
+
+    Route::prefix('property-records')->name('property-records.')->group(function () {
+        Route::get('/{id}', [PropertyRecordController::class, 'show'])->name('show');
+        Route::post('/', [PropertyRecordController::class, 'store'])->name('store');
+        Route::put('/{id}', [PropertyRecordController::class, 'update'])->name('update');
+        Route::delete('/{id}', [PropertyRecordController::class, 'destroy'])->name('destroy');
+    });
 });

@@ -26,7 +26,6 @@ use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SubApplicationController;
 use App\Http\Controllers\ApplicationMotherController;
-use App\Http\Controllers\PropertyCardController;
 use App\Http\Controllers\RecordController;
 use App\Http\Controllers\LegalSearchController;
 use App\Http\Controllers\ResidentialController;
@@ -427,15 +426,7 @@ Route::get('sectionaltitling/viewrecorddetail',  [App\Http\Controllers\Applicati
 
 // Add this route in the appropriate section
 Route::post('/sectionaltitling/save-eregistry', [eRegistryController::class, 'saveERegistry'])->name('sectionaltitling.saveERegistry');
-
-Route::get('/propertycard', [PropertyCardController::class, 'index'])->name('propertycard.index');
-Route::get('/propertycard/create', [PropertyCardController::class, 'create'])->name('propertycard.create');
-Route::get('/propertycard/capture', [PropertyCardController::class, 'capture'])->name('propertycard.capture');
-Route::post('/propertycard', [PropertyCardController::class, 'store'])->name('propertycard.store');
-Route::get('/propertycard/data', [PropertyCardController::class, 'getData'])->name('propertycard.data');
-Route::post('/propertycard/search', [PropertyCardController::class, 'search'])->name('propertycard.search');
-Route::post('/propertycard/save-record', [PropertyCardController::class, 'savePropertyRecord'])->name('propertycard.saveRecord');
-Route::post('/propertycard/navigate', [PropertyCardController::class, 'navigateRecord'])->name('propertycard.navigate');
+ 
 
 // Add this fallback route for propertycard data
 Route::get('/propertycard/data-fallback', function() {
@@ -507,7 +498,7 @@ Route::fallback(function () {
 Route:: get('/sectionaltitling/generate_bill_sub/{id?}', [ApplicationMotherController::class, 'GenerateBill2'])->name('sectionaltitling.generate_bill_sub');
  
 
-Route::get('/propertycard/record-details', [App\Http\Controllers\PropertyCardController::class, 'getRecordDetails'])->name('propertycard.getRecordDetails');
+ 
 
 
 // FileIndexing routes
