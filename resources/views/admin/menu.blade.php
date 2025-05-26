@@ -301,7 +301,7 @@
             <i data-lucide="globe" class="h-3.5 w-3.5 text-cyan-400"></i>
             <span>Online</span>
           </a>
-          <a href="/legal-search/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <a href="{{route('legalsearchreports.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('legalsearchreports.index') ? 'active' : '' }}">
             <i data-lucide="file-bar-chart" class="h-3.5 w-3.5 text-cyan-400"></i>
             <span>Legal Search Reports</span>
           </a>
@@ -365,11 +365,11 @@
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="lands">
-        <a href="/file-digital-registry/archive" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <a href="{{route('filearchive.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('filearchive.index') ? 'active' : '' }}">
           <i data-lucide="file-archive" class="h-4 w-4"></i>
           <span>File Digital Archive – Doc-WARE</span>
         </a>
-        <a href="/file-digital-registry/tracker" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <a href="{{route('filetracker.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200  {{ request()->routeIs('filetracker.index') ? 'active' : '' }}">a
           <i data-lucide="file-search" class="h-4 w-4"></i>
           <span>File Tracker/Tracking - RFID</span>
         </a>
@@ -395,7 +395,7 @@
             <a href="{{route('fileindexing.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('fileindexing.index') ? 'active' : '' }}">
               <span>File Indexing Assistant</span>
             </a>
-            <a href="/file-digital-registry/print-labels" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <a href="{{route('printlabel.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('printlabel.index') ? 'active' : '' }}">
               <span>Print File Labels</span>
             </a>
           </div>
@@ -409,7 +409,7 @@
           </div>
           
           <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="scanning">
-            <a href="/file-digital-registry/upload" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <a href="{{route('scanning.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('scanning.index') ? 'active' : '' }}">
               <i data-lucide="file-up" class="h-3.5 w-3.5"></i>
               <span>Upload</span>
             </a>
@@ -755,11 +755,11 @@
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="sltr">
-        <a href="/programmes/sltr/overview" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <a href="{{route('sltroverview.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sltroverview.index') ? 'active' : '' }}">
           <i data-lucide="file-text" class="h-4 w-4"></i>
           <span>Overview</span>
         </a>
-        <a href="/programmes/sltr/application" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <a href="{{route('sltrapplication.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sltrapplication.index') ? 'active' : '' }}">
           <i data-lucide="file-plus" class="h-4 w-4"></i>
           <span>Application</span>
         </a>

@@ -12,6 +12,13 @@ use App\Http\Controllers\FileIndexController;
 use App\Http\Controllers\PageTypingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyRecordController;
+use App\Http\Controllers\ScanningController;
+use App\Http\Controllers\FilearchiveController;
+use App\Http\Controllers\FileTrackerController;
+use App\Http\Controllers\SltroverviewController;
+use App\Http\Controllers\LegalsearchreportsController;
+use App\Http\Controllers\SltrApplicationController;
+use App\Http\Controllers\PrintLabelController;
 // Public routes
 Route::get('/custom-public', function () {
     return 'This is a public custom route';
@@ -146,5 +153,43 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/', [PropertyRecordController::class, 'store'])->name('store');
         Route::put('/{id}', [PropertyRecordController::class, 'update'])->name('update');
         Route::delete('/{id}', [PropertyRecordController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('scanning')->group(function () {
+        Route::get('/', [ScanningController::class, 'index'])->name('scanning.index');
+        Route::post('/upload', [ScanningController::class, 'upload'])->name('scanning.upload');
+        Route::get('/view/{id}', [ScanningController::class, 'view'])->name('scanning.view');
+        Route::delete('/delete/{id}', [ScanningController::class, 'delete'])->name('scanning.delete');
+    });
+
+    Route::prefix('filearchive')->group(function () {
+        Route::get('/', [FilearchiveController::class, 'index'])->name('filearchive.index');
+        Route::post('/upload', [FilearchiveController::class, 'upload'])->name('filearchive.upload');
+        Route::get('/view/{id}', [FilearchiveController::class, 'view'])->name('filearchive.view');
+        Route::delete('/delete/{id}', [FilearchiveController::class, 'delete'])->name('filearchive.delete');
+    });
+
+    Route::prefix('filetracker')->group(function () {
+        Route::get('/', [FileTrackerController::class, 'index'])->name('filetracker.index');
+        Route::post('/upload', [FileTrackerController::class, 'upload'])->name('filetracker.upload');
+        Route::get('/view/{id}', [FileTrackerController::class, 'view'])->name('filetracker.view');
+        Route::delete('/delete/{id}', [FileTrackerController::class, 'delete'])->name('filetracker.delete');
+    });
+
+    Route::prefix('sltroverview')->group(function () {
+        Route::get('/', [SltroverviewController::class, 'index'])->name('sltroverview.index');
+   
+    });
+
+    Route::prefix('legalsearchreports')->group(function () {
+        Route::get('/', [LegalsearchreportsController::class, 'index'])->name('legalsearchreports.index');
+    });
+
+    Route::prefix('sltrapplication')->group(function () {
+        Route::get('/', [SltrApplicationController::class, 'index'])->name('sltrapplication.index');
+    });
+
+    Route::prefix('printlabel')->group(function () {
+        Route::get('/', [PrintLabelController::class, 'index'])->name('printlabel.index');
     });
 });

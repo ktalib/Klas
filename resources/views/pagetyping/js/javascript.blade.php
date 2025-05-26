@@ -1,4 +1,13 @@
-  <script>
+<script>
+    // Add SweetAlert2 library
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof Swal === 'undefined') {
+            const sweetAlertScript = document.createElement('script');
+            sweetAlertScript.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+            document.head.appendChild(sweetAlertScript);
+        }
+    });
+
     // Initialize Lucide icons
     lucide.createIcons();
 
@@ -26,16 +35,48 @@
       processedPages: {}
     };
 
-    // Sample data
-        const samplePages = {
-            "FILE-2023-001": Array.from({ length: 5 }, (_, i) => `https://picsum.photos/seed/FILE-2023-001-${i+1}/800/600`),
-            "FILE-2023-002": Array.from({ length: 3 }, (_, i) => `https://picsum.photos/seed/FILE-2023-002-${i+1}/800/600`),
-            "FILE-2023-003": Array.from({ length: 2 }, (_, i) => `https://picsum.photos/seed/FILE-2023-003-${i+1}/800/600`),
-            "FILE-2023-004": Array.from({ length: 4 }, (_, i) => `https://picsum.photos/seed/FILE-2023-004-${i+1}/800/600`),
-            "FILE-2023-005": Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/FILE-2023-005-${i+1}/800/600`),
-            "FILE-2023-006": Array.from({ length: 3 }, (_, i) => `https://picsum.photos/seed/FILE-2023-006-${i+1}/800/600`),
-            "SCAN-EXAMPLE": Array.from({ length: 3 }, (_, i) => `https://picsum.photos/seed/SCAN-EXAMPLE-${i+1}/800/600`)
-        };
+    const samplePages = {
+      "FILE-2023-001": [
+        "{{ asset('storage/upload/dummy/1.jpg') }}",
+        "{{ asset('storage/upload/dummy/2.jpg') }}",
+        "{{ asset('storage/upload/dummy/3.jpg') }}",
+        "{{ asset('storage/upload/dummy/4.jpg') }}",
+        "{{ asset('storage/upload/dummy/5.jpg') }}"
+      ],
+      "FILE-2023-002": [
+        "{{ asset('storage/upload/dummy/1.jpg') }}",
+        "{{ asset('storage/upload/dummy/2.jpg') }}",
+        "{{ asset('storage/upload/dummy/3.jpg') }}"
+      ],
+      "FILE-2023-003": [
+        "{{ asset('storage/upload/dummy/1.jpg') }}",
+        "{{ asset('storage/upload/dummy/2.jpg') }}"
+      ],
+      "FILE-2023-004": [
+        "{{ asset('storage/upload/dummy/1.jpg') }}",
+        "{{ asset('storage/upload/dummy/2.jpg') }}",
+        "{{ asset('storage/upload/dummy/3.jpg') }}",
+        "{{ asset('storage/upload/dummy/4.jpg') }}"
+      ],
+      "FILE-2023-005": [
+        "{{ asset('storage/upload/dummy/1.jpg') }}",
+        "{{ asset('storage/upload/dummy/2.jpg') }}",
+        "{{ asset('storage/upload/dummy/3.jpg') }}",
+        "{{ asset('storage/upload/dummy/4.jpg') }}",
+        "{{ asset('storage/upload/dummy/5.jpg') }}",
+        "{{ asset('storage/upload/dummy/6.jpg') }}"
+      ],
+      "FILE-2023-006": [
+        "{{ asset('storage/upload/dummy/1.jpg') }}",
+        "{{ asset('storage/upload/dummy/2.jpg') }}",
+        "{{ asset('storage/upload/dummy/3.jpg') }}"
+      ],
+      "SCAN-EXAMPLE": [
+        "{{ asset('storage/upload/dummy/1.jpg') }}",
+        "{{ asset('storage/upload/dummy/2.jpg') }}",
+        "{{ asset('storage/upload/dummy/3.jpg') }}"
+      ]
+    };
 
     // Sample data for pending typing files
     const pendingFiles = [
@@ -1063,7 +1104,12 @@
       if (!file) return;
 
       // In a real app, this would save the content to a database
-      alert(`Content for page ${state.currentPage} of ${file.name} saved successfully!`);
+      Swal.fire({
+        title: 'Success!',
+        text: `Content for page ${state.currentPage} of ${file.name} saved successfully!`,
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
 
       // Update progress
       const newProgress = (state.currentPage / file.pages) * 100;
@@ -1077,7 +1123,12 @@
         state.currentPage++;
       } else {
         // If all pages are completed, go back to file list
-        alert("All pages completed! Returning to file list.");
+        Swal.fire({
+          title: 'Complete!',
+          text: 'All pages completed! Returning to file list.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
         state.selectedFile = null;
         state.activeTab = "completed";
       }
@@ -1130,7 +1181,12 @@
       } else {
         // In normal mode, submit immediately
         // In a real app, this would save the page type and subtype to the database
-        alert(`Page ${state.selectedPageInFolder + 1} processed with code: ${pageCode}`);
+        Swal.fire({
+          title: 'Page Processed',
+          text: `Page ${state.selectedPageInFolder + 1} processed with code: ${pageCode}`,
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
 
         // Store the processed page information
         state.processedPages = {
@@ -1169,7 +1225,12 @@
         const pageCount = Object.keys(state.batchTypedPages).length;
         // Extract just the person's name from the file name (removing document type)
         const personName = file.name.includes(" - ") ? file.name.split(" - ")[1] : file.name;
-        alert(`Successfully submitted ${pageCount} pages as a batch for ${file.fileNumber} - ${personName}!`);
+        Swal.fire({
+          title: 'Batch Submitted',
+          text: `Successfully submitted ${pageCount} pages as a batch for ${file.fileNumber} - ${personName}!`,
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
 
         // Reset batch mode
         state.batchMode = false;
