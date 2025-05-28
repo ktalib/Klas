@@ -1,4 +1,4 @@
- <!-- JavaScript -->
+<!-- JavaScript -->
   <script>
     // Initialize Lucide icons
     lucide.createIcons();
@@ -112,14 +112,12 @@
     
     // Function to toggle select all
     function toggleSelectAll() {
-      const selectAllCheckbox = document.getElementById('select-all-checkbox');
-      
       if (selectedFiles.length === pendingFiles.length) {
+        // If all files are already selected, deselect all
         selectedFiles = [];
-        selectAllCheckbox.checked = false;
       } else {
+        // Otherwise, select all files
         selectedFiles = pendingFiles.map(file => file.id);
-        selectAllCheckbox.checked = true;
       }
       
       renderPendingFiles();
@@ -560,6 +558,10 @@
     // Render pending files
     function renderPendingFiles() {
       pendingFilesList.innerHTML = '';
+      
+      // Update the "Select All" checkbox state
+      const selectAllCheckbox = document.getElementById('select-all-checkbox');
+      selectAllCheckbox.checked = pendingFiles.length > 0 && selectedFiles.length === pendingFiles.length;
       
       pendingFiles.forEach(file => {
         const isSelected = selectedFiles.includes(file.id);

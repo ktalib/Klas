@@ -62,7 +62,7 @@
 
     // State management
     let selectedFiles = [];
-    let labelFormat = 'barcode';
+    let labelFormat = 'qrcode';
     let activeTab = 'files';
     let batchMode = false;
     let batchStartNumber = 1;
@@ -258,32 +258,26 @@
         return canvas;
     }
 
-    function generateQRCode(text, size = 120) {
-        const canvas = document.createElement('canvas');
-        canvas.width = size;
-        canvas.height = size;
+    function generateQRCode(text, size = 150) {
+        // Create an image element instead of canvas
+        const img = document.createElement('img');
         
-        try {
-            QRCode.toCanvas(canvas, text, {
-                width: size,
-                margin: 2,
-                color: {
-                    dark: '#000000',
-                    light: '#FFFFFF'
-                }
-            });
-        } catch (error) {
-            // Fallback if QR code generation fails
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, size, size);
-            ctx.fillStyle = '#fff';
-            ctx.font = '12px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('QR', size / 2, size / 2);
-        }
+        // Use the QR code API URL
+        const encodedText = encodeURIComponent(text);
+        img.src = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodedText}`;
         
-        return canvas;
+        // Set size attributes
+        img.width = size;
+        img.height = size;
+        
+        // Add styling
+        img.style.maxWidth = '100%';
+        img.style.height = 'auto';
+        
+        // Add alt text for accessibility
+        img.alt = `QR Code for ${text}`;
+        
+        return img;
     }
 
     function updatePreview() {
@@ -377,7 +371,7 @@
 
     function resetForm() {
         selectedFiles = [];
-        labelFormat = 'barcode';
+        labelFormat = 'qrcode';
         batchMode = false;
         batchStartNumber = 1;
         batchCount = 10;
@@ -392,8 +386,8 @@
         elements.batchCount.value = '10';
         elements.copiesInput.value = '1';
         elements.searchInput.value = '';
-        elements.formatBarcode.classList.add('selected');
-        elements.formatQrcode.classList.remove('selected');
+        elements.formatBarcode.classList.remove('selected');
+        elements.formatQrcode.classList.add('selected');
         elements.advancedOptions.classList.add('hidden');
         elements.advancedOptionsBtn.textContent = 'Show Advanced';
         
@@ -522,7 +516,7 @@
     // Global function for file selection (called from HTML)
     window.toggleFileSelection = toggleFileSelection;
 
-    // Initialize the page
+    // Initialize the page - simplify since we don't need QR library check
     function init() {
         renderFilesList();
         updateCounts();
@@ -531,4 +525,12 @@
 
     // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', init);
+
+    // Additional initialization when window is fully loaded
+    window.addEventListener('load', function() {
+        // If we're on the preview tab, update it
+        if (activeTab === 'preview') {
+            updatePreview();
+        }
+    });
 </script>

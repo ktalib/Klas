@@ -22,53 +22,6 @@
       color: #111827;
       background-color: #f9fafb;
     }
-     
-    .watermark {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-45deg);
-      font-size: 80px;
-      color: #cccccc;
-      opacity: 0.2;
-      z-index: 0;
-      white-space: nowrap;
-      pointer-events: none;
-    }
-    
-    /* Print styles */
-    @media print {
-      body * {
-        visibility: hidden;
-      }
-      
-      .print-div, .print-div * {
-        visibility: visible;
-      }
-      
-      .print-div {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-      }
-      
-      .watermark {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(-45deg);
-        font-size: 80px;
-        color: #cccccc;
-        opacity: 0.2;
-        z-index: 0;
-        white-space: nowrap;
-      }
-      
-      button, .hidden-print {
-        display: none !important;
-      }
-    }
     
     /* Custom components */
     .badge {
@@ -519,28 +472,26 @@
             <p class="text-sm text-gray-500 mb-4">Historical transactions associated with this file</p>
             
             <div class="tabs border-b mb-6">
-              <button class="tab active" data-tab="property-history">Property History</button>
-              <button class="tab" data-tab="instrument-registration">Instrument Registration</button>
+              <button class="tab active" data-tab="property-transactions">Property Transactions</button>
+              <button class="tab" data-tab="property-history">Property History</button>
+              {{-- <button class="tab" data-tab="instrument-registration">Instrument Registration</button>  {{-- <button class="tab" data-tab="instrument-registration">Instrument Registration</button> --}}
               <button class="tab" data-tab="cofo">CofO</button>
             </div>
 
-            <div id="property-history-tab" class="tab-content active">
+            <div id="property-transactions-tab" class="tab-content active">
               <div class="overflow-x-auto">
                 <table class="w-full">
                   <thead>
                     <tr>
                       <th>Date</th>
                       <th>Transaction Type</th>
-                      <th>Grantor/Authority</th>
-                      <th>Grantee/Recipient</th>
-                      <th>Document No.</th>
-                      <th>Size</th>
+                      <th>Guarantor</th>
+                      <th>Guarantee</th>
                       <th>Caveat</th>
-                      <th>Comments</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
-                  <tbody id="property-history-table">
+                  <tbody id="property-transactions-table">
                     <!-- Will be populated dynamically -->
                   </tbody>
                 </table>
@@ -552,6 +503,26 @@
                   </svg>
                   View Detailed Records
                 </button>
+              </div>
+            </div>
+
+            <div id="property-history-tab" class="tab-content">
+              <div class="overflow-x-auto">
+                <table class="w-full">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Event</th>
+                      <th>Authority</th>
+                      <th>Recipient</th>
+                      <th>Document No.</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="property-history-table">
+                    <!-- Will be populated dynamically -->
+                  </tbody>
+                </table>
               </div>
             </div>
 
@@ -607,15 +578,14 @@
             <h2 class="text-2xl font-bold">Legal Search Report</h2>
             <p class="text-gray-500" id="report-subtitle">Official search report for file <span id="report-file-reference"></span></p>
           </div>
-           {{-- <div class="watermark">FOR OFFICE USE ONLY</div>   --}}
-          <div class="flex items-center gap-2 hidden-print">
+          <div class="flex items-center gap-2">
             <button id="back-to-file-details-btn" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               Back to File Details
             </button>
-            <button id="print-report-btn" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+            <button id="print-report-btn" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" disabled>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
               </svg>
@@ -624,7 +594,7 @@
           </div>
         </div>
 
-        <div class="space-y-6 print-div">
+        <div class="space-y-6">
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
             <div class="p-6">
               <!-- Report Header -->
@@ -899,8 +869,9 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Delete Confirmation Dialog (initially hidden) -->
+  <!-- Delete Confirmation Dialog (initially hidden) -->
   <div id="delete-confirm-dialog" class="hidden modal-overlay">
     <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
       <h3 class="text-lg font-semibold mb-2">Confirm Deletion</h3>
@@ -1163,7 +1134,7 @@
             propertyDescription: "Residential property at Fagge North District",
             registeredBy: "Chief Registry Officer",
             caveat: "No"
-          } 
+          }
         ],
         cofoRecords: [
           {
@@ -1610,7 +1581,7 @@
           <td class="p-2 text-sm font-medium ${file.caveat === 'Yes' ? 'text-red-600' : ''}">${file.caveat}</td>
           <td class="p-2 text-sm">
             <button class="view-file-btn inline-flex items-center px-2 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50" data-id="${file.id}">
-                           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0  5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
               </svg>
               View Records
@@ -1730,68 +1701,66 @@
         });
       });
       
-      // Default to property history tab
-      switchTab('property-history');
+      // Default to property transactions tab
+      switchTab('property-transactions');
     };
     
     // Render all transaction tables
     const renderTransactionTables = () => {
-      // Property History (merged view of transactions and history)
+      // Property Transactions
+      const propertyTransactionsTable = document.getElementById('property-transactions-table');
+      propertyTransactionsTable.innerHTML = '';
+      
+      if (selectedFile.history && selectedFile.history.length > 0) {
+        selectedFile.history.forEach(transaction => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${transaction.date}</td>
+            <td>${transaction.transactionType}</td>
+            <td>${transaction.guarantor}</td>
+            <td>${transaction.guarantee}</td>
+            <td class="${transaction.caveat === 'Yes' ? 'text-red-600 font-medium' : ''}">${transaction.caveat}</td>
+            <td>
+              <div class="flex space-x-2">
+                <button class="edit-action">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                </button>
+                <button class="delete-action">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          `;
+          propertyTransactionsTable.appendChild(row);
+        });
+      } else {
+        propertyTransactionsTable.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center py-4 text-gray-500">No property transactions found.</td>
+          </tr>
+        `;
+      }
+      
+      // Property History
       const propertyHistoryTable = document.getElementById('property-history-table');
       propertyHistoryTable.innerHTML = '';
       
-      // Create a combined array of history items
-      const combinedHistory = [];
-      
-      // Add items from history array (previously property transactions)
-      if (selectedFile.history && selectedFile.history.length > 0) {
-        selectedFile.history.forEach(transaction => {
-          combinedHistory.push({
-            date: transaction.date,
-            transactionType: transaction.transactionType,
-            grantor: transaction.guarantor,
-            grantee: transaction.guarantee,
-            documentNo: '-',
-            size: transaction.size || 'N/A',
-            caveat: transaction.caveat,
-            comments: transaction.comments || 'N/A',
-            isTransaction: true
-          });
-        });
-      }
-      
-      // Add items from propertyHistory array
       if (selectedFile.propertyHistory && selectedFile.propertyHistory.length > 0) {
         selectedFile.propertyHistory.forEach(history => {
-          combinedHistory.push({
-            date: history.date,
-            transactionType: history.event,
-            grantor: history.authority,
-            grantee: history.recipient,
-            documentNo: history.documentNo,
-            size: history.size || 'N/A',
-            caveat: '-',
-            comments: history.comments || 'N/A',
-            isTransaction: false
-          });
-        });
-      }
-      
-      // Sort the combined history by date (newest first)
-      combinedHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
-      
-      if (combinedHistory.length > 0) {
-        combinedHistory.forEach(item => {
           const row = document.createElement('tr');
           row.innerHTML = `
-            <td>${item.date}</td>
-            <td>${item.transactionType}</td>
-            <td>${item.grantor}</td>
-            <td>${item.grantee}</td>
-            <td>${item.documentNo}</td>
-            <td>${item.size}</td>
-            <td class="${item.caveat === 'Yes' ? 'text-red-600 font-medium' : ''}">${item.caveat}</td>
-            <td>${item.comments}</td>
+            <td>${history.date}</td>
+            <td>${history.event}</td>
+            <td>${history.authority}</td>
+            <td>${history.recipient}</td>
+            <td>${history.documentNo}</td>
             <td>
               <div class="flex space-x-2">
                 <button class="edit-action">
@@ -1815,12 +1784,10 @@
       } else {
         propertyHistoryTable.innerHTML = `
           <tr>
-            <td colspan="9" class="text-center py-4 text-gray-500">No property history records found.</td>
+            <td colspan="6" class="text-center py-4 text-gray-500">No property history records found.</td>
           </tr>
         `;
       }
-      
-      // Remove the property-transactions-tab related code since we merged it
       
       // Instrument Registration
       const instrumentRegistrationTable = document.getElementById('instrument-registration-table');
@@ -1923,7 +1890,6 @@
       document.getElementById(`${tabName}-tab`).classList.add('active');
     };
 
-    // Default to property history tab instead of property transactions
     // Back to dashboard from file history view
     document.getElementById('back-to-dashboard-btn').addEventListener('click', () => {
       fileHistoryView.classList.add('hidden');
@@ -2179,10 +2145,7 @@
 
     // Print report
     printReportBtn.addEventListener('click', () => {
-      // Add a small delay to ensure the report is fully rendered
-      setTimeout(() => {
-        window.print();
-      }, 200);
+      window.print();
     });
 
     // Render legal search report

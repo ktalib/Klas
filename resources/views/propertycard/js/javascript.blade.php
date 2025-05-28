@@ -278,6 +278,43 @@
                         if (leaseFields) leaseFields.classList.add('hidden');
                         if (defaultFields) defaultFields.classList.add('hidden');
                         
+                        // Handle "Other" transaction type
+                        const otherTransactionDiv = document.getElementById('other-transaction-type');
+                        const otherTransactionInput = document.getElementById('otherTransactionType');
+                        
+                        if (selectedType === 'Other') {
+                            if (otherTransactionDiv) {
+                                otherTransactionDiv.classList.remove('hidden');
+                                if (otherTransactionInput) {
+                                    otherTransactionInput.required = true;
+                                }
+                            }
+                        } else {
+                            if (otherTransactionDiv) {
+                                otherTransactionDiv.classList.add('hidden');
+                                if (otherTransactionInput) {
+                                    otherTransactionInput.required = false;
+                                    otherTransactionInput.value = '';
+                                }
+                            }
+                        }
+                        
+                        // Auto-fill Grantor for government transactions
+                        const grantorField = document.getElementById('grantor-record');
+                        if (selectedType === 'Certificate of Occupancy' || selectedType === 'Right Of Occupancy') {
+                            if (grantorField) {
+                                grantorField.value = 'KANO STATE GOVERNMENT';
+                                grantorField.readOnly = true;
+                                grantorField.classList.add('bg-gray-100');
+                            }
+                        } else {
+                            if (grantorField) {
+                                grantorField.value = '';
+                                grantorField.readOnly = false;
+                                grantorField.classList.remove('bg-gray-100');
+                            }
+                        }
+                        
                         // If no transaction type selected, hide the entire section
                         if (!selectedType) {
                             if (transactionSpecificFields) transactionSpecificFields.classList.add('hidden');
@@ -288,20 +325,41 @@
                         if (transactionSpecificFields) transactionSpecificFields.classList.remove('hidden');
                         
                         // Show the appropriate field set based on transaction type
-                        if (selectedType === 'assignment' && assignmentFields) {
+                        if (selectedType === 'Assignment' && assignmentFields) {
                             assignmentFields.classList.remove('hidden');
                         } 
-                        else if (selectedType === 'mortgage' && mortgageFields) {
+                        else if (selectedType === 'Mortgage' && mortgageFields) {
                             mortgageFields.classList.remove('hidden');
                         }
-                        else if (selectedType === 'surrender' && surrenderFields) {
+                        else if (selectedType === 'Surrender' && surrenderFields) {
                             surrenderFields.classList.remove('hidden');
                         }
-                        else if (['sublease', 'lease', 'sub-under-lease'].includes(selectedType) && leaseFields) {
+                        else if (['Sub-Lease', 'lease', 'sub-under-lease'].includes(selectedType) && leaseFields) {
                             leaseFields.classList.remove('hidden');
                         }
+                        else if (selectedType === 'Other') {
+                            // For "Other" transaction type, don't show any specific fields initially
+                            // Default fields will be shown/hidden based on custom type input
+                        }
                         else if (defaultFields) {
-                            // For any other transaction type, show the default fields
+                            // For Certificate of Occupancy, Right Of Occupancy, and other transaction types, show the default fields
+                            defaultFields.classList.remove('hidden');
+                        }
+                    });
+                }
+                
+                // Add event listener for "Other" transaction type input
+                const otherTransactionInput = document.getElementById('otherTransactionType');
+                if (otherTransactionInput) {
+                    otherTransactionInput.addEventListener('input', function() {
+                        const customType = this.value.trim();
+                        const defaultFields = document.getElementById(defaultFieldsId);
+                        
+                        if (customType && defaultFields) {
+                            // Hide Grantor and Grantee fields when custom type is specified
+                            defaultFields.classList.add('hidden');
+                        } else if (defaultFields) {
+                            // Show Grantor and Grantee fields when custom type is cleared
                             defaultFields.classList.remove('hidden');
                         }
                     });
@@ -856,7 +914,7 @@
                             }
                             return response.json();
                         })
-                        .then(data => {
+                        .then((data) => {
                             if (data.status === 'success') {
                                 Swal.fire(
                                     'Deleted!',
@@ -960,4 +1018,5 @@
 
             console.log('JavaScript initialization complete');
         });
+
     </script>

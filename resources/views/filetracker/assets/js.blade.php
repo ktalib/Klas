@@ -154,98 +154,98 @@
     }
     
     // Print tracking sheet
-    $('.print-tracking-btn').click(function() {
-      // Create a print window with file details
-      const fileId = $('.file-details h2 + p').text();
-      const fileNumber = $('.file-details .text-xs.font-medium:contains("RES")').text();
+    // $('.print-tracking-btn').click(function() {
+    //   // Create a print window with file details
+    //   const fileId = $('.file-details h2 + p').text();
+    //   const fileNumber = $('.file-details .text-xs.font-medium:contains("RES")').text();
       
-      const printWindow = window.open('', '_blank');
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>File Tracking Sheet - ${fileId}</title>
-            <style>
-              body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-              h1 { font-size: 18px; margin-bottom: 10px; }
-              .header { display: flex; justify-content: space-between; border-bottom: 2px solid #333; padding-bottom: 10px; }
-              .details { margin: 20px 0; }
-              .info-row { display: flex; margin-bottom: 5px; }
-              .info-label { width: 150px; color: #666; }
-              .info-value { font-weight: bold; }
-              .qr-img { border: 1px solid #ddd; padding: 10px; text-align: center; }
-              table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-              th { background-color: #f2f2f2; }
-            </style>
-          </head>
-          <body>
-            <div class="header">
-              <h1>File Tracking Sheet</h1>
-              <div>ID: ${fileId}</div>
-            </div>
-            <div class="details">
-              <div class="info-row">
-                <div class="info-label">File Number:</div>
-                <div class="info-value">${fileNumber}</div>
-              </div>
-              <div class="info-row">
-                <div class="info-label">Current Location:</div>
-                <div class="info-value">Customer Care Unit</div>
-              </div>
-              <div class="info-row">
-                <div class="info-label">Current Handler:</div>
-                <div class="info-value">Aisha Mohammed</div>
-              </div>
-              <div class="info-row">
-                <div class="info-label">RFID Tag:</div>
-                <div class="info-value">RFID-00125478</div>
-              </div>
-            </div>
-            <table>
-              <tr>
-                <th>Date</th>
-                <th>Location</th>
-                <th>Handler</th>
-                <th>Comment</th>
-                <th>Signature</th>
-              </tr>
-              <tr>
-                <td>2023-06-15</td>
-                <td>Reception</td>
-                <td>Fatima Usman</td>
-                <td>File received and registered</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>2023-06-15</td>
-                <td>Customer Care Unit</td>
-                <td>Aisha Mohammed</td>
-                <td>File assigned for processing</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-            </table>
-          </body>
-        </html>
-      `);
-      printWindow.document.close();
-      setTimeout(() => {
-        printWindow.print();
-      }, 500);
-    });
+    //   const printWindow = window.open('', '_blank');
+    //   printWindow.document.write(`
+    //     <html>
+    //       <head>
+    //         <title>File Tracking Sheet - ${fileId}</title>
+    //         <style>
+    //           body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+    //           h1 { font-size: 18px; margin-bottom: 10px; }
+    //           .header { display: flex; justify-content: space-between; border-bottom: 2px solid #333; padding-bottom: 10px; }
+    //           .details { margin: 20px 0; }
+    //           .info-row { display: flex; margin-bottom: 5px; }
+    //           .info-label { width: 150px; color: #666; }
+    //           .info-value { font-weight: bold; }
+    //           .qr-img { border: 1px solid #ddd; padding: 10px; text-align: center; }
+    //           table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+    //           th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    //           th { background-color: #f2f2f2; }
+    //         </style>
+    //       </head>
+    //       <body>
+    //         <div class="header">
+    //           <h1>File Tracking Sheet</h1>
+    //           <div>ID: ${fileId}</div>
+    //         </div>
+    //         <div class="details">
+    //           <div class="info-row">
+    //             <div class="info-label">File Number:</div>
+    //             <div class="info-value">${fileNumber}</div>
+    //           </div>
+    //           <div class="info-row">
+    //             <div class="info-label">Current Location:</div>
+    //             <div class="info-value">Customer Care Unit</div>
+    //           </div>
+    //           <div class="info-row">
+    //             <div class="info-label">Current Handler:</div>
+    //             <div class="info-value">Aisha Mohammed</div>
+    //           </div>
+    //           <div class="info-row">
+    //             <div class="info-label">RFID Tag:</div>
+    //             <div class="info-value">RFID-00125478</div>
+    //           </div>
+    //         </div>
+    //         <table>
+    //           <tr>
+    //             <th>Date</th>
+    //             <th>Location</th>
+    //             <th>Handler</th>
+    //             <th>Comment</th>
+    //             <th>Signature</th>
+    //           </tr>
+    //           <tr>
+    //             <td>2023-06-15</td>
+    //             <td>Reception</td>
+    //             <td>Fatima Usman</td>
+    //             <td>File received and registered</td>
+    //             <td></td>
+    //           </tr>
+    //           <tr>
+    //             <td>2023-06-15</td>
+    //             <td>Customer Care Unit</td>
+    //             <td>Aisha Mohammed</td>
+    //             <td>File assigned for processing</td>
+    //             <td></td>
+    //           </tr>
+    //           <tr>
+    //             <td></td>
+    //             <td></td>
+    //             <td></td>
+    //             <td></td>
+    //             <td></td>
+    //           </tr>
+    //           <tr>
+    //             <td></td>
+    //             <td></td>
+    //             <td></td>
+    //             <td></td>
+    //             <td></td>
+    //           </tr>
+    //         </table>
+    //       </body>
+    //     </html>
+    //   `);
+    //   printWindow.document.close();
+    //   setTimeout(() => {
+    //     printWindow.print();
+    //   }, 500);
+    // });
     
     // Search functionality
     $('#search-input').on('keyup', function() {

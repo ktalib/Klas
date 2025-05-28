@@ -221,7 +221,7 @@
           <i data-lucide="file-input" class="h-4 w-4 text-amber-500"></i>
           <span>Instrument Capture</span>
         </a>
-        <a href="/instrument-registration" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <a href="{{route('instrument_registration.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('instrument_registration.index') ? 'active' : '' }}">
           <i data-lucide="book-open" class="h-4 w-4 text-amber-500"></i>
           <span>Instrument Registration</span>
         </a>
@@ -293,11 +293,11 @@
             <i data-lucide="file-check-2" class="h-3.5 w-3.5 text-cyan-400"></i>
             <span>Official (for filing purpose)</span>
           </a>
-          <a href="/legal-search/on-premise" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <a href="{{route('onpremise.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('onpremise.index') ? 'active' : '' }}">
             <i data-lucide="building" class="h-3.5 w-3.5 text-cyan-400"></i>
             <span>On-Premise</span>
           </a>
-          <a href="/legal-search/online" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <a href="http://search.klas.com.ng/public/legal-search" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200" target="_blank">
             <i data-lucide="globe" class="h-3.5 w-3.5 text-cyan-400"></i>
             <span>Online</span>
           </a>
@@ -365,13 +365,15 @@
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="lands">
-        <a href="{{route('filearchive.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('filearchive.index') ? 'active' : '' }}">
-          <i data-lucide="file-archive" class="h-4 w-4"></i>
-          <span>File Digital Archive – Doc-WARE</span>
-        </a>
-        <a href="{{route('filetracker.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200  {{ request()->routeIs('filetracker.index') ? 'active' : '' }}">a
+       
+        <a href="{{route('filetracker.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200  {{ request()->routeIs('filetracker.index') ? 'active' : '' }}">
           <i data-lucide="file-search" class="h-4 w-4"></i>
           <span>File Tracker/Tracking - RFID</span>
+        </a>
+
+         <a href="{{route('filearchive.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('filearchive.index') ? 'active' : '' }}">
+          <i data-lucide="file-archive" class="h-4 w-4"></i>
+          <span>File Digital Archive – Doc-WARE</span>
         </a>
         
         <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="edms">

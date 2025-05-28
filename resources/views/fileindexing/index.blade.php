@@ -72,7 +72,7 @@
           <div class="border rounded-md">
             <div class="flex justify-between items-center p-4 border-b bg-gray-50">
               <div class="flex items-center">
-                <input type="checkbox" id="select-all-checkbox" class="mr-2" onclick="toggleSelectAll()">
+                <input type="checkbox" id="select-all-checkbox" class="mr-2">
                 <label for="select-all-checkbox" class="text-sm font-medium">Select All</label>
               </div>
               <div class="flex items-center">

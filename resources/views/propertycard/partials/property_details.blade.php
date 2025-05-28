@@ -8,7 +8,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-2">
                         <path d="M12 5v14M5 12h14"></path>
                     </svg>
-                    Add New Property
+                    Add New Property Record
                 </button>
             </div>
         </div>
@@ -21,7 +21,7 @@
                         <div class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center mb-3">
                             <span class="text-blue-600 text-xl">+</span>
                         </div>
-                        <h3 class="text-lg font-medium text-center">Add New Property</h3>
+                        <h3 class="text-lg font-medium text-center">Add New Property Record</h3>
                         <p class="text-sm text-gray-500 text-center mt-1">Create a new property record</p>
                     </div>
                 </div>
@@ -116,7 +116,7 @@
                 </div>
                 @empty
                 <div class="border rounded-lg shadow-sm p-6 text-center col-span-3">
-                    <p class="text-gray-500">No property records found. Click "Add New Property" to create one.</p>
+                    <p class="text-gray-500">No property records found. Click "Add New Property Record" to create one.</p>
                 </div>
                 @endforelse
             </div>

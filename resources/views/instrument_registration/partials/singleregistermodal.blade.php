@@ -2,22 +2,22 @@
 <div id="singleRegisterModal" class="modal">
   <div class="modal-content max-w-4xl" style="width: 90%; max-width: 800px;">
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-lg font-semibold">Transfer of Sectional Title</h2>
+      <h2 class="text-lg font-semibold">Register Instrument</h2>
       <button onclick="closeSingleRegisterModal()" class="text-gray-500 hover:text-gray-700">
         <i class="fas fa-times"></i>
       </button>
     </div>
-    <p class="text-gray-500 mb-6">Select a verified properties from the sectional title scheme for sectional title transfer.</p>
+    <p class="text-gray-500 mb-6">Register a new instrument in the system.</p>
     
-    <!-- Unit Search Section -->
+    <!-- Instrument Search Section -->
     <div id="unitSearchSection">
       <div class="flex gap-2 items-center mb-4">
         <div class="flex-1 relative">
           <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
-          <input type="search" placeholder="Search for a unit..." class="w-full pl-8 pr-3 py-2 border rounded-md" id="unitSearchInput">
+          <input type="search" placeholder="Search for an instrument..." class="w-full pl-8 pr-3 py-2 border rounded-md" id="unitSearchInput">
         </div>
         <select class="border rounded-md px-3 py-2" id="unitSearchFilter">
-          <option value="stmRef">ST FileNo</option>
+          <option value="fileNo">File No</option>
         </select>
       </div>
 
@@ -26,16 +26,13 @@
           <thead class="bg-gray-50">
             <tr>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ST FIleNo
+                File No
               </th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Unit
+                Grantor
               </th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Block
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Owner
+                Grantee
               </th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Status
@@ -48,10 +45,9 @@
           <tbody class="bg-white divide-y divide-gray-200" id="unitSearchResults">
             <!-- Will be populated by JavaScript -->
             <tr>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">STM-2024-001</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">101</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">A</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">Fatima Ahmed</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">MLS-2024-001</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm">John Doe</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm">Jane Smith</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm">
                 <span class="badge badge-registered">Verified</span>
               </td>
@@ -59,117 +55,114 @@
                 <button class="bg-blue-600 text-white px-3 py-1 rounded-md text-sm" onclick="selectUnit(0)">Select</button>
               </td>
             </tr>
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">STM-2024-001</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">102</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">A</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">Musa Ibrahim</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">
-                <span class="badge badge-registered">Verified</span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                <button class="bg-blue-600 text-white px-3 py-1 rounded-md text-sm" onclick="selectUnit(1)">Select</button>
-              </td>
-            </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Unit Details Section -->
+    <!-- Instrument Details Section -->
     <div id="unitDetailsSection" class="hidden">
       <!-- Property Details Overview -->
       <div class="bg-gray-50 p-4 rounded-lg space-y-4 mb-6">
         <div class="flex items-center justify-between">
-          <h3 class="font-medium">Selected Instrument  Details</h3>
-          {{-- <button class="text-gray-500 hover:text-gray-700 text-sm" onclick="backToUnitSearch()">
+          <h3 class="font-medium">Selected Instrument Details</h3>
+          <button class="text-gray-500 hover:text-gray-700 text-sm" onclick="backToUnitSearch()">
             Change
-          </button> --}}
+          </button>
         </div>
 
         <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
           <div>
-            <span class="text-gray-500">ST FileNo:</span>
-            <span class="ml-2 font-medium" id="selectedStmRef">STM-2024-001</span>
+            <span class="text-gray-500">File No:</span>
+            <span class="ml-2 font-medium" id="selectedFileNo">MLS-2024-001</span>
           </div>
           <div>
-            <span class="text-gray-500">Property:</span>
-            <span class="ml-2 font-medium" id="selectedProperty">Love Court Estate</span>
-          </div>
-          <div>
-            <span class="text-gray-500">Number of Units:</span>
-            <span class="ml-2 font-medium" id="selectedUnitNo">101</span>
-          </div>
-          <div>
-            <span class="text-gray-500">Number of Block:</span>
-            <span class="ml-2 font-medium" id="selectedBlockNo">A</span>
-          </div>
-           
-        
-          <div style="display: none;">
-            <span class="text-gray-500">Unit Size:</span>
-            <span class="ml-2 font-medium" id="selectedUnitSize">75 sq.m</span>
-          </div>
-         
-           
-         
-          <div>
-            <span class="text-gray-500">Number of Sections:</span>
-            <span class="ml-2 font-medium" id="selectedSectionNo">0</span>
+            <span class="text-gray-500">Property Description:</span>
+            <span class="ml-2 font-medium" id="selectedProperty">3 Bedroom Flat</span>
           </div>
         </div>
       </div>
 
       <form id="singleRegistrationForm" class="space-y-6">
-        <input type="hidden" id="formMotherApplicationId" name="mother_application_id">
+        <input type="hidden" id="formInstrumentId" name="instrument_id">
         
-        <!-- Certificate Details Section -->
+        <!-- Instrument Details Section -->
         <div class="border-t border-b py-4">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">Certificate of Occupancy Details</h3>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Instrument Details</h3>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label for="sectionalTitleFileNo" class="block text-sm font-medium text-gray-700 mb-1">Sectional Title File No <span class="text-red-500">*</span></label>
-              <input type="text" id="sectionalTitleFileNo" name="sectional_title_file_no" class="w-full px-3 py-2 border rounded-md bg-gray-100" readonly required>
-              <div class="text-xs text-red-500 hidden" id="sectionalTitleFileNoError"></div>
+              <label for="instrumentType" class="block text-sm font-medium text-gray-700 mb-1">Instrument Type <span class="text-red-500">*</span></label>
+              <select id="instrumentType" name="instrument_type" class="w-full px-3 py-2 border rounded-md" required>
+                <option value="">Select Instrument Type</option>
+                <option value="assignment">Assignment</option>
+                <option value="mortgage">Mortgage</option>
+                <option value="lease">Lease</option>
+                <option value="sublease">Sub-Lease</option>
+                <option value="consent">Consent</option>
+                <option value="release">Release</option>
+                <option value="surrender">Surrender</option>
+                <option value="vesting">Vesting Order</option>
+                <option value="variation">Deed of Variation</option>
+                <option value="assent">Assent</option>
+                <option value="merger">Merger</option>
+              </select>
+              <div class="text-xs text-red-500 hidden" id="instrumentTypeError"></div>
             </div>
             
-            <div>
-              <label for="applicantName" class="block text-sm font-medium text-gray-700 mb-1">Applicant Name <span class="text-red-500">*</span></label>
-              <input type="text" id="applicantName" name="applicant_name" class="w-full px-3 py-2 border rounded-md bg-gray-100" readonly required>
-              <div class="text-xs text-red-500 hidden" id="applicantNameError"></div>
+            <div class="hidden">
+              <label for="duration" class="block text-sm font-medium text-gray-700 mb-1">Duration <span class="text-red-500">*</span></label>
+              <input type="number" id="duration" name="duration" class="w-full px-3 py-2 border rounded-md" min="1" max="99" required>
+              <div class="text-xs text-red-500 hidden" id="durationError"></div>
             </div>
           </div>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label for="tenurePeriod" class="block text-sm font-medium text-gray-700 mb-1">Tenure Period (Years) <span class="text-red-500">*</span></label>
-              <input type="number" id="tenurePeriod" name="tenure_period" class="w-full px-3 py-2 border rounded-md" min="1" max="99" required>
-              <div class="text-xs text-red-500 hidden" id="tenurePeriodError"></div>
+              <label for="grantor" class="block text-sm font-medium text-gray-700 mb-1">Grantor <span class="text-red-500">*</span></label>
+              <input type="text" id="grantor" name="grantor" class="w-full px-3 py-2 border rounded-md" required>
+              <div class="text-xs text-red-500 hidden" id="grantorError"></div>
             </div>
             
-            <div class="hidden" >
-              <label for="deedsTransfer" class="block text-sm font-medium text-gray-700 mb-1">Deeds Transfer</label>
-              <input type="text" id="deedsTransfer" name="deeds_transfer" class="w-full px-3 py-2 border rounded-md">
+            <div>
+              <label for="grantee" class="block text-sm font-medium text-gray-700 mb-1">Grantee <span class="text-red-500">*</span></label>
+              <input type="text" id="grantee" name="grantee" class="w-full px-3 py-2 border rounded-md" required>
+              <div class="text-xs text-red-500 hidden" id="granteeError"></div>
             </div>
           </div>
-        </div>
-        
-        <!-- Current Owner Details -->
-        <div class="border-b py-4" style="display: none;">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">Owner Information</h3>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label for="currentOwner" class="block text-sm font-medium text-gray-700 mb-1">Current Owner <span class="text-red-500">*</span></label>
-              <input type="text" id="currentOwner" name="current_owner" class="w-full px-3 py-2 border rounded-md" required>
-              <div class="text-xs text-red-500 hidden" id="currentOwnerError"></div>
+              <label for="lga" class="block text-sm font-medium text-gray-700 mb-1">LGA <span class="text-red-500">*</span></label>
+              <input type="text" id="lga" name="lga" class="w-full px-3 py-2 border rounded-md" required>
+              <div class="text-xs text-red-500 hidden" id="lgaError"></div>
             </div>
             
             <div>
-              <label for="occupation" class="block text-sm font-medium text-gray-700 mb-1">Occupation <span class="text-red-500">*</span></label>
-              <input type="text" id="occupation" name="occupation" class="w-full px-3 py-2 border rounded-md" required>
-              <div class="text-xs text-red-500 hidden" id="occupationError"></div>
+              <label for="district" class="block text-sm font-medium text-gray-700 mb-1">District <span class="text-red-500">*</span></label>
+              <input type="text" id="district" name="district" class="w-full px-3 py-2 border rounded-md" required>
+              <div class="text-xs text-red-500 hidden" id="districtError"></div>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="plotNumber" class="block text-sm font-medium text-gray-700 mb-1">Plot Number <span class="text-red-500">*</span></label>
+              <input type="text" id="plotNumber" name="plot_number" class="w-full px-3 py-2 border rounded-md" required>
+              <div class="text-xs text-red-500 hidden" id="plotNumberError"></div>
+            </div>
+            
+            <div>
+              <label for="plotSize" class="block text-sm font-medium text-gray-700 mb-1">Plot Size <span class="text-red-500">*</span></label>
+              <input type="text" id="plotSize" name="plot_size" class="w-full px-3 py-2 border rounded-md" required>
+              <div class="text-xs text-red-500 hidden" id="plotSizeError"></div>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 gap-4 mb-4 hidden">
+            <div>
+              <label for="plotDescription" class="block text-sm font-medium text-gray-700 mb-1">Plot Description</label>
+              <textarea id="plotDescription" name="plot_description" class="w-full px-3 py-2 border rounded-md" rows="3"></textarea>
             </div>
           </div>
         </div>
@@ -230,7 +223,7 @@
             Cancel
           </button>
           <button type="button" id="registerButton" class="bg-blue-600 text-white px-4 py-2 rounded-md" onclick="submitSingleRegistration()">
-            Register CofO
+            Register Instrument
           </button>
         </div>
       </form>

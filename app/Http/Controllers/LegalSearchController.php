@@ -11,7 +11,7 @@ class LegalSearchController extends Controller
 {
     public function index()
     { 
-        $PageTitle = 'Legal Search - On-Premise Official';
+        $PageTitle = 'Legal Search - Official (for filing purpose)';
         $PageDescription = '';
         $Main_application = DB::connection('sqlsrv')->table('dbo.mother_applications')->get();
         return view('legal_search.index', compact('Main_application', 'PageTitle', 'PageDescription'));

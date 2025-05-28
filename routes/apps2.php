@@ -19,6 +19,8 @@ use App\Http\Controllers\SltroverviewController;
 use App\Http\Controllers\LegalsearchreportsController;
 use App\Http\Controllers\SltrApplicationController;
 use App\Http\Controllers\PrintLabelController;
+use App\Http\Controllers\InstrumentRegistrationController;
+use App\Http\Controllers\OnPremiseController;
 // Public routes
 Route::get('/custom-public', function () {
     return 'This is a public custom route';
@@ -46,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
     
     
     Route::prefix('gis_record')->name('gis_record.')->group(function () {
-        Route::get('/', [GisController::class, 'index'])->name('index');
+        Route::get('/index', [GisController::class, 'index'])->name('index');
         Route::get('/create', [GisController::class, 'create'])->name('create');
         Route::post('/store', [GisController::class, 'store'])->name('store');
 
@@ -171,6 +173,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('filetracker')->group(function () {
         Route::get('/', [FileTrackerController::class, 'index'])->name('filetracker.index');
+        Route::get('/print', [FileTrackerController::class, 'print'])->name('filetracker.print');
         Route::post('/upload', [FileTrackerController::class, 'upload'])->name('filetracker.upload');
         Route::get('/view/{id}', [FileTrackerController::class, 'view'])->name('filetracker.view');
         Route::delete('/delete/{id}', [FileTrackerController::class, 'delete'])->name('filetracker.delete');
@@ -191,5 +194,33 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('printlabel')->group(function () {
         Route::get('/', [PrintLabelController::class, 'index'])->name('printlabel.index');
+    });
+
+
+    
+    Route::prefix('instrument_registration')->group(function () {
+        Route::get('/', [InstrumentRegistrationController::class, 'InstrumentRegistration'])->name('instrument_registration.index');
+        
+        // Fix generate route to point to generate method, not save
+        Route::get('/generate/{id}', [InstrumentRegistrationController::class, 'generate'])->name('instrument_registration.generate');
+        
+        // Save route (POST) 
+        Route::post('/save', [InstrumentRegistrationController::class, 'save'])->name('instrument_registration.save');
+        
+        // View route is correct but make sure it's accessible
+        Route::get('/view/{id}', [InstrumentRegistrationController::class, 'view'])->name('instrument_registration.view');
+
+        // New endpoints for direct Instrument registration
+        Route::get('/get-next-serial', [InstrumentRegistrationController::class, 'getNextSerialNumber'])->name('instrument_registration.get-next-serial');
+        Route::post('/register-single', [InstrumentRegistrationController::class, 'registerSingle'])->name('instrument_registration.register-single');
+        Route::post('/register-batch', [InstrumentRegistrationController::class, 'registerBatch'])->name('instrument_registration.register-batch');
+        Route::post('/decline', [InstrumentRegistrationController::class, 'declineRegistration'])->name('instrument_registration.decline');
+        
+        // Debug route
+        Route::get('/debug', [InstrumentRegistrationController::class, 'debug'])->name('instrument_registration.debug');
+    });
+
+    Route::prefix('onpremise')->group(function () {
+        Route::get('/', [OnPremiseController::class, 'index'])->name('onpremise.index');
     });
 });

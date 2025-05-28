@@ -22,25 +22,42 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
            
 
-            <!-- File Card 3 - with real image -->
+            <!-- File Card 3 - with document-style preview -->
             <div class="border rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer file-card" data-id="FILE-2023-003">
                 <div class="aspect-[3/4] bg-gray-100 relative">
-                    <!-- Document thumbnail with real image -->
-                    <div class="absolute inset-0 flex items-center justify-center bg-gray-50">
-                        <div class="w-full h-full relative">
-                            <img src="{{ asset('storage/upload/dummy/1.jpg') }}" alt="Kano Traders Association" class="w-full h-full object-cover" />
-                            <div class="absolute bottom-1 right-1">
-                                <svg class="w-8 h-8 text-blue-500 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M19.826 21.214H4.174A2.174 2.174 0 0 1 2 19.04V4.96c0-1.2.974-2.174 2.174-2.174h15.652A2.174 2.174 0 0 1 22 4.96v14.08a2.174 2.174 0 0 1-2.174 2.174M4.174 4.13a.83.83 0 0 0-.83.83v14.08c0 .458.372.83.83.83h15.652a.83.83 0 0 0 .83-.83V4.96a.83.83 0 0 0-.83-.83H4.174z"></path>
-                                </svg>
+                    <!-- Document cover with document-style preview -->
+                    <div class="absolute inset-0 flex flex-col bg-white">
+                        <div class="h-8 bg-red-500 flex items-center justify-between px-3">
+                            <div class="flex space-x-1">
+                                <div class="w-3 h-3 rounded-full bg-gray-200 opacity-70"></div>
+                                <div class="w-3 h-3 rounded-full bg-gray-200 opacity-70"></div>
+                                <div class="w-3 h-3 rounded-full bg-gray-200 opacity-70"></div>
                             </div>
+                            <span class="text-white font-medium text-xs">PDF</span>
+                        </div>
+                        <div class="flex-1 flex flex-col p-4 overflow-hidden">
+                            <!-- Document-style content preview -->
+                            <div class="w-full h-3 bg-gray-200 rounded mb-2"></div>
+                            <div class="w-3/4 h-3 bg-gray-200 rounded mb-3"></div>
+                            
+                            <div class="w-full h-2 bg-gray-100 rounded mb-2"></div>
+                            <div class="w-full h-2 bg-gray-100 rounded mb-2"></div>
+                            <div class="w-5/6 h-2 bg-gray-100 rounded mb-3"></div>
+                            
+                            <div class="w-full flex justify-center my-2">
+                                <div class="w-16 h-12 bg-gray-200 rounded"></div>
+                            </div>
+                            
+                            <div class="w-full h-2 bg-gray-100 rounded mb-2"></div>
+                            <div class="w-full h-2 bg-gray-100 rounded mb-2"></div>
+                            <div class="w-4/5 h-2 bg-gray-100 rounded"></div>
                         </div>
                     </div>
 
                     <!-- File type badge -->
                     <div class="absolute top-2 right-2">
                         <span class="badge badge-secondary text-xs font-medium">
-                            JPG
+                            PDF
                         </span>
                     </div>
                 </div>
@@ -67,25 +84,56 @@
                 </div>
             </div>
 
-            <!-- File Card 4 - with real image -->
+            <!-- File Card 4 - with document-style preview -->
             <div class="border rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer file-card" data-id="FILE-2023-004">
                 <div class="aspect-[3/4] bg-gray-100 relative">
-                    <!-- Document thumbnail with real image -->
-                    <div class="absolute inset-0 flex items-center justify-center bg-gray-50">
-                        <div class="w-full h-full relative">
-                            <img src="{{ asset('storage/upload/dummy/3.jpg') }}" alt="Musa Usman Bayero" class="w-full h-full object-cover" />
-                            <div class="absolute bottom-1 right-1">
-                                <svg class="w-8 h-8 text-blue-500 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M19.826 21.214H4.174A2.174 2.174 0 0 1 2 19.04V4.96c0-1.2.974-2.174 2.174-2.174h15.652A2.174 2.174 0 0 1 22 4.96v14.08a2.174 2.174 0 0 1-2.174 2.174M4.174 4.13a.83.83 0 0 0-.83.83v14.08c0 .458.372.83.83.83h15.652a.83.83 0 0 0 .83-.83V4.96a.83.83 0 0 0-.83-.83H4.174z"></path>
-                                </svg>
+                    <!-- Document cover with document-style preview -->
+                    <div class="absolute inset-0 flex flex-col bg-white">
+                        <div class="h-8 bg-red-500 flex items-center justify-between px-3">
+                            <div class="flex space-x-1">
+                                <div class="w-3 h-3 rounded-full bg-gray-200 opacity-70"></div>
+                                <div class="w-3 h-3 rounded-full bg-gray-200 opacity-70"></div>
+                                <div class="w-3 h-3 rounded-full bg-gray-200 opacity-70"></div>
                             </div>
+                            <span class="text-white font-medium text-xs">PDF</span>
+                        </div>
+                        <div class="flex-1 flex flex-col p-4 overflow-hidden">
+                            <!-- Document-style content preview with table -->
+                            <div class="w-full h-3 bg-gray-200 rounded mb-2"></div>
+                            <div class="w-2/3 h-3 bg-gray-200 rounded mb-4"></div>
+                            
+                            <!-- Table-like structure -->
+                            <div class="w-full flex mb-1">
+                                <div class="w-1/3 h-2 bg-gray-200 mr-1"></div>
+                                <div class="w-1/3 h-2 bg-gray-200 mr-1"></div>
+                                <div class="w-1/3 h-2 bg-gray-200"></div>
+                            </div>
+                            <div class="w-full h-px bg-gray-300 my-1"></div>
+                            <div class="w-full flex mb-1">
+                                <div class="w-1/3 h-2 bg-gray-100 mr-1"></div>
+                                <div class="w-1/3 h-2 bg-gray-100 mr-1"></div>
+                                <div class="w-1/3 h-2 bg-gray-100"></div>
+                            </div>
+                            <div class="w-full flex mb-1">
+                                <div class="w-1/3 h-2 bg-gray-100 mr-1"></div>
+                                <div class="w-1/3 h-2 bg-gray-100 mr-1"></div>
+                                <div class="w-1/3 h-2 bg-gray-100"></div>
+                            </div>
+                            <div class="w-full flex mb-4">
+                                <div class="w-1/3 h-2 bg-gray-100 mr-1"></div>
+                                <div class="w-1/3 h-2 bg-gray-100 mr-1"></div>
+                                <div class="w-1/3 h-2 bg-gray-100"></div>
+                            </div>
+                            
+                            <div class="w-full h-2 bg-gray-100 rounded mb-2"></div>
+                            <div class="w-4/5 h-2 bg-gray-100 rounded"></div>
                         </div>
                     </div>
 
                     <!-- File type badge -->
                     <div class="absolute top-2 right-2">
                         <span class="badge badge-secondary text-xs font-medium">
-                            JPG
+                            PDF
                         </span>
                     </div>
                 </div>
@@ -112,17 +160,40 @@
                 </div>
             </div>
 
-            <!-- File Card 5 - with real image -->
+            <!-- File Card 5 - with document-style preview -->
             <div class="border rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer file-card" data-id="FILE-2023-005">
                 <div class="aspect-[3/4] bg-gray-100 relative">
-                    <!-- Document thumbnail with real image -->
-                    <div class="absolute inset-0 flex items-center justify-center bg-gray-50">
-                        <div class="w-full h-full relative">
-                            <img src="{{ asset('storage/upload/dummy/5.jpg') }}" alt="Hajiya Fatima Mohammed" class="w-full h-full object-cover" />
-                            <div class="absolute bottom-1 right-1">
-                                <svg class="w-8 h-8 text-blue-500 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M19.826 21.214H4.174A2.174 2.174 0 0 1 2 19.04V4.96c0-1.2.974-2.174 2.174-2.174h15.652A2.174 2.174 0 0 1 22 4.96v14.08a2.174 2.174 0 0 1-2.174 2.174M4.174 4.13a.83.83 0 0 0-.83.83v14.08c0 .458.372.83.83.83h15.652a.83.83 0 0 0 .83-.83V4.96a.83.83 0 0 0-.83-.83H4.174z"></path>
-                                </svg>
+                    <!-- Document cover with document-style preview -->
+                    <div class="absolute inset-0 flex flex-col bg-white">
+                        <div class="h-8 bg-red-500 flex items-center justify-between px-3">
+                            <div class="flex space-x-1">
+                                <div class="w-3 h-3 rounded-full bg-gray-200 opacity-70"></div>
+                                <div class="w-3 h-3 rounded-full bg-gray-200 opacity-70"></div>
+                                <div class="w-3 h-3 rounded-full bg-gray-200 opacity-70"></div>
+                            </div>
+                            <span class="text-white font-medium text-xs">PDF</span>
+                        </div>
+                        <div class="flex-1 flex flex-col p-4 overflow-hidden">
+                            <!-- Document-style content preview with form -->
+                            <div class="w-full h-3 bg-gray-200 rounded mb-3"></div>
+                            
+                            <div class="mb-2">
+                                <div class="w-1/4 h-2 bg-gray-200 mb-1"></div>
+                                <div class="w-full h-3 bg-gray-100 rounded border border-gray-200"></div>
+                            </div>
+                            
+                            <div class="mb-2">
+                                <div class="w-1/3 h-2 bg-gray-200 mb-1"></div>
+                                <div class="w-full h-3 bg-gray-100 rounded border border-gray-200"></div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="w-1/4 h-2 bg-gray-200 mb-1"></div>
+                                <div class="w-full h-3 bg-gray-100 rounded border border-gray-200"></div>
+                            </div>
+                            
+                            <div class="flex justify-end">
+                                <div class="w-1/4 h-4 bg-red-500 rounded"></div>
                             </div>
                         </div>
                     </div>
@@ -130,7 +201,7 @@
                     <!-- File type badge -->
                     <div class="absolute top-2 right-2">
                         <span class="badge badge-secondary text-xs font-medium">
-                            JPG
+                            PDF
                         </span>
                     </div>
                 </div>
@@ -157,25 +228,44 @@
                 </div>
             </div>
 
-            <!-- File Card 6 - with real image -->
+            <!-- File Card 6 - with document-style preview -->
             <div class="border rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer file-card" data-id="FILE-2023-006">
                 <div class="aspect-[3/4] bg-gray-100 relative">
-                    <!-- Document thumbnail with real image -->
-                    <div class="absolute inset-0 flex items-center justify-center bg-gray-50">
-                        <div class="w-full h-full relative">
-                            <img src="{{ asset('storage/upload/dummy/7.jpg') }}" alt="Nasarawa Development Plan" class="w-full h-full object-cover" />
-                            <div class="absolute bottom-1 right-1">
-                                <svg class="w-8 h-8 text-blue-500 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M19.826 21.214H4.174A2.174 2.174 0 0 1 2 19.04V4.96c0-1.2.974-2.174 2.174-2.174h15.652A2.174 2.174 0 0 1 22 4.96v14.08a2.174 2.174 0 0 1-2.174 2.174M4.174 4.13a.83.83 0 0 0-.83.83v14.08c0 .458.372.83.83.83h15.652a.83.83 0 0 0 .83-.83V4.96a.83.83 0 0 0-.83-.83H4.174z"></path>
-                                </svg>
+                    <!-- Document cover with document-style preview -->
+                    <div class="absolute inset-0 flex flex-col bg-white">
+                        <div class="h-8 bg-red-500 flex items-center justify-between px-3">
+                            <div class="flex space-x-1">
+                                <div class="w-3 h-3 rounded-full bg-gray-200 opacity-70"></div>
+                                <div class="w-3 h-3 rounded-full bg-gray-200 opacity-70"></div>
+                                <div class="w-3 h-3 rounded-full bg-gray-200 opacity-70"></div>
                             </div>
+                            <span class="text-white font-medium text-xs">PDF</span>
+                        </div>
+                        <div class="flex-1 flex flex-col p-4 overflow-hidden">
+                            <!-- Document-style content preview with map-like image -->
+                            <div class="w-full h-3 bg-gray-200 rounded mb-2"></div>
+                            <div class="w-4/5 h-3 bg-gray-200 rounded mb-3"></div>
+                            
+                            <div class="w-full bg-gray-100 rounded-sm mb-3 p-1 flex-1 flex items-center justify-center relative">
+                                <!-- Simulated map elements -->
+                                <div class="w-full h-full bg-gray-50">
+                                    <div class="absolute w-1/2 h-px bg-gray-300 top-1/2 left-1/4"></div>
+                                    <div class="absolute w-px h-1/2 bg-gray-300 top-1/4 left-1/2"></div>
+                                    <div class="absolute w-4 h-4 rounded-full bg-red-100 border border-red-300 top-1/3 left-1/3"></div>
+                                    <div class="absolute w-3 h-3 rounded-full bg-blue-100 border border-blue-300 bottom-1/4 right-1/4"></div>
+                                    <div class="absolute w-12 h-1 bg-gray-300 bottom-1/3 left-1/4"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="w-full h-2 bg-gray-100 rounded mb-2"></div>
+                            <div class="w-3/4 h-2 bg-gray-100 rounded"></div>
                         </div>
                     </div>
 
                     <!-- File type badge -->
                     <div class="absolute top-2 right-2">
                         <span class="badge badge-secondary text-xs font-medium">
-                            JPG
+                            PDF
                         </span>
                     </div>
                 </div>

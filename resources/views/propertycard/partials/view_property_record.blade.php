@@ -62,7 +62,7 @@
                             <p class="text-sm text-gray-500">Layout</p>
                             <p id="view-layout" class="font-medium"></p>
                         </div>
-                        <div>
+                        <div style="display: none">
                             <p class="text-sm text-gray-500">Schedule</p>
                             <p id="view-schedule" class="font-medium"></p>
                         </div>

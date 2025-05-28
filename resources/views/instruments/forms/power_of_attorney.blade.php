@@ -82,13 +82,13 @@
                             <div class="flex space-x-2">
                                 <input type="text" id="rootRegistrationNumber" name="rootRegistrationNumber" value="0/0/0" 
                                     class="form-input bg-gray-50 border border-gray-300 text-gray-700 rounded-md flex-1" readonly>
-                                <button type="button" id="generate-particulars-btn" 
+                                {{-- <button type="button" id="generate-particulars-btn" 
                                     class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-black/90 flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                     </svg>
                                     Generate Number
-                                </button>
+                                </button> --}}
                             </div>
                             <p class="text-xs text-gray-500 mt-1.5">Customary Titles are registered as ROOT TITLES with Registration Number 0/0/0 by default.</p>
                         </div>

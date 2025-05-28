@@ -231,7 +231,7 @@
                 </li>
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">
@@ -240,7 +240,7 @@
                 </li>
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">
@@ -265,21 +265,21 @@
               <ul class="pl-8 space-y-1.5">
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">Fully Automated Billing Workflow</span>
                 </li>
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">Real-time Integration with INTERSWITCH & KIRMAS</span>
                 </li>
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">
@@ -307,14 +307,14 @@
                 </li>
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">Transparency & Accountability</span>
                 </li>
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">
@@ -343,7 +343,7 @@
                 </li>
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">Multi-Tiered Approval & Alerts</span>
@@ -406,14 +406,14 @@
               <ul class="pl-8 space-y-1.5">
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">Empowers mass titling of informal settlements.</span>
                 </li>
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">
@@ -422,7 +422,7 @@
                 </li>
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">
@@ -453,7 +453,7 @@
                 </li>
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">
@@ -462,7 +462,7 @@
                 </li>
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">
@@ -559,7 +559,7 @@
               <h4 class="flex items-center text-lg font-medium  mb-2">
                 <div class="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center mr-2 flex-shrink-0">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 " width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                 </div>
@@ -568,7 +568,7 @@
               <ul class="pl-8 space-y-1.5">
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">
@@ -577,7 +577,7 @@
                 </li>
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">
@@ -586,7 +586,7 @@
                 </li>
                 <li class="flex items-start">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mt-1 mr-2 flex-shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <path d="M22 11.08V12a10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <span class="text-gray-700">
@@ -632,7 +632,50 @@
         }
       });
       
-    
+      // Auto-scrolling functionality for the right side content
+      const rightSideContent = document.querySelector('.md\\:w-1\\/2.bg-gray-100.h-screen.overflow-y-auto');
+      if (rightSideContent) {
+        let scrollSpeed = 0.1; // pixels per millisecond
+        let lastTimestamp = null;
+        let scrollPaused = false;
+
+        function autoScroll(timestamp) {
+          if (scrollPaused) return;
+
+          if (!lastTimestamp) {
+            lastTimestamp = timestamp;
+          }
+
+          const elapsed = timestamp - lastTimestamp;
+          lastTimestamp = timestamp;
+
+          // Calculate how much to scroll based on elapsed time
+          const scrollAmount = scrollSpeed * elapsed;
+
+          // Scroll content
+          rightSideContent.scrollTop += scrollAmount;
+
+          // Check if we've reached the bottom
+          const isAtBottom = rightSideContent.scrollHeight - rightSideContent.scrollTop - rightSideContent.clientHeight < 1;
+
+          if (isAtBottom) {
+            // Pause at the bottom before resetting
+            scrollPaused = true;
+            setTimeout(() => {
+              rightSideContent.scrollTop = 0;
+              lastTimestamp = null;
+              scrollPaused = false;
+              requestAnimationFrame(autoScroll);
+            }, 2000); // Pause for 2 seconds
+            return;
+          }
+
+          requestAnimationFrame(autoScroll);
+        }
+
+        // Start the auto-scrolling animation
+        requestAnimationFrame(autoScroll);
+      }
     });
   </script>
 </body>

@@ -14,4 +14,13 @@ class FileTrackerController extends Controller
         Log::info('File Tracker accessed', ['user_id' => auth()->id()]);
         return view('filetracker.index', compact('PageTitle', 'PageDescription'));
     }
+
+    //print
+  public function print() {
+        $PageTitle = 'File Tracker';
+        $PageDescription = 'Track and manage files within the system';
+        Log::info('File Tracker accessed', ['user_id' => auth()->id()]);
+        return view('filetracker.print', compact('PageTitle', 'PageDescription'));
+    }
+
 }
