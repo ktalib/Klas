@@ -72,14 +72,14 @@
                                     Export
                                 </button>
 
-                                <button class="btn btn-primary">
+                                <a  class="btn btn-primary"  href="{{ route('instruments.create') }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 4v16m8-8H4" />
                                     </svg>
                                     Capture New Instrument
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -151,10 +151,7 @@
                 </div>
             </main>
 
-            <!-- Instrument Type Selection Modal -->
-             @include('instruments.partial.instrument_type')
-            <!-- Power of Attorney Registration Form Modal -->
-            @include('instruments.forms.power_of_attorney')
+       
 
             <!-- JavaScript -->
             @include('instruments.partial.js')

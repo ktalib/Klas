@@ -37,7 +37,7 @@ tailwind.config = {
 @media print {
   @page {
     size: A4 landscape;
-    margin: 10mm;
+    margin: 5mm;
   }
   body * {
     visibility: hidden;
@@ -50,11 +50,45 @@ tailwind.config = {
     left: 0;
     top: 0;
     width: 100%;
-    padding: 10px;
-    font-size: 10px;
+    padding: 5px;
+    font-size: 9px;
+    transform: scale(0.98);
+    transform-origin: top left;
   }
   .no-print {
     display: none !important;
+  }
+  /* Ensure compact display */
+  .mb-4 {
+    margin-bottom: 0.5rem !important;
+  }
+  .mb-3 {
+    margin-bottom: 0.25rem !important;
+  }
+  .mb-2 {
+    margin-bottom: 0.15rem !important;
+  }
+  .p-4 {
+    padding: 0.5rem !important;
+  }
+  .p-3 {
+    padding: 0.25rem !important;
+  }
+  .p-2 {
+    padding: 0.15rem !important;
+  }
+  .gap-4 {
+    gap: 0.5rem !important;
+  }
+  .h-12 {
+    height: 2rem !important;
+  }
+  .h-\[80px\] {
+    height: 3rem !important;
+  }
+  .py-3 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
   }
 }
 
@@ -358,6 +392,25 @@ tailwind.config = {
 </div>
 
 <script>
+
+  // Auto-print functionality
+  function autoPrint() {
+    // Set a delay to ensure all content is fully rendered
+    setTimeout(() => {
+      console.log('Auto-printing document...');
+      window.print();
+    }, 1500); // 1.5-second delay before printing
+  }
+
+  // Document ready
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('Page loaded, initializing tracking sheet...');
+    populateTrackingSheet();
+    console.log('Tracking sheet initialization complete');
+    
+    // Trigger automatic printing after content is loaded
+    autoPrint();
+  });
 // Sample file data
 const fileDetails = {
   id: "TRK-2023-001",
@@ -543,7 +596,10 @@ function populateTrackingSheet() {
 }
 
 function handlePrint() {
-  window.print();
+  // Set a slight delay to ensure all elements are properly laid out
+  setTimeout(() => {
+    window.print();
+  }, 200);
 }
 
 // Event listeners
@@ -554,16 +610,6 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Page loaded, initializing tracking sheet...');
   populateTrackingSheet();
   console.log('Tracking sheet initialization complete');
-});
-
-// Initialize print automatically
-// Automatically trigger print after page loads completely
-window.addEventListener('load', () => {
-    // Add a small delay to ensure everything is rendered
-    setTimeout(() => {
-        console.log('Auto-printing document...');
-        window.print();
-    }, 1000); // 1 second delay to ensure everything is rendered
 });
 </script>
 </body>

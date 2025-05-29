@@ -91,24 +91,7 @@
           <h3 class="text-lg font-medium text-gray-900 mb-4">Instrument Details</h3>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label for="instrumentType" class="block text-sm font-medium text-gray-700 mb-1">Instrument Type <span class="text-red-500">*</span></label>
-              <select id="instrumentType" name="instrument_type" class="w-full px-3 py-2 border rounded-md" required>
-                <option value="">Select Instrument Type</option>
-                <option value="assignment">Assignment</option>
-                <option value="mortgage">Mortgage</option>
-                <option value="lease">Lease</option>
-                <option value="sublease">Sub-Lease</option>
-                <option value="consent">Consent</option>
-                <option value="release">Release</option>
-                <option value="surrender">Surrender</option>
-                <option value="vesting">Vesting Order</option>
-                <option value="variation">Deed of Variation</option>
-                <option value="assent">Assent</option>
-                <option value="merger">Merger</option>
-              </select>
-              <div class="text-xs text-red-500 hidden" id="instrumentTypeError"></div>
-            </div>
+            <!-- Instrument Type has been moved to Registration Details section -->
             
             <div class="hidden">
               <label for="duration" class="block text-sm font-medium text-gray-700 mb-1">Duration <span class="text-red-500">*</span></label>
@@ -120,13 +103,13 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label for="grantor" class="block text-sm font-medium text-gray-700 mb-1">Grantor <span class="text-red-500">*</span></label>
-              <input type="text" id="grantor" name="grantor" class="w-full px-3 py-2 border rounded-md" required>
+              <input type="text" id="grantor" name="grantor" class="w-full px-3 py-2 border rounded-md bg-gray-100" readonly required>
               <div class="text-xs text-red-500 hidden" id="grantorError"></div>
             </div>
             
             <div>
               <label for="grantee" class="block text-sm font-medium text-gray-700 mb-1">Grantee <span class="text-red-500">*</span></label>
-              <input type="text" id="grantee" name="grantee" class="w-full px-3 py-2 border rounded-md" required>
+              <input type="text" id="grantee" name="grantee" class="w-full px-3 py-2 border rounded-md bg-gray-100" readonly required>
               <div class="text-xs text-red-500 hidden" id="granteeError"></div>
             </div>
           </div>
@@ -134,13 +117,13 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label for="lga" class="block text-sm font-medium text-gray-700 mb-1">LGA <span class="text-red-500">*</span></label>
-              <input type="text" id="lga" name="lga" class="w-full px-3 py-2 border rounded-md" required>
+              <input type="text" id="lga" name="lga" class="w-full px-3 py-2 border rounded-md bg-gray-100" readonly required>
               <div class="text-xs text-red-500 hidden" id="lgaError"></div>
             </div>
             
             <div>
               <label for="district" class="block text-sm font-medium text-gray-700 mb-1">District <span class="text-red-500">*</span></label>
-              <input type="text" id="district" name="district" class="w-full px-3 py-2 border rounded-md" required>
+              <input type="text" id="district" name="district" class="w-full px-3 py-2 border rounded-md bg-gray-100" readonly required>
               <div class="text-xs text-red-500 hidden" id="districtError"></div>
             </div>
           </div>
@@ -148,13 +131,13 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label for="plotNumber" class="block text-sm font-medium text-gray-700 mb-1">Plot Number <span class="text-red-500">*</span></label>
-              <input type="text" id="plotNumber" name="plot_number" class="w-full px-3 py-2 border rounded-md" required>
+              <input type="text" id="plotNumber" name="plot_number" class="w-full px-3 py-2 border rounded-md bg-gray-100" readonly required>
               <div class="text-xs text-red-500 hidden" id="plotNumberError"></div>
             </div>
             
             <div>
               <label for="plotSize" class="block text-sm font-medium text-gray-700 mb-1">Plot Size <span class="text-red-500">*</span></label>
-              <input type="text" id="plotSize" name="plot_size" class="w-full px-3 py-2 border rounded-md" required>
+              <input type="text" id="plotSize" name="plot_size" class="w-full px-3 py-2 border rounded-md bg-gray-100" readonly required>
               <div class="text-xs text-red-500 hidden" id="plotSizeError"></div>
             </div>
           </div>
@@ -201,7 +184,26 @@
             </div>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label for="instrumentType" class="block text-sm font-medium text-gray-700 mb-1">Instrument Type <span class="text-red-500">*</span></label>
+              <select id="instrumentType" name="instrument_type" class="w-full px-3 py-2 border rounded-md" required>
+                <option value="">Select Instrument Type</option>
+                <option value="assignment">Assignment</option>
+                <option value="mortgage">Mortgage</option>
+                <option value="lease">Lease</option>
+                <option value="sublease">Sub-Lease</option>
+                <option value="consent">Consent</option>
+                <option value="release">Release</option>
+                <option value="surrender">Surrender</option>
+                <option value="vesting">Vesting Order</option>
+                <option value="variation">Deed of Variation</option>
+                <option value="assent">Assent</option>
+                <option value="merger">Merger</option>
+              </select>
+              <div class="text-xs text-red-500 hidden" id="instrumentTypeError"></div>
+            </div>
+            
             <div>
               <label for="deedsTime" class="block text-sm font-medium text-gray-700 mb-1">Deeds Time <span class="text-red-500">*</span></label>
               <input type="text" id="deedsTime" name="deeds_time" class="w-full px-3 py-2 border rounded-md" placeholder="eg. 10:30 AM" required>

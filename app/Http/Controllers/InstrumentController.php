@@ -19,18 +19,14 @@ class InstrumentController extends Controller
         return view('instruments.index', compact('PageTitle', 'PageDescription', 'instruments'));
     }
 
-    public function powerOfAttorney()
+    public function create()
     {
-        $title = 'Power Of Attorney';
-        return view('instruments.powerOfAttorney', compact('title'));
-    }
+      $PageTitle = 'Instrument Capture';
+      $PageDescription = 'Create a new instrument registration';
 
-    public function deedOfMortgage()
-    {
-        $title = 'Deed Of Mortgage';
-        return view('instruments.deedOfMortgage', compact('title'));
+        return view('instruments.create', compact('PageTitle', 'PageDescription'));
     }
-
+ 
     public function store(Request $request)
     {
         try {

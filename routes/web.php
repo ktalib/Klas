@@ -572,8 +572,7 @@ Route::get('/gis/get-all-units', [GisController::class, 'getAllUnits'])->name('g
 Route::group(['middleware' => ['auth'], 'prefix' => 'instruments'], function () {
     Route::get('/', [App\Http\Controllers\InstrumentController::class, 'index'])->name('instruments.index');
     Route::post('/store', [App\Http\Controllers\InstrumentController::class, 'store'])->name('instruments.store');
-    Route::get('/power-of-attorney', [App\Http\Controllers\InstrumentController::class, 'powerOfAttorney'])->name('instruments.powerOfAttorney');
-    Route::get('/deed-of-mortgage', [App\Http\Controllers\InstrumentController::class, 'deedOfMortgage'])->name('instruments.deedOfMortgage');
-    Route::get('/coroi', [App\Http\Controllers\InstrumentController::class, 'Coroi'])->name('instruments.coroi');
+    Route::get('/create', [App\Http\Controllers\InstrumentController::class, 'create'])->name('instruments.create');
+
 });
 
