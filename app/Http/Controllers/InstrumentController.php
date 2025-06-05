@@ -189,8 +189,10 @@ class InstrumentController extends Controller
 
     public function Coroi()
     {
-        $title = 'Confirmation Of Instrument Registration';
-        return view('instruments.Coroi', compact('title'));
+        $PageTitle = 'Confirmation Of Instrument Registration';
+        $PageDescription = 'Confirm the registration of an instrument';
+
+        return view('coroi.index', compact('PageTitle', 'PageDescription'));
     }
 
     public function update(Request $request, $id)

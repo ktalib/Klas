@@ -357,20 +357,7 @@ Route::resource('authPage', AuthPageController::class)->middleware(
 Route::get('page/{slug}', [PageController::class, 'page'])->name('page');
 //-------------------------------FAQ-------------------------------------------
 
-use App\Http\Controllers\InstrumentController;
-
-// Route::get('/instruments', [InstrumentController::class, 'index'])->name('instruments.index');
-// Route::get('/instruments/powerOfAttorney', [InstrumentController::class, 'powerOfAttorney'])->name('instruments.powerOfAttorney');
-// Route::get('/instruments/DeedOfMortgage', [InstrumentController::class, 'DeedOfMortgage'])->name('instruments.DeedOfMortgage');
-
-// Route::get('/instruments/Coroi', [InstrumentController::class, 'Coroi'])->name('instruments.Coroi');
-
-
-
-// Route::post('/instruments', [InstrumentController::class, 'store'])->name('instruments.store');
-// Route::get('/instruments/{id}/edit', [InstrumentController::class, 'edit']);
-// Route::post('/instruments/{id}', [InstrumentController::class, 'update'])->name('instruments.update');
-// Route::delete('/instruments/{id}', [InstrumentController::class, 'destroy']);
+ 
 
 // Application Mother routes
 Route::get('/sectionaltitling', [ApplicationMotherController::class, 'index'])->name('sectionaltitling.index');
@@ -461,13 +448,7 @@ Route::get('/legal_search', [LegalSearchController::class, 'index'])->name('lega
 Route::get('/legal_search/report', [LegalSearchController::class, 'report'])->name('legal_search.report');
 //Route::post('/legal_search', [LegalSearchController::class, 'store'])->name('legal_search.store');
 Route::get('/legal_search/legal_search_report', [LegalSearchController::class, 'legal_search_report'])->name('legal_search.legal_search_report');
-//sectionaltitling/residential
-Route::get('sectionaltitling/residential', [ResidentialController::class, 'index'])->name('sectionaltitling.residential.index');
-Route::get('sectionaltitling/residential/create', [ResidentialController::class, 'create'])->name('sectionaltitling.residential.create');
-Route::get('sectionaltitling/residential/sub_application', [ResidentialController::class, 'subApplication'])->name('sectionaltitling.residential.sub_application');
-Route::get('sectionaltitling/residential/sub_applications', [ResidentialController::class, 'subApplication'])->name('sectionaltitling.residential.sub_applications');
-Route::post('sectionaltitling/residential', [ResidentialController::class, 'storeResMotherApp'])->name('sectionaltitling.residential.store');
-
+ 
 Route::post('/deeds/insert', [DeedsController::class, 'insert'])->name('deeds.insert');
 Route::get('/deeds/getdeedsdublicate', [DeedsController::class, 'getDeedsDublicate'])->name('deeds.getDeedsDublicate');
 
@@ -575,4 +556,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'instruments'], function () 
     Route::get('/create', [App\Http\Controllers\InstrumentController::class, 'create'])->name('instruments.create');
 
 });
+
+// COROI routes
+Route::get('/coroi', [App\Http\Controllers\CoroiController::class, 'index'])->name('coroi.index');
 

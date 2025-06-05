@@ -21,6 +21,11 @@ use App\Http\Controllers\SltrApplicationController;
 use App\Http\Controllers\PrintLabelController;
 use App\Http\Controllers\InstrumentRegistrationController;
 use App\Http\Controllers\OnPremiseController;
+use App\Http\Controllers\SLTRApprovalController;
+use App\Http\Controllers\SLTRDeedsRegController;
+use App\Http\Controllers\InstrumentController;
+use App\Http\Controllers\ApplicationFormController;
+
 // Public routes
 Route::get('/custom-public', function () {
     return 'This is a public custom route';
@@ -223,4 +228,25 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('onpremise')->group(function () {
         Route::get('/', [OnPremiseController::class, 'index'])->name('onpremise.index');
     });
+
+
+    Route::prefix('sltrapproval')->group(function () {
+        Route::get('/deeds', [SLTRApprovalController::class, 'deeds'])->name('sltrapproval.deeds');
+    }); 
+
+
+    Route::prefix('sltrdeedsreg')->group(function () {
+        Route::get('/', [SLTRDeedsRegController::class, 'index'])->name('sltrdeedsreg.index');
+    });
+    
+    
+    Route::prefix('coroi')->group(function () {
+        Route::get('/', [InstrumentController::class, 'Coroi'])->name('coroi.index');
+    });
+
+    // Add any additional routes here
+    Route::prefix('sltr_application_form')->group(function () {
+        Route::get('/residential', [ApplicationFormController::class, 'residential'])->name('sltr_application_form.residential');
+    });
+
 });

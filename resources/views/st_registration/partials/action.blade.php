@@ -23,6 +23,13 @@
       <i data-lucide="x-circle" class="inline w-4 h-4 mr-1 text-red-600"></i> Decline
     </a>
     @else
+    @if(isset($app->STM_Ref) && $app->STM_Ref)
+    <a href="{{ route('coroi.index') }}?url=SectionalCofOReg?STM_Ref={{ $app->STM_Ref }}" 
+       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+      <i class="fas fa-eye mr-2 text-blue-500"></i> View Confirmation of Registration of Instrument (COROI)
+    </a>
+    @endif
+    
     <a href="#" class="block px-4 py-2 text-sm text-gray-400 cursor-not-allowed">
       <i data-lucide="file-text" class="inline w-4 h-4 mr-1 text-gray-400"></i>Register CofO 
     </a>

@@ -20,7 +20,35 @@ class InstrumentRegistrationController extends Controller
 
         return $application;
     }
- 
+    
+    // Add new method to generate unique STM reference
+    private function generateSTMReference()
+    {
+        $year = date('Y');
+        
+        // Get the latest STM reference for this year
+        $latestRef = DB::connection('sqlsrv')->table('registered_instruments')
+            ->where('STM_Ref', 'like', "STM-$year-%")
+            ->orderBy('id', 'desc')
+            ->value('STM_Ref');
+        
+        if ($latestRef) {
+            // Extract the sequence number and increment
+            $matches = [];
+            if (preg_match('/STM-\d{4}-(\d{4})/', $latestRef, $matches)) {
+                $sequence = (int)$matches[1] + 1;
+            } else {
+                $sequence = 1;
+            }
+        } else {
+            // First record for this year
+            $sequence = 1;
+        }
+        
+        // Format with leading zeros to 4 digits
+        return "STM-{$year}-" . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+    }
+
     public function InstrumentRegistration()
     {
         $PageTitle = 'Instrument Registration ';
@@ -53,7 +81,8 @@ class InstrumentRegistrationController extends Controller
                 'instrument_registration.landUseType as land_use',
                 'instrument_registration.created_by as reg_created_by',
                 DB::raw("CONCAT(users.first_name, ' ', users.last_name) as reg_creator_name"),
-                DB::raw("'instrument_registration' as source_table")
+                DB::raw("'instrument_registration' as source_table"),
+                DB::raw("NULL as STM_Ref") // Add NULL for STM_Ref for pending instruments
             )
             ->whereIn('instrument_registration.status', ['pending', 'rejected', null]);
 
@@ -260,6 +289,9 @@ class InstrumentRegistrationController extends Controller
             
             $serialData = $this->getNextSerialNumber()->getData(true);
             
+            // Generate STM Reference
+            $stmReference = $this->generateSTMReference();
+            
             // Prepare data to insert by combining source record with new registration info
             $dataToInsert = [
                 // Copy fields from source record
@@ -270,6 +302,7 @@ class InstrumentRegistrationController extends Controller
                 
                 // Add new registration details
                 'particularsRegistrationNumber' => $serialData['deeds_serial_no'],
+                'STM_Ref' => $stmReference, // Add STM Reference
                 'instrument_type' => $request->instrument_type,
                 'Grantor' => $request->Grantor,
                 'GrantorAddress' => $request->GrantorAddress ?? $sourceRecord->GrantorAddress ?? '',
@@ -334,6 +367,7 @@ class InstrumentRegistrationController extends Controller
                 'success' => true,
                 'message' => 'Instrument registered successfully',
                 'serial_data' => $serialData,
+                'stm_ref' => $stmReference, // Include STM reference in response
                 'record_id' => $newId
             ]);
         } catch (\Exception $e) {
@@ -389,6 +423,9 @@ class InstrumentRegistrationController extends Controller
                 
                 $registeredIds[] = $entry['application_id'];
                 
+                // Generate STM Reference for each record
+                $stmReference = $this->generateSTMReference();
+                
                 // Prepare data for insertion
                 $dataToInsert = [
                     // Copy fields from source record
@@ -399,6 +436,7 @@ class InstrumentRegistrationController extends Controller
                     
                     // Add new registration details
                     'particularsRegistrationNumber' => $serialData['deeds_serial_no'],
+                    'STM_Ref' => $stmReference, // Add STM Reference
                     'instrument_type' => $entry['instrument_type'] ?? $sourceRecord->instrument_type,
                                         'Grantor' => $entry['grantor'] ?? $sourceRecord->Grantor,
                                         'GrantorAddress' => $entry['grantorAddress'] ?? $sourceRecord->GrantorAddress ?? '',
@@ -454,7 +492,8 @@ class InstrumentRegistrationController extends Controller
                                     $results[] = [
                                         'application_id' => $entry['application_id'],
                                         'new_id' => $newId,
-                                        'deeds_serial_no' => $serialData['deeds_serial_no']
+                                        'deeds_serial_no' => $serialData['deeds_serial_no'],
+                                        'stm_ref' => $stmReference // Include STM reference in results
                                     ];
                                 }
                                 

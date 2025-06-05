@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 class OnPremiseController extends Controller
 { 
     public function index() {
-        $PageTitle = 'Legal Search - On-Premise Official';
+        $PageTitle = 'On-Premise - Pay-per-Search';
         $PageDescription = '';
         //Log::info('File Tracker accessed', ['user_id' => auth()->id()]);
         return view('onpremise.index', compact('PageTitle', 'PageDescription'));

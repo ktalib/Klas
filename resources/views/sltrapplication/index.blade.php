@@ -110,22 +110,22 @@
                     </button>
 
                     <div id="application-dropdown" class="dropdown-content2 absolute top-full right-0 z-50 bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-56 mt-1 hidden">
-                        <button class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors bg-white" data-type="residential">
+                        <a href="{{ route('sltr_application_form.residential') }}" class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors bg-white" data-type="residential">
                             <i data-lucide="home" class="h-4 w-4 mr-2 text-blue-500"></i>
                             Residential
-                        </button>
-                        <button class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors bg-white" data-type="commercial">
-                            <i data-lucide="building" class="h-4 w-4 mr-2 text-purple-500"></i>
+                        </a>
+                        <a href="#" class="flex items-center w-full px-4 py-2 text-sm text-gray-400 bg-white cursor-not-allowed pointer-events-none" data-type="commercial" aria-disabled="true">
+                            <i data-lucide="building" class="h-4 w-4 mr-2 text-gray-400"></i>
                             Commercial
-                        </button>
-                        <button class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors bg-white" data-type="warehouse">
-                            <i data-lucide="warehouse" class="h-4 w-4 mr-2 text-amber-500"></i>
+                        </a>
+                        <a href="#" class="flex items-center w-full px-4 py-2 text-sm text-gray-400 bg-white cursor-not-allowed pointer-events-none" data-type="warehouse" aria-disabled="true">
+                            <i data-lucide="warehouse" class="h-4 w-4 mr-2 text-gray-400"></i>
                             Warehouse
-                        </button>
-                        <button class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors bg-white" data-type="agriculture">
-                            <i data-lucide="tractor" class="h-4 w-4 mr-2 text-green-500"></i>
+                        </a>
+                        <a href="#" class="flex items-center w-full px-4 py-2 text-sm text-gray-400 bg-white cursor-not-allowed pointer-events-none" data-type="agriculture" aria-disabled="true">
+                            <i data-lucide="tractor" class="h-4 w-4 mr-2 text-gray-400"></i>
                             Agriculture
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

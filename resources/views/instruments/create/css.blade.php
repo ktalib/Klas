@@ -1,22 +1,5 @@
    <style>
-        /* Custom styles */
-        :root {
-            --primary: #3b82f6;
-            --primary-foreground: #ffffff;
-            --muted: #f3f4f6;
-            --muted-foreground: #6b7280;
-            --border: #e5e7eb;
-            --ring: #3b82f6;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --destructive: #ef4444;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            color: #0f172a;
-            background-color: #f8fafc;
-        }
+ 
 
         /* Card styles */
         .card {

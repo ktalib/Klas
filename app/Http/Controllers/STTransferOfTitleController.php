@@ -20,7 +20,7 @@ class STTransferOfTitleController extends Controller
 
         return $application;
     }
- 
+  
     public function StTransfer()
     {
         $PageTitle = 'Assignments ';

@@ -252,7 +252,7 @@
             <i data-lucide="home" class="h-3.5 w-3.5 text-amber-400"></i>
             <span>Sectional Titling CofO</span>
           </a>
-          <a href="/instrument/cofo/sltr" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <a href="{{route('sltrdeedsreg.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sltrdeedsreg.index') ? 'active' : '' }}">
             <i data-lucide="file-badge" class="h-3.5 w-3.5 text-amber-400"></i>
             <span>SLTR CofO</span>
           </a>
@@ -295,7 +295,7 @@
           </a>
           <a href="{{route('onpremise.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('onpremise.index') ? 'active' : '' }}">
             <i data-lucide="building" class="h-3.5 w-3.5 text-cyan-400"></i>
-            <span>On-Premise</span>
+            <span>On-Premise - Pay-per-Search</span>
           </a>
           <a href="http://search.klas.com.ng/public/legal-search" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200" target="_blank">
             <i data-lucide="globe" class="h-3.5 w-3.5 text-cyan-400"></i>
@@ -765,6 +765,10 @@
           <i data-lucide="file-plus" class="h-4 w-4"></i>
           <span>Application</span>
         </a>
+        <a href="/programmes/sltr/claimants" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="users" class="h-4 w-4"></i>
+          <span>Claimants</span>
+        </a>
         <a href="/programmes/sltr/legacy-data" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
           <i data-lucide="history" class="h-4 w-4"></i>
           <span>Legacy Data</span>
@@ -787,46 +791,46 @@
         </div>
         
         <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="sltrApprovals">
-          <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="sltrDepartments">
-            <div class="flex items-center gap-2">
-              <i data-lucide="building-2" class="h-3.5 w-3.5"></i>
-              <span>Other Departments</span>
-            </div>
-            <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="sltrDepartments"></i>
-          </div>
-          
-          <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="sltrDepartments">
-            <a href="/programmes/sltr/approvals/departments/lands" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-              <i data-lucide="file-text" class="h-3 w-3"></i>
-              <span>Lands</span>
-            </a>
-            <a href="/programmes/sltr/approvals/departments/deeds" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-              <i data-lucide="file-text" class="h-3 w-3"></i>
-              <span>Deeds</span>
-            </a>
-            <a href="/programmes/sltr/approvals/departments/survey" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-              <i data-lucide="file-text" class="h-3 w-3"></i>
-              <span>Survey</span>
-            </a>
-            <a href="/programmes/sltr/approvals/departments/cadastral" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-              <i data-lucide="file-text" class="h-3 w-3"></i>
-              <span>Cadastral</span>
-            </a>
-          </div>
-          
           <a href="/programmes/sltr/approvals/planning" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
             <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
             <span>Planning Recommendation</span>
           </a>
           <a href="/programmes/sltr/approvals/director" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
             <i data-lucide="stamp" class="h-3.5 w-3.5"></i>
-            <span>Director's Approval</span>
+            <span>Director SLTR</span>
+          </a>
+        </div>
+        
+        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="sltrDepartments">
+          <div class="flex items-center gap-2">
+            <i data-lucide="building-2" class="h-4 w-4"></i>
+            <span>Other Departments</span>
+          </div>
+          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="sltrDepartments"></i>
+        </div>
+        
+        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="sltrDepartments">
+          <a href="/programmes/sltr/departments/lands" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="file-text" class="h-3.5 w-3.5"></i>
+            <span>Lands</span>
+          </a>
+          <a href="{{route('sltrapproval.deeds')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sltrapproval.deeds') ? 'active' : '' }}">
+            <i data-lucide="file-text" class="h-3.5 w-3.5"></i>
+            <span>Deeds</span>
+          </a>
+          <a href="/programmes/sltr/departments/survey" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="file-text" class="h-3.5 w-3.5"></i>
+            <span>Survey</span>
+          </a>
+          <a href="/programmes/sltr/departments/cadastral" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="file-text" class="h-3.5 w-3.5"></i>
+            <span>Cadastral</span>
           </a>
         </div>
         
         <a href="/programmes/sltr/memo" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
           <i data-lucide="clipboard-list" class="h-4 w-4"></i>
-          <span>Memo</span>
+          <span>SLTR Memo</span>
         </a>
         
         <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="sltrCertificate">

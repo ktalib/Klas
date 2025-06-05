@@ -87,7 +87,7 @@
         <input type="hidden" id="formInstrumentId" name="instrument_id">
         
         <!-- Instrument Details Section -->
-        <div class="border-t border-b py-4">
+        <div class="border-t border-b py-4 hidden">
           <h3 class="text-lg font-medium text-gray-900 mb-4">Instrument Details</h3>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
