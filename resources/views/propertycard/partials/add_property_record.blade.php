@@ -399,7 +399,7 @@
                     </div>
                     <div class="flex justify-end space-x-3 pt-2 border-t mt-4">
                         
-                        <button  type="submit" class="btn btn-primary">Submit</button>
+                        <button id="property-submit-btn" type="submit" class="btn btn-primary opacity-50 cursor-not-allowed" disabled>Submit</button>
                     </div>
                 </form>
                 </div>

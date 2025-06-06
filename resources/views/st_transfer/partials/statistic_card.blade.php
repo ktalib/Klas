@@ -1,14 +1,14 @@
 <!-- Stats Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="bg-amber-50 p-4 rounded-lg shadow border-l-4 border-amber-500">
-        <div class="text-sm font-medium text-amber-700 mb-1">Pending Transfers</div>
+        <div class="text-sm font-medium text-amber-700 mb-1">Pending Registration</div>
         <div class="text-2xl font-bold text-amber-800">{{ $pendingCount }}</div>
-        <p class="text-xs text-amber-600 mt-1">Awaiting transfer</p>
+        <p class="text-xs text-amber-600 mt-1">Awaiting Registration</p>
     </div>
     <div class="bg-green-50 p-4 rounded-lg shadow border-l-4 border-green-500">
-        <div class="text-sm font-medium text-green-700 mb-1">Transfered</div>
+        <div class="text-sm font-medium text-green-700 mb-1">Registered</div>
         <div class="text-2xl font-bold text-green-800">{{ $registeredCount }}</div>
-        <p class="text-xs text-green-600 mt-1">Successfully transfers</p>
+        <p class="text-xs text-green-600 mt-1">Successfully Registered</p>
     </div>
     <div class="bg-red-50 p-4 rounded-lg shadow border-l-4 border-red-500">
         <div class="text-sm font-medium text-red-700 mb-1">Rejected</div>

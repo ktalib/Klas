@@ -297,7 +297,7 @@
             <i data-lucide="building" class="h-3.5 w-3.5 text-cyan-400"></i>
             <span>On-Premise - Pay-per-Search</span>
           </a>
-          <a href="http://search.klas.com.ng/public/legal-search" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200" target="_blank">
+          <a href="http://search.klas.com.ng/" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200" target="_blank">
             <i data-lucide="globe" class="h-3.5 w-3.5 text-cyan-400"></i>
             <span>Online</span>
           </a>

@@ -72,7 +72,7 @@
                   <a href="#"
                      onclick="switchTab('registered', this)"
                      class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-green-600 hover:border-green-300 text-gray-600 border-transparent tab-item">
-                     <span class="flex items-center">Transfer</span>
+                     <span class="flex items-center">Registered</span>
                      <span class="ml-2 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                        {{ $registeredCount }}
                      </span>

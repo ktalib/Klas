@@ -29,7 +29,7 @@
     <a href="{{ route('coroi.index') }}?url=Sectional_title_transfer?STM_Ref={{ $app->STM_Ref }}" 
        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
         <i class="fas fa-eye mr-2 text-blue-500"></i>
-        View Confirmation of Registration of Instrument (COROI)
+       View Confirmation of Registration (CoR)
     </a>
     @endif
   

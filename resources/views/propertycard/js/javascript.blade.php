@@ -387,6 +387,9 @@
                     // Initialize file number component when dialog opens
                     setTimeout(() => {
                         initFileNumberComponent('property_');
+                        
+                        // Setup form validation when dialog opens
+                        setupFormValidation('property-record-form', 'property-submit-btn');
                     }, 100);
                 }
                 
@@ -538,6 +541,9 @@
                         // Initialize file number component
                         setTimeout(() => {
                             initFileNumberComponent('edit_property_');
+                            
+                            // Setup validation for edit form
+                            setupFormValidation('property-edit-form', 'property-edit-submit-btn');
                         }, 100);
                     } else {
                         throw new Error(data.message || 'Failed to load property data');
@@ -839,6 +845,199 @@
                     fieldElement.classList.remove('hidden');
                 }
             }
+
+            // Form validation functions
+            function validatePropertyForm(formId, submitButtonId) {
+                const form = document.getElementById(formId);
+                const submitButton = document.getElementById(submitButtonId);
+                if (!form || !submitButton) return false;
+                
+                // Get all required fields
+                const requiredInputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+                
+                // Check if all required fields are filled
+                let isValid = true;
+                
+                requiredInputs.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                    }
+                });
+                
+                // Check for active file number (at least one must be filled)
+                const prefix = formId === 'property-record-form' ? 'property_' : 'edit_property_';
+                const activeFileTab = document.getElementById(prefix + 'activeFileTab');
+                
+                if (activeFileTab) {
+                    const activeTabValue = activeFileTab.value;
+                    let fileNumberFilled = false;
+                    
+                    if (activeTabValue === 'mlsFNo') {
+                        const mlsNumber = document.getElementById(prefix + 'mlsFileNumber');
+                        if (mlsNumber && mlsNumber.value.trim()) {
+                            fileNumberFilled = true;
+                        }
+                    } else if (activeTabValue === 'kangisFileNo') {
+                        const kangisNumber = document.getElementById(prefix + 'kangisFileNumber');
+                        if (kangisNumber && kangisNumber.value.trim()) {
+                            fileNumberFilled = true;
+                        }
+                    } else if (activeTabValue === 'NewKANGISFileno') {
+                        const newKangisNumber = document.getElementById(prefix + 'newKangisFileNumber');
+                        if (newKangisNumber && newKangisNumber.value.trim()) {
+                            fileNumberFilled = true;
+                        }
+                    }
+                    
+                    if (!fileNumberFilled) {
+                        isValid = false;
+                    }
+                }
+                
+                // Also validate transaction type and relevant fields
+                const transactionSelect = form.querySelector('select.transaction-type-select');
+                if (transactionSelect && !transactionSelect.value) {
+                    isValid = false;
+                } else if (transactionSelect && transactionSelect.value) {
+                    // Validate fields specific to the transaction type
+                    const transType = transactionSelect.value.toLowerCase();
+                    let partyFieldsValid = true;
+                    
+                    if (transType === 'assignment') {
+                        const assignorField = document.getElementById(prefix.replace('property_', '') + 'trans-assignor-record');
+                        const assigneeField = document.getElementById(prefix.replace('property_', '') + 'trans-assignee-record');
+                        if ((!assignorField || !assignorField.value.trim()) || (!assigneeField || !assigneeField.value.trim())) {
+                            partyFieldsValid = false;
+                        }
+                    } else if (transType === 'mortgage') {
+                        const mortgagorField = document.getElementById(prefix.replace('property_', '') + 'mortgagor-record');
+                        const mortgageeField = document.getElementById(prefix.replace('property_', '') + 'mortgagee-record');
+                        if ((!mortgagorField || !mortgagorField.value.trim()) || (!mortgageeField || !mortgageeField.value.trim())) {
+                            partyFieldsValid = false;
+                        }
+                    } else if (transType === 'surrender') {
+                        const surrenderorField = document.getElementById(prefix.replace('property_', '') + 'surrenderor-record');
+                        const surrendereeField = document.getElementById(prefix.replace('property_', '') + 'surrenderee-record');
+                        if ((!surrenderorField || !surrenderorField.value.trim()) || (!surrendereeField || !surrendereeField.value.trim())) {
+                            partyFieldsValid = false;
+                        }
+                    } else if (transType === 'lease') {
+                        const lessorField = document.getElementById(prefix.replace('property_', '') + 'lessor-record');
+                        const lesseeField = document.getElementById(prefix.replace('property_', '') + 'lessee-record');
+                        if ((!lessorField || !lessorField.value.trim()) || (!lesseeField || !lesseeField.value.trim())) {
+                            partyFieldsValid = false;
+                        }
+                    } else if (transType !== 'other') { // For default fields but not "Other" type
+                        const grantorField = document.getElementById(prefix.replace('property_', '') + 'grantor-record');
+                        const granteeField = document.getElementById(prefix.replace('property_', '') + 'grantee-record');
+                        if ((!grantorField || !grantorField.value.trim()) || (!granteeField || !granteeField.value.trim())) {
+                            partyFieldsValid = false;
+                        }
+                    }
+                    
+                    if (!partyFieldsValid) {
+                        isValid = false;
+                    }
+                }
+                
+                // Update button state
+                if (isValid) {
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    submitButton.disabled = true;
+                    submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+                
+                return isValid;
+            }
+
+            // Setup form validation and mark required fields
+            function setupFormValidation(formId, submitButtonId) {
+                const form = document.getElementById(formId);
+                if (!form) return;
+                
+                // Mark key fields as required
+                markRequiredFields(form);
+                
+                // Initially validate and disable the button
+                validatePropertyForm(formId, submitButtonId);
+                
+                // Add event listeners to all form inputs
+                const allInputs = form.querySelectorAll('input, select, textarea');
+                allInputs.forEach(input => {
+                    input.addEventListener('input', () => validatePropertyForm(formId, submitButtonId));
+                    input.addEventListener('change', () => validatePropertyForm(formId, submitButtonId));
+                });
+            }
+            
+            // Mark required fields with the 'required' attribute
+            function markRequiredFields(form) {
+                // File number fields are required indirectly via validation function
+                
+                // Property description fields
+                const requiredPropertyFields = [
+                    'plotNo', 
+                    'lgsaOrCity', 
+                    'property-description'
+                ];
+                
+                // Transaction fields
+                form.querySelector('select.transaction-type-select')?.setAttribute('required', 'true');
+                form.querySelector('#transactionDate')?.setAttribute('required', 'true');
+                form.querySelector('#serialNo')?.setAttribute('required', 'true');
+                form.querySelector('#pageNo')?.setAttribute('required', 'true');
+                form.querySelector('#volumeNo')?.setAttribute('required', 'true');
+                
+                // For each required field, add the required attribute
+                requiredPropertyFields.forEach(fieldId => {
+                    const field = form.querySelector('#' + fieldId);
+                    if (field) field.setAttribute('required', 'true');
+                });
+            }
+
+            // Create Edit Property Dialog with validation
+            let editPropertyDialog = document.getElementById('property-edit-dialog');
+            if (!editPropertyDialog) {
+                // Create the edit dialog if it doesn't exist
+                editPropertyDialog = document.createElement('div');
+                editPropertyDialog.id = 'property-edit-dialog';
+                editPropertyDialog.className = 'dialog-overlay hidden';
+                editPropertyDialog.innerHTML = `
+                    <div class="dialog-content property-form-content">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">Edit Property Record</h2>
+                            <button id="close-property-edit" class="text-gray-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <form id="property-edit-form" class="space-y-6 max-h-[75vh] overflow-y-auto">
+                            <!-- Content will be dynamically populated -->
+                        </form>
+                        
+                        <div class="flex justify-end space-x-3 pt-4 border-t mt-4">
+                            <button id="property-edit-submit-btn" class="btn btn-primary" type="submit">Save Changes</button>
+                            <button id="close-edit" class="btn btn-secondary">Close</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(editPropertyDialog);
+                
+                // Add event listeners for the new edit dialog
+                document.getElementById('close-property-edit').addEventListener('click', function() {
+                    editPropertyDialog.classList.add('hidden');
+                });
+                
+                document.getElementById('close-edit').addEventListener('click', function() {
+                    editPropertyDialog.classList.add('hidden');
+                });
+            }
+
+            // ...existing code...
 
             // Create View Property Dialog
             let viewPropertyDialog = document.getElementById('property-view-dialog');
