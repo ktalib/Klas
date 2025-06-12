@@ -221,9 +221,10 @@
                                <input type="hidden" name="address" id="contactAddressDisplay">    
                         <div class="mb-4">
                             <label class="block text-sm mb-1">Contact Address:</label>
-                            <div id="contactAddressDisplay" class="p-2 bg-gray-50 border border-gray-200 rounded-md">
-                                <span id="fullContactAddress"></span>
+                            <div id="contactAddressPreview" class="p-2 bg-white border border-gray-300 rounded-md min-h-[40px]">
+                                <span id="fullContactAddress" style="display: block; padding: 4px;"></span>
                             </div>
+                            <input type="hidden" name="address" id="contactAddressDisplay">
                         </div>
      
                           <div class="grid grid-cols-2 gap-4 mb-4">
@@ -435,6 +436,64 @@
                 form.submit();
             }, 3000);
         });
+    });
+
+    // Direct script to handle contact address updates
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Setting up direct address handler');
+        
+        // Get address input fields
+        const ownerHouseNo = document.getElementById('ownerHouseNo');
+        const ownerStreetName = document.getElementById('ownerStreetName');
+        const ownerDistrict = document.getElementById('ownerDistrict');
+        const ownerLga = document.getElementById('ownerLga');
+        const ownerState = document.getElementById('ownerState');
+        
+        // Get display elements
+        const fullContactAddress = document.getElementById('fullContactAddress');
+        const contactAddressDisplay = document.getElementById('contactAddressDisplay');
+        
+        console.log('Address elements found:', {
+            'ownerHouseNo': !!ownerHouseNo,
+            'ownerStreetName': !!ownerStreetName,
+            'fullContactAddress': !!fullContactAddress,
+            'contactAddressDisplay': !!contactAddressDisplay
+        });
+        
+        // Function to directly update address
+        function updateAddressDisplay() {
+            const houseNo = ownerHouseNo?.value || '';
+            const streetName = ownerStreetName?.value || '';
+            const district = ownerDistrict?.value || '';
+            const lga = ownerLga?.value || '';
+            const state = ownerState?.value || '';
+            
+            const fullAddress = [houseNo, streetName, district, lga, state]
+                .filter(part => part.trim() !== '')
+                .join(', ');
+            
+            console.log('New address value:', fullAddress);
+            
+            // Update both elements
+            if (fullContactAddress) {
+                fullContactAddress.textContent = fullAddress || '';
+            }
+            
+            if (contactAddressDisplay) {
+                contactAddressDisplay.value = fullAddress;
+            }
+        }
+        
+        // Add event listeners directly
+        [ownerHouseNo, ownerStreetName, ownerDistrict, ownerLga, ownerState].forEach(field => {
+            if (field) {
+                field.addEventListener('input', updateAddressDisplay);
+                field.addEventListener('change', updateAddressDisplay);
+            }
+        });
+        
+        // Run initial update
+        updateAddressDisplay();
     });
 </script>
 

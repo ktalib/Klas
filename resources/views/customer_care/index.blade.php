@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('page-title')
-    {{ __('SECTIONAL TITLING  MODULE') }}
+    {{ __('Customer Care') }}
 @endsection
 
  
@@ -80,6 +80,9 @@
                   </button>
                   <button onclick="promptForIndividualOutreach('email')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left" role="menuitem">
                     <i data-lucide="mail" class="inline-block w-4 h-4 mr-2 text-blue-500"></i> Send Email
+                  </button>
+                  <button onclick="promptForIndividualOutreach('whatsapp')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left" role="menuitem">
+                    <i class="fa-brands fa-whatsapp inline-block w-4 h-4 mr-2 text-green-500"></i> Send WhatsApp
                   </button>
                   
                   <!-- Divider -->

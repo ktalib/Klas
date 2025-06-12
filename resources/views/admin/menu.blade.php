@@ -474,7 +474,7 @@
             <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
             <span>Memo</span>
           </a>
-          <a href="{{route('programmes.approvals.planning_recomm')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.planning_recomm') ? 'active' : '' }}">
+          <a href="{{route('programmes.approvals.planning_recomm')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.planning_recomm') && request()->query('url') !== 'view' ? 'active' : '' }}">
             <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
             <span>Planning Recommendation</span>
           </a>
@@ -656,7 +656,7 @@
             <i data-lucide="building-2" class="h-3.5 w-3.5"></i>
             <span>Other Departments</span>
           </a>
-          <a href="{{route('programmes.approvals.planning_recomm')}}?url=view" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.planning_recomm') && request()->query('url') == 'view' ? 'active' : '' }}">
+          <a href="{{ route('programmes.approvals.planning_recomm', ['url' => 'view']) }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.planning_recomm') && request()->query('url') === 'view' ? 'active' : '' }}">
             <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
             <span>Planning Recommendation</span>
           </a>
@@ -963,6 +963,18 @@
           <i data-lucide="user-cog" class="h-4 w-4"></i>
           <span>User Account</span>
         </a>
+
+        <!-- New menu items for departments and roles -->
+        <a href="{{ route('departments.index') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('departments.index') ? 'active' : '' }}">
+          <i data-lucide="building" class="h-4 w-4"></i>
+          <span>Departments</span>
+        </a>
+
+        <a href="{{ route('user-roles.index') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('user-roles.index') ? 'active' : '' }}">
+          <i data-lucide="shield" class="h-4 w-4"></i>
+          <span>User Roles</span>
+        </a>
+        
         <a href="/admin/system-settings" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
           <i data-lucide="settings" class="h-4 w-4"></i>
           <span>System Settings</span>

@@ -49,7 +49,7 @@
                             @if (isset($application) && $application->plot_size)
                                 {{ $application->plot_size }} Square Meters
                             @else
-                                [Insert Size in Square Meters]
+                                
                             @endif
                         </li>
                     </ul>
@@ -216,8 +216,7 @@
 
                 <section class="mb-6">
                     <h2 class="text-base font-bold mb-2">OFFICIAL STAMP & SEAL</h2>
-                    <div class="border border-gray-400 p-8 text-center text-gray-400">[Insert Official Ministry Seal &
-                        Stamp Here]</div>
+                    <div class="border border-gray-400 p-8 text-center text-gray-400"> </div>
                 </section>
                 
                 <!-- Final Conveyance Records Section starts on a new page -->
@@ -275,11 +274,11 @@
                 </a>
 
                 <!-- Ensure this button is NOT inside a form -->
-                <button id="submit-final-conveyance" type="button"
+                {{-- <button id="submit-final-conveyance" type="button"
                     class="flex items-center px-3 py-1 text-xs bg-green-700 text-white rounded-md hover:bg-green-800">
                     <i data-lucide="send-horizontal" class="w-3.5 h-3.5 mr-1.5"></i>
                     Submit
-                </button>
+                </button> --}}
                 
                 <button id="print-conveyance" type="button"
                     class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-blue-600 text-white hover:bg-blue-700">

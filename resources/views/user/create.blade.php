@@ -19,10 +19,6 @@
 
             {{ Form::open(['url' => 'users', 'method' => 'post']) }}
 
-            @php
-                $assignRoles = DB::table('assign_roles')->select('id', 'role_name')->get()->pluck('role_name', 'role_name')->toArray();
-            @endphp
-
             <div class="p-6 overflow-y-auto max-h-[60vh]">
                 <div class="flex flex-wrap -mx-2">
                     @if (\Auth::user()->type != 'super admin')
@@ -31,24 +27,26 @@
                             <div class="flex flex-wrap -mx-2 mb-4">
                                 <div class="w-full md:w-1/2 px-2 mb-4">
                                     <div>
-                                        {{ Form::label('role', __('Department'), ['class' => 'block text-sm font-medium text-gray-700 mb-1']) }}
-                                        {!! Form::select('role', $userRoles, null, [
+                                        {{ Form::label('first_name', __('First Name'), ['class' => 'block text-sm font-medium text-gray-700 mb-1']) }}
+                                        {{ Form::text('first_name', null, [
                                             'class' => 'w-full p-2 border border-gray-300 rounded-md text-sm',
+                                            'placeholder' => __('Enter First Name'),
                                             'required' => 'required'
-                                        ]) !!}
+                                        ]) }}
                                     </div>
                                 </div>
                                 <div class="w-full md:w-1/2 px-2 mb-4">
                                     <div>
-                                        {{ Form::label('name', __('Name'), ['class' => 'block text-sm font-medium text-gray-700 mb-1']) }}
-                                        {{ Form::text('name', null, [
+                                        {{ Form::label('last_name', __('Last Name'), ['class' => 'block text-sm font-medium text-gray-700 mb-1']) }}
+                                        {{ Form::text('last_name', null, [
                                             'class' => 'w-full p-2 border border-gray-300 rounded-md text-sm',
-                                            'placeholder' => __('Enter Name'),
+                                            'placeholder' => __('Enter Last Name'),
                                             'required' => 'required'
                                         ]) }}
                                     </div>
                                 </div>
                             </div>
+                            
                             <div class="flex flex-wrap -mx-2 mb-4">
                                 <div class="w-full md:w-1/2 px-2 mb-4">
                                     <div>
@@ -72,6 +70,7 @@
                                     </div>
                                 </div>
                             </div>
+                            
                             <div class="flex flex-wrap -mx-2 mb-4">
                                 <div class="w-full md:w-1/2 px-2 mb-4">
                                     <div>
@@ -82,27 +81,92 @@
                                         ]) }}
                                     </div>
                                 </div>
+                                <div class="w-full md:w-1/2 px-2 mb-4">
+                                    <div>
+                                        {{ Form::label('department_id', __('Department'), ['class' => 'block text-sm font-medium text-gray-700 mb-1']) }}
+                                        {{ Form::select('department_id', $departments, null, [
+                                            'class' => 'w-full p-2 border border-gray-300 rounded-md text-sm',
+                                            'required' => 'required',
+                                            'id' => 'department_id',
+                                            'placeholder' => 'Select Department',
+                                            '@change' => 'selectedDept = $event.target.value; showAll = false;'
+                                        ]) }}
+                                    </div>
+                                </div>
                             </div>
                             
-                            {{-- Roles Section in Grid Layout --}}
-                            <div class="mt-6">
+                            {{-- Roles Section with improved Alpine.js data model --}}
+                            <div class="mt-6" id="roles_container" x-data="{
+                                selectedDept: null,
+                                showAll: true,
+                                
+                                filterByDept() {
+                                    this.selectedDept = document.getElementById('department_id').value;
+                                    this.showAll = false;
+                                },
+                                
+                                showAllRoles() {
+                                    this.showAll = true;
+                                },
+                                
+                                init() {
+                                    // Check for initial department value
+                                    this.$nextTick(() => {
+                                        const deptId = document.getElementById('department_id').value;
+                                        if (deptId) {
+                                            this.selectedDept = deptId;
+                                            this.showAll = false;
+                                            console.log('Initial department detected:', deptId);
+                                        }
+                                    });
+                                    
+                                    // Add a mutation observer to watch for department changes
+                                    const deptSelect = document.getElementById('department_id');
+                                    if (deptSelect) {
+                                        deptSelect.addEventListener('change', () => {
+                                            this.selectedDept = deptSelect.value;
+                                            this.showAll = deptSelect.value ? false : true;
+                                            console.log('Department changed to:', this.selectedDept);
+                                        });
+                                    }
+                                }
+                            }">
                                 {{ Form::label('assign_role', __('Select role(s)'), ['class' => 'block text-sm font-medium text-gray-700 mb-2']) }}
                                 <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                    <div class="grid grid-cols-3 gap-3">
-                                        @foreach ($assignRoles as $role)
-                                            <div class="flex items-start">
+                                    <div class="grid grid-cols-3 gap-3" id="roles_grid">
+                                        @foreach ($userRoles as $role)
+                                            <div class="flex items-start role-item" 
+                                                x-show="showAll || '{{ $role->department_id ?? 'null' }}' == selectedDept || '{{ $role->department_id ?? 'null' }}' == 'null'"
+                                                data-dept-id="{{ $role->department_id ?? 'null' }}">
                                                 <div class="flex items-center h-5">
-                                                    {{ Form::checkbox('assign_role[]', $role, false, [
-                                                        'class' => 'h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500',
-                                                        'id' => 'role_'.$role
-                                                    ]) }}
+                                                    <input type="checkbox" name="assign_role[]" value="{{ $role->id }}" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
                                                 </div>
                                                 <div class="ml-3 text-sm">
-                                                    {{ Form::label('role_'.$role, $role, ['class' => 'font-medium text-gray-700']) }}
+                                                    <label class="font-medium text-gray-700">{{ $role->name }}</label>
+                                                   
                                                 </div>
                                             </div>
                                         @endforeach
                                     </div>
+                                </div>
+                                
+                                <!-- Role Loading Helper Button -->
+                                <div class="mt-3 text-right">
+                                    <button type="button" id="showAllRolesBtn" @click="showAllRoles()" 
+                                        :class="{'bg-indigo-600 text-white': showAll, 'text-indigo-600 border border-indigo-600': !showAll}"
+                                        class="text-sm py-1 px-2 rounded">
+                                        Show All Roles
+                                    </button>
+                                    <button type="button" id="filterRolesBtn" @click="filterByDept()" 
+                                        :class="{'bg-indigo-600 text-white': !showAll, 'text-indigo-600 border border-indigo-600 bg-white': showAll}"
+                                        class="text-sm py-1 px-2 rounded ml-2">
+                                        Filter by Department
+                                    </button>
+                                </div>
+                                
+                                <!-- Department Filter Status Message -->
+                                <div class="mt-2 text-sm" x-show="!showAll && selectedDept">
+                                    <span class="text-green-600">Showing roles for selected department</span>
                                 </div>
                             </div>
                         </div>
@@ -116,6 +180,8 @@
                 </button>
             </div>
             {{ Form::close() }}
+            <!-- Removed inline role-filtering JS; now included via assets/js/role-filter.js -->
         </div>
     </div>
 </div>
+

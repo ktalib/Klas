@@ -118,35 +118,76 @@
             alert('Application process canceled');
         });
 
-        // Update the contact address display when address fields change
-        const addressFields = ['ownerHouseNo', 'ownerStreetName', 'ownerDistrict', 'ownerLga', 'ownerState'];
-        
-        addressFields.forEach(field => {
-            const element = document.getElementById(field);
-            if (element) {
-                element.addEventListener('input', updateContactAddress);
+        // Improved contact address update functionality
+        function initializeAddressUpdate() {
+            console.log('Initializing address update functionality');
+            
+            // Get all address input fields
+            const ownerHouseNo = document.getElementById('ownerHouseNo');
+            const ownerStreetName = document.getElementById('ownerStreetName');
+            const ownerDistrict = document.getElementById('ownerDistrict');
+            const ownerLga = document.getElementById('ownerLga');
+            const ownerState = document.getElementById('ownerState');
+            
+            // Get display elements
+            const fullContactAddress = document.getElementById('fullContactAddress');
+            const contactAddressDisplay = document.getElementById('contactAddressDisplay');
+            
+            if (!fullContactAddress || !contactAddressDisplay) {
+                console.error('Address display elements not found!', {
+                    fullContactAddress: !!fullContactAddress,
+                    contactAddressDisplay: !!contactAddressDisplay
+                });
+                return;
             }
-        });
-
-        function updateContactAddress() {
-            const houseNo = document.getElementById('ownerHouseNo')?.value || '';
-            const streetName = document.getElementById('ownerStreetName')?.value || '';
-            const district = document.getElementById('ownerDistrict')?.value || '';
-            const lga = document.getElementById('ownerLga')?.value || '';
-            const state = document.getElementById('ownerState')?.value || '';
             
-            const fullAddress = [houseNo, streetName, district, lga, state].filter(Boolean).join(', ');
+            // Function to update the address display
+            function updateAddress() {
+                const houseNo = ownerHouseNo ? ownerHouseNo.value.trim() : '';
+                const streetName = ownerStreetName ? ownerStreetName.value.trim() : '';
+                const district = ownerDistrict ? ownerDistrict.value.trim() : '';
+                const lga = ownerLga ? ownerLga.value.trim() : '';
+                const state = ownerState ? ownerState.value.trim() : '';
+                
+                // Build address parts array, filter out empty values
+                const addressParts = [];
+                if (houseNo) addressParts.push(houseNo);
+                if (streetName) addressParts.push(streetName);
+                if (district) addressParts.push(district);
+                if (lga) addressParts.push(lga);
+                if (state) addressParts.push(state);
+                
+                // Join with commas
+                const fullAddress = addressParts.join(', ');
+                
+                // Update display elements
+                fullContactAddress.textContent = fullAddress;
+                contactAddressDisplay.value = fullAddress;
+                
+                console.log('Address updated:', fullAddress);
+            }
             
-            // Update the display and hidden field
-            const addressDisplay = document.getElementById('fullContactAddress');
-            const hiddenAddressField = document.getElementById('contactAddressDisplay');
+            // Add input event listeners to all address fields
+            const attachListener = (element) => {
+                if (element) {
+                    console.log('Attaching listener to:', element.id);
+                    element.addEventListener('input', updateAddress);
+                }
+            };
             
-            if (addressDisplay) addressDisplay.textContent = fullAddress;
-            if (hiddenAddressField) hiddenAddressField.value = fullAddress;
+            attachListener(ownerHouseNo);
+            attachListener(ownerStreetName);
+            attachListener(ownerDistrict);
+            attachListener(ownerLga);
+            attachListener(ownerState);
+            
+            // Initial update
+            updateAddress();
+            console.log('Address update initialization complete');
         }
         
-        // Initialize address display
-        updateContactAddress();
+        // Call the initialization function
+        initializeAddressUpdate();
 
         // Form submission handling
         const form = document.querySelector('form');

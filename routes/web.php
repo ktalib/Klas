@@ -560,3 +560,76 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'instruments'], function () 
 // COROI routes
 Route::get('/coroi', [App\Http\Controllers\CoroiController::class, 'index'])->name('coroi.index');
 
+// User role routes for department-based filtering
+Route::get('/user-roles/by-department', 'App\Http\Controllers\UserRoleController@getByDepartment')
+    ->name('user-roles.by-department');
+
+// Direct route for user roles by department - Fix for AJAX issue
+Route::get('/get-roles-by-department/{departmentId}', function($departmentId) {
+    try {
+        // Get roles for the specific department
+        $departmentRoles = \App\Models\UserRole::where('department_id', $departmentId)
+                          ->where('is_active', 1)
+                          ->get(['id', 'name', 'description']);
+        
+        // Also include general roles that don't have a specific department
+        $generalRoles = \App\Models\UserRole::whereNull('department_id')
+                       ->where('is_active', 1)
+                       ->get(['id', 'name', 'description']);
+        
+        // Merge and return all roles
+        $allRoles = $departmentRoles->merge($generalRoles);
+        
+        return response()->json($allRoles);
+    } catch (\Exception $e) {
+        \Log::error('Error fetching roles for department', [
+            'department_id' => $departmentId,
+            'error' => $e->getMessage()
+        ]);
+        
+        return response()->json(['error' => 'Failed to load roles: ' . $e->getMessage()], 500);
+    }
+})->name('get.roles.by.department');
+
+// Debug routes - only for development
+if (app()->environment('local', 'development', 'staging')) {
+    Route::get('/debug/roles-departments', [App\Http\Controllers\DebugController::class, 'rolesDepartments']);
+}
+
+// Debug route that directly returns roles for a department (bypass controller completely)
+Route::get('/debug-roles/{departmentId}', function($departmentId) {
+    try {
+        // Log the request for debugging
+        \Log::info('Debug route hit', ['department_id' => $departmentId]);
+        
+        // Get all user roles (with or without department_id)
+        $roles = \App\Models\UserRole::where(function($query) use ($departmentId) {
+            $query->where('department_id', $departmentId)
+                  ->orWhereNull('department_id');
+        })->where('is_active', 1)->get(['id', 'name']);
+        
+        // Log what we found
+        \Log::info('Roles found', ['count' => $roles->count(), 'roles' => $roles->toArray()]);
+        
+        return response()->json($roles);
+    } catch (\Exception $e) {
+        \Log::error('Error in debug route', ['error' => $e->getMessage()]);
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+// Department and User Role Management Routes
+Route::group(['middleware' => ['auth', 'XSS']], function () {
+    // Department Routes
+    Route::resource('departments', 'App\Http\Controllers\DepartmentController');
+    
+    // User Role Routes
+    Route::resource('user-roles', 'App\Http\Controllers\UserRoleController');
+});
+
+// Debug routes for fixing user roles issue
+Route::prefix('debug')->group(function() {
+    Route::get('/check-roles', 'App\Http\Controllers\DebugController@checkUserRoles');
+    Route::get('/add-sample-roles', 'App\Http\Controllers\DebugController@addSampleRoles');
+});
+

@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\LoggedHistory;
 use App\Models\Notification;
 use App\Models\PackageTransaction;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Models\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -31,8 +32,9 @@ class UserController extends Controller
 
     public function create()
     {
-        $userRoles = Role::where('parent_id', parentId())->whereNotIn('name', ['tenant', 'maintainer'])->get()->pluck('name', 'id');
-        return view('user.create', compact('userRoles'));
+        $departments = Department::where('is_active', 1)->pluck('name', 'id');
+        $userRoles = UserRole::where('is_active', 1)->get(['id', 'name', 'department_id']);
+        return view('user.create', compact('departments', 'userRoles'));
     }
 
 
@@ -57,17 +59,16 @@ class UserController extends Controller
                 $user = new User();
                 $user->name = $request->name;
                 $user->email = $request->email;
-                $user->assign_role = implode(',', $request->assign_role); // Save as comma-separated values
+                $user->assign_role = isset($request->assign_role) ? implode(',', $request->assign_role) : null;
                 $user->password = \Hash::make($request->password);
                 $user->phone_number = $request->phone_number;
+                $user->department_id = $request->department_id; // Save department_id
                 $user->type = 'owner';
                 $user->lang = 'english';
                 $user->subscription = 1;
                 $user->parent_id = parentId();
                 $user->email_verified_at = now();
                 $user->save();
-                $userRole = Role::findByName('owner');
-                $user->assignRole($userRole);
                 defaultTemplate($user->id);
 
                 $module = 'user_create';
@@ -94,10 +95,12 @@ class UserController extends Controller
                 $validator = \Validator::make(
                     $request->all(),
                     [
-                        'name' => 'required',
+                        'first_name' => 'required',
+                        'last_name' => 'required',
                         'email' => 'required|email|unique:users',
                         'password' => 'required|min:6',
-                        'role' => 'required',
+                        'department_id' => 'required|exists:departments,id',
+                        'assign_role' => 'required|array',
                     ]
                 );
                 if ($validator->fails()) {
@@ -116,25 +119,31 @@ class UserController extends Controller
                         return redirect()->back()->with('error', __('Your user limit is over, please upgrade your subscription.'));
                     }
                 }
-                $userRole = Role::findById($request->role);
+                
+                // Get the first selected role to set as the user type
+                $firstRoleId = $request->assign_role[0];
+                $userRole = UserRole::findOrFail($firstRoleId);
+                
                 $user = new User();
                 $user->first_name = $request->first_name;
                 $user->last_name = $request->last_name;
                 $user->email = $request->email;
                 $user->phone_number = $request->phone_number;
                 $user->password = \Hash::make($request->password);
+                $user->department_id = $request->department_id; // Save department_id
                 $user->type = $userRole->name;
                 $user->email_verified_at = now();
                 $user->profile = 'avatar.png';
                 $user->lang = 'english';
                 $user->parent_id = parentId();
-                $user->assign_role = isset($request->assign_role) ? implode(',', $request->assign_role) : null; // Save assign_role
+                $user->assign_role = isset($request->assign_role) ? implode(',', $request->assign_role) : null;
                 $user->save();
-                $user->assignRole($userRole);
-
+                
                 $module = 'user_create';
                 $notification = Notification::where('parent_id', parentId())->where('module', $module)->first();
-                $notification->password=$request->password;
+                if (!empty($notification)) {
+                    $notification->password=$request->password;
+                }
                 $setting = settings();
                 $errorMessage = '';
                 if (!empty($notification) && $notification->enabled_email == 1) {
@@ -167,8 +176,8 @@ class UserController extends Controller
         } else {
             $settings = settings();
             $transactions = PackageTransaction::where('user_id', $user->id)->orderBy('created_at', 'DESC')->get();
-            $subscriptions = Subscription::get();
-            return view('user.show', compact('user', 'transactions','settings', 'subscriptions'));
+            // Remove subscriptions variable
+            return view('user.show', compact('user', 'transactions', 'settings'));
         }
     }
 
@@ -176,9 +185,13 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        $userRoles = Role::where('parent_id', '=', parentId())->whereNotIn('name', ['tenant', 'maintainer'])->get()->pluck('name', 'id');
-
-        return view('user.edit', compact('user', 'userRoles'));
+        $departments = Department::where('is_active', 1)->pluck('name', 'id');
+        $userRoles = UserRole::where('is_active', 1)->get(['id', 'name', 'department_id']);
+        
+        // Get user's assigned roles as an array
+        $userAssignedRoles = !empty($user->assign_role) ? explode(',', $user->assign_role) : [];
+        
+        return view('user.edit', compact('user', 'departments', 'userRoles', 'userAssignedRoles'));
     }
 
 
@@ -206,14 +219,14 @@ class UserController extends Controller
 
                 return redirect()->route('users.index')->with('success', 'User successfully updated.');
             } else {
-
-
                 $validator = \Validator::make(
                     $request->all(),
                     [
-                        'name' => 'required',
+                        'first_name' => 'required',
+                        'last_name' => 'required',
                         'email' => 'required|email|unique:users,email,' . $id,
-                        'role' => 'required',
+                        'department_id' => 'required|exists:departments,id',
+                        'assign_role' => 'required|array',
                     ]
                 );
                 if ($validator->fails()) {
@@ -222,16 +235,20 @@ class UserController extends Controller
                     return redirect()->back()->with('error', $messages->first());
                 }
 
-                $userRole = Role::findById($request->role);
+                // Get the first selected role to set as the user type
+                $firstRoleId = $request->assign_role[0];
+                $userRole = UserRole::findOrFail($firstRoleId);
+                
                 $user = User::findOrFail($id);
                 $user->first_name = $request->first_name;
                 $user->last_name = $request->last_name;
                 $user->email = $request->email;
                 $user->phone_number = $request->phone_number;
+                $user->department_id = $request->department_id; // Save department_id
                 $user->type = $userRole->name;
-                $user->assign_role = implode(',', $request->assign_role); // Save as comma-separated values
+                $user->assign_role = isset($request->assign_role) ? implode(',', $request->assign_role) : null;
                 $user->save();
-                $user->roles()->sync($userRole);
+                
                 return redirect()->route('users.index')->with('success', 'User successfully updated.');
             }
         } else {

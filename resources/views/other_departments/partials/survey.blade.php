@@ -172,7 +172,7 @@
           <!-- Full image viewer modal -->
        @include('actions.document')
           
-          <button type="button" id="submit-survey" class="flex items-center px-3 py-1 text-xs bg-green-700 text-white rounded-md hover:bg-gray-800">
+          <button type="button" id="submit-survey" class="flex items-center px-3 py-1 text-xs bg-green-700 text-white rounded-md hover:bg-gray-800" style="display: none;">
             <i data-lucide="send-horizontal" class="w-3.5 h-3.5 mr-1.5"></i>
             Submit
           </button>
@@ -358,56 +358,56 @@
      });
     });
     
-    // Initialize on page load
+    // Function to initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
-     // First check if edit button exists, if not create one
-     let editButton = document.getElementById('edit-survey');
-     if (!editButton) {
-      // Find the submit button to place edit button before it
-      const submitButton = document.getElementById('submit-survey');
-      
-      console.log("Submit button found:", submitButton); // Debug log
-      
-      if (submitButton) {
-       const parentElement = submitButton.parentElement;
-       
-       // Create the edit button - ensure it's always created regardless of URL parameters
-       editButton = document.createElement('button');
-       editButton.id = 'edit-survey';
-       editButton.type = 'button';
-       editButton.className = 'flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-white hover:bg-gray-50';
-       editButton.innerHTML = '<i data-lucide="pencil" class="w-3.5 h-3.5 mr-1.5"></i> Edit';
-       editButton.style.display = 'inline-flex'; // Ensure it's displayed
-       
-       // Insert before submit button
-       parentElement.insertBefore(editButton, submitButton);
-       
-       // Re-initialize Lucide icons
-       lucide.createIcons();
-       
-       console.log("Edit button created:", editButton); // Debug log
-      } else {
-       console.error("Submit button not found in the DOM"); // Error logging
-      }
-     }
-     
-     // Add click event to edit button - only enable fields, don't fetch data
-     if (editButton) {
-       editButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        toggleFormFields(true);
-       });
-     }
-     
-     // Ensure submit button is visible and has event listener
-     const submitButton = document.getElementById('submit-survey');
-     if (submitButton) {
-       submitButton.style.display = 'inline-flex'; // Ensure it's displayed
-     } else {
-       console.error("Submit button not found during initialization");
-     }
-     
-     // Fetch survey data on page load
-     fetchSurveyData();
-    });
+ // First check if edit button exists, if not create one
+ let editButton = document.getElementById('edit-survey');
+ if (!editButton) {
+  // Find the submit button to place edit button before it
+  const submitButton = document.getElementById('submit-survey');
+  
+  console.log("Submit button found:", submitButton); // Debug log
+  
+  if (submitButton) {
+   const parentElement = submitButton.parentElement;
+   
+   // Create the edit button - ensure it's always created regardless of URL parameters
+   editButton = document.createElement('button');
+   editButton.id = 'edit-survey';
+   editButton.type = 'button';
+   editButton.className = 'flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-white hover:bg-gray-50';
+   editButton.innerHTML = '<i data-lucide="pencil" class="w-3.5 h-3.5 mr-1.5"></i> Edit';
+   editButton.style.display = 'none'; // Hide the edit button
+   
+   // Insert before submit button
+   parentElement.insertBefore(editButton, submitButton);
+   
+   // Re-initialize Lucide icons
+   lucide.createIcons();
+   
+   console.log("Edit button created:", editButton); // Debug log
+  } else {
+   console.error("Submit button not found in the DOM"); // Error logging
+  }
+ }
+ 
+ // Add click event to edit button - only enable fields, don't fetch data
+ if (editButton) {
+   editButton.addEventListener('click', function(e) {
+    e.preventDefault();
+    toggleFormFields(true);
+   });
+ }
+ 
+ // Ensure submit button is visible and has event listener
+ const submitButton = document.getElementById('submit-survey');
+ if (submitButton) {
+   submitButton.style.display = 'none'; // Ensure it's hidden
+ } else {
+   console.error("Submit button not found during initialization");
+ }
+ 
+ // Fetch survey data on page load
+ fetchSurveyData();
+});
 </script>
