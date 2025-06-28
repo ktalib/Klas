@@ -74,39 +74,42 @@
                         <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
                             <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
                             <span>Export</span>
-  B21                       </button>
+                       </button>
                             @if(
                                 !request()->has('survey') && 
                                 (
                                     !request()->has('url') || 
                                     (
                                         request()->get('url') !== 'phy_planning' && 
-                                        request()->get('url') !== 'recommendation' && 
-                                        request()->get('url') !== 'infopro'
+                                        request()->get('url') !== 'recommendation'
+                                        
                                     )
+                                    
                                 )
                             )
-                                <div class="relative">
-                                    <button onclick="toggleDropdown(event)" class="flex items-center space-x-2 px-4 py-2 bg-gray-900 text-white rounded-md">
-                                        <i data-lucide="file-plus" class="w-4 h-4"></i>
-                                        <span>New Primary Application</span>
-                                        <i data-lucide="chevron-down" class="w-4 h-4 ml-2"></i>
-                                    </button>
-                                    <div class="absolute mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg hidden dropdown-menu">
-                                        <a href="{{ route('primaryform.index') }}?landuse=Residential" class="flex items-center px-4 py-2 hover:bg-gray-100">
-                                            <i data-lucide="home" class="w-4 h-4 text-blue-500 mr-2"></i>
-                                            Residential
-                                        </a>
-                                        <a href="{{ route('primaryform.index') }}?landuse=Commercial" class="flex items-center px-4 py-2 hover:bg-gray-100">
-                                            <i data-lucide="briefcase" class="w-4 h-4 text-green-500 mr-2"></i>
-                                            Commercial
-                                        </a>
-                                        <a href="{{ route('primaryform.index') }}?landuse=Industrial" class="flex items-center px-4 py-2 hover:bg-gray-100">
-                                            <i data-lucide="factory" class="w-4 h-4 text-red-500 mr-2"></i>
-                                            Industrial
-                                        </a>
+                                @if(request()->has('url') && request()->get('url') === 'infopro')
+                                    <div class="relative">
+                                        <button onclick="toggleDropdown(event)" class="flex items-center space-x-2 px-4 py-2 bg-gray-900 text-white rounded-md">
+                                            <i data-lucide="file-plus" class="w-4 h-4"></i>
+                                            <span>New Primary Application</span>
+                                            <i data-lucide="chevron-down" class="w-4 h-4 ml-2"></i>
+                                        </button>
+                                        <div class="absolute mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg hidden dropdown-menu">
+                                            <a href="{{ route('primaryform.index') }}?landuse=Residential" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                                <i data-lucide="home" class="w-4 h-4 text-blue-500 mr-2"></i>
+                                                Residential
+                                            </a>
+                                            <a href="{{ route('primaryform.index') }}?landuse=Commercial" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                                <i data-lucide="briefcase" class="w-4 h-4 text-green-500 mr-2"></i>
+                                                Commercial
+                                            </a>
+                                            <a href="{{ route('primaryform.index') }}?landuse=Industrial" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                                <i data-lucide="factory" class="w-4 h-4 text-red-500 mr-2"></i>
+                                                Industrial
+                                            </a>
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             @endif  
                   
                     </div>

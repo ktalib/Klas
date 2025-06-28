@@ -28,41 +28,20 @@
             <!-- Header with actions -->
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold">GIS Data Records</h2>
-               <div class="relative inline-block text-left">
-              <button id="survey-dropdown-button" class="flex items-center space-x-2 px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800">
-              <i data-lucide="plus" class="w-4 h-4"></i>
-              <span>Add New Record</span>
-              <i data-lucide="chevron-down" class="w-4 h-4"></i>
-              </button>
-              <div id="survey-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-              <div class="py-1">
-              <a href="{{ route('gis.create', ['is' => 'primary']) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <i data-lucide="file-plus" class="w-4 h-4 mr-2"></i>
-                Create Primary GIS
-              </a>
-              <a href="{{ route('gis.create', ['is' => 'secondary']) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <i data-lucide="layers" class="w-4 h-4 mr-2"></i>
-                Create Unit GIS
-              </a>
-              </div>
-              </div>
-            </div>
-            <script>
-              document.addEventListener('DOMContentLoaded', function() {
-              const dropdownButton = document.getElementById('survey-dropdown-button');
-              const dropdownMenu = document.getElementById('survey-dropdown-menu');
-              
-              dropdownButton.addEventListener('click', function() {
-              dropdownMenu.classList.toggle('hidden');
-              });
-              
-              document.addEventListener('click', function(event) {
-              if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
-              dropdownMenu.classList.add('hidden');
-              }
-              });
-              });
-            </script>
+                <!-- Primary GIS Create Button -->
+                <a href="{{ route('gis.create', ['is' => 'primary']) }}" 
+                   id="primary-gis-button"
+                   class="flex items-center space-x-2 px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800">
+                    <i data-lucide="file-plus" class="w-4 h-4"></i>
+                    <span>Create Primary GIS</span>
+                </a>
+                <!-- Unit GIS Create Button -->
+                <a href="{{ route('gis.create', ['is' => 'secondary']) }}" 
+                   id="unit-gis-button"
+                   class="hidden flex items-center space-x-2 px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800">
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                    <span>Create Unit GIS</span>
+                </a>
             </div>
 
             @if(session('success'))
@@ -242,6 +221,8 @@
         // Tab functionality
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content > div');
+        const primaryButton = document.getElementById('primary-gis-button');
+        const unitButton = document.getElementById('unit-gis-button');
         
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -254,6 +235,15 @@
                 // Add active class to current button and content
                 button.classList.add('active');
                 document.getElementById(tabId).classList.add('active');
+                
+                // Toggle create buttons visibility
+                if (tabId === 'primary-gis') {
+                    primaryButton.classList.remove('hidden');
+                    unitButton.classList.add('hidden');
+                } else {
+                    primaryButton.classList.add('hidden');
+                    unitButton.classList.remove('hidden');
+                }
             });
         });
     });

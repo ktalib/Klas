@@ -16,12 +16,22 @@ let nextSerialData = null;
 
 // Update the count of selected checkboxes in batch modal
 function updateSelectedCount() {
-  // Count only enabled & checked checkboxes
   const count = document.querySelectorAll('.available-property-checkbox:checked:not([disabled])').length;
-  const btn = document.getElementById('addSelectedBtn');
-  if (btn) {
-    btn.textContent = `Add Selected Instruments (${count})`;
-    btn.disabled = count === 0;
+  const addSelectedBtn = document.getElementById('addSelectedBtn');
+  const batchRegisterButton = document.getElementById('batchRegisterButton');
+  
+  if (addSelectedBtn) {
+    addSelectedBtn.textContent = `Add Selected Instruments (${count})`;
+    addSelectedBtn.disabled = count === 0;
+    addSelectedBtn.classList.toggle('opacity-50', count === 0);
+    addSelectedBtn.classList.toggle('cursor-not-allowed', count === 0);
+  }
+
+  if (batchRegisterButton) {
+    batchRegisterButton.textContent = `Register ${selectedBatchProperties.length} Instruments`;
+    batchRegisterButton.disabled = selectedBatchProperties.length === 0;
+    batchRegisterButton.classList.toggle('opacity-50', selectedBatchProperties.length === 0);
+    batchRegisterButton.classList.toggle('cursor-not-allowed', selectedBatchProperties.length === 0);
   }
 }
 
@@ -805,6 +815,13 @@ function updateSelectedPropertiesTable() {
   // Clear the table
   table.innerHTML = '';
   
+  // Update register button state
+  const batchRegisterButton = document.getElementById('batchRegisterButton');
+  if (batchRegisterButton) {
+    batchRegisterButton.disabled = selectedBatchProperties.length === 0;
+    batchRegisterButton.textContent = `Register ${selectedBatchProperties.length} CofO${selectedBatchProperties.length !== 1 ? 's' : ''}`;
+  }
+
   // Show/hide no selected properties message
   if (selectedBatchProperties.length === 0) {
     table.innerHTML = `
@@ -814,22 +831,7 @@ function updateSelectedPropertiesTable() {
         </td>
       </tr>
     `;
-    
-    const batchRegisterButton = document.getElementById('batchRegisterButton');
-    if (batchRegisterButton) {
-      batchRegisterButton.disabled = true;
-      batchRegisterButton.textContent = 'Register 0 Instruments';
-    }
-    
     return;
-  }
-  
-  // Update the register button
-  const batchRegisterButton = document.getElementById('batchRegisterButton');
-  if (batchRegisterButton) {
-    batchRegisterButton.disabled = false;
-    batchRegisterButton.textContent = 
-      `Register ${selectedBatchProperties.length} Instrument${selectedBatchProperties.length !== 1 ? 's' : ''}`;
   }
   
   // Populate table with selected properties

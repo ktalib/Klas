@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('page-title')
-    {{ $PageTitle ?? __('KLAS') }}
+    {{ $PageTitle ?? __('KLAES') }}
 @endsection
 
 

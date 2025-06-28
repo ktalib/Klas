@@ -23,8 +23,8 @@ class ProgrammesController extends Controller
 
     public function FieldData()
     {
-        $PageTitle = 'FIELD DATA';
-        $PageDescription = '';
+        $PageTitle = 'Field Data Collection';
+        $PageDescription = 'Import, collect, and manage field data from Survey123';
 
         return view('programmes.field_data', compact('PageTitle', 'PageDescription'));
     }

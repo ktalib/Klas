@@ -67,8 +67,8 @@
     ];
     
     // State variables
-    let selectedFiles = ["FILE-2023-001", "FILE-2023-002"]; // Pre-select two files for AI indexing
-    let indexingProgress = 50; // Set to 50% for the demo
+    let selectedFiles = []; // Initialize empty - no pre-selected files
+    let indexingProgress = 0; // Set to 0% initially
     let currentStage = "extract"; // Current stage in the AI pipeline
     
     // DOM Elements
@@ -154,7 +154,7 @@
         extract: "Extracting key information and metadata using form templates...",
         categorize: "Categorizing extracted information and applying relevant tags...",
         validate: "Validating extracted data against known patterns and rules...",
-        complete: "Finalizing results and preparing data for submission to KLAS..."
+        complete: "Finalizing results and preparing data for submission to KLAES..."
       };
       
       // Stage icons
@@ -413,9 +413,9 @@
     
     // Confirm and save results
     function confirmAndSaveResults() {
-      console.log("Submitting indexed data to KLAS");
+      console.log("Submitting indexed data to KLAES");
       
-      alert("Files have been successfully indexed and submitted to KLAS!");
+      alert("Files have been successfully indexed and submitted to KLAES!");
       
       // Move selected files from pending to indexed
       selectedFiles.forEach(fileId => {
@@ -536,7 +536,17 @@
           t.classList.remove('active');
         }
       });
-      
+
+      // Enable/disable new file button based on active tab
+      const newFileBtn = document.getElementById('new-file-index-btn');
+      if (tabName === 'pending') {
+        newFileBtn.removeAttribute('disabled');
+        newFileBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      } else {
+        newFileBtn.setAttribute('disabled', 'true');
+        newFileBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+
       // Update visible content
       tabContents.forEach(content => {
         content.classList.add('hidden');

@@ -133,19 +133,19 @@
         <div id="print-documents"></div>
       </div>
       
-      {{-- <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc;">
+      <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc;">
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
-            <td style="width: 50%; padding: 10px 0; text-align: center; vertical-align: bottom;">
+            {{-- <td style="width: 50%; padding: 10px 0; text-align: center; vertical-align: bottom;">
               _______________________________<br>
               Applicant's Signature
-            </td>
+            </td> --}}
             <td style="width: 50%; padding: 10px 0; text-align: center; vertical-align: bottom;">
               _______________________________<br>
               Receiving Officer's Signature
             </td>
           </tr>
         </table>
-      </div> --}}
+      </div>
     </div>
   </div>

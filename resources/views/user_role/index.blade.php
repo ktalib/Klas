@@ -38,7 +38,8 @@
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Role Name') }}</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Department') }}</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Description') }}</th>
+                                    {{-- <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Description') }}</th> --}}
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('User Type') }}</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Level') }}</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Status') }}</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Action') }}</th>
@@ -51,9 +52,9 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $role->department ? $role->department->name : 'No Department' }}
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{-- <td class="px-6 py-4 text-sm text-gray-500">
                                             {{ Str::limit($role->description, 50) }}
-                                        </td>
+                                        </td> --}}
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
                                                 {{ $role->level == 'system' ? 'bg-red-100 text-red-800' : 
@@ -61,6 +62,19 @@
                                                    ($role->level == 'operational' ? 'bg-green-100 text-green-800' : 
                                                     'bg-gray-100 text-gray-800')) }}">
                                                 {{ ucfirst($role->level) }}
+                                            </span>
+                                        </td>
+
+                                           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                               
+                                                {{  $role->user_type == 'ALL' ? 'bg-gray-100 text-gray-800' : 
+                                                   ($role->user_type == 'Management' ? 'bg-blue-100 text-blue-800' : 
+                                                   ($role->user_type == 'Operations' ? 'bg-green-100 text-green-800' : 
+                                                   ($role->user_type == 'User' ? 'bg-yellow-100 text-yellow-800' : 
+                                                   ($role->user_type == 'System_Highest' ? 'bg-red-100 text-red-800' : 
+                                                   'bg-purple-100 text-purple-800')))) }}">
+                                                {{ $role->user_type }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

@@ -11,9 +11,11 @@
     <div class="flex-1 overflow-auto">
         <!-- Header -->
         @include('admin.header')
-        <!-- Dashboard Content -->
-        <div class="p-6">
+        <!-- Dashboard Content --<div class="p-6">
              
+    <!-- Include Print.js library for enhanced printing -->
+    <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://printjs-4de6.kxcdn.com/print.min.css">
   
   <style>
     /* Base styles */
@@ -36,10 +38,34 @@
       pointer-events: none;
     }
     
-    /* Print styles */
+    /* Enhanced Print styles for A4 responsive printing */
     @media print {
+      @page {
+        size: A4;
+        margin: 12mm 8mm; /* Optimized A4 margins */
+        orphans: 3;
+        widows: 3;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-size: 11pt;
+        line-height: 1.3;
+        color: #000;
+        background: white;
+      }
+
       body * {
         visibility: hidden;
+        margin: 0;
+        padding: 0;
       }
       
       .print-div, .print-div * {
@@ -51,22 +77,208 @@
         left: 0;
         top: 0;
         width: 100%;
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+        background: white;
+        font-family: 'Times New Roman', serif;
       }
-      
+
+      /* Responsive table handling */
+      .print-div table {
+        width: 100%;
+        max-width: 100%;
+        font-size: 9pt;
+        border-collapse: collapse;
+        page-break-inside: auto;
+        margin: 0;
+      }
+
+      .print-div th,
+      .print-div td {
+        padding: 3px 4px;
+        border: 1px solid #000 !important;
+        font-size: 8pt;
+        line-height: 1.2;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+      }
+
+      .print-div th {
+        background-color: #f0f0f0 !important;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      /* Ensure small datasets fit on one page */
+      .print-div .space-y-6 {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      /* Header optimization */
+      .print-div .flex-wrap {
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      /* Logo positioning - left and right */
+      .print-div .h-16 {
+        height: 50px !important;
+        width: 50px !important;
+        max-width: 50px !important;
+        max-height: 50px !important;
+      }
+
+      .print-div .w-16 {
+        width: 50px !important;
+        max-width: 50px !important;
+      }
+
+      /* Header text optimization */
+      .print-div .text-xl {
+        font-size: 14pt !important;
+        font-weight: bold;
+        text-align: center;
+        margin: 0 10px;
+      }
+
+      .print-div .text-lg {
+        font-size: 12pt !important;
+        font-weight: bold;
+        text-align: center;
+        margin: 2px 0;
+      }
+
+      .print-div .text-md {
+        font-size: 11pt !important;
+        font-weight: bold;
+        text-align: center;
+        margin: 2px 0;
+      }
+
+      /* Watermark optimization */
       .watermark {
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%) rotate(-45deg);
-        font-size: 80px;
-        color: #cccccc;
-        opacity: 0.2;
+        font-size: 48px;
+        color: rgba(200, 200, 200, 0.15) !important;
         z-index: 0;
         white-space: nowrap;
+        pointer-events: none;
+        font-weight: bold;
       }
-      
-      button, .hidden-print {
+
+      /* Hide non-printable elements */
+      button, 
+      .hidden-print,
+      .actions-column,
+      .no-print {
         display: none !important;
+        visibility: hidden !important;
+      }
+
+      /* Ensure proper table layout */
+      .overflow-x-auto {
+        overflow: visible !important;
+      }
+
+      .min-w-[1000px] {
+        min-width: unset !important;
+      }
+
+      /* Property details section */
+      .print-div .border-black {
+        border: 2px solid #000 !important;
+      }
+
+      .print-div .bg-gray-100 {
+        background-color: #f5f5f5 !important;
+      }
+
+      .print-div .bg-gray-200 {
+        background-color: #e5e5e5 !important;
+      }
+
+      /* Responsive font scaling for small datasets */
+      .print-div.small-dataset {
+        font-size: 12pt;
+      }
+
+      .print-div.small-dataset table {
+        font-size: 10pt;
+      }
+
+      .print-div.small-dataset th,
+      .print-div.small-dataset td {
+        padding: 6px 8px;
+        font-size: 9pt;
+      }
+
+      /* Force single page for small datasets */
+      .print-div.force-single-page {
+        page-break-after: avoid;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .print-div.force-single-page table {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      /* Signature and footer area */
+      .print-div .mt-8 {
+        margin-top: 15px !important;
+      }
+
+      .print-div .border-t {
+        border-top: 1px solid #000 !important;
+        padding-top: 10px !important;
+      }
+
+      /* QR Code positioning */
+      .print-div #report-qr-code {
+        max-width: 70px !important;
+        max-height: 70px !important;
+        width: 70px !important;
+        height: 70px !important;
+      }
+
+      /* Timestamp positioning */
+      .print-div .text-right {
+        text-align: right !important;
+      }
+
+      /* Ensure proper page breaks */
+      .print-div .mb-6 {
+        margin-bottom: 8px !important;
+      }
+
+      /* Table row height optimization */
+      .print-div tbody tr {
+        height: auto;
+        min-height: 20px;
+      }
+
+      /* Text size adjustments for better readability */
+      .print-div .text-sm {
+        font-size: 9pt !important;
+      }
+
+      .print-div .text-xs {
+        font-size: 8pt !important;
+      }
+
+      /* Border consistency */
+      .print-div .border-gray-300 {
+        border-color: #000 !important;
       }
     }
     
@@ -517,7 +729,14 @@
           <div class="p-6">
             <h3 class="text-lg font-semibold mb-2">Transaction History</h3>
             <p class="text-sm text-gray-500 mb-4">Historical transactions associated with this file</p>
-            
+            <div class="mt-6 flex justify-end">
+              <button id="view-detailed-records-btn" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                View Detailed Records
+              </button>
+            </div>
             <div class="tabs border-b mb-6">
               <button class="tab active" data-tab="property-history">Property History</button>
               <button class="tab" data-tab="instrument-registration">Instrument Registration</button>
@@ -533,7 +752,7 @@
                       <th>Transaction Type</th>
                       <th>Grantor/Authority</th>
                       <th>Grantee/Recipient</th>
-                      <th>Document No.</th>
+                      <th>Registration Particulars</th>
                       <th>Size</th>
                       <th>Caveat</th>
                       <th>Comments</th>
@@ -545,14 +764,7 @@
                   </tbody>
                 </table>
               </div>
-              <div class="mt-6 flex justify-center">
-                <button id="view-detailed-records-btn" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                  </svg>
-                  View Detailed Records
-                </button>
-              </div>
+             
             </div>
 
             <div id="instrument-registration-tab" class="tab-content">
@@ -562,7 +774,7 @@
                     <tr>
                       <th>Registration Date</th>
                       <th>Instrument Type</th>
-                      <th>Registration No.</th>
+                      <th>Registration Particulars.</th>
                       <th>Parties</th>
                       <th>Registered By</th>
                       <th>Actions</th>
@@ -580,7 +792,7 @@
                 <table class="w-full">
                   <thead>
                     <tr>
-                      <th>CofO Number</th>
+                      <th>Registration Particulars</th>
                       <th>Issue Date</th>
                       <th>Holder Name</th>
                       <th>Land Use</th>
@@ -619,7 +831,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
               </svg>
-              Print Report
+           Print Report
             </button>
           </div>
         </div>
@@ -630,13 +842,13 @@
               <!-- Report Header -->
                 <div class="mb-6 border-b pb-4">
   <div class="flex flex-wrap items-center justify-between mb-4">
-    <img src="https://i.ibb.co/prw0q9jx/Whats-App-Image-2025-02-28-at-4-01-36-PM.jpg" alt="Kano State Logo" class="h-16 w-16">
+    <img src="{{ asset('assets/logo/logo1.jpg') }}" alt="Kano State Logo" class="h-16 w-16">
     <div class="text-center md:mx-4 flex-1">
       <h3 class="text-xl font-bold text-blue-700">KANO STATE GEOGRAPHIC INFORMATION SYSTEM</h3>
       <h4 class="text-lg font-semibold">MINISTRY OF LAND AND PHYSICAL PLANNING</h4>
       <h5 class="text-md font-medium mt-1">LEGAL SEARCH REPORT</h5>
     </div>
-    <img src="https://i.ibb.co/60m0yNx7/Whats-App-Image-2025-02-28-at-4-01-36-PM-1.jpg" alt="GIS Logo" class="h-16 w-16">
+    <img src="{{ asset('assets/logo/logo2.jpg') }}" alt="GIS Logo" class="h-16 w-16">
   </div>
   
   <!-- Timestamp section - now properly responsive -->
@@ -692,9 +904,9 @@
                           <th class="border border-gray-300 px-3 py-2 text-left font-bold bg-gray-200">S/N</th>
                           <th class="border border-gray-300 px-3 py-2 text-left font-bold bg-gray-200">Grantor</th>
                           <th class="border border-gray-300 px-3 py-2 text-left font-bold bg-gray-200">Grantee</th>
-                          <th class="border border-gray-300 px-3 py-2 text-left font-bold bg-gray-200">Instrument Type</th>
+                          <th class="border border-gray-300 px-3 py-2 text-left font-bold bg-gray-200">Transaction Type</th>
                           <th class="border border-gray-300 px-3 py-2 text-left font-bold bg-gray-200">Date/Time</th>
-                          <th class="border border-gray-300 px-3 py-2 text-left font-bold bg-gray-200">Reg. No.</th>
+                          <th class="border border-gray-300 px-3 py-2 text-left font-bold bg-gray-200">Registration Particulars</th>
                           <th class="border border-gray-300 px-3 py-2 text-left font-bold bg-gray-200">Size</th>
                           <th class="border border-gray-300 px-3 py-2 text-left font-bold bg-gray-200">Caveat</th>
                           <th class="border border-gray-300 px-3 py-2 text-left font-bold bg-gray-200">Comments</th>
@@ -714,8 +926,8 @@
 
                 <div class="mt-6 flex justify-between items-start">
                   <div>
-                    <p class="font-medium">Yours Faithfully,</p>
-                    <div class="h-12 mt-2 border-2 border-blue-900 p-1 w-48 transform -rotate-12">
+                    {{-- <p class="font-medium">Yours Faithfully,</p> --}}
+                    {{-- <div class="h-12 mt-2 border-2 border-blue-900 p-1 w-48 transform -rotate-12">
                       <svg width="200" height="45" viewBox="0 0 200 45" xmlns="http://www.w3.org/2000/svg">
                         <path
                           d="M10,35 C30,5 50,40 70,15 C90,30 110,10 130,25 C150,15 170,30 190,20"
@@ -724,14 +936,14 @@
                           stroke-width="2"
                         />
                       </svg>
-                    </div>
-                    <p>.......Director Deeds.........</p>
-                    <p class="mt-2">Printed by: jennifer.c</p>
+                    </div> --}}
+                     {{-- {{ auth()->user()->first_name }} {{ auth()->user()->first_name }} --}}
+                    <p class="mt-2">Generated by: {{ auth()->user()->first_name }}</p>
                   </div>
 
                   <div class="text-right">
                     <!-- QR Code -->
-                    <img id="report-qr-code" src="/placeholder.svg" alt="QR Code with File Details" width="150" height="150">
+                    <img id="report-qr-code" src="/placeholder.svg" alt="QR Code with File Details" width="80" height="80">
                     <div class="text-center text-xs mt-1">Scan for file verification</div>
                   </div>
                 </div>
@@ -884,7 +1096,7 @@
                     <th>LGA</th>
                     <th>Location</th>
                     <th>Plot No</th>
-                    <th>Registration Particulars</th>
+                    <th>Transaction Type</th>
                     <th>Size</th>
                     <th>Caveat</th>
                     <th>Actions</th>

@@ -61,8 +61,8 @@
       </div>
 
       <div class="flex justify-end mb-6">
-        <button id="addSelectedBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md" onclick="addSelectedToBatch()">
-          Add Selected Properties (0)
+        <button id="addSelectedBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed" onclick="addSelectedToBatch()" disabled>
+          Add Selected Instruments (0)
         </button>
       </div>
 
@@ -161,7 +161,7 @@
         <button onclick="closeBatchRegisterModal()" class="px-4 py-2 border rounded-md">
           Cancel
         </button>
-        <button id="batchRegisterButton" class="bg-blue-600 text-white px-4 py-2 rounded-md" onclick="submitBatchRegistration()" disabled>
+        <button id="batchRegisterButton" class="bg-blue-600 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed" onclick="submitBatchRegistration()" disabled>
           Register 0 CofOs
         </button>
       </div>

@@ -87,7 +87,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Reg. Number</th>
+                                
                                 <th>File No</th>
                                 <th>Grantor</th>
                                 <th>Grantee</th>
@@ -100,7 +100,7 @@
                         <tbody>
                             @forelse($instruments as $instrument)
                             <tr>
-                                <td>{{ $instrument->particularsRegistrationNumber }}</td>
+                                
                                 <td>{{ $instrument->MLSFileNo ?: $instrument->KAGISFileNO ?: $instrument->NewKANGISFileNo }}</td>
                                 <td>{{ $instrument->Grantor }}</td>
                                 <td>{{ $instrument->Grantee }}</td>
@@ -109,14 +109,39 @@
                                 </td>
                                 <td>{{ \Carbon\Carbon::parse($instrument->instrumentDate)->format('Y-m-d') }}</td>
                                 <td>{{ Str::limit($instrument->propertyDescription, 30) }}</td>
-                                <td>
-                                    <button class="text-gray-500 hover:text-gray-700">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                                        </svg>
+                                <td class="relative group">
+                                    <button 
+                                        class="text-gray-500 hover:text-gray-700 focus:outline-none flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition"
+                                        onclick="toggleDropdown('dropdown-{{ $instrument->id }}')" 
+                                        aria-haspopup="true" 
+                                        aria-expanded="false"
+                                        aria-controls="dropdown-{{ $instrument->id }}"
+                                        type="button"
+                                    >
+                                        <i data-lucide="ellipsis-vertical" class="w-4 h-4 mr-1"></i>
                                     </button>
+                                    <div 
+                                        id="dropdown-{{ $instrument->id }}" 
+                                        class="dropdown-menu hidden absolute right-0 transform -translate-x-4 top-full mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-[100]"
+                                        role="menu"
+                                    >
+                                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition" role="menuitem">
+                                            <i data-lucide="eye" class="w-4 h-4"></i>
+                                            View
+                                        </a>
+                                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition" role="menuitem">
+                                            <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                            Edit
+                                        </a>
+                                        <form action="#" method="POST" onsubmit="return confirm('Are you sure?');" role="menuitem">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition">
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
@@ -160,4 +185,45 @@
         <!-- Footer -->
         @include('admin.footer')
     </div>
+
+            <!-- JavaScript -->
+            @include('instruments.partial.js')
+            <script>
+                function toggleDropdown(id) {
+                    document.querySelectorAll('.dropdown-menu').forEach(el => {
+                        if (el.id !== id) el.classList.add('hidden');
+                    });
+                    const dropdown = document.getElementById(id);
+                    if (dropdown) dropdown.classList.toggle('hidden');
+                }
+                document.addEventListener('click', function(e) {
+                    // Close dropdown if click outside
+                    if (!e.target.closest('td.relative')) {
+                        document.querySelectorAll('.dropdown-menu').forEach(el => el.classList.add('hidden'));
+                    }
+                });
+                // Responsive: close dropdown on resize
+                window.addEventListener('resize', () => {
+                    document.querySelectorAll('.dropdown-menu').forEach(el => el.classList.add('hidden'));
+                });
+            </script>
+        </div>
+
+
+<style>
+    .table-container {
+        position: relative;
+        overflow: visible !important;
+    }
+    
+    table {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .dropdown-menu {
+        position: absolute;
+        z-index: 100;
+    }
+</style>
 @endsection

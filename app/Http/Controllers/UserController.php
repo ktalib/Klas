@@ -46,8 +46,10 @@ class UserController extends Controller
                     $request->all(),
                     [
                         'name' => 'required',
+                        'username' => 'required', // add username validation
                         'email' => 'required|email|unique:users',
                         'password' => 'required|min:6',
+                        
                     ]
                 );
                 if ($validator->fails()) {
@@ -58,11 +60,13 @@ class UserController extends Controller
 
                 $user = new User();
                 $user->name = $request->name;
+                $user->username = $request->username; // save username
                 $user->email = $request->email;
-                $user->assign_role = isset($request->assign_role) ? implode(',', $request->assign_role) : null;
+                $user->assign_role = isset($request->user_role) ? implode(',', $request->user_role) : null;
                 $user->password = \Hash::make($request->password);
                 $user->phone_number = $request->phone_number;
                 $user->department_id = $request->department_id; // Save department_id
+                $user->user_level = $request->user_level; // Save user_level
                 $user->type = 'owner';
                 $user->lang = 'english';
                 $user->subscription = 1;
@@ -97,10 +101,12 @@ class UserController extends Controller
                     [
                         'first_name' => 'required',
                         'last_name' => 'required',
+                        
                         'email' => 'required|email|unique:users',
                         'password' => 'required|min:6',
-                        'department_id' => 'required|exists:departments,id',
-                        'assign_role' => 'required|array',
+                        'department_id' => 'required',
+                        'user_level' => 'required|string',
+                        'user_role' => 'required|array',
                     ]
                 );
                 if ($validator->fails()) {
@@ -121,22 +127,24 @@ class UserController extends Controller
                 }
                 
                 // Get the first selected role to set as the user type
-                $firstRoleId = $request->assign_role[0];
-                $userRole = UserRole::findOrFail($firstRoleId);
+                $firstRoleName = $request->user_role[0];
+                $userRole = UserRole::where('name', $firstRoleName)->first();
                 
                 $user = new User();
                 $user->first_name = $request->first_name;
                 $user->last_name = $request->last_name;
+                $user->username = $request->username; // save username
                 $user->email = $request->email;
                 $user->phone_number = $request->phone_number;
                 $user->password = \Hash::make($request->password);
-                $user->department_id = $request->department_id; // Save department_id
-                $user->type = $userRole->name;
+                $user->department_id = $request->department_id;
+                $user->user_level = $request->user_level;
+                $user->type = $userRole ? $userRole->name : null;
                 $user->email_verified_at = now();
                 $user->profile = 'avatar.png';
                 $user->lang = 'english';
                 $user->parent_id = parentId();
-                $user->assign_role = isset($request->assign_role) ? implode(',', $request->assign_role) : null;
+                $user->assign_role = isset($request->user_role) ? implode(',', $request->user_role) : null;
                 $user->save();
                 
                 $module = 'user_create';
@@ -205,6 +213,7 @@ class UserController extends Controller
                     $request->all(),
                     [
                         'name' => 'required',
+                        'username' => 'required|unique:users,username,' . $id, // add username validation
                         'email' => 'required|email|unique:users,email,' . $id,
                     ]
                 );
@@ -215,7 +224,9 @@ class UserController extends Controller
                 }
 
                 $userData = $request->all();
-                $user->fill($userData)->save();
+                $user->fill($userData);
+                $user->username = $request->username; // update username
+                $user->save();
 
                 return redirect()->route('users.index')->with('success', 'User successfully updated.');
             } else {
@@ -224,9 +235,11 @@ class UserController extends Controller
                     [
                         'first_name' => 'required',
                         'last_name' => 'required',
+                       
                         'email' => 'required|email|unique:users,email,' . $id,
                         'department_id' => 'required|exists:departments,id',
-                        'assign_role' => 'required|array',
+                        'user_level' => 'required|string',
+                        'user_role' => 'required|array',
                     ]
                 );
                 if ($validator->fails()) {
@@ -236,17 +249,19 @@ class UserController extends Controller
                 }
 
                 // Get the first selected role to set as the user type
-                $firstRoleId = $request->assign_role[0];
-                $userRole = UserRole::findOrFail($firstRoleId);
+                $firstRoleName = $request->user_role[0];
+                $userRole = UserRole::where('name', $firstRoleName)->first();
                 
                 $user = User::findOrFail($id);
                 $user->first_name = $request->first_name;
                 $user->last_name = $request->last_name;
+                $user->username = $request->username; // update username
                 $user->email = $request->email;
                 $user->phone_number = $request->phone_number;
-                $user->department_id = $request->department_id; // Save department_id
-                $user->type = $userRole->name;
-                $user->assign_role = isset($request->assign_role) ? implode(',', $request->assign_role) : null;
+                $user->department_id = $request->department_id;
+                $user->user_level = $request->user_level;
+                $user->type = $userRole ? $userRole->name : null;
+                $user->assign_role = isset($request->user_role) ? implode(',', $request->user_role) : null;
                 $user->save();
                 
                 return redirect()->route('users.index')->with('success', 'User successfully updated.');

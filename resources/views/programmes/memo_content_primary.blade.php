@@ -179,9 +179,7 @@
                 {{ $memo->arc_design_page_no ?? ($landAdmin->arc_design_page_no ?? 'N/A') }}</span>
                 <span id="overleafText"> and overleaf</span> with the following measurements:
             </p>
-             <div id=unit>
-              @include('programmes.buyer_list', ['buyers' => $memo->buyers ?? []])
-             </div>
+             
             <div class="my-6"></div>
     
             <p>
@@ -238,42 +236,15 @@
                     <p class="border-t border-black pt-1 text-center w-64">HONOURABLE COMMISSIONER.</p>
                 </div>
             </div>
-             <div id="unit" style="display: none;">
-              @include('programmes.buyer_list', ['buyers' => $memo->buyers ?? []])
-             </div>
-             <div id="not_unit" style="display: none;">
-              @include('programmes.buyer_list', ['buyers' => $memo->buyers ?? []])
-             </div>
+             
 
-            <script>
-                document.addEventListener("DOMContentLoaded", function() {
-                    // Check if URL contains both unit and unit_id parameters
-                    var url = window.location.href;
-                    var hasUnitParams = url.includes("unit=") && url.includes("unit_id=");
-                    
-                    // Show the appropriate div based on URL parameters
-                    document.getElementById("unit").style.display = hasUnitParams ? "block" : "none";
-                    document.getElementById("not_unit").style.display = hasUnitParams ? "none" : "block";
-                    
-                    // Handle printing behavior
-                    window.onbeforeprint = function() {
-                        // Only show one table when printing, based on URL parameters
-                        document.getElementById("unit").style.display = hasUnitParams ? "block" : "none";
-                        document.getElementById("not_unit").style.display = hasUnitParams ? "none" : "block";
-                    };
-                    
-                    window.onafterprint = function() {
-                        // Return to the same state (no change needed)
-                        document.getElementById("unit").style.display = hasUnitParams ? "block" : "none";
-                        document.getElementById("not_unit").style.display = hasUnitParams ? "none" : "block";
-                    };
-                });
-            </script>
-            
             <!-- Print Button - Hidden when printing -->
             <div class="mt-12 text-center no-print">
                 <button id="printButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow">
                     Print Memo
+                </button>
+                 <button id="printBuyerListButton" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded shadow">
+                    Print Buyer List
                 </button>
             </div>
         </div>
@@ -283,6 +254,19 @@
     <script>
         document.getElementById('printButton').addEventListener('click', function() {
             window.print();
+        });
+
+        document.getElementById('printBuyerListButton').addEventListener('click', function() {
+            var url = new URL(window.location.href);
+            var unit = url.searchParams.get('unit');
+            var unit_id = url.searchParams.get('unit_id');
+            
+            var baseUrl = window.location.origin + '/gisedms';
+            var printUrl = baseUrl + '/print_buyer_list?' + (unit ? 'unit=' + unit + '&' : '') + (unit_id ? 'unit_id=' + unit_id : '');
+            var printWindow = window.open(printUrl, '_blank');
+            printWindow.onload = function() {
+                printWindow.print();
+            }
         });
     </script>
 </body>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('page-title')
-    {{ $PageTitle ?? __('KLAS') }}
+    {{ $PageTitle ?? __('KLAES') }}
 @endsection
 
 @section('header-scripts')
@@ -61,7 +61,8 @@
                 <li class="mr-2">
                   <a href="#"
                      onclick="switchTab('pending', this)"
-                     class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-blue-600 hover:border-blue-300 text-gray-600 border-transparent tab-item">
+                     class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-blue-600 hover:border-blue-300 text-gray-600 border-transparent tab-item tab-active"
+                     id="main-tab-pending">
                      <span class="flex items-center">Pending</span>
                      <span class="ml-2 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                        {{ $pendingCount }}
@@ -71,7 +72,8 @@
                 <li class="mr-2">
                   <a href="#"
                      onclick="switchTab('registered', this)"
-                     class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-green-600 hover:border-green-300 text-gray-600 border-transparent tab-item">
+                     class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-green-600 hover:border-green-300 text-gray-600 border-transparent tab-item"
+                     id="main-tab-registered">
                      <span class="flex items-center">Registered</span>
                      <span class="ml-2 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                        {{ $registeredCount }}
@@ -81,7 +83,8 @@
                 <li class="mr-2">
                   <a href="#"
                      onclick="switchTab('rejected', this)"
-                     class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-red-600 hover:border-red-300 text-gray-600 border-transparent tab-item">
+                     class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-red-600 hover:border-red-300 text-gray-600 border-transparent tab-item"
+                     id="main-tab-rejected">
                      <span class="flex items-center">Rejected</span>
                      <span class="ml-2 bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                        {{ $rejectedCount }}
@@ -91,13 +94,103 @@
                 <li class="mr-2">
                   <a href="#"
                      onclick="switchTab('all', this)"
-                     class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-indigo-600 hover:border-indigo-300 text-gray-600 border-transparent tab-item">
+                     class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-indigo-600 hover:border-indigo-300 text-gray-600 border-transparent tab-item"
+                     id="main-tab-all">
                      <span class="flex items-center">All Assignments</span>
                   </a>
                 </li>
               </ul>
             </div>
-    
+      <div id="pendingSubTabs" class="flex justify-center gap-2 py-3 transition-all duration-200" >
+              <a   href="{{ route('instrument_registration.index') }}" class="pending-subtab-btn flex flex-col items-center focus:outline-none transition-all duration-150" id="subtab-other" onclick="switchPendingSubTab('other')">
+                <span class="text-base font-semibold">Other Instruments</span>
+              </button>
+              <a href="{{route('st_transfer.index')}}" class="pending-subtab-btn flex flex-col items-center focus:outline-none transition-all duration-150 active" id="subtab-st" onclick="switchPendingSubTab('st')">
+                <span class="text-base font-semibold">ST Assignment</span>
+                <span class="text-xs font-normal text-gray-400">(Transfer of Title)</span>
+              </a>
+              <button class="pending-subtab-btn flex flex-col items-center focus:outline-none transition-all duration-150" id="subtab-regular" onclick="switchPendingSubTab('regular')">
+                <span class="text-base font-semibold">Regular CofO</span>
+              </button>
+              <a href="{{route('st_registration.index')}}" class="pending-subtab-btn flex flex-col items-center focus:outline-none transition-all duration-150" id="subtab-sectional" onclick="switchPendingSubTab('sectional')">
+                <span class="text-base font-semibold">Sectional Titling CofO</span>
+              </a>
+              <a  href="{{route('sltrdeedsreg.index')}}" class="pending-subtab-btn flex flex-col items-center focus:outline-none transition-all duration-150" id="subtab-sltr" onclick="switchPendingSubTab('sltr')">
+                <span class="text-base font-semibold">SLTR CofO</span>
+              </a>
+            </div>
+            <style>
+              .pending-subtab-btn {
+                @apply px-5 py-3 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium shadow-sm transition-all duration-150 hover:bg-blue-50 hover:border-blue-500 hover:text-blue-700 focus:ring-2 focus:ring-blue-200;
+                margin-right: 0.25rem;
+                min-width: 160px;
+                transition: all 0.2s ease;
+                cursor: pointer;
+              }
+              .pending-subtab-btn.active {
+                @apply bg-blue-600 text-white border-blue-600 shadow-md;
+                transform: translateY(-2px);
+              }
+              .pending-subtab-btn:hover:not(.active) {
+                @apply bg-blue-100 border-blue-400 shadow-md;
+              }
+              .pending-subtab-btn span:first-child {
+                @apply mb-1;
+              }
+            </style>
+            <style>
+                .pending-subtab-btn {
+                    @apply px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 font-medium shadow-sm transition-all duration-150;
+                    margin-right: 0.25rem;
+                }
+                .pending-subtab-btn.active,
+                .pending-subtab-btn:focus,
+                .pending-subtab-btn:hover {
+                    @apply bg-blue-600 text-white border-blue-600 shadow;
+                }
+            </style>
+            <script>
+                // Show/hide sub-tabs based on main tab selection
+                function switchTab(tab, btn) {
+                    // ...existing code for tab switching...
+                    document.querySelectorAll('.tab-active').forEach(el => el.classList.remove('tab-active'));
+                    btn.classList.add('tab-active');
+                    // Show sub-tabs only for Pending
+                    document.getElementById('pendingSubTabs').style.display = (tab === 'pending') ? 'flex' : 'nonde';
+                    // Optionally, reset subtab highlight when switching main tab
+                    if (tab === 'pending') {
+                        switchPendingSubTab('other');
+                    }
+                }
+                // Highlight sub-tabs (basic logic)
+                function switchPendingSubTab(subtab) {
+                    ['subtab-other', 'subtab-st', 'subtab-regular', 'subtab-sectional', 'subtab-sltr'].forEach(id => {
+                        document.getElementById(id).classList.remove('active');
+                    });
+                    const active = {
+                        'other': 'subtab-other',
+                        'st': 'subtab-st',
+                        'regular': 'subtab-regular',
+                        'sectional': 'subtab-sectional',
+                        'sltr': 'subtab-sltr'
+                    }[subtab];
+                    if (active) {
+                        document.getElementById(active).classList.add('active');
+                    }
+                    // Add logic to filter table if needed
+                }
+                // On page load, show sub-tabs only if Pending is active
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Detect which main tab is active
+                    let activeTab = document.querySelector('.tab-active');
+                    if (activeTab && activeTab.textContent.trim() === 'Pending') {
+                        document.getElementById('pendingSubTabs').style.display = 'flex';
+                        switchPendingSubTab('other');
+                    } else {
+                        document.getElementById('pendingSubTabs').style.display = 'nonde';
+                    }
+                });
+            </script>
             <!-- Table -->
             <div class="overflow-x-auto">
               <table class="min-w-full divide-y divide-gray-200">
@@ -111,7 +204,7 @@
                       FileNo
                     </th>
                     
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                    {{-- <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
                      Number Of Units
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
@@ -119,7 +212,7 @@
                     </th> 
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
                       Number Of Sections
-                    </th>
+                    </th> --}}
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
                       Owner
                     </th>
@@ -156,9 +249,9 @@
                     
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">{{ $app->fileno }}</td>
                     
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->NoOfUnits }}</td>
+                    {{-- <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->NoOfUnits }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->NoOfBlocks ?: 'N/A' }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->NoOfSections ?: 'N/A' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->NoOfSections ?: 'N/A' }}</td> --}}
                     <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->owner_name }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->property_description }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">{{ !empty($app->Deeds_Serial_No) ? $app->Deeds_Serial_No : 'N/A' }}</td>

@@ -145,18 +145,23 @@
         /* Passport photo styling */
         .passport-photo {
             position: absolute;
-            top: -0.5cm; /* Moved higher up from 0.1cm */
-            right: 0;
-            width: 100px;
-            height: 100px;
+            top: 1.7cm; /* Move further down */
+            right: 0cm;
+            width: 15vw;
+            max-width: 2.5cm;
+            min-width: 80px;
+            height: auto;
+            aspect-ratio: 5/6;
             border: 1px solid #000;
             overflow: hidden;
+            background: #fff;
         }
         
         .passport-photo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
     </style>
 </head>
@@ -188,68 +193,73 @@
 @endphp
 
     <div class="max-w-4xl mx-auto certificate-container">
-        <div class="certificate-content">
-            <!-- Header - Updated with new certificate-header class -->
-            <div class="certificate-header content-section relative">
-                <!-- Passport Photo -->
-                <div class="passport-photo">
-                    <img src="{{ asset('storage/app/public/' . ($unit_owner->passport ?? 'default-passport.jpg')) }}" alt="Passport Photo">
-                   
-                </div> 
-           
-                <h1 class="text-xl font-bold">CERTIFICATE OF OCCUPANCY</h1>
-                <h2 class="text-lg font-bold">FOR SECTIONAL TITLE</h2>
-                <p>ST File No: <span class="highlight">{{ $cofo->file_no ?? 'N/A' }}</span></p>
-                <p class="highlight">{{ $cofo->land_use ?? 'N/A' }} - PLOT NO :{{ $cofo->plot_no ?? 'N/A' }}, B L O C K N O :{{ $cofo->block_no ?? 'N/A' }}, F L O O R N O :{{ $cofo->floor_no ?? 'N/A' }}, F L A T N O :{{ $cofo->flat_no ?? 'N/A' }}</p>
+        <div class="certificate-content relative">
+            <!-- Passport Photo absolutely positioned at top right corner -->
+            <div class="passport-photo">
+                <img src="{{ asset('storage/app/public/' . ($unit_owner->passport ?? 'default-passport.jpg')) }}" 
+                     alt="Passport Photo">
             </div>
-            
-            <!-- Main Content -->
+            <div class="certificate-header content-section">
+                <h2 class="whitespace-nowrap text-xl font-bold mb-2 mr-20">SECTIONAL TITLING (ST) CERTIFICATE OF OCCUPANCY</h2>
+                <div class="mb-2 font-semibold">New File No: <span class="highlight">{{ $cofo->file_no ?? 'ST/COM/2025/001' }}</span></div>
+                <div class="mb-2 font-semibold"> {{ $cofo->land_use ?? 'Insert Landuse' }}</div>
+                <div class="mb-2 font-semibold">
+                    @if(!empty($cofo->unit_description))
+                        {{ $cofo->unit_description }}
+                    @else
+                        Plot No: {{ $cofo->plot_no ?? 'N/A' }}, 
+                        Block No: {{ $cofo->block_no ?? 'N/A' }}, 
+                        Floor No: {{ $cofo->floor_no ?? 'N/A' }}, 
+                        Flat No: {{ $cofo->flat_no ?? 'N/A' }}
+                    @endif
+                </div>
+            </div>
+
             <div class="mb-6 content-section">
-                <p class="mb-2">This is to certify that: <span class="highlight">{{ $cofo->holder_name ?? 'N/A' }}</span></p>
-                <p class="mb-2">Whose address is: <span class="highlight">{{ $cofo->holder_address ?? 'N/A' }}</span></p>
-                <p class="mb-2">(hereinafter called the "holder," which terms shall include any person/persons in title)</p>
-                <p class="mb-2">is hereby granted a right of occupancy for, and over the land described in the schedule, and more particularly in the plan printed hereto for a remaining term of <span class="highlight">{{ $cofo->remaining_term ?? '40' }} YEARS</span> commencing from the <span class="highlight">{{ isset($cofo->start_date) ? date('jS F, Y', strtotime($cofo->start_date)) : 'DATE OF COMMENCEMENT' }}</span> according to the true intent and meaning of the Land Use Act No. 6 of 1978 and subject to the provisions thereof and to the following special terms and conditions:</p>
+                <p class="mb-2">This is to certify that: <span class="highlight">{{ $cofo->file_no ?? '[Insert FileNo]' }}</span></p>
+                <p class="mb-2">Whose address is <span class="highlight">{{ $cofo->holder_address ?? '[Insert Address]' }}</span></p>
+                <p class="mb-2">
+                    (Herein after called the holder, which terms shall include any person/persons in title) is hereby granted a right of occupancy for in and over the land described in the schedule, and more particularly in the plan printed hereto for a term of <span class="highlight">{{ $cofo->total_term ?? '[Tenancy]' }}</span> commencing from <span class="highlight">{{ isset($cofo->start_date) ? date('jS F, Y', strtotime($cofo->start_date)) : '[Insert Certificate Date]' }}</span> according to the true intent and meaning of the Kano State Sectional and Systematic Land Titling Registration Law, 2024 and subject to the provisions thereof and to the following special terms and conditions:
+                </p>
             </div>
-            
-            <!-- Definition Section -->
-            <div class="mb-6 content-section">
-                <h3 class="text-center font-bold mb-2">DEFINITION OF SECTIONAL TITLING</h3>
-                <ol class="list-decimal pl-6 space-y-1">
-                    <li>Exclusive Ownership of Units: The holder is granted exclusive ownership rights to their designated unit ("section") as outlined in the attached sectional title deed plan.</li>
-                    <li>Shared Ownership of Common Areas: The holder shares ownership of common/shared areas, including but not limited to hallways, gardens, parking lots, and other facilities, with other unit owners.</li>
-                    <li>Participation Quota: Each unit owner's financial responsibility for the maintenance and upkeep of shared property is determined by their "participation quota," calculated based on the size of their unit relative to the total building area.</li>
-                    <li>Body Corporate: The management and maintenance of shared/common areas shall be governed by a "Body Corporate," comprising all unit owners, which is responsible for ensuring compliance with statutory obligations and maintaining the property in good condition.</li>
-                    <li>Boundaries and Designations: The boundaries of each unit and the designation of common/shared areas are explicitly detailed in the sectional title deed plan attached hereto.</li>
-                </ol>
-            </div>
-            
-            <!-- Special Terms Section -->
-            <div class="mb-6 content-section">
-                <h3 class="text-center font-bold mb-2">SPECIAL TERMS AND CONDITIONS UNDER THE LAND USE ACT NO. 6 OF 1978</h3>
-                <ol class="list-decimal pl-6 space-y-1">
-                    <li>Ground Rent: Pay revised ground rent annually or as prescribed by the Governor.</li>
-                    <li>Rates and Impositions: Pay all rates, utilities, and impositions charged on the land or buildings.</li>
-                    <li>Survey Fees: Pay all survey fees and charges due for the preparation, registration, and issuance of this certificate.</li>
-                    <li>Development Obligations: Erect and complete approved buildings within two years from the commencement of occupancy.</li>
-                    <li>Maintenance: Maintain all buildings and surroundings in good repair and sanitary condition.</li>
-                    <li>Surrender of Property: Deliver the land and buildings in good condition upon expiration of the term.</li>
-                    <li>Construction Restrictions: Do not erect or alter buildings without prior approval.</li>
-                    <li>Inspection Rights: Permit the Governor or authorized officers to inspect the property at reasonable hours.</li>
-                    <li>Alienation Restrictions: Do not sell, mortgage, or transfer occupancy rights without the Governor's consent.</li>
-                    <li>Land Use: Use the land only for <span class="highlight">{{ $cofo->land_use ?? 'SPECIFIED' }}</span> purposes.</li>
-                    <li>Compliance: Adhere to the Land Use Act and all rules and regulations laid down by Kano State Government.</li>
-                    <li>Rent Revision: Ground rent may be revised every five years; notice will be provided one month in advance.</li>
-                    <li>Breach of Terms: Failure to comply with terms allows the Governor to reclaim the property without prejudice to legal remedies.</li>
-                </ol>
-            </div>
-            
-            <!-- Signature Section -->
+
+            <ol class="list-decimal pl-6 space-y-2 text-justify">
+                <li>
+                    To pay in advance without demand to the Government of the State (herein after referred to as the Governor) or any other officer or agency appointed by the Governor of the State:
+                    <ol class="list-[lower-alpha] pl-6">
+                        <li>Whatever is the computed revised and the current ground rent from the first day of January of each year or</li>
+                        <li>Such revised ground rent as the Governor may from time to time prescribe.</li>
+                        <li>Such penal rent as the Governor may from time to time impose.</li>
+                    </ol>
+                </li>
+                <li>To pay and discharge all rates (including utilities), assessment and impositions, whatsoever which shall at any time be charged or imposed on the said land or any building thereon, or upon the occupier or occupiers thereof.</li>
+                <li>To pay forthwith to the Kano State Government through Ministry of Land and Physical Planning or such other body or agency appointed by the Governor (if not sooner paid) all survey fees and other charges due in respect of the preparation, registration and issuance of this certificate.</li>
+                <li>Within two years from the day of the commencement of the right of occupancy to erect and complete on the said land building(s) or other works specified in the related plans approved or to be approved by the Kano State Government or any other agency empowered to do so. The approval may be revoked after two (2) years.</li>
+                <li>To maintain in good and substantial repair to the satisfaction of Kano State Government or any other officer appointed by the Governor, all buildings on the said land and appurtenances thereof, and to do other works, properly maintained in clean and good sanitary condition around all of the land and surroundings of the buildings.</li>
+                <li>Upon the expiration of the said term to deliver up to the Governor in good and tenable state to the satisfaction of the Kano State Government or any other agency appointed by the State Governor, the said land and building(s) thereon.</li>
+                <li>Not to erect build or permit to be erected or built on the land, buildings other than those permitted to be erected by virtue of this certificate of occupancy nor to make or permit to be made any addition or alteration to the said building(s) already erected on the land except in accordance with the plans and specifications approved by the Governor and or any officer authorized by him on his behalf.</li>
+                <li>The Governor or any public officer duly authorized by the Governor on his behalf, shall have the power to enter upon and inspect the land comprised in any statutory right of occupancy or any improvements effected thereon, at any reasonable hour during the day and the occupier shall permit and give free access to the Governor or any such officer to enter and so inspect.</li>
+                <li>Not to alienate the right of occupancy hereby granted or any part thereof by sale, assignment, mortgage, transfer of possessions, sub-lease or bequest, or otherwise howsoever without the prior consent of the Governor.</li>
+                <li>To use the said land only for <span class="highlight">{{ $cofo->land_use ?? '[Insert Landuse]' }}</span> purpose.</li>
+                <li>Not to contravene any of the provisions of the Kano State Sectional and Systematic Land Titling Registration Law, 2024 and to conform and comply with all rules and regulations laid down from time to time by Kano State Government.</li>
+                <li>To become joint owner of the common property of the Sectional Titling Land and actively participate in all quotas that benefit or burden sections.</li>
+                <li>To exclusively use certain parts and share undivided sections of the common property e.g, Garage, Garden, Parking space, Storeroom among others.</li>
+                <li>
+                    For the purpose of the rent to be paid under this certificate of occupancy:
+                    <ol class="list-[lower-roman] pl-6">
+                        <li>
+                            The term of the Right Of Occupancy shall be divided into periods of five years and Governor may, at the expiration of each period of five years, revise the rent and fix the sum which shall be payable for the next period of five years. If the Governor shall so revise the rent, he shall cause a notice to be sent to the holder/holders and the rent so fixed or revised shall commenced to be payable one calendar month from the date of the receipt of such notice.
+                        </li>
+                        <li>
+                            If any rent for the time being payable in respect of the land or any part hereof shall be in arrears for the period of three months whether same shall or shall not have been legally demanded or if the holder/holders become bankrupt or make a composition with creditors or enter into liquidation, whether compulsory or voluntarily or if there shall be any breach or non-observance of any of the occupier’s covenants or agreements herein contained. Then and in any of the said cases it shall be lawful for the Governor at any given time thereafter to hold and enjoy the same as if the right of occupancy had not been granted but without prejudice to Right of Action or remedy of Governor for any antecedent breach of covenant by the holder/holders.
+                        </li>
+                    </ol>
+                </li>
+            </ol>
+
             <div class="mt-8 content-section">
-                <p class="mb-1 whitespace-nowrap font-bold">DATED This______________________________________ day of__________________________________, 20__________________________________________________________</p>
-               
-                <p class="text-center mb-2 font-bold">Given under my hand the day and year above written</p>  
-                <p class="text-center mb-2 font-bold">above written</p>
-                
+                <p class="mb-1 font-bold">DATED This____________________day of_____________________, 20______</p>
+                <p class="text-center mb-2">Given under my hand the day and year above written</p>
                 <div class="flex justify-end mt-20">
                     <div class="text-center w-64">
                         <div class="border-t border-black w-full mb-2"></div>

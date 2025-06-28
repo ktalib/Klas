@@ -6,7 +6,7 @@
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-      
+       
       <div class="mb-6">
         <div class="flex items-center mb-2">
           <i data-lucide="file-text" class="w-5 h-5 mr-2 text-green-600"></i>
@@ -223,64 +223,75 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Add event listener for the back button
-      document.getElementById('backStep5').addEventListener('click', function() {
-        document.getElementById('step5').classList.remove('active');
-        document.getElementById('step4').classList.add('active');
-      });
-      
-      // Function to update the application summary
       function updateApplicationSummary() {
         // Applicant Information
-        const applicantType = document.querySelector('input[name="applicantType"]:checked')?.value || '-';
-        const title = document.querySelector('select[name="applicant_title"]').value || '';
-        const fullName = document.querySelector('input[name="fullname"]').value || '-';
-        const email = document.querySelector('input[name="owner_email"]').value || '-';
-        const phone1 = document.querySelectorAll('input[name="phone_number[]"]')[0]?.value || '-';
-        const phone2 = document.querySelectorAll('input[name="phone_number[]"]')[1]?.value || '';
+        const applicantTypeEl = document.querySelector('input[name="applicantType"]:checked');
+        const applicantType = applicantTypeEl ? applicantTypeEl.value : '-';
+
+        const titleEl = document.querySelector('select[name="applicant_title"]');
+        const title = titleEl ? titleEl.value + ' ' : '';
+
+        const fullNameEl = document.querySelector('input[name="fullname"]');
+        const fullName = fullNameEl ? fullNameEl.value : '-';
+
+        const emailEl = document.querySelector('input[name="owner_email"]');
+        const email = emailEl ? emailEl.value : '-';
+
+        const phoneEls = document.querySelectorAll('input[name="phone_number[]"]');
+        const phone1 = phoneEls[0] ? phoneEls[0].value : '-';
+        const phone2 = phoneEls[1] ? phoneEls[1].value : '';
         const phones = [phone1, phone2].filter(Boolean).join(', ');
-        
+
         // Address Information
-        const houseNo = document.querySelector('input[name="address_house_no"]').value || '-';
-        const streetName = document.querySelector('input[name="owner_street_name"]').value || '-';
-        const district = document.querySelector('input[name="owner_district"]').value || '-';
-        const lga = document.querySelector('input[name="owner_lga"]').value || '-';
-        const state = document.querySelector('input[name="owner_state"]').value || '-';
-        const fullAddress = `${houseNo} ${streetName}, ${district}, ${lga}, ${state}`.replace(/,\s*-/g, '');
-        
+        const houseNoEl = document.querySelector('input[name="address_house_no"]');
+        const streetNameEl = document.querySelector('input[name="owner_street_name"]');
+        const districtEl = document.querySelector('input[name="owner_district"]');
+        const lgaEl = document.querySelector('input[name="owner_lga"]');
+        const stateEl = document.querySelector('input[name="owner_state"]');
+
+        const houseNo = houseNoEl ? houseNoEl.value : '-';
+        const streetName = streetNameEl ? streetNameEl.value : '-';
+        const district = districtEl ? districtEl.value : '-';
+        const lga = lgaEl ? lgaEl.value : '-';
+        const state = stateEl ? stateEl.value : '-';
+        const fullAddress = `${houseNo} ${streetName}, ${district}, ${lga}, ${state}`;
+
         // Property Details
-        const residenceType = document.querySelector('input[name="residenceType"]:checked')?.value || '-';
-        const unitsCount = document.querySelector('input[name="units_count"]').value || '-';
-        const blocksCount = document.querySelector('input[name="blocks_count"]').value || '-';
-        const sectionsCount = document.querySelector('input[name="sections_count"]').value || '-';
-        
-        // File Number - Get active file number from the active tab
+        const residenceTypeEl = document.querySelector('input[name="residenceType"]:checked');
+        const residenceType = residenceTypeEl ? residenceTypeEl.value : '-';
+        const unitsCountEl = document.querySelector('input[name="units_count"]');
+        const unitsCount = unitsCountEl ? unitsCountEl.value : '-';
+        const blocksCountEl = document.querySelector('input[name="blocks_count"]');
+        const blocksCount = blocksCountEl ? blocksCountEl.value : '-';
+        const sectionsCountEl = document.querySelector('input[name="sections_count"]');
+        const sectionsCount = sectionsCountEl ? sectionsCountEl.value : '-';
+
+        // File Number from active tab (if available)
         let fileNumber = '-';
         const activeFileTab = document.querySelector('.tabcontent.active');
         if (activeFileTab) {
           const tabId = activeFileTab.id;
           if (tabId === 'mlsFNo') {
-            fileNumber = document.getElementById('mlsPreviewFileNumber').value || '-';
+            fileNumber = document.getElementById('mlsPreviewFileNumber')?.value || '-';
           } else if (tabId === 'kangisFileNo') {
-            fileNumber = document.getElementById('kangisPreviewFileNumber').value || '-';
+            fileNumber = document.getElementById('kangisPreviewFileNumber')?.value || '-';
           } else if (tabId === 'NewKANGISFileno') {
-            fileNumber = document.getElementById('newKangisPreviewFileNumber').value || '-';
+            fileNumber = document.getElementById('newKangisPreviewFileNumber')?.value || '-';
           }
         }
-        
+
         // Payment Information
-        const appFee = parseFloat(document.querySelector('input[name="application_fee"]').value || 0);
-        const procFee = parseFloat(document.querySelector('input[name="processing_fee"]').value || 0);
-        const sitePlanFee = parseFloat(document.querySelector('input[name="site_plan_fee"]').value || 0);
+        const appFee = parseFloat(document.querySelector('input[name="application_fee"]')?.value || 0);
+        const procFee = parseFloat(document.querySelector('input[name="processing_fee"]')?.value || 0);
+        const sitePlanFee = parseFloat(document.querySelector('input[name="site_plan_fee"]')?.value || 0);
         const totalFee = appFee + procFee + sitePlanFee;
-        const receiptNumber = document.querySelector('input[name="receipt_number"]').value || '-';
-        const paymentDate = document.querySelector('input[name="payment_date"]').value || '-';
-        
-        // Format currency
+        const receiptNumber = document.querySelector('input[name="receipt_number"]')?.value || '-';
+        const paymentDate = document.querySelector('input[name="payment_date"]')?.value || '-';
+
         const formatCurrency = (amount) => {
           return '₦' + amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         };
-        
+
         // Property Address from Property Details
         const propertyHouseNo = document.querySelector('input[name="property_house_no"]')?.value || '-';
         const propertyPlotNo = document.querySelector('input[name="property_plot_no"]')?.value || '-';
@@ -288,11 +299,11 @@
         const propertyDistrict = document.querySelector('input[name="property_district"]')?.value || '-';
         const propertyLga = document.querySelector('input[name="property_lga"]')?.value || '-';
         const propertyState = document.querySelector('input[name="property_state"]')?.value || '-';
-        const propertyFullAddress = `${propertyHouseNo} ${propertyPlotNo} ${propertyStreetName}, ${propertyDistrict}, ${propertyLga}, ${propertyState}`.replace(/,\s*-/g, '');
-        
+        const propertyFullAddress = `${propertyHouseNo} ${propertyPlotNo} ${propertyStreetName}, ${propertyDistrict}, ${propertyLga}, ${propertyState}`;
+
         // Update summary fields
         document.getElementById('summary-applicant-type').textContent = applicantType;
-        document.getElementById('summary-name').textContent = title + ' ' + fullName;
+        document.getElementById('summary-name').textContent = title + fullName;
         document.getElementById('summary-email').textContent = email;
         document.getElementById('summary-phone').textContent = phones;
         
@@ -316,7 +327,6 @@
         document.getElementById('summary-receipt-number').textContent = receiptNumber;
         document.getElementById('summary-payment-date').textContent = paymentDate;
         
-        // Update Property Address summary fields
         document.getElementById('summary-property-house-no').textContent = propertyHouseNo;
         document.getElementById('summary-property-plot-no').textContent = propertyPlotNo;
         document.getElementById('summary-property-street-name').textContent = propertyStreetName;
@@ -325,36 +335,38 @@
         document.getElementById('summary-property-state').textContent = propertyState;
         document.getElementById('summary-property-full-address').textContent = propertyFullAddress;
         
-        // Collect and display uploaded documents
+        // Collect and display uploaded documents (unchanged)
         const documentsContainer = document.getElementById('summary-documents');
         documentsContainer.innerHTML = '';
-        
-        // Check which documents have been uploaded
         const documents = [
           { name: 'Application Letter', id: 'application-letter-input' },
           { name: 'Building Plan', id: 'building-plan-input' },
           { name: 'Architectural Design', id: 'architectural-design-input' },
           { name: 'Ownership Document', id: 'ownership-document-input' }
         ];
-        
         documents.forEach(doc => {
           const input = document.getElementById(doc.id);
           const isUploaded = input && input.files && input.files.length > 0;
-          
           const docElement = document.createElement('div');
           docElement.className = 'flex items-center';
-          
           const statusDot = document.createElement('span');
           statusDot.className = `inline-block w-2 h-2 ${isUploaded ? 'bg-green-500' : 'bg-red-500'} rounded-full mr-2`;
-          
           const docName = document.createElement('span');
           docName.textContent = doc.name;
-          
           docElement.appendChild(statusDot);
           docElement.appendChild(docName);
           documentsContainer.appendChild(docElement);
         });
       }
+      
+      // Make updateApplicationSummary globally accessible
+      window.updateApplicationSummary = updateApplicationSummary;
+      
+      // Add event listener for the back button
+      document.getElementById('backStep5').addEventListener('click', function() {
+        document.getElementById('step5').classList.remove('active');
+        document.getElementById('step4').classList.add('active');
+      });
       
       // Initialize Print Application Slip functionality
       function initializePrintFunctionality() {

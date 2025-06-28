@@ -1,4 +1,4 @@
-    <script>
+<script>
         // Initialize Lucide icons
         lucide.createIcons();
 
@@ -96,10 +96,6 @@
             cancelBtn: document.getElementById('cancel-btn'),
             submitBtn: document.getElementById('submit-btn'),
             isTemporaryFileNo: document.getElementById('isTemporaryFileNo'),
-            temporaryFileSection: document.getElementById('temporary-file-section'),
-            regularFileSection: document.getElementById('regular-file-section'),
-            temporaryFileNo: document.getElementById('temporaryFileNo'),
-            regenerateTempBtn: document.getElementById('regenerate-temp-btn'),
             fileNumberType: document.getElementById('fileNumberType'),
             filePrefix: document.getElementById('filePrefix'),
             fileSerialNo: document.getElementById('fileSerialNo'),
@@ -354,7 +350,10 @@
             } else {
                 elements.regNoSection.classList.add('hidden');
             }
-            
+
+            // Always update survey info section visibility based on checkbox state
+            handleSurveyInfoChange();
+
             elements.registrationDialog.classList.remove('hidden');
         }
 
@@ -368,13 +367,13 @@
             const isChecked = elements.isTemporaryFileNo.checked;
             
             if (isChecked) {
-                elements.temporaryFileSection.classList.remove('hidden');
-                elements.regularFileSection.classList.add('hidden');
-                elements.temporaryFileNo.value = generateTemporaryFileNo();
+                // Show root title reg no and hide root reg no
+                if (elements.regNoSection) elements.regNoSection.classList.remove('hidden');
+                document.getElementById('rootRegNoSection')?.classList.add('hidden');
             } else {
-                elements.temporaryFileSection.classList.add('hidden');
-                elements.regularFileSection.classList.remove('hidden');
-                elements.temporaryFileNo.value = '';
+                // Hide root title reg no and show root reg no
+                if (elements.regNoSection) elements.regNoSection.classList.add('hidden');
+                document.getElementById('rootRegNoSection')?.classList.remove('hidden');
             }
         }
 
@@ -387,12 +386,19 @@
         }
 
         function handleSurveyInfoChange() {
-            const isChecked = elements.surveyInfo.checked;
+            console.log('Survey info changed'); // Debug log
+            const surveyCheckbox = document.getElementById('surveyInfo');
+            const surveySection = document.getElementById('survey-info-section');
             
-            if (isChecked) {
-                elements.surveyInfoSection.classList.remove('hidden');
+            if (!surveyCheckbox || !surveySection) {
+                console.error('Survey elements not found'); // Debug log
+                return;
+            }
+
+            if (surveyCheckbox.checked) {
+                surveySection.classList.remove('hidden');
             } else {
-                elements.surveyInfoSection.classList.add('hidden');
+                surveySection.classList.add('hidden');
                 // Clear survey fields
                 document.getElementById('lga').value = '';
                 document.getElementById('district').value = '';
@@ -412,9 +418,7 @@
             data.instrumentType = currentInstrumentType;
             
             // Add final file number
-            data.finalFileNo = elements.isTemporaryFileNo.checked ? 
-                elements.temporaryFileNo.value : 
-                elements.fileNo.value;
+            data.finalFileNo = elements.fileNo.value;
             
             return data;
         }
@@ -448,8 +452,6 @@
         elements.filePrefix.addEventListener('input', updateFileNumber);
         elements.fileSerialNo.addEventListener('input', updateFileNumber);
 
-        elements.surveyInfo.addEventListener('change', handleSurveyInfoChange);
-
         // Close dialog when clicking outside
         elements.registrationDialog.addEventListener('click', (e) => {
             if (e.target === elements.registrationDialog) {
@@ -468,9 +470,17 @@
         function init() {
             setDefaultDates();
             lucide.createIcons();
+            
+            // Add event listener for survey info checkbox
+            const surveyCheckbox = document.getElementById('surveyInfo');
+            if (surveyCheckbox) {
+                surveyCheckbox.addEventListener('change', handleSurveyInfoChange);
+            }
+            
+            // Initialize survey info section to be hidden
+            handleSurveyInfoChange();
         }
 
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', init);
     </script>
- 

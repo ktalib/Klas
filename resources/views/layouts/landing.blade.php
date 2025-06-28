@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kano State Land Admin System</title>
+    <title>Kano State Land Administration Enterprise 
+System</title>
     <meta name="description" content="Official Land Administration System for Kano State - Manage land records, certificates, and property documentation efficiently.">
     <meta name="keywords" content="land administration, Kano State, property management, land registry, land certificates">
     <meta name="author" content="Kano State Government">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#006837">
     <!-- Open Graph / Social Media Meta Tags -->
-    <meta property="og:title" content="Kano State Land Admin System">
+    <meta property="og:title" content="Kano State Land Administration Enterprise 
+System">
     <meta property="og:description" content="Official Land Administration System for Kano State">
     <meta property="og:type" content="website">
     <link rel="icon" href="{{ asset('storage/upload/logo/favicon.ico') }}" type="image/x-icon">
@@ -147,8 +149,9 @@
     <div class="fixed inset-0 z-0">
         <div id="background-carousel" class="carousel">
             <img src="{{ asset('storage/upload/logo/2.jpeg') }}" alt="City Skyline" class="carousel-item active">
-            <img src="{{ asset('storage/upload/logo/2.jpeg') }}" alt="City Skyline" class="carousel-item">
-            <img src="{{ asset('storage/upload/logo/2.jpeg') }}" alt="City Skyline" class="carousel-item">
+            <img src="{{ asset('storage/upload/logo/3.jpeg') }}" alt="City Skyline" class="carousel-item">
+            <img src="{{ asset('storage/upload/logo/4.jpeg') }}" alt="City Skyline" class="carousel-item">
+            <img src="{{ asset('storage/upload/logo/5.jpeg') }}" alt="City Skyline" class="carousel-item">
         </div>
         <div id="gradient-overlay" class="absolute inset-0 bg-gradient-theme1"></div>
     </div>
@@ -185,7 +188,7 @@
                
                 </div>
                 
-                <h1 id="main-title" class="text-4xl md:text-6xl font-black mb-6 whitespace-nowrap shadow-text italic theme1-text" style="letter-spacing: -0.5px;">Kano State Land Admin System</h1>
+                <h1 id="main-title" class="text-4xl md:text-6xl font-black mb-6 whitespace-nowrap shadow-text italic theme1-text" style="letter-spacing: -0.5px;">Kano State Land Administration Enterprise System</h1>
               
             </div>
             </div>

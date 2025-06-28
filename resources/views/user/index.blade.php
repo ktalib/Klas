@@ -1,15 +1,26 @@
 @extends('layouts.app')
 @section('page-title')
-    {{ __('Users') }}
+{{ __('Users') }}
 @endsection
 @php
     $profile = asset(Storage::url('upload/profile/'));
 @endphp
  
 @section('content')
-
+     <!-- Hide Alpine x-cloak elements until initialized -->
+     <style>[x-cloak] { display: none !important; }</style>
     <!-- Main Content -->
-    <div class="flex-1 overflow-auto">
+    <div class="flex-1 overflow-auto" x-data="{ rolesModalOpen: false, modalRoles: '' }">
+    <!-- Roles Modal -->
+    <div x-show="rolesModalOpen" x-cloak class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.away="rolesModalOpen = false">
+        <div class="bg-white rounded-lg overflow-hidden w-1/3">
+            <div class="px-4 py-2 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-lg font-medium text-gray-900">All Roles</h3>
+                <button class="text-gray-400 hover:text-gray-500 text-xl font-bold" @click="rolesModalOpen = false">&times;</button>
+            </div>
+            <div class="p-4 text-sm text-gray-800" x-text="modalRoles"></div>
+        </div>
+    </div>
         <!-- Header -->
         @include('admin.header')
         <!-- Dashboard Content -->
@@ -87,7 +98,19 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ !empty($user->subscription_expire_date) ? dateFormat($user->subscription_expire_date) : __('Unlimited') }}</td>
                                         @else
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($user->type) }}</td>
-                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($user->assign_role) }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                @php
+                                                    $roles = is_array($user->assign_role) ? $user->assign_role : explode(',', $user->assign_role);
+                                                    $displayRoles = array_slice($roles, 0, 2);
+                                                    $moreRoles = count($roles) > 2;
+                                                @endphp
+                                                <span>
+                                                    {{ implode(', ', array_map('ucfirst', $displayRoles)) }}
+                                                    @if($moreRoles)
+                                                        <a href="#" class="ml-1 text-blue-600 underline" @click.prevent="rolesModalOpen = true; modalRoles = '{{ implode(', ', array_map('ucfirst', $roles)) }}'">+{{ count($roles) - 2 }} more</a>
+                                                    @endif
+                                                </span>
+                                            </td>
                                         @endif
                                         
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

@@ -23,7 +23,8 @@ class HomeController extends Controller
     public function index()
     {
         $PageTitle = 'Dashboard';
-        $PageDescription = 'Welcome to KLAS - Kano State Land Admin System.';
+        $PageDescription = 'Welcome to KLAES - Kano State Land Administration Enterprise 
+System.';
         if (\Auth::check()) {
             if (\Auth::user()->type == 'super admin') {
                 $result['totalOrganization'] = User::where('type', 'owner')->count();

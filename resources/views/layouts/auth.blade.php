@@ -68,7 +68,7 @@
                       
                     </a>
 <hr>
-                    <P CLASS="TEXT-SECONDARY" STYLE="DISPLAY: INLINE;"><b>KLAS (KANO STATE LAND ADMIN SYSTEM)</b></P>
+                    <P CLASS="TEXT-SECONDARY" STYLE="DISPLAY: INLINE;"><b>KLAES (KANO STATE LAND ADMIN SYSTEM)</b></P>
                     
                 </div>
 

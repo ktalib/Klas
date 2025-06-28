@@ -11,7 +11,7 @@
     
     <div id="batchSearchSection">
       <div class="flex justify-between mb-4">
-        <h3 class="text-md font-medium">Available Instruments</h3>
+        <h3 class="text-md font-medium">Available Instruments</h3> 
         <div class="flex gap-2">
           <div class="relative w-64">
             <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
@@ -63,7 +63,7 @@
       </div>
 
       <div class="flex justify-end mb-6">
-        <button id="addSelectedBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md" onclick="addSelectedToBatch()">
+        <button id="addSelectedBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed" onclick="addSelectedToBatch()" disabled>
           Add Selected Instruments (0)
         </button>
       </div>
@@ -186,7 +186,7 @@
         <button onclick="closeBatchRegisterModal()" class="px-4 py-2 border rounded-md">
           Cancel
         </button>
-        <button id="batchRegisterButton" class="bg-blue-600 text-white px-4 py-2 rounded-md" onclick="submitBatchRegistration()" disabled>
+        <button id="batchRegisterButton" class="bg-blue-600 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed" onclick="submitBatchRegistration()" disabled>
           Register 0 Instruments
         </button>
       </div>

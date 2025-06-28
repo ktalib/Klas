@@ -122,9 +122,12 @@
                     <div style="display:{{$is_view}}">
 
                       <div class="grid grid-cols-3 gap-2 mb-4">
+                       <button class="tab-button active" data-tab="detterment">
+                        <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
+                        DOCUMENTS
+                      </button>
                      
-                     
-                      <button class="tab-button active" data-tab="summary">
+                      <button class="tab-button " data-tab="summary">
                         <i data-lucide="user" class="w-3.5 h-3.5 mr-1.5"></i>
                         SUMMARY
                       </button> 
@@ -133,10 +136,7 @@
                         <i data-lucide="banknote" class="w-3.5 h-3.5 mr-1.5"></i>
                         APPROVAL
                       </button>
-                      <button class="tab-button " data-tab="detterment">
-                        <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
-                        DOCUMENTS
-                      </button>
+                    
 
                     
                     
@@ -150,7 +150,7 @@
                       </div>
                   
                       <!-- Summary Tab -->
-                      <div id="summary-tab" class="tab-content active">
+                      <div id="summary-tab" class="tab-content">
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                           <div class="p-4 border-b">
                             <h3 class="text-sm font-medium">Applicant Summary</h3>
@@ -414,7 +414,7 @@
                
                 
                       <!-- Detterment Bill Tab -->
-                        <div id="detterment-tab" class="tab-content">
+                        <div id="detterment-tab" class="tab-content active">
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                           <div class="p-4 border-b">
                           <h3 class="text-sm font-medium">Documents</h3>

@@ -171,7 +171,7 @@
   <div class="popup-content bg-white rounded-xl shadow-2xl w-11/12 max-w-md mx-auto overflow-hidden">
     <!-- Brand Logos Header -->
     <div class="flex justify-center items-center space-x-6 pt-4">
-      <img src="{{ asset('storage/upload/logo/logo.png') }}" alt="KLAS Logo" class="h-12">
+      <img src="{{ asset('storage/upload/logo/logo.png') }}" alt="KLAES Logo" class="h-12">
       <img src="{{ asset('storage/upload/logo/las.jpeg') }}" alt="LAAD-Sys Logo" class="h-12">
     </div>
     
@@ -187,7 +187,7 @@
         
         <div class="flash-text py-3 px-4 rounded-lg" style="background: linear-gradient(to right, rgba(212,46,18,0.1), rgba(255,186,8,0.1), rgba(16,124,65,0.1));">
           <h3 class="text-2xl md:text-3xl font-extrabold" style="color: #212121;">
-            WELCOME TO KLAS
+            WELCOME TO KLAES
           </h3>
           <p class="text-xl md:text-2xl font-bold mt-2">
             Dear <span id="username" class="text-brand-green-fallback" style="color: #107C41;">USERNAME</span>
@@ -288,7 +288,7 @@
     // Handle learn more button
     if (learnMoreBtn) {
       learnMoreBtn.addEventListener('click', function() {
-        alert('This would take you to more information about KLAS.');
+        alert('This would take you to more information about KLAES.');
       });
     }
     

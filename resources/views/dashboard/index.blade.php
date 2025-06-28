@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('page-title')
-    {{ __('Welcome to KLAS - Kano State Land Admin System') }}
+    {{ __('Welcome to KLAES - Kano State Land Administration Enterprise 
+System') }}
 @endsection
 
 <style>
@@ -28,6 +29,22 @@
 </style>
 @include('sectionaltitling.partials.assets.css')
 @section('content')
+@if (auth()->check() && is_null(auth()->user()->is_password_change))
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+          title: 'Password Change Required',
+          text: 'You must change your password before accessing the dashboard.',
+          icon: 'warning',
+          confirmButtonText: 'Go to Profile'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "{{ route('profile.index') }}";
+          }
+        });
+      });
+    </script>
+@endif
     <!-- Main Content -->
     <div class="flex-1 overflow-auto">
         <!-- Header -->
@@ -176,7 +193,7 @@
                       </div>
                       <div class="text-sm text-gray-500 flex items-center mt-1">
                         <i data-lucide="map-pin" class="w-3.5 h-3.5 mr-1"></i>
-                        KLAS Office
+                        KLAES Office
                       </div>
                       <span class="inline-block mt-2 px-2 py-0.5 bg-gray-800 text-white text-xs rounded-full">
                         Upcoming

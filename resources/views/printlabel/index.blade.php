@@ -193,10 +193,12 @@
                 <div class="p-6 border-t flex justify-between">
                     <button class="btn btn-outline">Back to Indexing</button>
                     <div class="flex gap-2">
+                        <div style="display: none">
                         <button id="duplicate-btn" class="btn btn-outline gap-2 hidden">
                             <i data-lucide="copy" class="h-4 w-4"></i>
                             Duplicate
                         </button>
+                        </div>
                         <button id="continue-to-settings-btn"  class="bg-blue-600 hover:bg-blue-700 text-white shadow-sm flex items-center justify-center gap-2 px-6 py-2 transition-all duration-200" disabled>
                             <i data-lucide="settings" class="h-4 w-4"></i>
                             Continue to Label Settings

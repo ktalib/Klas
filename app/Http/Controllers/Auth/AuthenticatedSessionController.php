@@ -46,7 +46,16 @@ class AuthenticatedSessionController extends Controller
         }
         $this->validate($request, $validation);
 
-        $request->authenticate();
+        // Manually authenticate using username instead of email
+        $credentials = [
+            'username' => $request->input('username'),
+            'password' => $request->input('password'),
+        ];
+
+        if (!Auth::attempt($credentials, $request->filled('remember'))) {
+            return redirect()->route('login')->with('error', __('The provided credentials do not match our records.'));
+        }
+
         $request->session()->regenerate();
         $loginUser = Auth::user();
         if ($loginUser->is_active == 0) {

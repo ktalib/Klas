@@ -34,10 +34,9 @@
                 <div class="mb-4">
                     {{ Form::label('level', __('Access Level'), ['class' => 'block text-sm font-medium text-gray-700 mb-1']) }}
                     {{ Form::select('level', [
-                        'system' => 'System (Highest)',
-                        'management' => 'Management',
-                        'operational' => 'Operational',
-                        'user' => 'User (Lowest)'
+                        'highest' => 'Highest',
+                        'high' => 'High',
+                        'lowest' => 'Lowest'
                     ], null, [
                         'class' => 'w-full p-2 border border-gray-300 rounded-md text-sm',
                         'required' => 'required'
@@ -45,11 +44,17 @@
                 </div>
                 
                 <div class="mb-4">
-                    {{ Form::label('description', __('Description'), ['class' => 'block text-sm font-medium text-gray-700 mb-1']) }}
-                    {{ Form::textarea('description', null, [
+                    {{ Form::label('user_type', __('User Type'), ['class' => 'block text-sm font-medium text-gray-700 mb-1']) }}
+                    {{ Form::select('user_type', [
+                        'ALL' => 'ALL',
+                        'Management' => 'Management',
+                        'Operations' => 'Operations',
+                        'User' => 'User',
+                        'System_Highest' => 'System (Highest)',
+                        'System_High' => 'System (High)'
+                    ], null, [
                         'class' => 'w-full p-2 border border-gray-300 rounded-md text-sm',
-                        'placeholder' => __('Enter Description'),
-                        'rows' => 3
+                        'required' => 'required'
                     ]) }}
                 </div>
                 

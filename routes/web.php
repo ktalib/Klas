@@ -40,6 +40,7 @@ use App\Http\Controllers\ScannerController;
 use App\Http\Controllers\LandingController;
  
 use App\Http\Controllers\GisController;
+use App\Http\Controllers\ProgrammeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -633,3 +634,5 @@ Route::prefix('debug')->group(function() {
     Route::get('/add-sample-roles', 'App\Http\Controllers\DebugController@addSampleRoles');
 });
 
+Route::get('/print_buyer_list', [ProgrammeController::class, 'printBuyerList']);
+Route::get('/print_buyer_list/{applicationId}', [ProgrammeController::class, 'printBuyerList']);

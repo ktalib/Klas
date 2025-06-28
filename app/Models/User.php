@@ -32,8 +32,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'subscription_expire_date',
         'parent_id',
         'is_active',
-        'assign_role',
-        'department_id', // Added department ID field
+        'assign_role', // stores user_role ids as comma-separated
+        'department_id', // correct field for department
+        'user_level',    // new field for user 
+        'username', // username field
     ];
 
     public function sendEmailVerificationNotification()

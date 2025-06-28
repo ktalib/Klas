@@ -56,9 +56,7 @@ class UserRoleController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'department_id' => 'nullable|exists:departments,id',
-            'description' => 'nullable|string',
-            'level' => 'required|string|in:system,management,operational,user'
+           
         ]);
 
         if ($validator->fails()) {
@@ -110,9 +108,7 @@ class UserRoleController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'department_id' => 'nullable|exists:departments,id',
-            'description' => 'nullable|string',
-            'level' => 'required|string|in:system,management,operational,user'
+            
         ]);
 
         if ($validator->fails()) {

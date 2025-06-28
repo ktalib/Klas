@@ -165,7 +165,8 @@
                
                 </div>
                 
-                <h1 class="text-4xl md:text-6xl font-black text-white mb-6 whitespace-nowrap shadow-text italic" style="text-shadow: 0 0 1px #000000; -webkit-text-stroke: 0.5px #000000; letter-spacing: -0.5px;">Kano State Land Admin System</h1>
+                <h1 class="text-4xl md:text-6xl font-black text-white mb-6 whitespace-nowrap shadow-text italic" style="text-shadow: 0 0 1px #000000; -webkit-text-stroke: 0.5px #000000; letter-spacing: -0.5px;">Kano State Land Administration Enterprise 
+System</h1>
               
             </div>
             </div>

@@ -91,22 +91,9 @@
                 <div class="space-y-4 border rounded-md p-4 bg-gray-50">
                     <h3 class="text-lg font-medium">File Number</h3>
                     
-                    <div class="flex items-center space-x-2 mb-4">
-                        <input type="checkbox" id="isTemporaryFileNo" class="checkbox">
-                        <label for="isTemporaryFileNo" class="label">
-                            This application has no Extant File Number (Use Temporary File Number)
-                        </label>
-                        <i data-lucide="info" class="h-4 w-4 text-gray-400 cursor-help" title="For applications without an existing file number, a temporary file number will be generated."></i>
-                    </div>
+               
 
-                    <div id="temporary-file-section" class="space-y-2 hidden">
-                        <label for="temporaryFileNo" class="label">Temporary File Number</label>
-                        <div class="flex gap-2">
-                            <input id="temporaryFileNo" name="temporaryFileNo" class="input bg-muted" readonly>
-                            <button type="button" id="regenerate-temp-btn" class="btn btn-outline">Regenerate</button>
-                        </div>
-                        <p class="text-xs text-gray-500">This temporary file number will be used until a permanent file number is assigned.</p>
-                    </div>
+               
 
                     <div id="regular-file-section" class="space-y-4">
                          @include('instruments.partial.fileno')
@@ -116,17 +103,24 @@
                 <!-- Registration Details Section -->
                 <div class="space-y-4 border rounded-md p-4 bg-gray-50">
                     <h3 class="text-lg font-medium">Registration Details</h3>
-                    
+                    <div class="flex items-center space-x-2 mb-4">
+                        <input type="checkbox" id="isTemporaryFileNo" class="checkbox">
+                        <label for="isTemporaryFileNo" class="label text-blue-600 font-semibold">
+                            <i data-lucide="info" class="inline h-4 w-4 mr-1"></i>
+                            This application has no Extant Registration Number (ROOT TITLE). Using a Temporary Registration Number ROOT TITLE.
+                        </label>
+                        <i data-lucide="info" class="h-4 w-4 text-gray-400 cursor-help" title="For applications without an existing file number, a temporary file number will be generated."></i>
+                    </div>
                     <div id="reg-no-section" class="space-y-2 hidden">
                         <label for="regNo" class="label">Registration Number (ROOT TITLE)</label>
                         <input id="regNo" name="regNo" value="0/0/0" readonly class="input bg-muted">
                         <p class="text-xs text-gray-500">Customary Titles are registered as ROOT TITLES with Registration Number 0/0/0 by default.</p>
                     </div>
                     
-                    <div class="space-y-2">
+                    <div id="rootRegNoSection" class="space-y-2">
                         <label for="rootRegNo" class="label">Root Registration Number</label>
                         <input id="rootRegNo" name="rootRegNo" class="input" placeholder="Enter root registration number">
-                    </div>
+                    </div>  
                 </div>
 
                 <!-- First Party Section -->
@@ -234,8 +228,18 @@
                         <input id="plotSize" name="plotSize" class="input" placeholder="Enter plot size (e.g., 100 x 50 meters)">
                     </div>
 
+                    <div class="space-y-2 mt-4">
+                        <label for="propertyLocation" class="label">Property Location</label>
+                        <input id="propertyLocation" name="propertyLocation" class="input" placeholder="Enter property location">
+                    </div>
+
+                    <div class="space-y-2 mt-4">
+                        <label for="surveyorName" class="label">Name of Surveyor</label>
+                        <input id="surveyorName" name="surveyorName" class="input" placeholder="Enter name of surveyor">
+                    </div>
+
                     <div class="flex items-center space-x-2 mt-4">
-                        <input type="checkbox" id="surveyInfo" class="checkbox">
+                        <input type="checkbox" id="surveyInfo" name="surveyInfo" class="checkbox">
                         <label for="surveyInfo" class="label">Include Survey Information</label>
                     </div>
 
@@ -300,6 +304,17 @@
                                 <label for="plotNumber" class="label">Plot Number</label>
                                 <input id="plotNumber" name="plotNumber" class="input" placeholder="Enter plot number">
                             </div>
+                           
+                            <div class="space-y-2">
+                                <label for="propertyLocationSurvey" class="label">Address</label>
+                                <input id="propertyLocationSurvey" name="propertyLocationSurvey" class="input" placeholder="Enter property location">
+                            </div>
+
+                             <div class="space-y-2">
+                                <label for="surveyorNameSurvey" class="label">Name of Surveyor</label>
+                                <input id="surveyorNameSurvey" name="surveyorNameSurvey" class="input" placeholder="Enter name of surveyor">
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -314,7 +329,7 @@
 
                     <!-- Registration Dates -->
                     <div class="border-t pt-4 mt-4">
-                        <h4 class="font-medium mb-3">Registration Dates</h4>
+                        {{-- <h4 class="font-medium mb-3">Registration Dates</h4> --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="space-y-2">
                                 <label for="registrationDate" class="label">Registration Date</label>
@@ -325,7 +340,7 @@
                             <div class="space-y-2">
                                 <label for="entryDate" class="label">Entry Date</label>
                                 <div class="date-picker">
-                                    <input id="entryDate" name="entryDate" type="date" class="input date-picker-input">
+                                    <input id="entryDate" name="entryDate" type="date" class="input date-picker-input" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                                 </div>
                             </div>
                         </div>
@@ -347,4 +362,19 @@
     </div>
 
 @include('instruments.create.js')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const surveyCheckbox = document.getElementById('surveyInfo');
+    const surveySection = document.getElementById('survey-info-section');
+    if (surveyCheckbox && surveySection) {
+        surveyCheckbox.addEventListener('change', function() {
+            if (surveyCheckbox.checked) {
+                surveySection.classList.remove('hidden');
+            } else {
+                surveySection.classList.add('hidden');
+            }
+        });
+    }
+});
+</script>
 @endsection

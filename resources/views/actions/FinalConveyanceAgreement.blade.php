@@ -214,11 +214,11 @@
                     </div>
                 </section>
 
-                <section class="mb-6">
+                {{-- <section class="mb-6">
                     <h2 class="text-base font-bold mb-2">OFFICIAL STAMP & SEAL</h2>
                     <div class="border border-gray-400 p-8 text-center text-gray-400"> </div>
                 </section>
-                
+                 --}}
                 <!-- Final Conveyance Records Section starts on a new page -->
                 <div class="page-break"></div>
                 

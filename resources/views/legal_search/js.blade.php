@@ -15,6 +15,13 @@
       { month: "Dec", searches: 24, revenue: 360000 }
     ];
 
+    // Helper to generate registration numbers in XX/XX/YYY format
+    function generateRegNumber() {
+      const prefix = Math.floor(Math.random() * 90) + 10; // 10-99
+      const suffix = Math.floor(Math.random() * 300) + 1; // 1-300
+      return `${prefix}/${prefix}/${suffix}`;
+    }
+
     // Sample land records data
     const landRecords = [
       {
@@ -53,10 +60,10 @@
             id: 1,
             date: "2021-04-05",
             time: "10:30 AM",
-            event: "Initial Registration",
+            event: "Lease Agreement",
             authority: "Kano Land Registry",
             recipient: "Suleiman Abubakar Trading Co.",
-            documentNo: "DOC/2021/001",
+            documentNo: "77/77/11", // updated to XX/XX/YYY format
             size: "1000 Ha",
             comments: "First registration of property"
           }
@@ -67,7 +74,7 @@
             registrationDate: "2021-04-10",
             registrationTime: "11:45 AM",
             instrumentType: "Lease Agreement",
-            registrationNumber: "REG/2021/001",
+            registrationNumber: "55/55/83", // updated to XX/XX/YYY format
             parties: "Kano Market Development Authority and Suleiman Abubakar Trading Co.",
             propertyDescription: "Commercial stall at Sabon Gari Market",
             registeredBy: "Land Registry Officer",
@@ -77,7 +84,7 @@
         cofoRecords: [
           {
             id: 1,
-            cofoNumber: "C of O/KN/2021/001",
+            cofoNumber: "55/55/11",
             issueDate: "2021-05-01",
             holderName: "Suleiman Abubakar Trading Co.",
             propertyDescription: "Commercial stall at Sabon Gari Market",
@@ -188,7 +195,7 @@
             event: "Lease Registration",
             authority: "Kano Land Registry",
             recipient: "Sarah Williams",
-            documentNo: "DOC/2023/002",
+            documentNo: "11/11/122", // updated to XX/XX/YYY format
             size: "750 Ha",
             comments: "Lease agreement registered"
           },
@@ -199,7 +206,7 @@
             event: "Ownership Transfer",
             authority: "Kano Land Registry",
             recipient: "Ahmed Abdullahi",
-            documentNo: "DOC/2023/003",
+            documentNo: "22/22/123", // updated to XX/XX/YYY format
             size: "750 Ha",
             comments: "Deed of assignment registered"
           },
@@ -207,10 +214,10 @@
             id: 4,
             date: "2024-02-25",
             time: "02:45 PM",
-            event: "Sale Agreement Filing",
+            event: "Ownership Transfer",
             authority: "Kano Land Registry",
             recipient: "Musa Ibrahim Kano",
-            documentNo: "DOC/2024/001",
+            documentNo: "55/55/199", // updated to XX/XX/YYY format
             size: "750 Ha",
             comments: "Deed of Mortgage filed and approved"
           }
@@ -221,7 +228,7 @@
             registrationDate: "2023-06-25",
             registrationTime: "02:45 PM",
             instrumentType: "Lease Agreement",
-            registrationNumber: "REG/2023/002",
+            registrationNumber: "24/24/122", // updated to XX/XX/YYY format
             parties: "Michael Johnson and Sarah Williams",
             propertyDescription: "Residential property at Fagge North District",
             registeredBy: "Land Registry Officer",
@@ -232,7 +239,7 @@
             registrationDate: "2023-08-25",
             registrationTime: "01:30 PM",
             instrumentType: "Deed of Assignment",
-            registrationNumber: "REG/2023/003",
+            registrationNumber: "77/77/221", // updated to XX/XX/YYY format
             parties: "Sarah Williams and Ahmed Abdullahi",
             propertyDescription: "Residential property at Fagge North District",
             registeredBy: "Senior Registry Officer",
@@ -243,7 +250,7 @@
             registrationDate: "2024-05-27",
             registrationTime: "11:15 AM",
             instrumentType: "Transfer of Title",
-            registrationNumber: "REG/2024/001",
+            registrationNumber: "66/66/199", // updated to XX/XX/YYY format
             parties: "Musa Ibrahim Kano and Aisha Bello Muhammad",
             propertyDescription: "Residential property at Fagge North District",
             registeredBy: "Chief Registry Officer",
@@ -253,7 +260,7 @@
         cofoRecords: [
           {
             id: 2,
-            cofoNumber: "C of O/KN/2024/001",
+            cofoNumber: "24/24/31",
             issueDate: "2023-07-01",
             holderName: "Sarah Williams",
             propertyDescription: "Residential property at Fagge North District",
@@ -776,7 +783,7 @@
                 <span class="text-gray-500">Size:</span> ${file.size}
               </div>
               <div class="col-span-2">
-                <span class="text-gray-500">Registration Particulars:</span> ${file.registrationParticulars}
+                <span class="text-gray-500">Transaction Type:</span> ${file.registrationParticulars}
               </div>
             </div>
           </div>
@@ -1090,13 +1097,181 @@
       fileHistoryView.classList.remove('hidden');
     });
 
-    // Print report
+    // Enhanced Print report with responsive handling
     printReportBtn.addEventListener('click', () => {
+      // Optimize print layout based on data size
+      optimizePrintLayout();
+      
       // Add a small delay to ensure the report is fully rendered
       setTimeout(() => {
         window.print();
-      }, 200);
+      }, 300);
     });
+
+    // Function to optimize print layout based on data size
+    const optimizePrintLayout = () => {
+      const printDiv = document.querySelector('.print-div');
+      const transactionRows = document.querySelectorAll('#report-transactions-table tbody tr');
+      
+      if (!printDiv) return;
+      
+      // Remove existing optimization classes
+      printDiv.classList.remove('small-dataset', 'force-single-page');
+      
+      // Check if dataset is small (less than 5 rows)
+      if (transactionRows.length <= 5) {
+        printDiv.classList.add('small-dataset', 'force-single-page');
+        
+        // Adjust table layout for better single-page fit
+        const table = document.querySelector('#report-transactions-table');
+        if (table) {
+          table.style.pageBreakInside = 'avoid';
+          table.style.breakInside = 'avoid';
+        }
+        
+        // Optimize header spacing for small datasets
+        const headerSection = printDiv.querySelector('.mb-6');
+        if (headerSection) {
+          headerSection.style.marginBottom = '6px';
+        }
+        
+        // Adjust property details section
+        const propertySection = printDiv.querySelector('.space-y-6 > div:first-child');
+        if (propertySection) {
+          propertySection.style.marginBottom = '8px';
+        }
+      }
+      
+      // Ensure logos are properly positioned (left and right)
+      const logoContainer = printDiv.querySelector('.flex-wrap');
+      if (logoContainer) {
+        logoContainer.style.display = 'flex';
+        logoContainer.style.justifyContent = 'space-between';
+        logoContainer.style.alignItems = 'center';
+        logoContainer.style.marginBottom = '10px';
+        
+        const logos = logoContainer.querySelectorAll('img');
+        if (logos.length >= 2) {
+          logos[0].style.order = '1'; // Left logo
+          logos[1].style.order = '3'; // Right logo
+          
+          const textContainer = logoContainer.querySelector('.text-center');
+          if (textContainer) {
+            textContainer.style.order = '2'; // Center text
+            textContainer.style.flex = '1';
+            textContainer.style.margin = '0 15px';
+          }
+        }
+      }
+      
+      // Optimize table cell content for better printing
+      const tableCells = printDiv.querySelectorAll('td, th');
+      tableCells.forEach(cell => {
+        cell.style.wordWrap = 'break-word';
+        cell.style.overflowWrap = 'break-word';
+        cell.style.hyphens = 'auto';
+      });
+      
+      // Ensure watermark is properly positioned
+      const watermark = document.querySelector('.watermark');
+      if (watermark) {
+        watermark.style.position = 'fixed';
+        watermark.style.top = '50%';
+        watermark.style.left = '50%';
+        watermark.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+        watermark.style.zIndex = '0';
+        watermark.style.pointerEvents = 'none';
+      }
+    };
+
+    // Function to handle print media queries and responsive adjustments
+    const handlePrintMediaQuery = () => {
+      const printMediaQuery = window.matchMedia('print');
+      
+      printMediaQuery.addListener((mq) => {
+        if (mq.matches) {
+          // Print mode activated
+          optimizePrintLayout();
+        }
+      });
+    };
+
+    // Initialize print media query handler
+    handlePrintMediaQuery();
+
+    // Add CSS for better print handling
+    const addPrintStyles = () => {
+      const style = document.createElement('style');
+      style.textContent = `
+        @media print {
+          /* Additional responsive print styles */
+          .print-div {
+            transform: none !important;
+            zoom: 1 !important;
+            -webkit-transform: none !important;
+            -moz-transform: none !important;
+          }
+          
+          /* Ensure proper A4 sizing */
+          @page {
+            size: A4;
+            margin: 12mm 8mm;
+          }
+          
+          /* Force single page for small datasets */
+          .force-single-page {
+            height: auto !important;
+            max-height: none !important;
+            page-break-after: avoid !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+          }
+          
+          /* Optimize table for A4 width */
+          .print-div table {
+            table-layout: auto !important;
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+          
+          .print-div th,
+          .print-div td {
+            max-width: none !important;
+            white-space: normal !important;
+            word-break: break-word !important;
+          }
+          
+          /* Logo positioning fix */
+          .print-div .flex-wrap {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            width: 100% !important;
+          }
+          
+          .print-div .flex-wrap > img:first-child {
+            order: 1 !important;
+            margin-right: auto !important;
+          }
+          
+          .print-div .flex-wrap > div {
+            order: 2 !important;
+            flex: 1 !important;
+            text-align: center !important;
+            margin: 0 15px !important;
+          }
+          
+          .print-div .flex-wrap > img:last-child {
+            order: 3 !important;
+            margin-left: auto !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    };
+
+    // Add the print styles when the page loads
+    addPrintStyles();
 
     // Add this helper function to generate random time strings
 const generateRandomTime = () => {
@@ -1104,6 +1279,14 @@ const generateRandomTime = () => {
   const minutes = Math.floor(Math.random() * 60); // 0-59
   const ampm = Math.random() > 0.5 ? 'AM' : 'PM';
   return `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+};
+
+// Generate Reg. No in format X/X/Y where first two are same
+const generateRegNo = () => {
+  const prefix = Math.floor(Math.random() * 90) + 10;
+  // Limit suffix to range 100-300
+  const suffix = Math.floor(Math.random() * 201) + 100;
+  return `${prefix}/${prefix}/${suffix}`;
 };
 
     // Render legal search report
@@ -1140,29 +1323,107 @@ const generateRandomTime = () => {
       const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrCodeData)}`;
       document.getElementById('report-qr-code').src = qrCodeUrl;
       
-      // Render transaction history table
+      // Create combined array of all transactions
+      const allTransactions = [];
+      
+      // Add items from history array
+      if (selectedFile.history && selectedFile.history.length > 0) {
+        selectedFile.history.forEach(transaction => {
+          allTransactions.push({
+            type: 'Property Transaction',
+            date: transaction.date,
+            time: transaction.time || generateRandomTime(),
+            transactionType: transaction.transactionType,
+            grantor: transaction.guarantor,
+            grantee: transaction.guarantee,
+            regNo: generateRegNo(),
+            size: transaction.size || 'N/A',
+            caveat: transaction.caveat,
+            comments: transaction.comments || 'N/A'
+          });
+        });
+      }
+      
+      // Add items from propertyHistory array
+      if (selectedFile.propertyHistory && selectedFile.propertyHistory.length > 0) {
+        selectedFile.propertyHistory.forEach(history => {
+          allTransactions.push({
+            type: 'Property History',
+            date: history.date,
+            time: history.time || generateRandomTime(),
+            transactionType: history.event,
+            grantor: history.authority,
+            grantee: history.recipient,
+            regNo: generateRegNo(),
+            size: history.size || 'N/A',
+            caveat: '-',
+            comments: history.comments || 'N/A'
+          });
+        });
+      }
+    
+      // Add items from instrumentRegistrations array
+      if (selectedFile.instrumentRegistrations && selectedFile.instrumentRegistrations.length > 0) {
+        selectedFile.instrumentRegistrations.forEach(reg => {
+          allTransactions.push({
+            type: 'Instrument Registration',
+            date: reg.registrationDate,
+            time: reg.registrationTime || generateRandomTime(),
+            transactionType: reg.instrumentType,
+            grantor: reg.parties.split(' and ')[0],
+            grantee: reg.parties.split(' and ')[1] || '-',
+            regNo: generateRegNo(),
+            size: '-',
+            caveat: '-',
+            comments: `Registered by ${reg.registeredBy}`
+          });
+        });
+      }
+    
+      // Add items from cofoRecords array
+      if (selectedFile.cofoRecords && selectedFile.cofoRecords.length > 0) {
+        selectedFile.cofoRecords.forEach(cofo => {
+          allTransactions.push({
+            type: 'Certificate of Occupancy',
+            date: cofo.issueDate,
+            time: cofo.issueTime || generateRandomTime(),
+            transactionType: 'C of O Issuance',
+            grantor: 'Land Registry',
+            grantee: cofo.holderName,
+            regNo: generateRegNo(),
+            size: '-',
+            caveat: '-',
+            comments: `Land Use: ${cofo.landUse}, Term: ${cofo.term}`
+          });
+        });
+      }
+    
+      // Sort all transactions by date (newest first)
+      allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+      // Render the combined transactions table
       const transactionsTable = document.getElementById('report-transactions-table');
       transactionsTable.innerHTML = '';
-      
-      if (selectedFile.history && selectedFile.history.length > 0) {
-        selectedFile.history.forEach((transaction, index) => {
-          // Ensure time consistency - use the existing time or generate one if needed
-          transaction.time = transaction.time || generateRandomTime();
-          
+    
+      if (allTransactions.length > 0) {
+        allTransactions.forEach((transaction, index) => {
           const row = document.createElement('tr');
           row.innerHTML = `
             <td class="border border-gray-300 px-3 py-2">${index + 1}</td>
-            <td class="border border-gray-300 px-3 py-2">${transaction.guarantor}</td>
-            <td class="border border-gray-300 px-3 py-2">${transaction.guarantee}</td>
-            <td class="border border-gray-300 px-3 py-2">${transaction.transactionType}</td>
+            <td class="border border-gray-300 px-3 py-2">${transaction.grantor}</td>
+            <td class="border border-gray-300 px-3 py-2">${transaction.grantee}</td>
+            <td class="border border-gray-300 px-3 py-2">
+              ${transaction.transactionType}
+              <div class="text-xs text-gray-500">${transaction.type}</div>
+            </td>
             <td class="border border-gray-300 px-3 py-2">
               <div>${transaction.date}</div>
               <div class="text-xs text-gray-600">${transaction.time}</div>
             </td>
-            <td class="border border-gray-300 px-3 py-2">${index + 1}/${index + 1}/1</td>
-            <td class="border border-gray-300 px-3 py-2">${transaction.size || "0.0192ha"}</td>
+            <td class="border border-gray-300 px-3 py-2">${transaction.regNo}</td>
+            <td class="border border-gray-300 px-3 py-2">${transaction.size}</td>
             <td class="border border-gray-300 px-3 py-2 ${transaction.caveat === 'Yes' ? 'text-red-600' : ''}">${transaction.caveat}</td>
-            <td class="border border-gray-300 px-3 py-2">${transaction.comments || "Transfer registered"}</td>
+            <td class="border border-gray-300 px-3 py-2">${transaction.comments}</td>
           `;
           transactionsTable.appendChild(row);
         });
@@ -1187,3 +1448,4 @@ const generateRandomTime = () => {
       }
     });
   </script>
+      

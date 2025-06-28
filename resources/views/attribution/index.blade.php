@@ -13,133 +13,219 @@
     <div class="p-6">
       <!-- Stats Cards -->
         
-      
+      <style>
+.tab-button {
+    transition: all 0.3s;
+}
+.tab-button.active {
+    border-bottom-width: 2px;
+}
+</style>
       <!-- Secondary Applications Table - Screenshot 135 -->
       <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-xl font-bold">Survey Record</h2>
           
+          <!-- Replace the dropdown section with these two buttons -->
           <div class="flex items-center space-x-4">
-            <div class="relative inline-block text-left">
-              <button id="survey-dropdown-button" class="flex items-center space-x-2 px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800">
-              <i data-lucide="plus" class="w-4 h-4"></i>
-              <span>Create New Survey</span>
-              <i data-lucide="chevron-down" class="w-4 h-4"></i>
-              </button>
-              <div id="survey-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-              <div class="py-1">
-              <a href="{{ route('attribution.create', ['is' => 'primary']) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <i data-lucide="file-plus" class="w-4 h-4 mr-2"></i>
-                Create Primary Survey
-              </a>
-              <a href="{{ route('attribution.create', ['is' => 'secondary']) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <i data-lucide="layers" class="w-4 h-4 mr-2"></i>
-                Create Unit Survey
-              </a>
-              </div>
-              </div>
-            </div>
-            <script>
-              document.addEventListener('DOMContentLoaded', function() {
-              const dropdownButton = document.getElementById('survey-dropdown-button');
-              const dropdownMenu = document.getElementById('survey-dropdown-menu');
-              
-              dropdownButton.addEventListener('click', function() {
-              dropdownMenu.classList.toggle('hidden');
-              });
-              
-              document.addEventListener('click', function(event) {
-              if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
-              dropdownMenu.classList.add('hidden');
-              }
-              });
-              });
-            </script>
+            <a href="{{ route('attribution.create', ['is' => 'primary']) }}" id="primary-create-btn" class="flex items-center space-x-2 px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800">
+                <i data-lucide="file-plus" class="w-4 h-4"></i>
+                <span>Create Primary Survey</span>
+            </a>
+            
+            <a href="{{ route('attribution.create', ['is' => 'secondary']) }}" id="unit-create-btn" class="hidden flex items-center space-x-2 px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800">
+                <i data-lucide="layers" class="w-4 h-4"></i>
+                <span>Create Unit Survey</span>
+            </a>
+            
             <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
               <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
               <span>Export</span>
             </button>
           </div>
         </div>
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead>
-              <tr class="text-xs">
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">File No</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Plot No</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Block No</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Approved Plan No</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">TP Plan No</th>
-                 <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Survey Type</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Control Beacon Name</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Control Beacon X</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Control Beacon Y</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Metric Sheet Index</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Metric Sheet No</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Imperial Sheet</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Imperial Sheet No</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Layout Name</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">District Name</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">LGA Name</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Survey By</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Survey Date</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Drawn By</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Drawn Date</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Checked By</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Checked Date</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Approved By</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Approved Date</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($surveys as $survey)
-              <tr class="text-xs">
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->fileno }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->plot_no }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->block_no }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->approved_plan_no }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->tp_plan_no }}</td>
-                <td class="px-4 py-2 text-sm">
-                  @if(!empty($survey->application_id))
-                  <span class="px-2 py-1 rounded-full text-white bg-green-500">Primary</span>
-                    @elseif(!empty($survey->sub_application_id))
-                  <span class="px-2 py-1 rounded-full text-white bg-blue-500">Unit</span>
-                  
-                  @else
-                  <span class="px-2 py-1 rounded-full text-white bg-gray-500">Unknown</span>
-                  @endif
-                </td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->beacon_control_name }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Control_Beacon_Coordinate_X }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Control_Beacon_Coordinate_Y }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Metric_Sheet_Index }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Metric_Sheet_No }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Imperial_Sheet }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Imperial_Sheet_No }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->layout_name }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->district_name }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->lga_name }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->survey_by }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->survey_by_date }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->drawn_by }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->drawn_by_date }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->checked_by }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->checked_by_date }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->approved_by }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->approved_by_date }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">
-                <a href="{{ url('attribution/update-survey/' . $survey->ID) }}" class="flex items-center px-3 py-1 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                    <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Update
-                </a>
-                </td>
 
-                 
-              </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
+        <!-- Tabs -->
+        <div class="mb-4 border-b border-gray-200">
+  <ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
+    <li class="mr-2">
+      <button onclick="switchTab('primary')" class="inline-block p-4 border-b-2 border-green-500 text-green-500 tab-button active" 
+              id="primary-tab">
+        Primary Survey
+      </button>
+    </li>
+    <li class="mr-2">
+      <button onclick="switchTab('unit')" class="inline-block p-4 border-b-2 border-transparent hover:border-gray-300 tab-button" 
+              id="unit-tab">
+        Unit Survey
+      </button>
+    </li>
+  </ul>
+</div>
+
+<!-- Tab Content -->
+<div class="tab-content" id="primary-content">
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead>
+        <tr class="text-xs">
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">File No</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Plot No</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Block No</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Approved Plan No</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">TP Plan No</th>
+           <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Survey Type</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Control Beacon Name</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Control Beacon X</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Control Beacon Y</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Metric Sheet Index</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Metric Sheet No</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Imperial Sheet</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Imperial Sheet No</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Layout Name</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">District Name</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">LGA Name</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Survey By</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Survey Date</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Drawn By</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Drawn Date</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Checked By</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Checked Date</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Approved By</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Approved Date</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach($surveys as $survey)
+          @if(!empty($survey->application_id))
+            <tr class="text-xs">
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->fileno }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->plot_no }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->block_no }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->approved_plan_no }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->tp_plan_no }}</td>
+              <td class="px-4 py-2 text-sm">
+                @if(!empty($survey->application_id))
+                <span class="px-2 py-1 rounded-full text-white bg-green-500">Primary</span>
+                  @elseif(!empty($survey->sub_application_id))
+                <span class="px-2 py-1 rounded-full text-white bg-blue-500">Unit</span>
+                
+                @else
+                <span class="px-2 py-1 rounded-full text-white bg-gray-500">Unknown</span>
+                @endif
+              </td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->beacon_control_name }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Control_Beacon_Coordinate_X }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Control_Beacon_Coordinate_Y }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Metric_Sheet_Index }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Metric_Sheet_No }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Imperial_Sheet }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Imperial_Sheet_No }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->layout_name }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->district_name }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->lga_name }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->survey_by }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->survey_by_date }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->drawn_by }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->drawn_by_date }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->checked_by }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->checked_by_date }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->approved_by }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->approved_by_date }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">
+              <a href="{{ url('attribution/update-survey/' . $survey->ID) }}" class="flex items-center px-3 py-1 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                  <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Update
+              </a>
+              </td>
+          @endif
+        @endforeach
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="tab-content hidden" id="unit-content"> 
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead>
+        <tr class="text-xs">
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">File No</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Plot No</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Block No</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Approved Plan No</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">TP Plan No</th>
+           <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Survey Type</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Control Beacon Name</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Control Beacon X</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Control Beacon Y</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Metric Sheet Index</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Metric Sheet No</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Imperial Sheet</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Imperial Sheet No</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Layout Name</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">District Name</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">LGA Name</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Survey By</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Survey Date</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Drawn By</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Drawn Date</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Checked By</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Checked Date</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Approved By</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Approved Date</th>
+          <th class="px-4 py-2 text-left text-sm font-medium text-green-500">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach($surveys as $survey)
+          @if(!empty($survey->sub_application_id))
+            <tr class="text-xs">
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->fileno }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->plot_no }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->block_no }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->approved_plan_no }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->tp_plan_no }}</td>
+              <td class="px-4 py-2 text-sm">
+                @if(!empty($survey->application_id))
+                <span class="px-2 py-1 rounded-full text-white bg-green-500">Primary</span>
+                  @elseif(!empty($survey->sub_application_id))
+                <span class="px-2 py-1 rounded-full text-white bg-blue-500">Unit</span>
+                
+                @else
+                <span class="px-2 py-1 rounded-full text-white bg-gray-500">Unknown</span>
+                @endif
+              </td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->beacon_control_name }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Control_Beacon_Coordinate_X }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Control_Beacon_Coordinate_Y }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Metric_Sheet_Index }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Metric_Sheet_No }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Imperial_Sheet }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->Imperial_Sheet_No }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->layout_name }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->district_name }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->lga_name }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->survey_by }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->survey_by_date }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->drawn_by }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->drawn_by_date }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->checked_by }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->checked_by_date }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->approved_by }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">{{ $survey->approved_by_date }}</td>
+              <td class="px-4 py-2 text-sm text-gray-700">
+              <a href="{{ url('attribution/update-survey/' . $survey->ID) }}" class="flex items-center px-3 py-1 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                  <i data-lucide="edit" class="w-4 h-4 mr-1"></i> Update
+              </a>
+              </td>
+          @endif
+        @endforeach
+      </tbody>
+    </table>
+  </div>
+</div>
+
         <div class="flex justify-between items-center mt-6 text-sm">
           <div class="text-green-500">Showing 5 of 180 applications</div>
           <div class="flex items-center space-x-2">
@@ -159,8 +245,7 @@
     <!-- Footer -->
     @include('admin.footer')
   </div>
- 
-@endsection
+
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -185,8 +270,38 @@ window.showFullNames = function(owners) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('create-new-survey').addEventListener('click', function () {
+function switchTab(tabId) {
+    // Get all tabs and contents
+    const tabs = document.querySelectorAll('.tab-button');
+    const contents = document.querySelectorAll('.tab-content');
+    
+    // Remove active class from all tabs
+    tabs.forEach(tab => {
+        tab.classList.remove('active', 'text-green-500', 'border-green-500');
+        tab.classList.add('border-transparent');
+    });
+    
+    // Add active class to selected tab
+    const selectedTab = document.getElementById(`${tabId}-tab`);
+    selectedTab.classList.add('active', 'text-green-500', 'border-green-500');
+    selectedTab.classList.remove('border-transparent');
+    
+    // Hide all contents
+    contents.forEach(content => content.classList.add('hidden'));
+    
+    // Show selected content
+    document.getElementById(`${tabId}-content`).classList.remove('hidden');
+
+    // Toggle create buttons visibility
+    document.getElementById('primary-create-btn').classList.toggle('hidden', tabId !== 'primary');
+    document.getElementById('unit-create-btn').classList.toggle('hidden', tabId !== 'unit');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize with primary tab active
+    switchTab('primary');
+    
+    document.getElementById('create-new-survey').addEventListener('click', function () {
     window.location.href = '{{ route("survey_records.index") }}';
   });
 
@@ -198,3 +313,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 </script>
+
+
+ 
+@endsection

@@ -17,20 +17,57 @@
         }
 
         @media print {
-            body {
-                print-color-adjust: exact;
-                -webkit-print-color-adjust: exact;
+            body * {
+                visibility: hidden !important;
             }
-
-            .page {
-                margin: 0;
-                border: initial;
-                border-radius: initial;
-                width: initial;
-                min-height: initial;
-                box-shadow: initial;
-                background: initial;
-                page-break-after: always;
+            .print-area, .print-area * {
+                visibility: visible !important;
+            }
+            .print-area {
+                position: absolute !important;
+                left: 0; 
+                top: 0; 
+                width: 100vw;
+                margin: 0 !important;
+                padding: 10px !important;
+                box-shadow: none !important;
+                background: white !important;
+                z-index: 9999;
+            }
+            .print-button, .print-button * {
+                display: none !important;
+            }
+            
+            /* A4 page optimization */
+            @page {
+                size: A4;
+                margin: 0.5in;
+            }
+            
+            .certificate-container {
+                max-width: 100% !important;
+                padding: 5px !important;
+                margin: 0 !important;
+            }
+            
+            .certificate-grid {
+                gap: 8px !important;
+            }
+            
+            .certificate-item {
+                font-size: 7px !important;
+                line-height: 1.1 !important;
+                padding: 4px !important;
+            }
+            
+            .certificate-item img {
+                width: 8px !important;
+                height: 8px !important;
+            }
+            
+            .red-box {
+                padding: 3px !important;
+                margin-bottom: 3px !important;
             }
         }
 
@@ -49,37 +86,141 @@
             font-size: 16px;
             margin-bottom: 15px;
         }
+        
+        /* Compact layout for screen view */
+        .certificate-container {
+            max-width: 210mm; /* A4 width */
+            margin: 0 auto;
+        }
+        
+        .certificate-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .certificate-item {
+            border: 1px solid #d1d5db;
+            padding: 6px;
+            background: white;
+            font-size: 8px;
+            line-height: 1.2;
+        }
+        
+        .certificate-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        
+        .logo-container {
+            width: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .logo-container img {
+            width: 14px;
+            height: 14px;
+            object-fit: contain;
+        }
+        
+        .seal-container {
+            width: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .seal {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 1px solid #9ca3af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .seal img {
+            width: 12px;
+            height: 12px;
+            object-fit: contain;
+        }
+        
+        .reg-number {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .title {
+            text-align: center;
+            margin-bottom: 4px;
+            font-weight: bold;
+            font-size: 9px;
+        }
+        
+        .red-box-compact {
+            border: 1px solid #c41e3a;
+            color: #c41e3a;
+            padding: 4px;
+            margin-bottom: 4px;
+            font-size: 7px;
+            line-height: 1.1;
+        }
+        
+        .footer-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 6px;
+            margin-top: 2px;
+        }
+        
+        .footer-logo {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #b91c1c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .footer-logo img {
+            width: 12px;
+            height: 12px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
     </style>
+    
     <div class="flex-1 overflow-auto">
         <!-- Header -->
         @include('admin.header')
         
         <!-- Print button -->
         <div class="p-4 flex justify-center">
-            <button class="print-button" onclick="window.print()">Print Certificates</button>
+            <button class="print-button" onclick="window.print()">Print</button>
         </div>
         
-        <!-- Dashboard Content - Always show certificates regardless of data availability -->
-        <div class="p-6">
-            <div class="max-w-4xl mx-auto bg-white p-6 shadow-md container mx-auto mt-4 p-4">
+        <!-- Dashboard Content -->
+        <div class="print-area">
+            <div class="certificate-container p-4">
                 <!-- 2x2 Grid of Certificates -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Certificate 1 -->
-
+                <div class="certificate-grid">
                     @for ($i = 0; $i < 4; $i++)
-                        <div class="border border-gray-300 p-2 bg-white">
-                            <div class="flex justify-between items-center mb-2">
-                                <!-- Nigerian Coat of Arms -->
-                                <div class="w-16">
-                                    <div class="flex flex-col items-center">
-                                        <img src="https://i.ibb.co/60m0yNx7/Whats-App-Image-2025-02-28-at-4-01-36-PM-1.jpg"
-                                            alt="Nigerian Coat of Arms" class="w-12 h-12 object-contain">
-                                    </div>
+                        <div class="certificate-item">
+                            <!-- Header with logos and registration number -->
+                            <div class="certificate-header">
+                                <!-- Nigerian Coat of Arms (local logo1.jpg) -->
+                                <div class="logo-container">
+                                    <img src="{{ asset('assets/logo/logo1.jpg') }}" alt="Nigerian Coat of Arms">
                                 </div>
 
                                 <!-- Registration Number -->
-                                <div class="text-center">
-                                    <p class="text-sm font-bold">
+                                <div class="reg-number">
+                                    <p class="font-bold text-[8px]">
                                     @if(isset($data) && isset($data->STM_Ref))
                                         {{ $data->STM_Ref }}
                                     @else
@@ -91,73 +232,54 @@
                                     </p>
                                 </div>
 
-                                <!-- Official Seal -->
-                                <div class="w-16">
-                                    <div
-                                        class="w-12 h-12 rounded-full border-2 border-gray-400 flex items-center justify-center mx-auto">
-                                        <div
-                                            class="w-10 h-10 rounded-full border border-gray-400 flex items-center justify-center">
-                                            <img src="https://i.ibb.co/prw0q9jx/Whats-App-Image-2025-02-28-at-4-01-36-PM.jpg"
-                                                alt="Nigerian Coat of Arms" class="w-12 h-12 object-contain">
-                                        </div>
-                                    </div>
+                                <!-- KANGIS Logo (logo2.jpg) -->
+                                <div class="logo-container">
+                                    <img src="{{ asset('assets/logo/logo2.jpg') }}" alt="KANGIS Logo">
                                 </div>
+
+                              
                             </div>
 
                             <!-- Title -->
-                            <div class="text-center mb-2">
-                                <h2 class="text-xs font-bold">CONFIRMATION OF REGISTRATION OF INSTRUMENT</h2>
+                            <div class="title">
+                                <h2>CONFIRMATION OF REGISTRATION OF INSTRUMENT</h2>
                             </div>
 
                             <!-- Red Box 1 -->
-                            <div class="red-box p-2 mb-2 text-[10px] leading-tight">
+                            <div class="red-box-compact">
                                 <p>THIS {{ isset($data) && isset($data->instrument_type) ? strtoupper($data->instrument_type) : 'INSTRUMENT' }} WAS DELIVERED TO ME FOR REGISTRATION BY</p>
                                 <p class="font-bold">{{ isset($data) && isset($data->Applicant_Name) ? strtoupper($data->Applicant_Name) : 'APPLICANT NAME' }}</p>
                                 <p>AT {{ isset($data) && isset($data->hour_part) ? $data->hour_part : '12' }} O'CLOCK IN THE {{ isset($data) && isset($data->time_part) ? $data->time_part : 'AFTERNOON' }}</p>
                                 <p>ON THE {{ isset($data) && isset($data->formatted_date) ? strtoupper($data->formatted_date) : strtoupper(date('jS \of F Y')) }}</p>
-                                <p class="text-center mt-1">REGISTRAR OF DEEDS
-                                </p>
-                                <div class="mt-2">
-                                    <p>Signature: -------------------------------------------------------------------------
-                                    </p>
-                                    <br><br>
-                                    <p>Date:
-                                        ------------------------------------------------------------------------------------
-                                    </p>
+                                <p class="text-center mt-1">REGISTRAR OF DEEDS</p>
+                                <div class="mt-1">
+                                    <p>Signature: ________________________________</p>
+                                    <p style="margin-top: 4px;">Date: ____________________________________</p>
                                 </div>
-                                <br>
-                                <br>
 
                                 <!-- Land Deeds Registry Office -->
-                                <div class="text-center text-[10px] mb-2">
-                                    <p class="font-bold" style="color:black">DEEDS REGISTRY </p>
-
-                                    <p class="font-bold" style="color:black">MDEEDS DEPARTMENT</p>
-                                    <p class="font-bold" style="color:black">
-                                        MINISTRY OF LANDS AND PHYSICAL PLANNING
-                                    </p>
-                                    <p class="font-bold " style="color:black">KANO STATE</p>
+                                <div class="text-center mt-2" style="color:black">
+                                    <p class="font-bold">DEEDS REGISTRY</p>
+                                    <p class="font-bold">DEEDS DEPARTMENT</p>
+                                    <p class="font-bold">MINISTRY OF LANDS AND PHYSICAL PLANNING</p>
+                                    <p class="font-bold">KANO STATE</p>
                                 </div>
                             </div>
 
                             <!-- Red Box 2 -->
-                            <div class="red-box p-2 mb-2 text-[10px] leading-tight">
+                            <div class="red-box-compact">
                                 <p>THIS {{ isset($data) && isset($data->instrument_type) ? strtoupper($data->instrument_type) : 'INSTRUMENT' }} IS REGISTERED AS</p>
-                                <br>
-                                <p>NO <strong>{{ isset($data) && isset($data->serial_no) ? $data->serial_no : '1' }}</strong> AT PAGE <strong>{{ isset($data) && isset($data->page_no) ? $data->page_no : '1' }}</strong> IN VOLUME <strong>{{ isset($data) && isset($data->volume_no) ? $data->volume_no : '1' }}</strong></p>
-                                <br>
-                                <p>OF THE MINISTRY OF LAND AND PHYSICAL PLANNING</p>
-                                <br>
-                                <p>AT KANO STATE</p>
+                                <p style="margin-top: 2px;">NO <strong>{{ isset($data) && isset($data->serial_no) ? $data->serial_no : '1' }}</strong> AT PAGE <strong>{{ isset($data) && isset($data->page_no) ? $data->page_no : '1' }}</strong> IN VOLUME <strong>{{ isset($data) && isset($data->volume_no) ? $data->volume_no : '1' }}</strong></p>
+                                <p style="margin-top: 2px;">OF THE MINISTRY OF LAND AND PHYSICAL PLANNING</p>
+                                <p style="margin-top: 2px;">AT KANO STATE</p>
                             </div>
 
                             <!-- Footer -->
-                            <div class="flex justify-between items-center text-[8px]">
-                                <p>Generated by Kano State Land Admin System (KLAS)</p>
-                                <div
-                                    class="w-4 h-4 rounded-full bg-red-700 flex items-center justify-center text-white text-[6px]">
-                                    <img src="http://klas.com.ng/storage/upload/logo/1.jpeg" alt="Kano State Logo"
-                                        class="w-4 h-4 object-cover">
+                            <div class="footer-info">
+                                <p>Generated by Kano State Land Administration Enterprise 
+System (KLAES)</p>
+                                <div class="footer-logo">
+                                    <img src="http://klas.com.ng/storage/upload/logo/1.jpeg" alt="Kano State Logo">
                                 </div>
                             </div>
                         </div>
@@ -165,6 +287,7 @@
                 </div>
             </div>
         </div>
+        
         <!-- Footer -->
         @include('admin.footer')
     </div>

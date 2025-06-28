@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KLAS - Login</title>
+  <title>KLAES - Login</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
@@ -28,54 +28,30 @@
           <div class="w-32 h-32 relative mb-4">
             <img
               src="{{ asset('storage/upload/logo/1.jpeg') }}"
-              alt="KLAS Logo"
+              alt="KLAES Logo"
               class="rounded-lg w-full h-full object-cover"
             />
           </div>
-          <h2 class="text-2xl font-bold text-gray-900">Welcome to KLAS</h2>
+          <h2 class="text-2xl font-bold text-gray-900">Welcome to KLAES</h2>
           <p class="text-sm text-gray-600 mt-1">Kano State  Land Administration System</p>
         </div>
 
         <form action="{{ route('login') }}" method="post" id="loginForm" class="login-form">
             @csrf
      
-        @if (session('error'))
-            <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '{{ session('error') }}',
-                confirmButtonColor: '#4B5563'
-                });
-            });
-            </script>
-        @endif
-        @if (session('success'))
-            <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: '{{ session('success') }}',
-                confirmButtonColor: '#4B5563'
-                });
-            });
-            </script>
-        @endif
-          <div class="space-y-4">
+        <div class="space-y-4">
             <div class="space-y-2">
-              <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+              <label for="email" class="block text-sm font-medium text-gray-700">Username</label>
               <div class="relative">
                 <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-3 h-4 w-4 text-gray-400" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect width="20" height="16" x="2" y="4" rx="2"></rect>
                   <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                 </svg>
                 <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="Enter your email"
+                  id="username"
+                  type="text"
+                  name="username"
+                  placeholder="Enter your username"
                   class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm"
                   required
                 />
@@ -144,6 +120,32 @@
           </button>
         </form>
 
+        {{-- SweetAlert for error/success messages --}}
+        @if (session('error'))
+            <script>
+            window.addEventListener('load', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: @json(session('error')),
+                    confirmButtonColor: '#4B5563'
+                });
+            });
+            </script>
+        @endif
+        @if (session('success'))
+            <script>
+            window.addEventListener('load', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: @json(session('success')),
+                    confirmButtonColor: '#4B5563'
+                });
+            });
+            </script>
+        @endif
+
         <div class="mt-6 text-center">
           <p class="text-sm text-gray-600">
             Don't have an account?
@@ -155,7 +157,7 @@
       </div>
     </div>
 
-    <!-- Right side - KLAS information (scrollable with hidden scrollbar) -->
+    <!-- Right side - KLAES information (scrollable with hidden scrollbar) -->
     <div
       class="hidden md:block md:w-1/2 bg-gray-100 h-screen overflow-y-auto hide-scrollbar"
     >
@@ -163,7 +165,7 @@
         <div class="flex justify-center mb-6">
           <div class="w-64 h-auto relative">
             <img
-              src="https://astralisco.com/images/faanlas2.jpg"
+              src="http://klas.com.ng/storage/uploads/logo.jpeg"
               alt="LAAD-SYS Logo"
               class="rounded-lg w-full h-auto"
             />
@@ -171,8 +173,9 @@
         </div>
 
         <div class="text-center mb-8">
-          <h1 class="text-4xl font-bold text-gray-900 mb-2">KLAS</h1>
-          <h2 class="text-2xl font-semibold text-gray-800 mb-3">Kano State Land Administration System</h2>
+          <h1 class="text-4xl font-bold text-gray-900 mb-2">KLAES</h1>
+          <h2 class="text-2xl font-semibold text-gray-800 mb-3">Kano State Land Administration Enterprise 
+System</h2>
           <p class="text-lg text-gray-700 font-medium italic">
             Powering a Smart, Secure & Integrated Future for Land Governance in Kano State whilst Leveraging on Block
             Chain Technology and AI
@@ -181,9 +184,10 @@
 
         <div class="bg-white p-6 rounded-lg shadow-sm mb-6">
           <p class="text-gray-700 leading-relaxed">
-            The Kano State Land Administration System (KLAS) is a next-generation, enterprise-grade Land Information
+            The Kano State Land Administration Enterprise 
+System (KLAES) is a next-generation, enterprise-grade Land Information
             System designed to revolutionize how land is managed, administered, and serviced across Kano State. Built
-            with a modern, modular architecture, KLAS serves as the digital backbone of the Ministry of Land and
+            with a modern, modular architecture, KLAES serves as the digital backbone of the Ministry of Land and
             Physical Planning, enabling interoperability between departments and seamless integration of core land
             services.
           </p>
@@ -191,21 +195,21 @@
 
         <div class="bg-blue-50 p-6 rounded-lg shadow-sm mb-6 border border-blue-100">
           <h3 class="font-semibold text-xl  mb-3 text-center">
-            KLAS – Interoperable, Intelligent, and Future-Proof
+            KLAES – Interoperable, Intelligent, and Future-Proof
           </h3>
           <p class="text-gray-700 leading-relaxed">
-            By bringing together these features, KLAS is not just a software—it's a statewide digital land governance
+            By bringing together these features, KLAES is not just a software—it's a statewide digital land governance
             ecosystem, enabling smarter workflows, greater transparency, and improved service delivery.
           </p>
           <p class="text-gray-700 leading-relaxed mt-3">
             Whether it's planning infrastructure, registering titles, performing legal search, or managing land
-            disputes, KLAS ensures every department, from Survey to Legal, works in lockstep with synchronized data
+            disputes, KLAES ensures every department, from Survey to Legal, works in lockstep with synchronized data
             and automated processes.
           </p>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-sm mb-6">
-          <h3 class="font-semibold text-xl text-gray-900 mb-4">Key Features of KLAS</h3>
+          <h3 class="font-semibold text-xl text-gray-900 mb-4">Key Features of KLAES</h3>
 
           <div class="space-y-6">
             <!-- Digital Legal Search -->
@@ -600,7 +604,7 @@
 
         <div class="text-center mb-8">
           <p class="text-xl  font-semibold italic">
-            "KLAS: Interoperable Land Governance for a Smarter Kano."
+            "KLAES: Interoperable Land Governance for a Smarter Kano."
           </p>
         </div>
 

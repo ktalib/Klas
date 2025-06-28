@@ -55,10 +55,10 @@ class ProfileController extends Controller
         $user->email = $validated['email'];
         $user->phone_number = $validated['phone_number'];
        
-        
         // Only update password if provided
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
+            $user->is_password_change = 1; // Mark password as changed
         }
         
         // Save the updated user

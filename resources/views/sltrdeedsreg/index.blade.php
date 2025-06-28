@@ -1,283 +1,420 @@
 @extends('layouts.app')
+
 @section('page-title')
-    {{ __('Deeds Department - SLTR Application Approval') }}
+    {{ $PageTitle ?? __('KLAES') }}
+@endsection
+
+@section('header-scripts')
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
 @endsection
 
 @section('content')
- <script>
-tailwind.config = {
-    theme: {
-        extend: {
-            colors: {
-                primary: '#3b82f6',
-                'primary-foreground': '#ffffff',
-                muted: '#f3f4f6',
-                'muted-foreground': '#6b7280',
-                border: '#e5e7eb',
-                ring: '#3b82f6',
-                success: '#10b981',
-                warning: '#f59e0b',
-                destructive: '#ef4444',
-                secondary: '#f1f5f9',
-                'secondary-foreground': '#0f172a',
-            }
-        }
-    }
-}
-</script>
-<style>
-/* Custom styles for JavaScript-controlled states */
-.tab-content {
-    display: none;
-}
-.tab-content.active {
-    display: block;
-}
-.modal {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s, visibility 0.2s;
-}
-.modal.open {
-    opacity: 1;
-    visibility: visible;
-}
-.modal-content {
-    transform: scale(0.95);
-    transition: transform 0.2s;
-}
-.modal.open .modal-content {
-    transform: scale(1);
-}
-</style>
-    <div class="flex-1 overflow-auto">
-        <!-- Header -->
-        @include('admin.header')
-        <!-- Dashboard Content -->
-        <div class="p-6">
-            
-    <!-- Search and Filter Controls -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-        <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-            <div class="relative w-full md:w-80">
-                <i data-lucide="search" class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"></i>
-                <input type="text" id="search-input" placeholder="Search applications..." class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
+@include('st_registration.partials.css')
 
-            <div class="relative">
-                <select id="status-filter" class="w-44 pl-8 pr-8 py-2 border border-gray-300 rounded-md text-sm bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="all">All Statuses</option>
-                    <option value="approved">Registered</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="pending">Pending</option>
-                    <option value="rejected">Rejected</option>
-                </select>
-                <i data-lucide="filter" class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none"></i>
-                <i data-lucide="chevron-down" class="absolute right-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none"></i>
-            </div>
-        </div>
-
-        <div class="flex gap-2 w-full md:w-auto">
-            <button id="bulk-reject-btn" class="hidden inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition-colors">
-                Reject Selected
-            </button>
-            <button id="bulk-approve-btn" class="hidden inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors">
-                Register Selected
-            </button>
-            <button class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 bg-white text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50 transition-colors">
-                <i data-lucide="download" class="h-4 w-4 mr-2"></i>
-                Export
-            </button>
-        </div>
-    </div>
-
-    <!-- Tabs -->
-    <div class="w-full">
-        <div class="flex bg-gray-100 rounded-md p-1 mb-4">
-            <button class="tab-trigger flex-1 flex items-center justify-center px-4 py-2 rounded text-sm font-medium transition-all bg-white text-blue-600 shadow-sm" data-tab="pending">Pending Review</button>
-            <button class="tab-trigger flex-1 flex items-center justify-center px-4 py-2 rounded text-sm font-medium transition-all text-gray-600 hover:text-gray-900" data-tab="in_progress">In Progress</button>
-            <button class="tab-trigger flex-1 flex items-center justify-center px-4 py-2 rounded text-sm font-medium transition-all text-gray-600 hover:text-gray-900" data-tab="approved">Registered</button>
-            <button class="tab-trigger flex-1 flex items-center justify-center px-4 py-2 rounded text-sm font-medium transition-all text-gray-600 hover:text-gray-900" data-tab="rejected">Rejected</button>
-        </div>
-
-        <!-- Pending Review Tab -->
-        <div id="pending-tab" class="tab-content active">
-            <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-                <div class="p-6 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold">Pending Deeds Review</h3>
-                    <p class="text-sm text-gray-600 mt-1">Applications awaiting deed document verification by Deeds Department</p>
-                </div>
-                <div class="p-6">
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b border-gray-200">
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm w-12">
-                                        <input type="checkbox" id="select-all-pending" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                    </th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Application</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Applicant</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Property Type</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Location</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Status</th>
-                                    <th class="text-right py-3 px-4 font-medium text-gray-600 text-sm">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pending-table-body">
-                                <!-- Will be populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- In Progress Tab -->
-        <div id="in_progress-tab" class="tab-content">
-            <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-                <div class="p-6 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold">In Progress Deeds Review</h3>
-                    <p class="text-sm text-gray-600 mt-1">Applications currently being reviewed by Deeds Department</p>
-                </div>
-                <div class="p-6">
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b border-gray-200">
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Application</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Applicant</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Property Type</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Location</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Status</th>
-                                    <th class="text-right py-3 px-4 font-medium text-gray-600 text-sm">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="in-progress-table-body">
-                                <!-- Will be populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Registered Tab -->
-        <div id="approved-tab" class="tab-content">
-            <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-                <div class="p-6 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold">Registered Applications</h3>
-                    <p class="text-sm text-gray-600 mt-1">Applications approved by Deeds Department</p>
-                </div>
-                <div class="p-6">
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b border-gray-200">
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Application</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Applicant</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Property Type</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Location</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Status</th>
-                                    <th class="text-right py-3 px-4 font-medium text-gray-600 text-sm">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="approved-table-body">
-                                <!-- Will be populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Rejected Tab -->
-        <div id="rejected-tab" class="tab-content">
-            <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-                <div class="p-6 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold">Rejected Applications</h3>
-                    <p class="text-sm text-gray-600 mt-1">Applications rejected by Deeds Department</p>
-                </div>
-                <div class="p-6">
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b border-gray-200">
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Application</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Applicant</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Property Type</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Location</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600 text-sm">Status</th>
-                                    <th class="text-right py-3 px-4 font-medium text-gray-600 text-sm">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="rejected-table-body">
-                                <!-- Will be populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Approval Modal -->
-    <div id="approval-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="modal-content bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-lg font-semibold flex items-center gap-2">
-                            <i data-lucide="book-open" class="h-5 w-5 text-purple-500"></i>
-                            Deeds Department Review
-                        </h3>
-                        <p id="modal-application-info" class="text-sm text-gray-600 mt-1">SLTR-RES-2023-01 - John Doe</p>
-                    </div>
-                    <button id="close-modal-btn" class="inline-flex items-center justify-center p-2 border border-gray-300 bg-white text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
-                        <i data-lucide="x" class="h-4 w-4"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="p-6 space-y-6">
-                <!-- Application Details Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h4 class="text-sm font-medium text-gray-600 mb-3">Application Details</h4>
-                        <div class="space-y-2" id="application-details">
-                            <!-- Will be populated by JavaScript -->
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-sm font-medium text-gray-600 mb-3">Previous Approvals</h4>
-                        <div class="space-y-2" id="approval-history">
-                            <!-- Will be populated by JavaScript -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="flex justify-end gap-2 p-6 pt-0 border-t border-gray-200">
-                <button id="cancel-approval-btn" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 bg-white text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50 transition-colors">
-                    Cancel
-                </button>
-                <button id="reject-application-btn" class="inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition-colors">
-                    <i data-lucide="x" class="h-4 w-4 mr-1"></i>
-                    Reject Application
-                </button>
-                <button id="approve-application-btn" class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors">
-                    <i data-lucide="check" class="h-4 w-4 mr-1"></i>
-                    <span id="approve-btn-text">Register</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-        </div>
-        <!-- Footer -->
-        @include('admin.footer')
-    </div>
+<div class="flex-1 overflow-auto">
+    <!-- Header -->
+    @include($headerPartial ?? 'admin.header')
     
-    @include('sltrdeedsreg.partial.deeds_js')
+    <!-- Main Content -->
+    <div class="container mx-auto py-6 space-y-6 px-4">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+ 
+            
+          </div>
+          <div class="dropdown">
+            <a href="#" onclick="openBatchRegisterModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2">
+             Register Batch CofO 
+            </a>
+            
+          </div>
+        </div>
+    
+        <!-- Stats Cards -->
+        <!-- Stats Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-amber-50 p-4 rounded-lg shadow border-l-4 border-amber-500">
+        <div class="text-sm font-medium text-amber-700 mb-1">Pending Registration</div>
+        <div class="text-2xl font-bold text-amber-800">0</div>
+        <p class="text-xs text-amber-600 mt-1">Awaiting Registration</p>
+    </div>
+    <div class="bg-green-50 p-4 rounded-lg shadow border-l-4 border-green-500">
+        <div class="text-sm font-medium text-green-700 mb-1">Registered</div>
+        <div class="text-2xl font-bold text-green-800">0</div>
+        <p class="text-xs text-green-600 mt-1">Successfully Registered</p>
+    </div>
+    <div class="bg-red-50 p-4 rounded-lg shadow border-l-4 border-red-500">
+        <div class="text-sm font-medium text-red-700 mb-1">Rejected</div>
+        <div class="text-2xl font-bold text-red-800">0</div>
+        <p class="text-xs text-red-600 mt-1">Rejected applications</p>
+    </div>
+    <div class="bg-blue-50 p-4 rounded-lg shadow border-l-4 border-blue-500">
+        <div class="text-sm font-medium text-blue-700 mb-1">Total SLTR CofO</div>
+        <div class="text-2xl font-bold text-blue-800">0</div>
+        <p class="text-xs text-blue-600 mt-1">All SLTR CofO</p>
+    </div>
+</div>
+
+    
+        <!-- Main Content Card -->
+        <div class="bg-white rounded-lg shadow">
+          <div class="p-4 border-b">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <h2 class="text-lg font-semibold">SLTR    Certificates of Occupancy</h2>
+              <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+                <div class="flex gap-2">
+                  <div class="relative w-full sm:w-64">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
+                    <input type="search" placeholder="Search FileNO..." class="w-full pl-8 pr-3 py-2 border rounded-md" id="searchInput">
+                  </div>
+                  <!-- Removed filter dropdown as we're only searching by ST FileNO -->
+                </div>
+                <button class="flex items-center gap-1 whitespace-nowrap border rounded-md px-3 py-2 hover:bg-gray-50">
+                  <i class="fas fa-download text-sm"></i> Export
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="p-4">
+            <!-- Tabs -->
+            <div class="border-b mb-6">
+              <ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
+                <li class="mr-2">
+                  <a href="#"
+                     onclick="switchTab('pending', this)"
+                     class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-blue-600 hover:border-blue-300 text-gray-600 border-transparent tab-item">
+                     <span class="flex items-center">Pending</span>
+                     <span class="ml-2 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                       0
+                     </span>
+                  </a>
+                </li>
+                <li class="mr-2">
+                  <a href="#"
+                     onclick="switchTab('registered', this)"
+                     class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-green-600 hover:border-green-300 text-gray-600 border-transparent tab-item">
+                     <span class="flex items-center">Registered</span>
+                     <span class="ml-2 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                       0
+                     </span>
+                  </a>
+                </li>
+                <li class="mr-2">
+                  <a href="#"
+                     onclick="switchTab('rejected', this)"
+                     class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-red-600 hover:border-red-300 text-gray-600 border-transparent tab-item">
+                     <span class="flex items-center">Rejected</span>
+                     <span class="ml-2 bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                      0
+                     </span>
+                  </a>
+                </li>
+                <li class="mr-2">
+                  <a href="#"
+                     onclick="switchTab('all', this)"
+                     class="group inline-flex items-center px-4 py-3 border-b-2 rounded-t-lg transition-all duration-200 ease-in-out hover:text-indigo-600 hover:border-indigo-300 text-gray-600 border-transparent tab-item">
+                     <span class="flex items-center">All CofOs</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <!-- Sub-tabs for Pending (specific to SLTR  Titling CofO) -->
+            <div id="pendingSubTabs" class="flex justify-center gap-2 py-3 transition-all duration-200" style="display: flex;">
+              <a href="{{ route('instrument_registration.index') }}" class="pending-subtab-btn flex flex-col items-center focus:outline-none transition-all duration-150" id="subtab-other" onclick="switchPendingSubTab('other')">
+                <span class="text-base font-semibold">Other Instruments</span>
+              </a>
+              <a href="{{ route('st_transfer.index') }}" class="pending-subtab-btn flex flex-col items-center focus:outline-none transition-all duration-150" id="subtab-st" onclick="switchPendingSubTab('st')">
+                <span class="text-base font-semibold">ST Assignment</span>
+                <span class="text-xs font-normal text-gray-400">(Transfer of Title)</span>
+              </a>
+              <a href="" class="pending-subtab-btn flex flex-col items-center focus:outline-none transition-all duration-150" id="subtab-regular" onclick="switchPendingSubTab('regular')">
+                <span class="text-base font-semibold">Regular CofO</span>
+              </a>
+              <a  href="{{route('st_registration.index')}}"  class="pending-subtab-btn flex flex-col items-center focus:outline-none transition-all duration-150  "  >
+                <span class="text-base font-semibold">Sectional  Titling CofO</span>
+              </a >
+              <a href="{{ route('sltrdeedsreg.index') }}" class="pending-subtab-btn flex flex-col items-center focus:outline-none transition-all duration-150" id="subtab-sltr" onclick="switchPendingSubTab('sltr')">
+                <span class="text-base font-semibold">SLTR CofO</span>
+              </a>
+              </a>
+            </div>
+            <style>
+              .pending-subtab-btn {
+                @apply px-5 py-3 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium shadow-sm transition-all duration-150 hover:bg-blue-50 hover:border-blue-500 hover:text-blue-700 focus:ring-2 focus:ring-blue-200;
+                margin-right: 0.25rem;
+                min-width: 160px;
+                transition: all 0.2s ease;
+                cursor: pointer;
+              }
+              .pending-subtab-btn.active {
+                @apply bg-blue-600 text-white border-blue-600 shadow-md;
+                transform: translateY(-2px);
+              }
+              .pending-subtab-btn:hover:not(.active) {
+                @apply bg-blue-100 border-blue-400 shadow-md;
+              }
+              .pending-subtab-btn span:first-child {
+                @apply mb-1;
+              }
+            </style>
+            <script>
+              function switchPendingSubTab(subtab) {
+                ['subtab-other', 'subtab-st', 'subtab-regular', 'subtab-sectional', 'subtab-sltr'].forEach(id => {
+                  document.getElementById(id)?.classList.remove('active');
+                });
+                const active = {
+                  'other': 'subtab-other',
+                  'st': 'subtab-st',
+                  'regular': 'subtab-regular',
+                  'sectional': 'subtab-sectional',
+                  'sltr': 'subtab-sltr'
+                }[subtab];
+                if (active && document.getElementById(active)) {
+                  document.getElementById(active).classList.add('active');
+                }
+                // Add logic to filter table if needed
+              }
+              document.addEventListener('DOMContentLoaded', function() {
+                // Always show sub-tabs for this page
+                document.getElementById('pendingSubTabs').style.display = 'flex';
+                switchPendingSubTab('sltr');
+              });
+            </script>
+            <!-- End Sub-tabs -->
+    
+            <!-- Table -->
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      <input type="checkbox" class="rounded" onchange="toggleSelectAll(this)">
+                    </th>
+                     
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                     SLTR FileNo
+                    </th>
+                    
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      Unit
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      Block
+                    </th> 
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      Section
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      Owner
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      Property Description
+                    </th>
+
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      Reg.No
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      Reg. Time
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      Reg. Date
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      Reg.By
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider">
+                      Status
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500  tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                {{-- <tbody class="bg-white divide-y divide-gray-200" id="cofoTableBody">
+                  @foreach($approvedUnitApplications as $app)
+                  <tr class="cofo-row" data-status="{{ $app->status }}">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <input type="checkbox" class="rounded">
+                    </td>
+                    
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">{{ $app->fileno }}</td>
+                    
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->unit_number }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->block_number ?: 'N/A' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->floor_no ?: 'N/A' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->owner_name }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->property_description }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">{{ !empty($app->Deeds_Serial_No) ? $app->Deeds_Serial_No : 'N/A' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">{{ !empty($app->deeds_time) ? $app->deeds_time : 'N/A' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->deeds_date ? date('Y-m-d', strtotime($app->deeds_date)) : 'N/A' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      @if($app->status === 'pending')
+                        N/A
+                      @else
+                        {{ !empty($app->reg_creator_name) ? $app->reg_creator_name : 'System' }}
+                      @endif
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <span class="badge badge-{{ $app->status }}">{{ ucfirst($app->status) }}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm relative" x-data="{ 
+                      open: false,
+                      updatePosition() {
+                        if (this.open) {
+                          const button = this.$refs.actionButton;
+                          const menu = this.$refs.actionMenu;
+                          const rect = button.getBoundingClientRect();
+                          menu.style.top = `${rect.bottom + 5}px`;
+                          menu.style.left = `${rect.right - menu.offsetWidth}px`;
+                        }
+                      },
+                      toggle() {
+                        this.open = !this.open;
+                        if (this.open) {
+                          this.$nextTick(() => {
+                            this.updatePosition();
+                            // Add scroll event listener when menu is opened
+                            window.addEventListener('scroll', () => this.updatePosition(), { passive: true });
+                          });
+                        } else {
+                          // Remove scroll event listener when menu is closed
+                          window.removeEventListener('scroll', () => this.updatePosition());
+                        }
+                      },
+                      // Ensure we clean up event listeners when component is destroyed
+                      init() {
+                        this.$watch('open', value => {
+                          if (!value) {
+                            window.removeEventListener('scroll', () => this.updatePosition());
+                          }
+                        });
+                      }
+                    }">
+                      <button 
+                        x-ref="actionButton"
+                        @click="toggle()" 
+                        class="text-gray-500 hover:text-gray-700">
+                        <i data-lucide="more-vertical"></i>
+                      </button>
+                    
+                        @include('st_registration.partials.action')  
+                    </td>
+                  </tr>
+                  @endforeach
+                </tbody> --}}
+              </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 mt-4">
+              <div class="flex-1 flex justify-between sm:hidden">
+                <button class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                  Previous
+                </button>
+                <button class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                  Next
+                </button>
+              </div>
+              <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                  <p class="text-sm text-gray-700">
+                    Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">42</span> results
+                  </p>
+                </div>
+                <div>
+                  <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    <button class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                      <span class="sr-only">Previous</span>
+                      <i class="fas fa-chevron-left text-xs"></i>
+                    </button>
+                    <button class="bg-blue-50 border-blue-500 text-blue-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                      1
+                    </button>
+                    <button class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                      2
+                    </button>
+                    <button class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium">
+                      3
+                    </button>
+                    <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                      ...
+                    </span>
+                    <button class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                      5
+                    </button>
+                    <button class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                      <span class="sr-only">Next</span>
+                      <i class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    
+     {{-- Include Modals --}}
+        @include('st_registration.partials.singleregistermodal')
+        @include('st_registration.partials.batchregistermodal')
+    <!-- Page Footer -->
+    @include($footerPartial ?? 'admin.footer')
+</div>
+
+<!-- Add this to the page to pass the data to JavaScript -->
+<script>
+  // Pass PHP data to JavaScript
+ 
+</script>
+
+<!-- Include SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Include the external JavaScript file -->
+<script src="{{ asset('js/st_registration.js') }}"></script>
+
+@if(session('success'))
+<script>
+    Swal.fire({
+        title: 'Success!',
+        text: "{{ session('success') }}",
+        icon: 'success',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+</script>
+@endif
+
+@if(session('error'))
+<script>
+    Swal.fire({
+        title: 'Error!',
+        text: "{{ session('error') }}",
+        icon: 'error',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+</script>
+@endif
+
+@section('footer-scripts')
+<script>
+  // Initialize Lucide icons after page load
+  document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+  });
+</script>
 @endsection
+
+@endsection
+
+
+

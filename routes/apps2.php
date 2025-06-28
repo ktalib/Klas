@@ -25,6 +25,7 @@ use App\Http\Controllers\SLTRApprovalController;
 use App\Http\Controllers\SLTRDeedsRegController;
 use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\ApplicationFormController;
+use App\Http\Controllers\SltrFieldDataController;
 
 // Public routes
 Route::get('/custom-public', function () {
@@ -247,6 +248,9 @@ Route::middleware(['auth'])->group(function () {
     // Add any additional routes here
     Route::prefix('sltr_application_form')->group(function () {
         Route::get('/residential', [ApplicationFormController::class, 'residential'])->name('sltr_application_form.residential');
+    });
+    Route::prefix('sltr_field_data')->group(function () {
+        Route::get('/', [SltrFieldDataController::class, 'FieldData'])->name('sltr_field_data.index');
     });
 
 });

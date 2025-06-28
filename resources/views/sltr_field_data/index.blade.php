@@ -112,13 +112,13 @@ tailwind.config = {
           <!-- Survey123 Link Card 1 -->
           <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
             <div class="p-6 border-b border-gray-200">
-              <h3 class="text-lg font-semibold text-gray-900">ST Field Survey</h3>
+              <h3 class="text-lg font-semibold text-gray-900">SLTR Field Survey</h3>
               <p class="text-sm text-gray-600 mt-1">Main field data collection form</p>
             </div>
             <div class="p-6 space-y-4">
               <div class="flex items-center gap-2 text-sm">
                 <i data-lucide="file-text" class="h-4 w-4 text-blue-600"></i>
-                <span class="text-gray-700">Form ID: st-field-survey-2024</span>
+                <span class="text-gray-700">Form ID: sltr-field-survey-2024</span>
               </div>
               <div class="flex items-center gap-2 text-sm">
                 <i data-lucide="calendar" class="h-4 w-4 text-blue-600"></i>
@@ -129,11 +129,11 @@ tailwind.config = {
                 <span class="text-gray-700">247 Submissions</span>
               </div>
               <div class="flex gap-2 mt-4">
-                <a href="https://survey123.arcgis.com/share/st-field-survey-2024" target="_blank" class="inline-flex items-center justify-center rounded-md font-medium text-sm px-4 py-2 transition-all cursor-pointer bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 flex-1 gap-1">
+                <a href="https://survey123.arcgis.com/share/sltr-field-survey-2024" target="_blank" class="inline-flex items-center justify-center rounded-md font-medium text-sm px-4 py-2 transition-all cursor-pointer bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 flex-1 gap-1">
                   <i data-lucide="external-link" class="h-4 w-4"></i>
                   Open
                 </a>
-                <a href="https://survey123.arcgis.com/share/st-field-survey-2024?mode=edit" target="_blank" class="inline-flex items-center justify-center rounded-md font-medium text-sm px-4 py-2 transition-all cursor-pointer border-0 bg-blue-600 text-white hover:bg-blue-700 flex-1 gap-1">
+                <a href="https://survey123.arcgis.com/share/sltr-field-survey-2024?mode=edit" target="_blank" class="inline-flex items-center justify-center rounded-md font-medium text-sm px-4 py-2 transition-all cursor-pointer border-0 bg-blue-600 text-white hover:bg-blue-700 flex-1 gap-1">
                   <i data-lucide="edit" class="h-4 w-4"></i>
                   Edit
                 </a>
@@ -231,7 +231,7 @@ tailwind.config = {
               <div class="space-y-4">
                 <div class="flex justify-between items-center">
                   <div>
-                    <h4 class="text-base font-medium text-gray-900">ST Field Survey</h4>
+                    <h4 class="text-base font-medium text-gray-900">SLTR Field Survey</h4>
                     <p class="text-sm text-gray-600">Complete the form to collect field data</p>
                   </div>
                   <div class="flex items-center gap-2">
@@ -245,7 +245,7 @@ tailwind.config = {
                   <label class="block text-sm font-medium text-gray-700 mb-2">Select Survey Form</label>
                   <div class="flex gap-2">
                     <select id="survey-form-select" class="flex-1 w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-white cursor-pointer focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10">
-                      <option value="st-field-survey-2024">ST Field Survey</option>
+                      <option value="sltr-field-survey-2024">SLTR Field Survey</option>
                       <option value="property-assessment-2024">Property Assessment</option>
                       <option value="land-use-survey-2024">Land Use Survey</option>
                     </select>
@@ -261,7 +261,7 @@ tailwind.config = {
                   <div class="space-y-4">
                     <i data-lucide="map" class="w-12 h-12 text-gray-400 mx-auto"></i>
                     <div>
-                      <h5 class="text-lg font-medium text-gray-900">ST Field Survey</h5>
+                      <h5 class="text-lg font-medium text-gray-900">SLTR Field Survey</h5>
                       <p class="text-gray-600">Survey123 form will load here</p>
                     </div>
                     <button id="load-survey-iframe" class="inline-flex items-center justify-center rounded-md font-medium text-sm px-4 py-2 transition-all cursor-pointer border-0 bg-blue-600 text-white hover:bg-blue-700">
@@ -420,11 +420,11 @@ tailwind.config = {
                             type="text"
                             placeholder="Enter Survey123 Form ID"
                             class="flex-1 w-full px-3 py-2 border border-gray-300 rounded-md text-sm transition-all focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
-                            value="st-field-survey-2024"
+                            value="sltr-field-survey-2024"
                           />
                           <select id="form-select" class="w-44 px-3 py-2 border border-gray-300 rounded-md text-sm bg-white cursor-pointer focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10">
                             <option value="">Select a form</option>
-                            <option value="st-field-survey-2024">ST Field Survey 2024</option>
+                            <option value="sltr-field-survey-2024">SLTR Field Survey 2024</option>
                             <option value="property-assessment-2024">Property Assessment 2024</option>
                             <option value="land-use-survey-2024">Land Use Survey 2024</option>
                           </select>
@@ -455,7 +455,7 @@ tailwind.config = {
                           id="generated-url"
                           type="text"
                           readonly
-                          value="https://survey123.arcgis.com/share/st-field-survey-2024"
+                          value="https://survey123.arcgis.com/share/sltr-field-survey-2024"
                           class="w-full p-2 text-sm border border-gray-300 rounded-l-md bg-gray-50 focus:outline-none"
                         />
                         <button id="copy-generated-url" class="inline-flex items-center justify-center rounded-md font-medium text-sm px-3 py-2 transition-all cursor-pointer bg-gray-200 text-gray-700 hover:bg-gray-300 rounded-l-none border border-l-0 border-gray-300">
@@ -494,7 +494,7 @@ tailwind.config = {
                       <div class="flex-1">
                         <select id="api-form-select" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-white cursor-pointer focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10">
                           <option value="">Select a form</option>
-                          <option value="st-field-survey-2024">ST Field Survey 2024</option>
+                          <option value="sltr-field-survey-2024">SLTR Field Survey 2024</option>
                           <option value="property-assessment-2024">Property Assessment 2024</option>
                           <option value="land-use-survey-2024">Land Use Survey 2024</option>
                         </select>
@@ -704,7 +704,7 @@ function loadSurveyForm() {
       <iframe 
         src="https://survey123.arcgis.com/share/${formId}" 
         class="survey123-iframe"
-        title="ST Field Survey">
+        title="SLTR Field Survey">
       </iframe>
     `;
   }, 2000);
