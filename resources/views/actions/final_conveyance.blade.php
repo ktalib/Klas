@@ -207,7 +207,7 @@
                                     
                                     <div class="flex justify-between items-center">
                                         <div class="flex gap-2">
-                                            <a href="{{route('sectionaltitling.primary')}}" class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-white hover:bg-gray-50">
+                                            <a href="javascript:window.history.back()" class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-white hover:bg-gray-50">
                                                 <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
                                                 Back
                                             </a>
@@ -391,6 +391,7 @@
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SN</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buyer Name</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit No.</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Measurement (sqm)</th>
                         
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -402,6 +403,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${index + 1}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.buyer_title || ''} ${record.buyer_name || ''}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.unit_no || ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.measurement || 'N/A'}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       
                         </td>

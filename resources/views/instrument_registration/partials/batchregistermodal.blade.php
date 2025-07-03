@@ -19,8 +19,12 @@
                   class="w-full pl-8 pr-3 py-2 border rounded-md">
           </div>
           <select id="batchStatusFilter" class="border rounded-md px-3 py-2">
-            <option value="all">All Instruments</option>
-            <option value="pending" selected>Pending Only</option>
+            <option value="other">Other Instruments</option>
+            <option value="stAssignment">ST Assignment (Transfer of Title)</option>
+            <option value="regular">Regular CofO</option>
+            <option value="sectional">Sectional Titling CofO</option>
+            <option value="sltr">SLTR CofO</option>
+            <option value="batch" selected>Batch Registration</option>
           </select>
         </div>
       </div>
@@ -154,20 +158,7 @@
                   <td class="px-6 py-4 whitespace-nowrap text-sm">John Doe</td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm">Jane Smith</td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm">
-                    <select class="w-full px-3 py-1 border rounded-md instrument-type-select">
-                      <option value="">Select Type</option>
-                      <option value="assignment">Assignment</option>
-                      <option value="mortgage">Mortgage</option>
-                      <option value="lease">Lease</option>
-                      <option value="sublease">Sub-Lease</option>
-                      <option value="consent">Consent</option>
-                      <option value="release">Release</option>
-                      <option value="surrender">Surrender</option>
-                      <option value="vesting">Vesting Order</option>
-                      <option value="variation">Deed of Variation</option>
-                      <option value="assent">Assent</option>
-                      <option value="merger">Merger</option>
-                    </select>
+                    <input type="text" class="w-full px-3 py-1 border rounded-md bg-gray-100 instrument-type-display" readonly>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm">1/1/1</td>
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm">

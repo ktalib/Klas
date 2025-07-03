@@ -280,7 +280,7 @@
                                     </div>
                                     <div id="regNoPreview" class="mt-1 p-1.5 bg-green-50 border border-green-100 rounded-md hidden">
                                         <div class="flex items-center justify-between">
-                                            <span class="text-xs text-green-700">REG NO:</span>
+                                            <span class="text-xs text-green-700">Registration Particulars:</span>
                                             <span id="regNo" class="text-sm font-medium text-green-800"></span>
                                         </div>
                                         <div class="text-xs text-green-600 text-right">Format: 1/1/2</div>

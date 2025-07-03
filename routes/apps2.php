@@ -26,6 +26,8 @@ use App\Http\Controllers\SLTRDeedsRegController;
 use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\ApplicationFormController;
 use App\Http\Controllers\SltrFieldDataController;
+use App\Http\Controllers\SurveyPlanExtractionController;
+use App\Http\Controllers\RecertificationController;
 
 // Public routes
 Route::get('/custom-public', function () {
@@ -217,6 +219,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/view/{id}', [InstrumentRegistrationController::class, 'view'])->name('instrument_registration.view');
 
         // New endpoints for direct Instrument registration
+        Route::get('/get-batch-data', [InstrumentRegistrationController::class, 'getBatchData'])->name('instrument_registration.get-batch-data');
         Route::get('/get-next-serial', [InstrumentRegistrationController::class, 'getNextSerialNumber'])->name('instrument_registration.get-next-serial');
         Route::post('/register-single', [InstrumentRegistrationController::class, 'registerSingle'])->name('instrument_registration.register-single');
         Route::post('/register-batch', [InstrumentRegistrationController::class, 'registerBatch'])->name('instrument_registration.register-batch');
@@ -251,6 +254,14 @@ Route::middleware(['auth'])->group(function () {
     });
     Route::prefix('sltr_field_data')->group(function () {
         Route::get('/', [SltrFieldDataController::class, 'FieldData'])->name('sltr_field_data.index');
+    });
+
+    Route::prefix('survey_plan_extraction')->group(function () {
+        Route::get('/', [SurveyPlanExtractionController::class, 'index'])->name('survey_plan_extraction.index');
+    });
+
+    Route::prefix('recertification')->group(function () {
+        Route::get('/', [RecertificationController::class, 'index'])->name('recertification.index');
     });
 
 });

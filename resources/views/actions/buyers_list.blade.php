@@ -383,6 +383,7 @@
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SN</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buyer Name</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit No.</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Measurement (sqm)</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
@@ -393,8 +394,9 @@
                     html += `
                     <tr class="hover:bg-gray-50" data-index="${index}">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${index + 1}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.buyerTitle || ''} ${record.buyerName || ''}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.sectionNo || ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.buyer_title || record.buyerTitle || ''} ${record.buyer_name || record.buyerName || ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.unit_no || record.sectionNo || ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.measurement || 'N/A'}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <button class="edit-buyer text-blue-600 hover:text-blue-900 mr-2" data-index="${index}">
                             <i data-lucide="edit" class="w-4 h-4"></i>

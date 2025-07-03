@@ -92,8 +92,37 @@
         }
 
         .signature-section {
-            margin-top: 1.5rem;
+            margin-top: 2rem;
             page-break-inside: avoid;
+        }
+
+        /* Signature section styling */
+        .signature-section .border-t {
+            border-top: 1px solid #6b7280;
+        }
+
+        .signature-section p {
+            margin: 0.25rem 0;
+        }
+
+        /* Print-specific signature styling */
+        @media print {
+            .signature-section {
+                margin-top: 2rem;
+                page-break-inside: avoid;
+            }
+            
+            .signature-section .mb-8 {
+                margin-bottom: 2rem !important;
+            }
+            
+            .signature-section .mb-4 {
+                margin-bottom: 1rem !important;
+            }
+            
+            .signature-section .border-t {
+                border-top: 1px solid #000 !important;
+            }
         }
     </style>
 </head>
@@ -563,10 +592,33 @@
 
     <!-- Signature Section -->
     <div class="signature-section">
-      <div class="border-t border-gray-500 w-48"></div>
-      <p class="text-sm mt-1">AUWALU RABIU</p>
-      <p class="text-sm">(ACTPP)</p>
-      <p class="text-sm">For Director</p>
+      <!-- Initial Signature -->
+      <div class="mb-8">
+        <div class="border-t border-gray-500 w-48"></div>
+        <p class="text-sm mt-1">AUWALU RABIU</p>
+        <p class="text-sm">(ACTPP)</p>
+        <p class="text-sm">For Director</p>
+      </div>
+
+      <!-- Director's Counter-Signature -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Director's Counter-Signature -->
+        <div class="mb-8">
+          <p class="text-sm mb-4 font-medium">DIRECTOR'S COUNTER-SIGNATURE:</p>
+          <div class="border-t border-gray-500 w-48 mb-2"></div>
+          <p class="text-sm">Signature: ..........................................</p>
+          <p class="text-sm">Date: ....................................................</p>
+        </div>
+
+        <!-- Permanent Secretary's Endorsement -->
+        <div class="mb-4">
+          <p class="text-sm mb-4 font-medium">PERMANENT SECRETARY'S ENDORSEMENT:</p>
+          <div class="border-t border-gray-500 w-48 mb-2"></div>
+          <p class="text-sm">Signature: ..........................................</p>
+          <p class="text-sm">Date: ....................................................</p>
+          <p class="text-sm mt-2">Official Stamp: ..................................</p>
+        </div>
+      </div>
     </div>
   </div>
   @include('actions.parts.pp_js')

@@ -147,58 +147,9 @@
     <!-- Main Content -->
     <div class="p-6">
     <!-- Payments Overview -->
- 
-   <div class="grid grid-cols-3 gap-4 mb-6">
-    <div class="stat-card">
-      <div class="flex justify-between items-start mb-4">
-        <h3 class="text-gray-600 font-medium">Total Director's Approvals</h3>
-        <i data-lucide="file-text" class="text-gray-400 w-5 h-5"></i>
-      </div>
-      <div class="text-3xl font-bold">{{ $totalPrimaryApplications + $totalUnitApplications }}</div>
-      <div class="flex items-center mt-2 text-sm">
-        <i data-lucide="info" class="text-blue-500 w-4 h-4 mr-1"></i>
-        <span class="text-blue-500">All Applications in system </span>
-      </div>
-      <span class="text-xs italic">(Primary + Unit Applications)</span>
-    </div>
-     
-    <div class="stat-card">
-      <div class="flex justify-between items-start mb-4">
-        <h3 class="text-gray-600 font-medium">Primary Applications</h3>
-      
-        <i data-lucide="home" class="text-gray-400 w-5 h-5"></i>
-      </div>
-      <div class="text-3xl font-bold">{{ $totalPrimaryApplications }}</div>
-      <div class="flex items-center mt-2 text-sm">
-        <i data-lucide="check-circle" class="text-green-500 w-4 h-4 mr-1"></i>
-        <span class="text-green-500">{{ $approvedPrimaryApplications }} Approved</span>
-        <i data-lucide="x-circle" class="text-red-500 w-4 h-4 ml-3 mr-1"></i>
-        <span class="text-red-500">{{ $rejectedPrimaryApplications }} Declined</span>
-        <i data-lucide="clock" class="text-amber-500 w-4 h-4 ml-3 mr-1"></i>
-        <span class="text-amber-500">{{ $pendingPrimaryApplications ?? ($totalPrimaryApplications - $approvedPrimaryApplications - $rejectedPrimaryApplications) }} Pending</span>
-      </div>
-    </div>
 
-     
-<div class="stat-card">
-    <div class="flex justify-between items-start mb-4">
-      <h3 class="text-gray-600 font-medium">Unit Applications</h3>
-      <i data-lucide="layers" class="text-gray-400 w-5 h-5"></i>
-    </div>
-    <div class="text-3xl font-bold">{{ $totalUnitApplications }}</div>
-    <div class="flex items-center mt-2 text-sm">
-      <i data-lucide="check-circle" class="text-green-500 w-4 h-4 mr-1"></i>
-      <span class="text-green-500">{{ $approvedUnitApplications }} Approved</span>
-      <i data-lucide="x-circle" class="text-red-500 w-4 h-4 ml-3 mr-1"></i>
-      <span class="text-red-500">{{ $rejectedUnitApplications }} Declined</span>
-      <i data-lucide="clock" class="text-amber-500 w-4 h-4 ml-3 mr-1"></i>
-      <span class="text-amber-500">{{ $pendingUnitApplications ?? ($totalUnitApplications - $approvedUnitApplications - $rejectedUnitApplications) }} Pending</span>
-    </div>
-  </div>
-
-   </div>
-      <!-- Payments Table -->
-      <div class="flex space-x-3 mb-6">
+    <!-- Payments Table -->
+    <div class="flex space-x-3 mb-6">
         <button 
         onclick="showTab('primary-survey')"
         id="primary-survey-tab"
@@ -215,8 +166,56 @@
         </button>
     </div>  
 
-      <!-- Primary Application  -->
-      <div id="primary-survey">
+    <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="stat-card">
+        <div class="flex justify-between items-start mb-4">
+            <h3 class="text-gray-600 font-medium">Total Director's Approvals</h3>
+            <i data-lucide="file-text" class="text-gray-400 w-5 h-5"></i>
+        </div>
+        <div class="text-3xl font-bold">{{ $totalPrimaryApplications + $totalUnitApplications }}</div>
+        <div class="flex items-center mt-2 text-sm">
+            <i data-lucide="info" class="text-blue-500 w-4 h-4 mr-1"></i>
+            <span class="text-blue-500">All Applications in system </span>
+        </div>
+        <span class="text-xs italic">(Primary + Unit Applications)</span>
+        </div>
+        
+        <div class="stat-card">
+        <div class="flex justify-between items-start mb-4">
+            <h3 class="text-gray-600 font-medium">Primary Applications</h3>
+        
+            <i data-lucide="home" class="text-gray-400 w-5 h-5"></i>
+        </div>
+        <div class="text-3xl font-bold">{{ $totalPrimaryApplications }}</div>
+        <div class="flex items-center mt-2 text-sm">
+            <i data-lucide="check-circle" class="text-green-500 w-4 h-4 mr-1"></i>
+            <span class="text-green-500">{{ $approvedPrimaryApplications }} Approved</span>
+            <i data-lucide="x-circle" class="text-red-500 w-4 h-4 ml-3 mr-1"></i>
+            <span class="text-red-500">{{ $rejectedPrimaryApplications }} Declined</span>
+            <i data-lucide="clock" class="text-amber-500 w-4 h-4 ml-3 mr-1"></i>
+            <span class="text-amber-500">{{ $pendingPrimaryApplications ?? ($totalPrimaryApplications - $approvedPrimaryApplications - $rejectedPrimaryApplications) }} Pending</span>
+        </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="flex justify-between items-start mb-4">
+            <h3 class="text-gray-600 font-medium">Unit Applications</h3>
+            <i data-lucide="layers" class="text-gray-400 w-5 h-5"></i>
+            </div>
+            <div class="text-3xl font-bold">{{ $totalUnitApplications }}</div>
+            <div class="flex items-center mt-2 text-sm">
+            <i data-lucide="check-circle" class="text-green-500 w-4 h-4 mr-1"></i>
+            <span class="text-green-500">{{ $approvedUnitApplications }} Approved</span>
+            <i data-lucide="x-circle" class="text-red-500 w-4 h-4 ml-3 mr-1"></i>
+            <span class="text-red-500">{{ $rejectedUnitApplications }} Declined</span>
+            <i data-lucide="clock" class="text-amber-500 w-4 h-4 ml-3 mr-1"></i>
+            <span class="text-amber-500">{{ $pendingUnitApplications ?? ($totalUnitApplications - $approvedUnitApplications - $rejectedUnitApplications) }} Pending</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Primary Application  -->
+    <div id="primary-survey">
         @include('programmes.partials.director_report')
         <div  class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
             <div class="flex justify-between items-center mb-6">
@@ -274,11 +273,9 @@
                             @endif
                         </td> 
                         <td class="table-cell">
-                            @if($application->planning_approval_date)
-                                {{ \Carbon\Carbon::parse($application->planning_approval_date)->format('d/m/Y') }}
-                            @else
-                                N/A
-                            @endif
+                            
+                                 
+                           {{ $application->approval_date ?? 'N/A' }}
                         </td>
                         <td class="table-cell">{{ $application->comments ?? 'N/A' }}</td>
                        
@@ -388,11 +385,8 @@
                     @endif
                   </td>
                 <td class="table-cell">
-                    @if($unitApplication->planning_approval_date)
-                        {{ \Carbon\Carbon::parse($unitApplication->planning_approval_date)->format('d/m/Y') }}
-                    @else
-                        N/A
-                    @endif
+                  {{ $unitApplication->approval_date ?? 'N/A' }}
+                   
                 </td>
                   <td class="table-cell">{{ $unitApplication->comments ?? 'N/A' }}</td>
                   <td class="table-cell relative">

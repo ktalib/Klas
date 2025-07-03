@@ -393,16 +393,17 @@
     @endif
 
     <div class="mt-6 flex gap-3">
-        <a href="{{ route('sectionaltitling.primary') }}"
+        <button type="button"
+            onclick="window.history.back();"
             class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md transition duration-150 ease-in-out flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20"
-                fill="currentColor">
-                <path fill-rule="evenodd"
-                    d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z"
-                    clip-rule="evenodd" />
+            fill="currentColor">
+            <path fill-rule="evenodd"
+                d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z"
+                clip-rule="evenodd" />
             </svg>
             Back to List
-        </a>
+        </button>
 
         <button onclick="openDocumentsModal()" class="ml-auto bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded-md flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

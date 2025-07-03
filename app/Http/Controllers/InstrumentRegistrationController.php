@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class InstrumentRegistrationController extends Controller
 {
@@ -21,31 +22,25 @@ class InstrumentRegistrationController extends Controller
         return $application;
     }
     
-    // Add new method to generate unique STM reference
     private function generateSTMReference()
     {
         $year = date('Y');
-        
-        // Get the latest STM reference for this year
         $latestRef = DB::connection('sqlsrv')->table('registered_instruments')
             ->where('STM_Ref', 'like', "STM-$year-%")
             ->orderBy('id', 'desc')
             ->value('STM_Ref');
         
         if ($latestRef) {
-            // Extract the sequence number and increment
             $matches = [];
-            if (preg_match('/STM-\d{4}-(\d{4})/', $latestRef, $matches)) {
+            if (preg_match('/STM-\\d{4}-(\\d{4})/', $latestRef, $matches)) {
                 $sequence = (int)$matches[1] + 1;
             } else {
                 $sequence = 1;
             }
         } else {
-            // First record for this year
             $sequence = 1;
         }
         
-        // Format with leading zeros to 4 digits
         return "STM-{$year}-" . str_pad($sequence, 4, '0', STR_PAD_LEFT);
     }
 
@@ -54,128 +49,233 @@ class InstrumentRegistrationController extends Controller
         $PageTitle = 'Instrument Registration ';
         $PageDescription = '';
 
-        // Get pending and rejected instruments from instrument_registration table
-        $pendingInstruments = DB::connection('sqlsrv')->table('instrument_registration')
-            ->leftJoin('users', 'instrument_registration.created_by', '=', 'users.id')
-            ->select(
-                'instrument_registration.*',
-                'instrument_registration.id',
-                'instrument_registration.MLSFileNo as fileno',
-                'instrument_registration.rootRegistrationNumber as Deeds_Serial_No',
-                'instrument_registration.instrument_type',
-                'instrument_registration.Grantor',
-                'instrument_registration.Grantee',
-                'instrument_registration.GrantorAddress',
-                'instrument_registration.GranteeAddress',
-                'instrument_registration.duration',
-                'instrument_registration.leasePeriod',
-                'instrument_registration.propertyDescription',
-                'instrument_registration.lga',
-                'instrument_registration.district',
-                'instrument_registration.size',
-                'instrument_registration.plotNumber',
-                'instrument_registration.instrumentDate as deeds_date',
-                'instrument_registration.solicitorName',
-                'instrument_registration.solicitorAddress',
-                'instrument_registration.status',
-                'instrument_registration.landUseType as land_use',
-                'instrument_registration.created_by as reg_created_by',
-                DB::raw("CONCAT(users.first_name, ' ', users.last_name) as reg_creator_name"),
-                DB::raw("'instrument_registration' as source_table"),
-                DB::raw("NULL as STM_Ref") // Add NULL for STM_Ref for pending instruments
-            )
-            ->whereIn('instrument_registration.status', ['pending', 'rejected', null]);
+        try {
+            // Other Instruments (Pending/Rejected)
+            $pendingInstruments = DB::connection('sqlsrv')->table('instrument_registration')
+                ->leftJoin('users', 'instrument_registration.created_by', '=', 'users.id')
+                ->where(function ($query) {
+                    $query->where('instrument_registration.status', '!=', 'registered')
+                          ->orWhereNull('instrument_registration.status');
+                })
+                ->select(
+                    'instrument_registration.id',
+                    DB::raw("COALESCE(instrument_registration.MLSFileNo, instrument_registration.KAGISFileNO, instrument_registration.NewKANGISFileNo) as fileno"),
+                    'instrument_registration.rootRegistrationNumber as Deeds_Serial_No',
+                    'instrument_registration.instrument_type',
+                    'instrument_registration.Grantor',
+                    'instrument_registration.Grantee',
+                    'instrument_registration.GrantorAddress',
+                    'instrument_registration.GranteeAddress',
+                    'instrument_registration.duration',
+                    'instrument_registration.leasePeriod',
+                    'instrument_registration.propertyDescription',
+                    'instrument_registration.lga',
+                    'instrument_registration.district',
+                    'instrument_registration.size',
+                    'instrument_registration.plotNumber',
+                    'instrument_registration.instrumentDate as deeds_date',
+                    'instrument_registration.solicitorName',
+                    'instrument_registration.solicitorAddress',
+                    'instrument_registration.status',
+                    'instrument_registration.landUseType as land_use',
+                    'instrument_registration.created_by as reg_created_by',
+                    'instrument_registration.created_at',
+                    DB::raw("CONCAT(COALESCE(users.first_name, ''), ' ', COALESCE(users.last_name, '')) as reg_creator_name"),
+                    DB::raw("'Other Instruments' as instrument_category"),
+                    DB::raw("NULL as STM_Ref")
+                );
 
-    // Get registered instruments from registered_instruments table
-    $registeredInstruments = DB::connection('sqlsrv')->table('registered_instruments')
-        ->leftJoin('users', 'registered_instruments.created_by', '=', 'users.id')
-        ->select(
-            'registered_instruments.*',
-            'registered_instruments.id',
-            'registered_instruments.MLSFileNo as fileno',
-            'registered_instruments.particularsRegistrationNumber as Deeds_Serial_No',
-            'registered_instruments.instrument_type',
-            'registered_instruments.Grantor',
-            'registered_instruments.Grantee',
-            'registered_instruments.GrantorAddress',
-            'registered_instruments.GranteeAddress',
-            'registered_instruments.duration',
-            'registered_instruments.leasePeriod',
-            'registered_instruments.propertyDescription',
-            'registered_instruments.lga',
-            'registered_instruments.district',
-            'registered_instruments.size',
-            'registered_instruments.plotNumber',
-            'registered_instruments.instrumentDate as deeds_date',
-            'registered_instruments.solicitorName',
-            'registered_instruments.solicitorAddress',
-            'registered_instruments.status',
-            'registered_instruments.landUseType as land_use',
-            'registered_instruments.created_by as reg_created_by',
-            DB::raw("CONCAT(users.first_name, ' ', users.last_name) as reg_creator_name"),
-            DB::raw("'registered_instruments' as source_table")
-        )
-        ->where('registered_instruments.status', 'registered');
+            // Other Instruments (Registered)
+            $registeredInstruments = DB::connection('sqlsrv')->table('registered_instruments')
+                ->leftJoin('users', 'registered_instruments.created_by', '=', 'users.id')
+                ->select(
+                    'registered_instruments.id',
+                    DB::raw("COALESCE(registered_instruments.MLSFileNo, registered_instruments.KAGISFileNO, registered_instruments.NewKANGISFileNo) as fileno"),
+                    'registered_instruments.particularsRegistrationNumber as Deeds_Serial_No',
+                    'registered_instruments.instrument_type',
+                    'registered_instruments.Grantor',
+                    'registered_instruments.Grantee',
+                    'registered_instruments.GrantorAddress',
+                    'registered_instruments.GranteeAddress',
+                    'registered_instruments.duration',
+                    'registered_instruments.leasePeriod',
+                    'registered_instruments.propertyDescription',
+                    'registered_instruments.lga',
+                    'registered_instruments.district',
+                    'registered_instruments.size',
+                    'registered_instruments.plotNumber',
+                    'registered_instruments.instrumentDate as deeds_date',
+                    'registered_instruments.solicitorName',
+                    'registered_instruments.solicitorAddress',
+                    'registered_instruments.status',
+                    'registered_instruments.landUseType as land_use',
+                    'registered_instruments.created_by as reg_created_by',
+                    'registered_instruments.created_at',
+                    DB::raw("CONCAT(COALESCE(users.first_name, ''), ' ', COALESCE(users.last_name, '')) as reg_creator_name"),
+                    DB::raw("CASE WHEN registered_instruments.instrument_type = 'ST Assignment (Transfer of Title)' THEN 'ST Assignment' WHEN registered_instruments.instrument_type = 'Sectional Titling CofO' THEN 'Sectional Titling' ELSE 'Other Instruments' END as instrument_category"),
+                    'registered_instruments.STM_Ref'
+                )
+                ->where('registered_instruments.status', 'registered');
 
-    // Combine both collections
-    $pendingCollection = $pendingInstruments->get();
-    $registeredCollection = $registeredInstruments->get();
-    $approvedApplications = $pendingCollection->merge($registeredCollection);
+            // ST Assignment (Transfer of Title)
+            $stAssignmentApplications = DB::connection('sqlsrv')->table('mother_applications as m')
+                ->leftJoin('users', 'm.created_by', '=', 'users.id')
+                ->where('m.application_status', 'Approved')
+                ->where('m.planning_recommendation_status', 'Approved')
+                ->where(function($query) {
+                    $query->whereNull('m.deeds_status')->orWhere('m.deeds_status', '!=', 'registered');
+                })
+                ->select(
+                    'm.id',
+                    'm.fileno',
+                    DB::raw("NULL as Deeds_Serial_No"),
+                    DB::raw("'ST Assignment (Transfer of Title)' as instrument_type"),
+                    DB::raw("CONCAT(COALESCE(m.applicant_title,''), ' ', COALESCE(m.first_name,''), ' ', COALESCE(m.surname,''), COALESCE(m.corporate_name,''), COALESCE(m.multiple_owners_names,'')) as Grantor"),
+                    DB::raw("'' as Grantee"),
+                    DB::raw("'' as GrantorAddress"),
+                    DB::raw("'' as GranteeAddress"),
+                    DB::raw("'' as duration"),
+                    DB::raw("'' as leasePeriod"),
+                    DB::raw("'' as propertyDescription"),
+                    'm.property_lga as lga',
+                    'm.property_district as district',
+                    'm.plot_size as size',
+                    'm.property_plot_no as plotNumber',
+                    DB::raw("NULL as deeds_date"),
+                    DB::raw("'' as solicitorName"),
+                    DB::raw("'' as solicitorAddress"),
+                    DB::raw("'pending' as status"),
+                    DB::raw("'' as land_use"),
+                    'm.created_by as reg_created_by',
+                    'm.created_at',
+                    DB::raw("CONCAT(COALESCE(users.first_name, ''), ' ', COALESCE(users.last_name, '')) as reg_creator_name"),
+                    DB::raw("'ST Assignment' as instrument_category"),
+                    DB::raw("NULL as STM_Ref")
+                );
 
-    // Count statistics for the statistics cards
-    $pendingCount = 0;
-    $registeredCount = 0;
-    $rejectedCount = 0;
-    $totalCount = $approvedApplications->count();
+            // Sectional Titling CofO
+            $sectionalApplications = DB::connection('sqlsrv')->table('subapplications as s')
+                ->join('st_cofo as st', 's.id', '=', 'st.sub_application_id')
+                ->leftJoin('mother_applications as m', 's.main_application_id', '=', 'm.id')
+                ->leftJoin('users', 's.created_by', '=', 'users.id')
+                ->where('m.application_status', 'Approved')
+                ->where('m.planning_recommendation_status', 'Approved')
+                ->where(function($query) {
+                    $query->whereNull('s.deeds_status')->orWhere('s.deeds_status', '!=', 'registered');
+                })
+                                ->select(
+                    's.id',
+                    's.fileno',
+                    DB::raw("NULL as Deeds_Serial_No"),
+                    DB::raw("'Sectional Titling CofO' as instrument_type"),
+                    DB::raw("CONCAT(COALESCE(m.applicant_title,''), ' ', COALESCE(m.first_name,''), ' ', COALESCE(m.surname,''), COALESCE(m.corporate_name,''), COALESCE(m.multiple_owners_names,'')) as Grantor"),
+                    DB::raw("CONCAT(COALESCE(s.applicant_title,''), ' ', COALESCE(s.first_name,''), ' ', COALESCE(s.surname,''), COALESCE(s.corporate_name,''), COALESCE(s.multiple_owners_names,'')) as Grantee"),
+                    DB::raw("'' as GrantorAddress"),
+                    DB::raw("'' as GranteeAddress"),
+                    DB::raw("'' as duration"),
+                    DB::raw("'' as leasePeriod"),
+                    DB::raw("'' as propertyDescription"),
+                    'm.property_lga as lga',
+                    'm.property_district as district',
+                    'm.plot_size as size',
+                    'm.property_plot_no as plotNumber',
+                    DB::raw("NULL as deeds_date"),
+                    DB::raw("'' as solicitorName"),
+                    DB::raw("'' as solicitorAddress"),
+                    DB::raw("'pending' as status"),
+                    DB::raw("'' as land_use"),
+                    's.created_by as reg_created_by',
+                    's.created_at',
+                    DB::raw("CONCAT(COALESCE(users.first_name, ''), ' ', COALESCE(users.last_name, '')) as reg_creator_name"),
+                    DB::raw("'Sectional Titling' as instrument_category"),
+                    DB::raw("NULL as STM_Ref")
+                );
 
-    // Process data and determine status
-    foreach ($approvedApplications as $application) {
-        // Set status for each record
-        if (empty($application->status) || strtolower($application->status) === 'pending') {
-            $application->status = 'pending';
-            $pendingCount++;
-        } else if (strtolower($application->status) === 'registered') {
-            $registeredCount++;
-        } else if (strtolower($application->status) === 'rejected') {
-            $rejectedCount++;
-        } else {
-            $application->status = 'pending';
-            $pendingCount++;
-        }
-        
-        // Add debug output to verify data
-        \Log::debug('Instrument record:', [
-            'id' => $application->id,
-            'status' => $application->status,
-            'fileno' => $application->fileno,
-            'Grantor' => $application->Grantor,
-        ]); 
+            // Debug: Check individual query results
+            $pendingInstrumentsData = $pendingInstruments->get();
+            $registeredInstrumentsData = $registeredInstruments->get();
+            $stAssignmentData = $stAssignmentApplications->get();
+            $sectionalData = $sectionalApplications->get();
             
-        // Format property description if not already set
-        if (empty($application->propertyDescription)) {
-            $application->property_description = 
-                (!empty($application->district) ? $application->district . ', ' : '') .
-                (!empty($application->lga) ? $application->lga . ', ' : '') .
-                (!empty($application->state) ? $application->state : '');
-        } else {
-            $application->property_description = $application->propertyDescription;
+            Log::info('Individual query results', [
+                'pending_instruments' => $pendingInstrumentsData->count(),
+                'registered_instruments' => $registeredInstrumentsData->count(),
+                'st_assignment' => $stAssignmentData->count(),
+                'sectional' => $sectionalData->count()
+            ]);
+
+            $approvedApplications = $pendingInstrumentsData
+                ->merge($registeredInstrumentsData)
+                ->merge($stAssignmentData)
+                ->merge($sectionalData);
+
+            $pendingCount = 0;
+            $registeredCount = 0;
+            $rejectedCount = 0;
+            $totalCount = $approvedApplications->count();
+
+            foreach ($approvedApplications as $application) {
+                if (empty($application->status) || strtolower($application->status) === 'pending') {
+                    $application->status = 'pending';
+                    $pendingCount++;
+                } else if (strtolower($application->status) === 'registered') {
+                    $registeredCount++;
+                } else if (strtolower($application->status) === 'rejected') {
+                    $rejectedCount++;
+                } else {
+                    $application->status = 'pending';
+                    $pendingCount++;
+                }
+                
+                if (empty($application->propertyDescription)) {
+                    $application->property_description = 
+                        (!empty($application->district) ? $application->district . ', ' : '') .
+                        (!empty($application->lga) ? $application->lga . ', ' : '') .
+                        (!empty($application->state) ? $application->state : '');
+                } else {
+                    $application->property_description = $application->propertyDescription;
+                }
+                
+                $application->duration = $application->duration ?? $application->leasePeriod ?? 'N/A';
+            }
+
+            Log::info('Instrument Registration data loaded', [
+                'total_count' => $totalCount,
+                'pending_count' => $pendingCount,
+                'registered_count' => $registeredCount,
+                'rejected_count' => $rejectedCount,
+            ]);
+
+            return view('instrument_registration.index', compact(
+                'approvedApplications',
+                'PageTitle',
+                'PageDescription',
+                'pendingCount',
+                'registeredCount',
+                'rejectedCount',
+                'totalCount'
+            ));
+            
+        } catch (\Exception $e) {
+            Log::error('Error in InstrumentRegistration method', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            $approvedApplications = collect();
+            $pendingCount = $registeredCount = $rejectedCount = $totalCount = 0;
+            
+            return view('instrument_registration.index', compact(
+                'approvedApplications',
+                'PageTitle',
+                'PageDescription',
+                'pendingCount',
+                'registeredCount',
+                'rejectedCount',
+                'totalCount'
+            ))->with('error', 'Error loading instrument data: ' . $e->getMessage());
         }
-        
-        // Make sure we have a duration value
-        $application->duration = $application->duration ?? $application->leasePeriod ?? 'N/A';
     }
-
-    return view('instrument_registration.index', compact(
-        'approvedApplications',
-        'PageTitle',
-        'PageDescription',
-        'pendingCount',
-        'registeredCount',
-        'rejectedCount',
-        'totalCount'
-    ));
-}
-
 
     public function view($id)
     {
@@ -194,13 +294,13 @@ class InstrumentRegistrationController extends Controller
                 ->first();
 
             if (!$application) {
-                \Log::error('Instrument not found', ['id' => $id]);
+                Log::error('Instrument not found', ['id' => $id]);
                 return redirect()->route('instrument_registration.index')->with('error', 'Instrument not found');
             }
 
             return view('instrument_registration.view', compact('application', 'PageTitle', 'PageDescription'));
         } catch (\Exception $e) {
-            \Log::error('Error in view method', [
+            Log::error('Error in view method', [
                 'id' => $id, 
                 'exception' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -213,7 +313,6 @@ class InstrumentRegistrationController extends Controller
     public function getNextSerialNumber()
     {
         try {
-            // Get the latest serial numbers from registered_instruments
             $latest = DB::connection('sqlsrv')->table('registered_instruments')
                 ->select('volume_no', 'page_no', 'serial_no')
                 ->orderBy('volume_no', 'desc')
@@ -233,7 +332,6 @@ class InstrumentRegistrationController extends Controller
             $pageNo = $latest->page_no;
             $serialNo = $latest->serial_no;
             
-            // Check if we need to start a new volume
             if ($pageNo >= 100) {
                 $volumeNo++;
                 $pageNo = 1;
@@ -252,7 +350,7 @@ class InstrumentRegistrationController extends Controller
                 'deeds_serial_no' => $deedsSerialNo
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error generating next serial number', [
+            Log::error('Error generating next serial number', [
                 'exception' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -262,124 +360,176 @@ class InstrumentRegistrationController extends Controller
         }
     }
 
+    public function getBatchData(Request $request)
+    {
+        try {
+            $filter = $request->query('filter', 'batch');
+            $data = collect();
+            
+            switch ($filter) {
+                case 'other':
+                    $data = DB::connection('sqlsrv')->table('instrument_registration')
+                        ->where('status', 'pending')
+                        ->select(
+                            'id', 
+                            DB::raw("COALESCE(MLSFileNo, KAGISFileNO, NewKANGISFileNo) as fileno"), 
+                            'instrument_type', 
+                            'Grantor as grantor', 
+                            'Grantee as grantee', 
+                            'lga', 
+                            'district', 
+                            'size', 
+                            'plotNumber', 
+                            'created_at',
+                            DB::raw("status")
+                        )
+                        ->get();
+                    break;
+                    
+                case 'stAssignment':
+                    $data = DB::connection('sqlsrv')->table('mother_applications')
+                        ->where('application_status', 'Approved')
+                        ->where('planning_recommendation_status', 'Approved')
+                       ->where(function($q) {
+                          $q->whereNull('deeds_status')->orWhere('deeds_status', '!=', 'registered');
+                       })
+                        ->select(
+                            'id', 
+                            'fileno',
+                            DB::raw("'ST Assignment (Transfer of Title)' as instrument_type"),
+                            DB::raw("CONCAT(COALESCE(applicant_title,''), ' ', COALESCE(first_name,''), ' ', COALESCE(surname,''), COALESCE(corporate_name,''), COALESCE(multiple_owners_names,'')) as grantor"),
+                            DB::raw("'' as grantee"), 
+                            'property_lga as lga', 
+                            'property_district as district', 
+                            'plot_size as size', 
+                            'property_plot_no as plotNumber', 
+                            'created_at',
+                            DB::raw("'pending' as status"),
+                            DB::raw("'ST Assignment' as source_type")
+                        )
+                        ->get();
+                    break;
+                    
+                case 'regular':
+                case 'sltr':
+                    $data = collect([
+                        (object)[
+                            'id' => null,
+                            'fileno' => 'No Record',
+                            'grantor' => 'No Record',
+                            'grantee' => 'No Record',
+                            'lga' => 'No Record',
+                            'district' => 'No Record',
+                            'size' => 'No Record',
+                            'plotNumber' => 'No Record',
+                            'created_at' => null,
+                            'status' => 'unavailable'
+                        ]
+                    ]);
+                    break;
+                    
+                case 'sectional':
+                    $data = DB::connection('sqlsrv')->table('subapplications as s')
+                        ->join('st_cofo as st', 's.id', '=', 'st.sub_application_id')
+                        ->leftJoin('mother_applications as m', 's.main_application_id', '=', 'm.id')
+                        ->where('m.application_status', 'Approved')
+                        ->where('m.planning_recommendation_status', 'Approved')
+                        ->where(function($q) {
+                            $q->whereNull('s.deeds_status')->orWhere('s.deeds_status', '!=', 'registered');
+                       })
+                        ->select(
+                            's.id', 
+                            's.fileno',
+                            DB::raw("'Sectional Titling CofO' as instrument_type"),
+                            DB::raw("CONCAT(COALESCE(m.applicant_title,''), ' ', COALESCE(m.first_name,''), ' ', COALESCE(m.surname,''), COALESCE(m.corporate_name,''), COALESCE(m.multiple_owners_names,'')) as grantor"),
+                            DB::raw("CONCAT(COALESCE(s.applicant_title,''), ' ', COALESCE(s.first_name,''), ' ', COALESCE(s.surname,''), COALESCE(s.corporate_name,''), COALESCE(s.multiple_owners_names,'')) as grantee"),
+                            'm.property_lga as lga', 
+                            'm.property_district as district', 
+                            'm.plot_size as size', 
+                            'm.property_plot_no as plotNumber', 
+                            's.created_at',
+                            DB::raw("'pending' as status"),
+                            DB::raw("'Sectional Titling' as source_type")
+                        )
+                        ->get();
+                    break;
+                    
+                case 'batch':
+                default:
+                    $instrumentData = DB::connection('sqlsrv')->table('instrument_registration')
+                        ->where(function ($q) {
+                            $q->where('status', '!=', 'registered')
+                              ->orWhereNull('status');
+                        })
+                        ->select('id', DB::raw("COALESCE(MLSFileNo, KAGISFileNO, NewKANGISFileNo) as fileno"), 'instrument_type', 'Grantor as grantor', 'Grantee as grantee', 'lga', 'district', 'size', 'plotNumber', 'created_at', DB::raw("COALESCE(status, 'pending') as status"), DB::raw("'Other Instruments' as source_type"))->get();
+                    $motherData = DB::connection('sqlsrv')->table('mother_applications')->where('application_status', 'Approved')->where('planning_recommendation_status', 'Approved')
+                        ->where(function($q) {
+                           $q->whereNull('deeds_status')->orWhere('deeds_status', '!=', 'registered');
+                        })
+                      ->select('id', 'fileno', DB::raw("'ST Assignment (Transfer of Title)' as instrument_type"), DB::raw("CONCAT(COALESCE(applicant_title,''), ' ', COALESCE(first_name,''), ' ', COALESCE(surname,''), COALESCE(corporate_name,''), COALESCE(multiple_owners_names,'')) as grantor"), DB::raw("'' as grantee"), 'property_lga as lga', 'property_district as district', 'plot_size as size', 'property_plot_no as plotNumber', 'created_at', DB::raw("'pending' as status"), DB::raw("'ST Assignment' as source_type"))->get();
+                    $subData = DB::connection('sqlsrv')->table('subapplications as s')->join('st_cofo as st', 's.id', '=', 'st.sub_application_id')->leftJoin('mother_applications as m', 's.main_application_id', '=', 'm.id')->where('m.application_status', 'Approved')->where('m.planning_recommendation_status', 'Approved')
+                       ->where(function($q) {
+                           $q->whereNull('s.deeds_status')->orWhere('s.deeds_status', '!=', 'registered');
+                        })
+                        ->select('s.id', 's.fileno', DB::raw("'Sectional Titling CofO' as instrument_type"), DB::raw("CONCAT(COALESCE(m.applicant_title,''), ' ', COALESCE(m.first_name,''), ' ', COALESCE(m.surname,''), COALESCE(m.corporate_name,''), COALESCE(m.multiple_owners_names,'')) as grantor"), DB::raw("CONCAT(COALESCE(s.applicant_title,''), ' ', COALESCE(s.first_name,''), ' ', COALESCE(s.surname,''), COALESCE(s.corporate_name,''), COALESCE(s.multiple_owners_names,'')) as grantee"), 'm.property_lga as lga', 'm.property_district as district', 'm.plot_size as size', 'm.property_plot_no as plotNumber', 's.created_at', DB::raw("'pending' as status"), DB::raw("'Sectional Titling' as source_type"))->get();
+                    $data = $instrumentData->merge($motherData)->merge($subData);
+                    break;
+            }
+            
+            return response()->json($data->values()->toArray());
+            
+        } catch (\Exception $e) {
+            Log::error('Error in getBatchData', ['filter' => $request->query('filter'), 'exception' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Failed to fetch batch data: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function registerSingle(Request $request)
     {
         try {
-            $request->validate([
-                'mother_application_id' => 'required',
-                'instrument_type' => 'required|string',
-                'Grantor' => 'required|string',
-                'Grantee' => 'required|string',
-                'deeds_date' => 'required|date',
-                'deeds_time' => 'required|string',
-            ]);
+            // Removed validation to allow empty grantee and other fields
             
-            // Get the source record from instrument_registration
-            $sourceRecord = DB::connection('sqlsrv')
-                ->table('instrument_registration')
-                ->where('id', $request->mother_application_id)
-                ->first();
+            $applicationId = $request->mother_application_id;
+            $sourceRecord = null;
+            $sourceTable = null;
+            
+            $sourceRecord = DB::connection('sqlsrv')->table('instrument_registration')->where('id', $applicationId)->first();
+            if ($sourceRecord) {
+                $sourceTable = 'instrument_registration';
+            } else {
+                $sourceRecord = DB::connection('sqlsrv')->table('mother_applications')->where('id', $applicationId)->first();
+                if ($sourceRecord) {
+                    $sourceTable = 'mother_applications';
+                } else {
+                    $sourceRecord = DB::connection('sqlsrv')->table('subapplications')->where('id', $applicationId)->first();
+                    if ($sourceRecord) {
+                        $sourceTable = 'subapplications';
+                    }
+                }
+            }
                 
             if (!$sourceRecord) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Source instrument record not found'
-                ], 404);
+                return response()->json(['success' => false, 'error' => 'Source record not found in any table'], 404);
             }
             
             $serialData = $this->getNextSerialNumber()->getData(true);
-            
-            // Generate STM Reference
             $stmReference = $this->generateSTMReference();
+            $dataToInsert = $this->prepareRegistrationData($sourceRecord, $sourceTable, $request, $serialData, $stmReference);
             
-            // Prepare data to insert by combining source record with new registration info
-            $dataToInsert = [
-                // Copy fields from source record
-                'MLSFileNo' => $sourceRecord->MLSFileNo ?? $request->file_no,
-                'KAGISFileNO' => $sourceRecord->KAGISFileNO ?? null,
-                'NewKANGISFileNo' => $sourceRecord->NewKANGISFileNo ?? null,
-                'rootRegistrationNumber' => $sourceRecord->rootRegistrationNumber ?? null,
-                
-                // Add new registration details
-                'particularsRegistrationNumber' => $serialData['deeds_serial_no'],
-                'STM_Ref' => $stmReference, // Add STM Reference
-                'instrument_type' => $request->instrument_type,
-                'Grantor' => $request->Grantor,
-                'GrantorAddress' => $request->GrantorAddress ?? $sourceRecord->GrantorAddress ?? '',
-                'Grantee' => $request->Grantee,
-                'GranteeAddress' => $request->GranteeAddress ?? $sourceRecord->GranteeAddress ?? '',
-                
-                // Copy more fields from source as needed
-                'mortgagor' => $sourceRecord->mortgagor ?? null,
-                'mortgagorAddress' => $sourceRecord->mortgagorAddress ?? null,
-                'mortgagee' => $sourceRecord->mortgagee ?? null,
-                'mortgageeAddress' => $sourceRecord->mortgageeAddress ?? null,
-                'loanAmount' => $sourceRecord->loanAmount ?? null,
-                'interestRate' => $sourceRecord->interestRate ?? null,
-                'duration' => $request->duration ?? $sourceRecord->duration ?? null,
-                'assignor' => $sourceRecord->assignor ?? null,
-                'assignorAddress' => $sourceRecord->assignorAddress ?? null,
-                'assignee' => $sourceRecord->assignee ?? null,
-                'assigneeAddress' => $sourceRecord->assigneeAddress ?? null,
-                'lessor' => $sourceRecord->lessor ?? null,
-                'lessorAddress' => $sourceRecord->lessorAddress ?? null,
-                'lessee' => $sourceRecord->lessee ?? null,
-                'lesseeAddress' => $sourceRecord->lesseeAddress ?? null,
-                'leasePeriod' => $sourceRecord->leasePeriod ?? null,
-                'leaseTerms' => $sourceRecord->leaseTerms ?? null,
-                'propertyDescription' => $request->propertyDescription ?? $sourceRecord->propertyDescription ?? '',
-                'propertyAddress' => $sourceRecord->propertyAddress ?? null,
-                'lga' => $request->lga ?? $sourceRecord->lga ?? '',
-                'district' => $request->district ?? $sourceRecord->district ?? '',
-                'size' => $request->plotSize ?? $sourceRecord->size ?? '',
-                'plotNumber' => $request->plotNumber ?? $sourceRecord->plotNumber ?? '',
-                'landUseType' => $sourceRecord->landUseType ?? null,
-                'solicitorName' => $sourceRecord->solicitorName ?? null,
-                'solicitorAddress' => $sourceRecord->solicitorAddress ?? null,
-                
-                // Set registration details
-                'instrumentDate' => $request->deeds_date,
-                'deeds_date' => $request->deeds_date,
-                'deeds_time' => $request->deeds_time,
-                'serial_no' => $serialData['serial_no'],
-                'page_no' => $serialData['page_no'],
-                'volume_no' => $serialData['volume_no'],
-                'status' => 'registered',
-                'created_by' => Auth::id(),
-                'updated_by' => Auth::id(),
-                'created_at' => now(),
-                'updated_at' => now()
-            ];
-            
-            // Insert the new record
             $newId = DB::connection('sqlsrv')->table('registered_instruments')->insertGetId($dataToInsert);
-            
-            // Update original record status
-            DB::connection('sqlsrv')->table('instrument_registration')
-                ->where('id', $request->mother_application_id)
-                ->update([
-                    'status' => 'registered',
-                    'updated_by' => Auth::id(),
-                    'updated_at' => now()
-                ]);
+            $this->updateSourceRecordStatus($applicationId, $sourceTable);
             
             return response()->json([
                 'success' => true,
                 'message' => 'Instrument registered successfully',
                 'serial_data' => $serialData,
-                'stm_ref' => $stmReference, // Include STM reference in response
-                'record_id' => $newId
+                'stm_ref' => $stmReference,
+                'record_id' => $newId,
+                'source_table' => $sourceTable
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error in registerSingle', [
-                'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
-            return response()->json([
-                'success' => false,
-                'error' => 'Failed to register: ' . $e->getMessage()
-            ], 500);
+            Log::error('Error in registerSingle', ['exception' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['success' => false, 'error' => 'Failed to register: ' . $e->getMessage()], 500);
         }
     }
 
@@ -394,12 +544,11 @@ class InstrumentRegistrationController extends Controller
             
             $serialData = $this->getNextSerialNumber()->getData(true);
             $results = [];
-            $registeredIds = [];
+            $processedRecords = [];
             
             DB::connection('sqlsrv')->beginTransaction();
             
             foreach ($request->batch_entries as $index => $entry) {
-                // Update serial numbers for subsequent entries
                 if ($index > 0) {
                     if (++$serialData['page_no'] > 100) {
                         $serialData['volume_no']++;
@@ -411,122 +560,190 @@ class InstrumentRegistrationController extends Controller
                     $serialData['deeds_serial_no'] = "{$serialData['serial_no']}/{$serialData['page_no']}/{$serialData['volume_no']}";
                 }
                 
-                // Get source record
-                $sourceRecord = DB::connection('sqlsrv')
-                    ->table('instrument_registration')
-                    ->where('id', $entry['application_id'])
-                    ->first();
+                $applicationId = $entry['application_id'];
+                $sourceRecord = null;
+                $sourceTable = null;
+                
+                $sourceRecord = DB::connection('sqlsrv')->table('instrument_registration')->where('id', $applicationId)->first();
+                if ($sourceRecord) {
+                    $sourceTable = 'instrument_registration';
+                } else {
+                    $sourceRecord = DB::connection('sqlsrv')->table('mother_applications')->where('id', $applicationId)->first();
+                    if ($sourceRecord) {
+                        $sourceTable = 'mother_applications';
+                    } else {
+                        $sourceRecord = DB::connection('sqlsrv')->table('subapplications')->where('id', $applicationId)->first();
+                        if ($sourceRecord) {
+                            $sourceTable = 'subapplications';
+                        }
+                    }
+                }
                     
                 if (!$sourceRecord) {
-                    continue; // Skip this record if source not found
+                    Log::warning('Source record not found for batch entry', ['application_id' => $applicationId]);
+                    continue;
                 }
                 
-                $registeredIds[] = $entry['application_id'];
-                
-                // Generate STM Reference for each record
+                $processedRecords[] = ['id' => $applicationId, 'table' => $sourceTable];
                 $stmReference = $this->generateSTMReference();
                 
-                // Prepare data for insertion
-                $dataToInsert = [
-                    // Copy fields from source record
-                    'MLSFileNo' => $sourceRecord->MLSFileNo ?? $entry['file_no'] ?? null,
+                $entryRequest = new \Illuminate\Http\Request();
+                $entryRequest->merge([
+                    'instrument_type' => $entry['instrument_type'] ?? '',
+                    'Grantor' => $entry['grantor'] ?? '',
+                    'Grantee' => $entry['grantee'] ?? '',
+                    'duration' => $entry['duration'] ?? '',
+                    'propertyDescription' => $entry['propertyDescription'] ?? '',
+                    'lga' => $entry['lga'] ?? '',
+                    'district' => $entry['district'] ?? '',
+                    'plotSize' => $entry['size'] ?? '',
+                    'plotNumber' => $entry['plotNumber'] ?? '',
+                    'deeds_date' => $request->deeds_date,
+                    'deeds_time' => $request->deeds_time,
+                    'file_no' => $entry['file_no'] ?? ''
+                ]);
+                
+                $dataToInsert = $this->prepareRegistrationData($sourceRecord, $sourceTable, $entryRequest, $serialData, $stmReference);
+                $newId = DB::connection('sqlsrv')->table('registered_instruments')->insertGetId($dataToInsert);
+                
+                $results[] = [
+                    'application_id' => $applicationId,
+                    'new_id' => $newId,
+                    'deeds_serial_no' => $serialData['deeds_serial_no'],
+                    'stm_ref' => $stmReference,
+                    'source_table' => $sourceTable
+                ];
+            }
+            
+            foreach ($processedRecords as $record) {
+                $this->updateSourceRecordStatus($record['id'], $record['table']);
+            }
+            
+            DB::connection('sqlsrv')->commit();
+            
+            return response()->json(['success' => true, 'message' => count($results) . ' instruments registered successfully', 'results' => $results]);
+        } catch (\Exception $e) {
+            DB::connection('sqlsrv')->rollBack();
+            Log::error('Error in registerBatch', ['exception' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['success' => false, 'error' => 'Failed to register batch: ' . $e->getMessage()], 500);
+        }
+    }
+
+    private function prepareRegistrationData($sourceRecord, $sourceTable, $request, $serialData, $stmReference)
+    {
+         // Convert array inputs to comma-separated strings
+         if (is_array($request->instrument_type)) {
+             $request->instrument_type = implode(',', $request->instrument_type);
+         }
+         if (is_array($request->Grantor)) {
+            $request->Grantor = implode(',', $request->Grantor);
+         }
+         if (is_array($request->Grantee)) {
+             $request->Grantee = implode(',', $request->Grantee);
+         }
+        $baseData = [
+            'particularsRegistrationNumber' => $serialData['deeds_serial_no'],
+            'STM_Ref' => $stmReference,
+
+                    'instrument_type' => $request->instrument_type,
+            'Grantor' => $request->Grantor,
+            'Grantee' => $request->Grantee,
+            'instrumentDate' => $request->deeds_date,
+            'deeds_date' => $request->deeds_date,
+            'deeds_time' => $request->deeds_time,
+            'serial_no' => $serialData['serial_no'],
+            'page_no' => $serialData['page_no'],
+            'volume_no' => $serialData['volume_no'],
+            'status' => 'registered',
+            'created_by' => Auth::id(),
+            'updated_by' => Auth::id(),
+            'created_at' => now(),
+            'updated_at' => now()
+        ];
+
+        switch ($sourceTable) {
+            case 'instrument_registration':
+                return array_merge($baseData, [
+                    'MLSFileNo' => $sourceRecord->MLSFileNo ?? $request->file_no,
                     'KAGISFileNO' => $sourceRecord->KAGISFileNO ?? null,
                     'NewKANGISFileNo' => $sourceRecord->NewKANGISFileNo ?? null,
                     'rootRegistrationNumber' => $sourceRecord->rootRegistrationNumber ?? null,
-                    
-                    // Add new registration details
-                    'particularsRegistrationNumber' => $serialData['deeds_serial_no'],
-                    'STM_Ref' => $stmReference, // Add STM Reference
-                    'instrument_type' => $entry['instrument_type'] ?? $sourceRecord->instrument_type,
-                                        'Grantor' => $entry['grantor'] ?? $sourceRecord->Grantor,
-                                        'GrantorAddress' => $entry['grantorAddress'] ?? $sourceRecord->GrantorAddress ?? '',
-                                        'Grantee' => $entry['grantee'] ?? $sourceRecord->Grantee,
-                                        'GranteeAddress' => $entry['granteeAddress'] ?? $sourceRecord->GranteeAddress ?? '',
-                                        
-                                        // Copy more fields from source record
-                                        'mortgagor' => $sourceRecord->mortgagor ?? null,
-                                        'mortgagorAddress' => $sourceRecord->mortgagorAddress ?? null,
-                                        'mortgagee' => $sourceRecord->mortgagee ?? null,
-                                        'mortgageeAddress' => $sourceRecord->mortgageeAddress ?? null,
-                                        'loanAmount' => $sourceRecord->loanAmount ?? null,
-                                        'interestRate' => $sourceRecord->interestRate ?? null,
-                                        'duration' => $entry['duration'] ?? $sourceRecord->duration ?? null,
-                                        'assignor' => $sourceRecord->assignor ?? null,
-                                        'assignorAddress' => $sourceRecord->assignorAddress ?? null,
-                                        'assignee' => $sourceRecord->assignee ?? null,
-                                        'assigneeAddress' => $sourceRecord->assigneeAddress ?? null,
-                                        'lessor' => $sourceRecord->lessor ?? null,
-                                        'lessorAddress' => $sourceRecord->lessorAddress ?? null,
-                                        'lessee' => $sourceRecord->lessee ?? null,
-                                        'lesseeAddress' => $sourceRecord->lesseeAddress ?? null,
-                                        'leasePeriod' => $sourceRecord->leasePeriod ?? null,
-                                        'leaseTerms' => $sourceRecord->leaseTerms ?? null,
-                                        'propertyDescription' => $entry['propertyDescription'] ?? $sourceRecord->propertyDescription ?? '',
-                                        'propertyAddress' => $sourceRecord->propertyAddress ?? null,
-                                        'lga' => $entry['lga'] ?? $sourceRecord->lga ?? '',
-                                        'district' => $entry['district'] ?? $sourceRecord->district ?? '',
-                                        'size' => $entry['size'] ?? $sourceRecord->size ?? '',
-                                        'plotNumber' => $entry['plotNumber'] ?? $sourceRecord->plotNumber ?? '',
-                                        'landUseType' => $sourceRecord->landUseType ?? null,
-                                        'solicitorName' => $sourceRecord->solicitorName ?? null,
-                                        'solicitorAddress' => $sourceRecord->solicitorAddress ?? null,
-                                        
-                                        // Set registration details
-                                        'instrumentDate' => $request->deeds_date,
-                                        'deeds_date' => $request->deeds_date,
-                                        'deeds_time' => $request->deeds_time,
-                                        'serial_no' => $serialData['serial_no'],
-                                        'page_no' => $serialData['page_no'],
-                                        'volume_no' => $serialData['volume_no'],
-                                        'status' => 'registered',
-                                        'created_by' => Auth::id(),
-                                        'updated_by' => Auth::id(),
-                                        'created_at' => now(),
-                                        'updated_at' => now()
-                                    ];
-                                    
-                                    // Insert the new record
-                                    $newId = DB::connection('sqlsrv')->table('registered_instruments')->insertGetId($dataToInsert);
-                                    
-                                    // Save result
-                                    $results[] = [
-                                        'application_id' => $entry['application_id'],
-                                        'new_id' => $newId,
-                                        'deeds_serial_no' => $serialData['deeds_serial_no'],
-                                        'stm_ref' => $stmReference // Include STM reference in results
-                                    ];
-                                }
-                                
-                                // Update all processed records to registered status
-                                if (!empty($registeredIds)) {
-                                    DB::connection('sqlsrv')->table('instrument_registration')
-                                        ->whereIn('id', $registeredIds)
-                                        ->update([
-                                            'status' => 'registered',
-                                            'updated_by' => Auth::id(),
-                                            'updated_at' => now()
-                                        ]);
-                                }
-                                
-                                DB::connection('sqlsrv')->commit();
-                                
-                                return response()->json([
-                                    'success' => true,
-                                    'message' => count($results) . ' instruments registered successfully',
-                                    'results' => $results
-                                ]);
-                            } catch (\Exception $e) {
-                                DB::connection('sqlsrv')->rollBack();
-                                
-                                \Log::error('Error in registerBatch', [
-                                    'exception' => $e->getMessage(),
-                                    'trace' => $e->getTraceAsString()
-                                ]);
-                                
-                                return response()->json([
-                                    'success' => false,
-                                    'error' => 'Failed to register batch: ' . $e->getMessage()
-                                ], 500);
-                            }
-                        }
-                    }
+                    'GrantorAddress' => $request->GrantorAddress ?? $sourceRecord->GrantorAddress ?? '',
+                    'GranteeAddress' => $request->GranteeAddress ?? $sourceRecord->GranteeAddress ?? '',
+                    'mortgagor' => $sourceRecord->mortgagor ?? null,
+                    'mortgagorAddress' => $sourceRecord->mortgagorAddress ?? null,
+                    'mortgagee' => $sourceRecord->mortgagee ?? null,
+                    'mortgageeAddress' => $sourceRecord->mortgageeAddress ?? null,
+                    'loanAmount' => $sourceRecord->loanAmount ?? null,
+                    'interestRate' => $sourceRecord->interestRate ?? null,
+                    'duration' => $request->duration ?? $sourceRecord->duration ?? null,
+                    'assignor' => $sourceRecord->assignor ?? null,
+                    'assignorAddress' => $sourceRecord->assignorAddress ?? null,
+                    'assignee' => $sourceRecord->assignee ?? null,
+                    'assigneeAddress' => $sourceRecord->assigneeAddress ?? null,
+                    'lessor' => $sourceRecord->lessor ?? null,
+                    'lessorAddress' => $sourceRecord->lessorAddress ?? null,
+                    'lessee' => $sourceRecord->lessee ?? null,
+                    'lesseeAddress' => $sourceRecord->lesseeAddress ?? null,
+                    'leasePeriod' => $sourceRecord->leasePeriod ?? null,
+                    'leaseTerms' => $sourceRecord->leaseTerms ?? null,
+                    'propertyDescription' => $request->propertyDescription ?? $sourceRecord->propertyDescription ?? '',
+                    'propertyAddress' => $sourceRecord->propertyAddress ?? null,
+                    'lga' => $request->lga ?? $sourceRecord->lga ?? '',
+                    'district' => $request->district ?? $sourceRecord->district ?? '',
+                    'size' => $request->plotSize ?? $sourceRecord->size ?? '',
+                    'plotNumber' => $request->plotNumber ?? $sourceRecord->plotNumber ?? '',
+                    'landUseType' => $sourceRecord->landUseType ?? null,
+                    'solicitorName' => $sourceRecord->solicitorName ?? null,
+                    'solicitorAddress' => $sourceRecord->solicitorAddress ?? null,
+                ]);
+
+            case 'mother_applications':
+                return array_merge($baseData, [
+                    'MLSFileNo' => $sourceRecord->fileno ?? $request->file_no,
+                    'lga' => $sourceRecord->property_lga ?? '',
+                    'district' => $sourceRecord->property_district ?? '',
+                    'size' => $sourceRecord->plot_size ?? '',
+                    'plotNumber' => $sourceRecord->property_plot_no ?? '',
+                ]);
+
+            case 'subapplications':
+                $motherApp = DB::connection('sqlsrv')->table('mother_applications')->where('id', $sourceRecord->main_application_id)->first();
+                return array_merge($baseData, [
+                    'MLSFileNo' => $sourceRecord->fileno ?? $request->file_no,
+                    'lga' => $motherApp->property_lga ?? '',
+                    'district' => $motherApp->property_district ?? '',
+                    'size' => $motherApp->plot_size ?? '',
+                    'plotNumber' => $motherApp->property_plot_no ?? '',
+                ]);
+
+            default:
+                return $baseData;
+        }
+    }
+
+    private function updateSourceRecordStatus($id, $sourceTable)
+    {
+        $updateData = [
+            'updated_by' => Auth::id(),
+            'updated_at' => now()
+        ];
+
+        switch ($sourceTable) {
+            case 'instrument_registration':
+                $updateData['status'] = 'registered';
+                DB::connection('sqlsrv')->table('instrument_registration')->where('id', $id)->update($updateData);
+                break;
+
+            case 'mother_applications':
+                $updateData['deeds_status'] = 'registered';
+                DB::connection('sqlsrv')->table('mother_applications')->where('id', $id)->update($updateData);
+                break;
+
+            case 'subapplications':
+                $updateData['deeds_status'] = 'registered';
+                DB::connection('sqlsrv')->table('subapplications')->where('id', $id)->update($updateData);
+                break;
+        }
+    }
+}

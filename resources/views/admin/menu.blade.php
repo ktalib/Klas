@@ -189,7 +189,7 @@
         @endif
 
         @if($hasRole('Recertification'))
-        <a href="/programmes/recertification" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <a href="{{route('recertification.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('recertification.index') ? 'active' : '' }}">
           <i data-lucide="file-cog" class="h-4 w-4 text-purple-500"></i>
           <span>Recertification</span>
         </a>
@@ -323,7 +323,7 @@
         
         @if($hasRole('Deeds - Property Records Assistant (Legacy Records)'))
         <a href="{{route('propertycard.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('propertycard.index') ? 'active' : '' }}">
-          <i data-lucide="file-search" class="h-4 w-4 text-amber-500"></i>
+          <i data-lucide="sparkles" class="h-4 w-4"></i>
           <span>Property Records Assistant (Legacy Records)</span>
         </a>
         @endif
@@ -482,7 +482,7 @@
         <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="edms">
           <div class="flex items-center gap-2">
             <i data-lucide="folder" class="h-4 w-4"></i>
-            <span>EDMS - Indexing</span>
+            <span>Indexing</span>
           </div>
           <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="edms"></i>
         </div>
@@ -499,10 +499,10 @@
 
           <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="indexing">
             <a href="{{route('fileindexing.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('fileindexing.index') ? 'active' : '' }}">
-              <span>EDMS - File Indexing Assistant</span>
+              <span>File Indexing Assistant</span>
             </a>
             <a href="{{route('printlabel.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('printlabel.index') ? 'active' : '' }}">
-              <span>EDMS - Print File Labels</span>
+              <span> Print File Labels</span>
             </a>
           </div>
           @endif
@@ -511,7 +511,7 @@
           <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="scanning">
             <div class="flex items-center gap-2">
               <i data-lucide="scan" class="h-3.5 w-3.5"></i>
-              <span>EDMS - Scanning</span>
+              <span> Scanning</span>
             </div>
             <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="scanning"></i>
           </div>
@@ -520,13 +520,13 @@
             @if($hasRole('EDMS - Upload'))
             <a href="{{route('scanning.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('scanning.index') ? 'active' : '' }}">
               <i data-lucide="file-up" class="h-3.5 w-3.5"></i>
-              <span>EDMS - Upload</span>
+              <span> Upload</span>
             </a>
             @endif
             @if($hasRole('EDMS - Download'))
             <a href="/file-digital-registry/download" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
               <i data-lucide="file-down" class="h-3.5 w-3.5"></i>
-              <span>EDMS - Download</span>
+              <span>Download</span>
             </a>
             @endif
           </div>
@@ -535,7 +535,7 @@
           @if($hasRole('EDMS - PageTyping'))
           <a href="{{route('pagetyping.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('pagetyping.index') ? 'active' : '' }}">
             <i data-lucide="file-text" class="h-3.5 w-3.5"></i>
-            <span>EDMS - PageTyping</span>
+            <span>PageTyping</span>
           </a>
           @endif
         </div>
@@ -678,6 +678,15 @@
           <span>E-Registry</span>
         </a>
         @endif
+
+
+        @if($hasRole('Survey Reports'))
+        <a href="{{ route('survey_plan_extraction.index') }}?url=survey" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200  {{ request()->routeIs('survey_plan_extraction.index') && request()->query('url') === 'survey' ? 'active' : '' }}">
+          <i data-lucide="sparkles" class="h-4 w-4" style="color:#E7C117FF"></i>
+          <span>Survey Plan Extraction</span>
+        </a>
+        @endif  
+        
         @if($hasRole('Survey Reports'))
         <a href="/survey/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
           <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
@@ -728,6 +737,13 @@
         </a>
         @endif
         @if($hasRole('Cadastral Reports'))
+        <a href="{{ route('survey_plan_extraction.index') }}?url=survey" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200  {{ request()->routeIs('survey_plan_extraction.index') && request()->query('url') === 'survey' ? 'active' : '' }}">
+          <i data-lucide="sparkles" class="h-4 w-4" style="color:#E7C117FF"></i>
+          <span>Survey Plan Extraction</span>
+        </a>
+        @endif 
+        
+        @if($hasRole('Cadastral Reports'))
         <a href="/cadastral/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
           <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
           <span>Cadastral Reports</span>
@@ -776,6 +792,13 @@
         <span>E-Registry</span>
       </a>
       @endif
+      @if($hasRole('Survey Reports'))
+     <a href="{{ route('survey_plan_extraction.index') }}?url=survey" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200  {{ request()->routeIs('survey_plan_extraction.index') && request()->query('url') === 'survey' ? 'active' : '' }}">
+          <i data-lucide="sparkles" class="h-4 w-4" style="color:#E7C117FF"></i>
+          <span>Survey Plan Extraction</span>
+        </a>
+      @endif 
+      
       @if($hasRole('Survey Reports'))
       <a href="/gis/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
         <i data-lucide="file-bar-chart" class="h-4 w-4"></i>

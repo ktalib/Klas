@@ -227,9 +227,13 @@
 
                     @php
                         $buyers = DB::connection('sqlsrv')
-                            ->table('buyer_list')
-                            ->where('application_id', $application->id)
-                            ->select('buyer_title', 'buyer_name', 'unit_no')
+                            ->table('buyer_list as bl')
+                            ->leftJoin('st_unit_measurements as sum', function($join) use ($application) {
+                                $join->on('bl.unit_no', '=', 'sum.unit_no')
+                                     ->where('sum.application_id', '=', $application->id);
+                            })
+                            ->where('bl.application_id', $application->id)
+                            ->select('bl.buyer_title', 'bl.buyer_name', 'bl.unit_no', 'sum.measurement')
                             ->get();
                     @endphp
                     
@@ -240,6 +244,7 @@
                                     <th class="border border-gray-400 p-2 text-left">SN</th>
                                     <th class="border border-gray-400 p-2 text-left">BUYER NAME</th>
                                     <th class="border border-gray-400 p-2 text-left">UNIT NO.</th>
+                                    <th class="border border-gray-400 p-2 text-left">MEASUREMENT (SQM)</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -250,6 +255,7 @@
                                             {{ $buyer->buyer_title ? $buyer->buyer_title . ' ' : '' }}{{ $buyer->buyer_name }}
                                         </td>
                                         <td class="border border-gray-400 p-2">{{ $buyer->unit_no }}</td>
+                                        <td class="border border-gray-400 p-2">{{ $buyer->measurement ?? 'N/A' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

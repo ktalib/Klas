@@ -48,15 +48,18 @@
           
           <div class="flex items-center space-x-4">
          
-            <div class="relative">
-              <select class="pl-4 pr-8 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none">
-                <option>All...</option>
-                <option>Approved</option>
-                <option>Pending</option>
-                <option>Declined</option>
-              </select>
-              <i data-lucide="chevron-down" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-            </div>
+     
+                      <div class="relative">
+    <select id="statusFilter"
+        class="pl-4 pr-8 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none">
+        <option value="All...">All...</option>
+        <option value="Approved">Approved</option>
+        <option value="Pending">Pending</option>
+        <option value="Declined">Declined</option>
+    </select>
+    <i data-lucide="chevron-down"
+        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+</div>
             
              
 
@@ -275,13 +278,13 @@
           </table>
         </div>
         <div class="flex justify-between items-center mt-6 text-sm">
-          <div class="text-gray-500">Showing 5 of 180 applications</div>
+          <div class="text-gray-500" id="showingCount">Showing 0 of 0 applications</div>
           <div class="flex items-center space-x-2">
-            <button class="px-3 py-1 border border-gray-200 rounded-md flex items-center">
+            <button id="prevPageBtn" class="px-3 py-1 border border-gray-200 rounded-md flex items-center" disabled>
               <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
               <span>Previous</span>
             </button>
-            <button class="px-3 py-1 border border-gray-200 rounded-md flex items-center">
+            <button id="nextPageBtn" class="px-3 py-1 border border-gray-200 rounded-md flex items-center" disabled>
               <span>Next</span>
               <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
             </button>
@@ -303,6 +306,142 @@
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add ID to the filter select if it doesn't have one
+    const filterSelect = document.querySelector('select');
+    if (filterSelect && !filterSelect.id) {
+        filterSelect.id = 'statusFilter';
+    }
+    
+    // Pagination variables
+    window.secondaryTablePagination = {
+        currentPage: 1,
+        rowsPerPage: 10,
+        filteredRows: [],
+        allRows: []
+    };
+
+    function paginateTable(page = 1) {
+        const { rowsPerPage, filteredRows } = window.secondaryTablePagination;
+        const totalRows = filteredRows.length;
+        const startIdx = (page - 1) * rowsPerPage;
+        const endIdx = Math.min(startIdx + rowsPerPage, totalRows);
+
+        // Hide all rows first
+        filteredRows.forEach(row => {
+            row.style.display = 'none';
+        });
+
+        // Show only the rows for current page
+        for (let i = startIdx; i < endIdx; i++) {
+            if (filteredRows[i]) {
+                filteredRows[i].style.display = '';
+            }
+        }
+
+        // Update showing count
+        const showingCount = document.getElementById('showingCount');
+        const showing = Math.min(rowsPerPage, totalRows - startIdx);
+        showingCount.textContent = `Showing ${showing} of ${totalRows} applications`;
+
+        // Enable/disable buttons
+        document.getElementById('prevPageBtn').disabled = page === 1;
+        document.getElementById('nextPageBtn').disabled = endIdx >= totalRows;
+
+        window.secondaryTablePagination.currentPage = page;
+    }
+
+    function filterTable(selectedStatus) {
+        const allRows = window.secondaryTablePagination.allRows;
+        let filteredRows = [];
+
+        allRows.forEach(row => {
+            let showRow = false;
+            if (selectedStatus === 'All...') {
+                showRow = true;
+            } else {
+                // No badge columns in this table, so just show all for now or implement your own logic
+                showRow = row.innerText.includes(selectedStatus);
+            }
+            row.style.display = showRow ? '' : 'none';
+            if (showRow) filteredRows.push(row);
+        });
+
+        window.secondaryTablePagination.filteredRows = filteredRows;
+        paginateTable(1);
+    }
+
+    // Initial setup - only count actual data rows, not empty or template rows
+    window.secondaryTablePagination.allRows = Array.from(document.querySelectorAll('tbody tr')).filter(row => {
+        // Filter out empty rows or rows without actual data
+        const cells = row.querySelectorAll('td');
+        return cells.length > 0 && row.textContent.trim() !== '';
+    });
+    window.secondaryTablePagination.filteredRows = window.secondaryTablePagination.allRows;
+    
+    // Debug: Log the actual count
+    console.log('Total rows found:', window.secondaryTablePagination.allRows.length);
+    console.log('Filtered rows:', window.secondaryTablePagination.filteredRows.length);
+    
+    paginateTable(1);
+
+    // Filter event
+    const statusFilter = document.getElementById('statusFilter');
+    if (statusFilter) {
+        statusFilter.addEventListener('change', function() {
+            filterTable(this.value);
+        });
+    }
+
+    // Pagination events
+    document.getElementById('prevPageBtn').addEventListener('click', function() {
+        const { currentPage } = window.secondaryTablePagination;
+        if (currentPage > 1) paginateTable(currentPage - 1);
+    });
+    document.getElementById('nextPageBtn').addEventListener('click', function() {
+        const { currentPage, filteredRows, rowsPerPage } = window.secondaryTablePagination;
+        if (currentPage * rowsPerPage < filteredRows.length) paginateTable(currentPage + 1);
+    });
+
+    // Export to CSV
+    document.querySelector('button.flex.items-center.space-x-2.px-4.py-2.border.border-gray-200.rounded-md').addEventListener('click', function() {
+        exportVisibleTableToCSV();
+    });
+
+    function exportVisibleTableToCSV() {
+        const table = document.querySelector('table');
+        const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText.trim());
+        const { filteredRows, currentPage, rowsPerPage } = window.secondaryTablePagination;
+        const startIdx = (currentPage - 1) * rowsPerPage;
+        const endIdx = startIdx + rowsPerPage;
+        const visibleRows = filteredRows.slice(startIdx, endIdx);
+
+        let csvContent = '';
+        csvContent += headers.join(',') + '\n';
+
+        visibleRows.forEach(row => {
+            const cells = Array.from(row.querySelectorAll('td')).map(td => {
+                return '"' + td.innerText.replace(/"/g, '""').replace(/\n/g, ' ').replace(/,/g, ' ') + '"';
+            });
+            csvContent += cells.join(',') + '\n';
+        });
+
+        // Download CSV
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'secondary_applications.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Re-filter and paginate on load
+    filterTable(statusFilter ? statusFilter.value : 'All...');
+});
+
 window.showFullNames = function(owners) {
   if (!Array.isArray(owners)) {
     owners = [];

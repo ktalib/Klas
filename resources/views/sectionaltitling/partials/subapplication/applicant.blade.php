@@ -94,9 +94,9 @@
                             <!-- Right side - Photo Upload -->
                             <div>
                                 <div id="photoUploadContainer"
-                                    class="relative w-full h-[215px] border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    class="relative w-full aspect-[7/9] max-w-xs mx-auto border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors">
                                     <div id="photoPlaceholder"
-                                        class="flex flex-col items-center justify-center text-gray-400">
+                                        class="flex flex-col items-center justify-center text-gray-400 w-full h-full">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-2" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -106,7 +106,7 @@
                                         </svg>
                                         <p class="text-sm">Upload Photo</p>
                                     </div>
-                                    <img id="photoPreview" class="w-full h-full object-cover rounded-lg hidden" src="#"
+                                    <img id="photoPreview" class="w-full h-full object-contain rounded-lg hidden" src="#"
                                         alt="">
                                     <button type="button" id="removePhotoBtn"
                                         class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hidden hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
@@ -183,14 +183,17 @@
             
             const row = document.createElement('div');
             row.id = rowId;
-            row.className = 'grid grid-cols-12 gap-4 p-4';
-            
+            row.className = 'grid grid-cols-12 gap-4 p-4 border-b border-gray-100';
+
             row.innerHTML = `  
                 <div class="col-span-7">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
                     <input type="text" name="multiple_owners_names[]" 
                            class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm" 
                            placeholder="Enter full name">
+                    <div class="mt-2">
+                        <input type="text" name="multiple_owners_address[]" class="w-full p-2 border border-gray-300 rounded-md text-xs" placeholder="Address">
+                    </div>
                 </div>
                 <div class="col-span-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Passport Photo</label>
@@ -268,6 +271,9 @@
                     photoPreview.classList.remove('hidden');
                     photoPlaceholder.classList.add('hidden');
                     removePhotoBtn.classList.remove('hidden');
+                    // Ensure object-contain is always applied
+                    photoPreview.classList.remove('object-cover');
+                    photoPreview.classList.add('object-contain');
                 }
                 reader.readAsDataURL(file);
             }
@@ -355,4 +361,4 @@
             fullnameInput.value = applicantName.trim();
         }
     </script>
-
+        

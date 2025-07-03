@@ -28,11 +28,11 @@ Implement a view (e.g., a data table) to list all captured POA instruments.
 The table should display key information such as particularsRegistrationNumber, Grantor, Grantee, instrumentDate, and instrument_type.
 II. Auto-Generation of particularsRegistrationNumber
 
-This system is primarily invoked when a primary application identifier (e.g., an application's "Root Title Reg No") is not available for an instrument.
+This system is primarily invoked when a primary application identifier (e.g., an application's "Root Title Registration Particulars") is not available for an instrument.
 
 Triggering Mechanism:
 In the user interface where an instrument is being created or managed (likely in relation to a parent application):
-If the associated application is missing its "Root Title Reg No", display a button labeled "Generate Particulars Registration Number".
+If the associated application is missing its "Root Title Registration Particulars", display a button labeled "Generate Particulars Registration Number".
 particularsRegistrationNumber Generation Logic:
 Format: The particularsRegistrationNumber will be a string in the format S/P/V, where:
 S = serial_no

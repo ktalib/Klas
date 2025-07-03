@@ -100,7 +100,7 @@
                                     </div>
                                     <div class="col-3 text-center mb-3">
                                         <button type="button" class="btn btn-warning w-100">
-                                            <i class="fa fa-address-card"></i><br>Generate Reg No
+                                            <i class="fa fa-address-card"></i><br>Generate Registration Particulars
                                         </button>
                                     </div>
                                     <div class="col-3 text-center mb-3">

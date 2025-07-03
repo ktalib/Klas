@@ -1,6 +1,9 @@
 // Use server-provided data instead of sample data
 let cofoData = [];
 
+// Base URL for API endpoints defined in blade
+const baseUrl = window.baseUrl || '';
+
 // Helper function to capitalize first letter (moved to the top)
 function capitalizeFirstLetter(string) {
   if (!string) return '';
@@ -8,7 +11,8 @@ function capitalizeFirstLetter(string) {
 }
 
 // Initialize variables
-let activeTab = 'pending';
+// Show all instruments by default in main table
+let activeTab = 'all';
 let selectedUnitIndex = -1;
 let selectedProperties = [];
 let selectedBatchProperties = [];
@@ -46,11 +50,10 @@ window.populateAvailablePropertiesTable = function() {
     return;
   }
   
-  // Get filter values
-  const statusFilter = document.getElementById('batchStatusFilter')?.value || 'pending';
+  // Get search input value
   const searchInput = document.getElementById('batchSearchInput')?.value?.toLowerCase() || '';
   
-  console.log("Filter settings:", { statusFilter, searchInput });
+  console.log("Search input:", searchInput);
   console.log("cofoData length:", cofoData ? cofoData.length : 0);
   
   // Validate cofoData
@@ -65,19 +68,23 @@ window.populateAvailablePropertiesTable = function() {
     return;
   }
   
-  // Filter data
+  // Filter data by search input only (filter is already applied by the server)
   let filteredData = [...cofoData]; // Make a copy
   
-  // Debug: Print sample of original data
-  console.log("Sample data before filtering:", filteredData.slice(0, 2));
-  
-  if (statusFilter === 'pending') {
+  // Apply search filter if there's a search term
+  if (searchInput) {
     filteredData = filteredData.filter(item => {
-      const itemStatus = (item.status || '').toLowerCase();
-      const isPending = itemStatus === 'pending' || itemStatus === '';
-      return isPending;
+      const fileNo = (item.fileNo || '').toLowerCase();
+      const grantor = (item.grantor || '').toLowerCase();
+      const grantee = (item.grantee || '').toLowerCase();
+      return fileNo.includes(searchInput) || 
+             grantor.includes(searchInput) || 
+             grantee.includes(searchInput);
     });
   }
+  
+  // Debug: Print sample of filtered data
+  console.log("Sample data after filtering:", filteredData.slice(0, 2));
   // Clear the table first
   table.innerHTML = '';
   
@@ -179,25 +186,122 @@ window.openBatchRegisterModalImplementation = function() {
       </td></tr>`;
   }
 
-  // populate after render
-  setTimeout(() => {
-    try {
-      populateAvailablePropertiesTable();
-    } catch (e) {
-      console.error("Error populating batch table:", e);
+  // fetch batch data and populate table
+  const baseUrl = window.location.origin + '/gisedms';
+  const filter = document.getElementById('batchStatusFilter').value;
+  fetch(`${baseUrl}/instrument_registration/get-batch-data?filter=${filter}`, {
+    method: 'GET',
+    credentials: 'same-origin'
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Batch data received:', data);
+    // Ensure data is an array
+    if (Array.isArray(data)) {
+      cofoData = data.map(item => ({
+        id: item.id,
+        fileNo: item.fileno,
+        grantor: item.grantor,
+        grantee: item.grantee,
+        status: item.status || 'pending',
+        instrumentType: item.instrument_type || '',
+        source_type: item.source_type || ''
+      }));
+    } else if (data && data.error) {
+      console.error('Server error:', data.error);
+      cofoData = [];
       if (table) {
         table.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-red-500">
-          Error loading instruments: ${e.message}
+          Server error: ${data.error}
         </td></tr>`;
       }
+      return;
+    } else {
+      console.error('Expected array but got:', typeof data, data);
+      cofoData = [];
     }
-  }, 100);
+    populateAvailablePropertiesTable();
+  })
+  .catch(error => {
+    console.error('Error fetching batch data:', error);
+    if (table) {
+      table.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-red-500">
+        Error loading instruments: ${error.message}
+      </td></tr>`;
+    }
+  });
 
   // fetch next serial
   if (typeof fetchNextSerialNumber === 'function') {
     fetchNextSerialNumber();
   }
 };
+
+// Function to fetch batch data for a specific filter
+function fetchBatchDataForFilter(filter) {
+  console.log('Fetching data for filter:', filter);
+  
+  const table = document.getElementById('availablePropertiesTable');
+  if (table) {
+    table.innerHTML = `
+      <tr><td colspan="5" class="px-6 py-10 text-center text-gray-500">
+        <i class="fas fa-spinner fa-spin mr-2"></i> Loading ${filter} data...
+      </td></tr>`;
+  }
+
+  const baseUrl = window.location.origin + '/gisedms';
+  fetch(`${baseUrl}/instrument_registration/get-batch-data?filter=${filter}`, {
+    method: 'GET',
+    credentials: 'same-origin'
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Filter data received:', data);
+    // Ensure data is an array
+    if (Array.isArray(data)) {
+      cofoData = data.map(item => ({
+        id: item.id,
+        fileNo: item.fileno,
+        grantor: item.grantor,
+        grantee: item.grantee,
+        status: item.status || 'pending',
+        instrumentType: item.instrument_type || '',
+        source_type: item.source_type || ''
+      }));
+    } else if (data && data.error) {
+      console.error('Server error:', data.error);
+      cofoData = [];
+      if (table) {
+        table.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-red-500">
+          Server error: ${data.error}
+        </td></tr>`;
+      }
+      return;
+    } else {
+      console.error('Expected array but got:', typeof data, data);
+      cofoData = [];
+    }
+    populateAvailablePropertiesTable();
+  })
+  .catch(error => {
+    console.error('Error fetching filter data:', error);
+    if (table) {
+      table.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-red-500">
+        Error loading ${filter} data: ${error.message}
+      </td></tr>`;
+    }
+  });
+}
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
@@ -211,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
         id: item.id,
         fileNo: item.fileno || item.MLSFileNo,
         grantor: item.Grantor || '',
-        grantee: item.Grantee || '',
+        grantee: item.Grantee != null ? String(item.Grantee) : '',
         instrumentType: item.instrument_type || '',
         duration: item.duration || item.leasePeriod || '',
         lga: item.lga || '',
@@ -249,7 +353,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const batchStatusFilter = document.getElementById('batchStatusFilter');
   if (batchStatusFilter) {
     batchStatusFilter.addEventListener('change', function() {
-      populateAvailablePropertiesTable();
+      console.log('Filter changed to:', this.value);
+      fetchBatchDataForFilter(this.value);
     });
   }
   
@@ -278,7 +383,7 @@ function fetchNextSerialNumber() {
   }
   
   // Use the correct route for the instrument_registration controller
-  return fetch('http://localhost/gisedms/instrument_registration/get-next-serial', {
+  return fetch(`${baseUrl}/instrument_registration/get-next-serial`, {
     method: 'GET',
     headers: headers,
     credentials: 'same-origin' // Include cookies in the request
@@ -516,10 +621,42 @@ function openSingleRegisterModalWithData(id) {
   // Convert id to string to ensure consistent comparison
   id = String(id);
   
-  // Find the application by id
-  const application = cofoData.find(item => String(item.id) === id);
+  // Find the application by id - first try cofoData, then serverCofoData
+  let application = cofoData.find(item => String(item.id) === id);
+  
+  // If not found in cofoData, try serverCofoData (main table data)
+  if (!application && typeof serverCofoData !== 'undefined') {
+    const serverItem = serverCofoData.find(item => String(item.id) === id);
+    if (serverItem) {
+      application = {
+        id: serverItem.id,
+        fileNo: serverItem.fileno || serverItem.MLSFileNo,
+        grantor: serverItem.Grantor || '',
+        grantee: serverItem.Grantee != null ? String(serverItem.Grantee) : '',
+        instrumentType: serverItem.instrument_type || '',
+        duration: serverItem.duration || serverItem.leasePeriod || '',
+        lga: serverItem.lga || '',
+        district: serverItem.district || '',
+        plotNumber: serverItem.plotNumber || '',
+        plotSize: serverItem.size || '',
+        plotDescription: serverItem.propertyDescription || '',
+        deeds_date: serverItem.deeds_date || serverItem.instrumentDate || '',
+        deeds_time: serverItem.deeds_time || '',
+        rootRegistrationNumber: serverItem.rootRegistrationNumber || serverItem.Deeds_Serial_No || '',
+        status: serverItem.status || 'pending',
+        solicitorName: serverItem.solicitorName || '',
+        solicitorAddress: serverItem.solicitorAddress || '',
+        landUseType: serverItem.landUseType || serverItem.land_use || ''
+      };
+    }
+  }
   
   if (!application) {
+    console.error('Instrument not found with ID:', id);
+    console.log('Available cofoData IDs:', cofoData.map(item => item.id));
+    if (typeof serverCofoData !== 'undefined') {
+      console.log('Available serverCofoData IDs:', serverCofoData.map(item => item.id));
+    }
     Swal.fire({
       title: 'Error',
       text: 'Instrument not found. Please try again.',
@@ -846,20 +983,7 @@ function updateSelectedPropertiesTable() {
       <td class="px-6 py-4 whitespace-nowrap text-sm">${property.grantor || 'N/A'}</td>
       <td class="px-6 py-4 whitespace-nowrap text-sm">${property.grantee || 'N/A'}</td>
       <td class="px-6 py-4 whitespace-nowrap text-sm">
-        <select class="w-full px-3 py-1 border rounded-md instrument-type-select" data-index="${index}">
-          <option value="" ${!property.instrumentType ? 'selected' : ''}>Select Type</option>
-          <option value="assignment" ${property.instrumentType === 'assignment' ? 'selected' : ''}>Assignment</option>
-          <option value="mortgage" ${property.instrumentType === 'mortgage' ? 'selected' : ''}>Mortgage</option>
-          <option value="lease" ${property.instrumentType === 'lease' ? 'selected' : ''}>Lease</option>
-          <option value="sublease" ${property.instrumentType === 'sublease' ? 'selected' : ''}>Sub-Lease</option>
-          <option value="consent" ${property.instrumentType === 'consent' ? 'selected' : ''}>Consent</option>
-          <option value="release" ${property.instrumentType === 'release' ? 'selected' : ''}>Release</option>
-          <option value="surrender" ${property.instrumentType === 'surrender' ? 'selected' : ''}>Surrender</option>
-          <option value="vesting" ${property.instrumentType === 'vesting' ? 'selected' : ''}>Vesting Order</option>
-          <option value="variation" ${property.instrumentType === 'variation' ? 'selected' : ''}>Deed of Variation</option>
-          <option value="assent" ${property.instrumentType === 'assent' ? 'selected' : ''}>Assent</option>
-          <option value="merger" ${property.instrumentType === 'merger' ? 'selected' : ''}>Merger</option>
-        </select>
+        <input type="text" class="w-full px-3 py-1 border rounded-md bg-gray-100" value="${property.instrumentType || 'N/A'}" readonly>
       </td>
       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${property.serialData.deeds_serial_no}</td>
       <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
@@ -872,13 +996,7 @@ function updateSelectedPropertiesTable() {
     table.appendChild(row);
   });
   
-  // Add event listeners for instrument type selects
-  document.querySelectorAll('.instrument-type-select').forEach(select => {
-    select.addEventListener('change', function() {
-      const index = parseInt(this.getAttribute('data-index'), 10);
-      selectedBatchProperties[index].instrumentType = this.value;
-    });
-  });
+  // Instrument types are now automatically determined, no event listeners needed
 }
 
 // Remove property from batch - Make sure it's properly defined
@@ -933,7 +1051,7 @@ document.addEventListener('DOMContentLoaded', function() {
         id: item.id,
         fileNo: item.fileno || item.MLSFileNo,
         grantor: item.Grantor || '',
-        grantee: item.Grantee || '',
+        grantee: item.Grantee != null ? String(item.Grantee) : '',
         instrumentType: item.instrument_type || '',
         duration: item.duration || item.leasePeriod || '',
         lga: item.lga || '',
@@ -962,18 +1080,13 @@ function initializeCalendars() {
 
 // Submit single registration
 function submitSingleRegistration() {
-  // Check for required fields
   const instrumentType = document.getElementById('instrumentType').value;
   const grantor = document.getElementById('grantor').value;
-  const grantee = document.getElementById('grantee').value;
+  
   const deedsTime = document.getElementById('deedsTime').value;
   const deedsDate = document.getElementById('deedsDate').value;
   
-  if (!instrumentType || !grantor || !grantee || !deedsTime || !deedsDate) {
-    Swal.fire('Error', 'Please fill all required fields', 'error');
-    return;
-  }
-
+  
   const data = {
     mother_application_id: document.getElementById('formInstrumentId').value,
     file_no: document.getElementById('selectedFileNo').textContent,
@@ -1028,12 +1141,7 @@ function submitBatchRegistration() {
     return;
   }
   
-  // Check if all instruments have types selected
-  const missingTypes = selectedBatchProperties.some(p => !p.instrumentType);
-  if (missingTypes) {
-    Swal.fire('Error', 'All instruments must have a type selected', 'error');
-    return;
-  }
+  // Instrument types are automatically determined from the source data
   
   const batchEntries = selectedBatchProperties.map(p => ({
     application_id: p.id,

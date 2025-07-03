@@ -1216,6 +1216,23 @@
             }
 
             console.log('JavaScript initialization complete');
+
+            // Assistant toggle functionality
+            const assistantToggle = document.getElementById('assistant-toggle');
+            const manualAssistant = document.getElementById('manual-assistant');
+            const aiAssistant = document.getElementById('ai-assistant');
+
+            if (assistantToggle && manualAssistant && aiAssistant) {
+                assistantToggle.addEventListener('change', function() {
+                    if (this.checked) {
+                        manualAssistant.style.display = 'none';
+                        aiAssistant.style.display = 'block';
+                    } else {
+                        manualAssistant.style.display = 'block';
+                        aiAssistant.style.display = 'none';
+                    }
+                });
+            }
         });
 
     </script>

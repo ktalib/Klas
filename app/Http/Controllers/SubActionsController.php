@@ -80,7 +80,7 @@ class SubActionsController extends Controller
     public function Payment($id)
     {
         $PageTitle = 'Payment';
-        $PageDescription = 'Sub-Application Payment Management';
+        $PageDescription = 'Sub-Application Bills Management';
         
         $application = $this->getApplication($id);
         if ($application instanceof \Illuminate\Http\JsonResponse) {

@@ -201,11 +201,15 @@ class PrimaryActionsController extends Controller
     public function getConveyance($applicationId)
     {
         try {
-            // Query the buyer_list table instead of relying on the JSON field
+            // Query the buyer_list table and join with st_unit_measurements to include measurements
             $records = DB::connection('sqlsrv')
-                ->table('buyer_list')
-                ->where('application_id', $applicationId)
-                ->select('id', 'buyer_title', 'buyer_name', 'unit_no', 'unit_measurement_id')
+                ->table('buyer_list as bl')
+                ->leftJoin('st_unit_measurements as sum', function($join) use ($applicationId) {
+                    $join->on('bl.unit_no', '=', 'sum.unit_no')
+                         ->where('sum.application_id', '=', $applicationId);
+                })
+                ->where('bl.application_id', $applicationId)
+                ->select('bl.id', 'bl.buyer_title', 'bl.buyer_name', 'bl.unit_no', 'bl.unit_measurement_id', 'sum.measurement')
                 ->get()
                 ->toArray();
 
@@ -263,9 +267,13 @@ class PrimaryActionsController extends Controller
 
             // Get updated records list for response
             $updatedRecords = DB::connection('sqlsrv')
-                ->table('buyer_list')
-                ->where('application_id', $applicationId)
-                ->select('id', 'buyer_title', 'buyer_name', 'unit_no', 'unit_measurement_id')
+                ->table('buyer_list as bl')
+                ->leftJoin('st_unit_measurements as sum', function($join) use ($applicationId) {
+                    $join->on('bl.unit_no', '=', 'sum.unit_no')
+                         ->where('sum.application_id', '=', $applicationId);
+                })
+                ->where('bl.application_id', $applicationId)
+                ->select('bl.id', 'bl.buyer_title', 'bl.buyer_name', 'bl.unit_no', 'bl.unit_measurement_id', 'sum.measurement')
                 ->get();
 
             return response()->json([
@@ -326,9 +334,13 @@ class PrimaryActionsController extends Controller
 
             // Get all records for the response
             $allRecords = DB::connection('sqlsrv')
-                ->table('buyer_list')
-                ->where('application_id', $applicationId)
-                ->select('id', 'buyer_title', 'buyer_name', 'unit_no', 'unit_measurement_id')
+                ->table('buyer_list as bl')
+                ->leftJoin('st_unit_measurements as sum', function($join) use ($applicationId) {
+                    $join->on('bl.unit_no', '=', 'sum.unit_no')
+                         ->where('sum.application_id', '=', $applicationId);
+                })
+                ->where('bl.application_id', $applicationId)
+                ->select('bl.id', 'bl.buyer_title', 'bl.buyer_name', 'bl.unit_no', 'bl.unit_measurement_id', 'sum.measurement')
                 ->get();
 
             return response()->json([
@@ -373,9 +385,13 @@ class PrimaryActionsController extends Controller
 
             // Get remaining records
             $records = DB::connection('sqlsrv')
-                ->table('buyer_list')
-                ->where('application_id', $validated['application_id'])
-                ->select('id', 'buyer_title', 'buyer_name', 'unit_no', 'unit_measurement_id')
+                ->table('buyer_list as bl')
+                ->leftJoin('st_unit_measurements as sum', function($join) use ($validated) {
+                    $join->on('bl.unit_no', '=', 'sum.unit_no')
+                         ->where('sum.application_id', '=', $validated['application_id']);
+                })
+                ->where('bl.application_id', $validated['application_id'])
+                ->select('bl.id', 'bl.buyer_title', 'bl.buyer_name', 'bl.unit_no', 'bl.unit_measurement_id', 'sum.measurement')
                 ->get();
 
             return response()->json([

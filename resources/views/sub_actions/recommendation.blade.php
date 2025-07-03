@@ -228,12 +228,22 @@
                                                     </script>
                                                 </div>
                                             </div>
-                                            <div class="space-y-2">
+                                           <div class="space-y-2">
                                                 <label for="approval-date" class="text-xs font-medium block">
                                                     Approval/Decline Date
                                                 </label>
-                                                <input id="approval-date" type="date"
-                                                    class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                                                <div class="flex items-center space-x-2">
+                                                    <input id="approval-date" type="datetime-local" name="planning_approval_date"
+                                                        value="{{ old('planning_approval_date') ?? now()->format('Y-m-d\TH:i') }}"
+                                                        class="w-full p-2 border border-gray-300 rounded-md text-sm"
+                                                        max="{{ now()->format('Y-m-d\TH:i') }}"
+                                                    >
+                                                    <button type="button" onclick="document.getElementById('approval-date').value = '{{ now()->format('Y-m-d\TH:i') }}';"
+                                                        class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300">
+                                                        Use Current Date/Time
+                                                    </button>
+                                                </div>
+                                                <span class="text-xs text-gray-500">You cannot select a future date.</span>
                                             </div>
                                         </div>
                                      <div id="observationsContainer" class="grid grid-cols-1 gap-4" style="display: none;">

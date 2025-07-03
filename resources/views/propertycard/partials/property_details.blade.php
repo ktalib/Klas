@@ -78,7 +78,7 @@
                                     <span>{{ $property->location ?: 'N/A' }}</span>
                                 </div>
                                 <div class="flex justify-between text-xs">
-                                    <span class="text-gray-500">Reg No:</span>
+                                    <span class="text-gray-500">Registration Particulars:</span>
                                     <span>{{ $property->regNo ?: 'N/A' }}</span>
                                 </div>
                             </div>
@@ -129,7 +129,7 @@
                             <th>File Number</th>
                             <th>Description</th>
                             <th>Location</th>
-                            <th>Reg No</th>
+                            <th>Registration Particulars</th>
                             <th>Transaction Type</th>
                             <th>Instrument Type</th>
                             <th>Actions</th>

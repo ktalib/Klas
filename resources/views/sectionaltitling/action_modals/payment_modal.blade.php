@@ -50,7 +50,7 @@
       <div class="relative bg-white rounded-lg max-w-4xl w-full mx-auto shadow-xl">
         <!-- Header -->
         <div class="flex items-center justify-between p-4 border-b">
-          <h3 class="text-lg font-semibold">Payment Management</h3>
+          <h3 class="text-lg font-semibold">Bills Management</h3>
           <button type="button" class="text-gray-400 hover:text-gray-500" id="closePaymentBtn">
             <span class="sr-only">Close</span>
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

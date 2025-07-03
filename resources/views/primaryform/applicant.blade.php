@@ -18,7 +18,7 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-1">
                                             Title <span class="text-red-500">*</span>
                                         </label>
-                                        <select id="applicantTitle" name="applicant_title"
+                                        <select id="applicantTitle" name="applicant_title" required
                                             class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                                             onchange="updateApplicantNamePreview()">
                                             <option value="" disabled {{ old('applicant_title') ? '' : 'selected' }}>Select title</option>
@@ -54,7 +54,7 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-1">
                                             First Name <span class="text-red-500">*</span>
                                         </label>
-                                        <input type="text" id="applicantName" name="first_name" value="{{ old('first_name') }}"
+                                        <input type="text" id="applicantName" name="first_name" value="{{ old('first_name') }}" required
                                             class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                                             placeholder="Enter first name" oninput="updateApplicantNamePreview()">
                                     </div>
@@ -74,7 +74,7 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-1">
                                             Surname <span class="text-red-500">*</span>
                                         </label>
-                                        <input type="text" id="applicantSurname" name="surname" value="{{ old('surname') }}"
+                                        <input type="text" id="applicantSurname" name="surname" value="{{ old('surname') }}" required
                                             class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                                             placeholder="Enter surname" oninput="updateApplicantNamePreview()">
                                     </div>
@@ -94,34 +94,34 @@
                             <!-- Right side - Photo Upload -->
                             <div>
                                 <div id="photoUploadContainer"
-                                    class="relative w-full h-[215px] border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    class="relative w-full max-w-[200px] aspect-[3.5/4.5] border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors mx-auto">
                                     <div id="photoPlaceholder"
-                                        class="flex flex-col items-center justify-center text-gray-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-2" fill="none"
+                                        class="flex flex-col items-center justify-center text-gray-400 absolute inset-0 z-10 bg-gray-50 rounded-lg">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 sm:h-12 sm:w-12 mb-2" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
-                                        <p class="text-sm">Upload Photo</p>
+                                        <p class="text-xs sm:text-sm text-center px-2">Upload Photo<br>(3.5 x 4.5 cm)</p>
                                     </div>
-                                    <img id="photoPreview" class="w-full h-full object-cover rounded-lg hidden" src="#"
-                                        alt="">
+                                    <img id="photoPreview" class="w-full h-full object-contain rounded-lg absolute inset-0 z-20 hidden border-2 border-blue-400 bg-white" src="#"
+                                        alt="Passport Photo Preview">
                                     <button type="button" id="removePhotoBtn"
-                                        class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hidden hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                        class="absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500 text-white rounded-full p-1 hidden hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 z-30"
                                         onclick="removePhoto()">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                        <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M6 18L18 6M6 6l12 12" />
                                         </svg>
                                     </button>
                                     <input type="file" id="photoUpload" name="passport" accept="image/*"
-                                        class="absolute inset-0 opacity-0 cursor-pointer"
+                                        class="absolute inset-0 opacity-0 cursor-pointer z-40"
                                         onchange="previewPhoto(event)">
                                 </div>
-                                <p class="text-xs text-gray-500 mt-2 text-center">Passport size photo (3.5 x 4.5 cm)</p>
+                                <p class="text-xs text-gray-500 mt-2 text-center">Passport size photo (3.5 x 4.5 cm, American embassy size, clear background, max 2MB)</p>
                             </div>
                         </div>
                     </div>
@@ -136,7 +136,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Name of Corporate Body <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="corporateName" name="corporate_name" value="{{ old('corporate_name') }}"
+                                <input type="text" id="corporateName" name="corporate_name" value="{{ old('corporate_name') }}" required
                                     class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                                     placeholder="Enter corporate body name">
                             </div>
@@ -144,7 +144,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     RC Number <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="rcNumber" name="rc_number" value="{{ old('rc_number') }}"
+                                <input type="text" id="rcNumber" name="rc_number" value="{{ old('rc_number') }}" required
                                     class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                                     placeholder="Enter RC number">
                             </div>
@@ -185,24 +185,34 @@
             row.id = rowId;
             row.className = 'grid grid-cols-12 gap-4 p-4 border border-gray-200 rounded-lg bg-white shadow-sm';
             
-            row.innerHTML = `  
-                <div class="col-span-7">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
-                    <input type="text" name="multiple_owners_names[]" 
-                           class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm" 
-                           placeholder="Enter full name">
+            row.innerHTML = `
+                <div class="col-span-12 md:col-span-7">
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
+                            <input type="text" name="multiple_owners_names[]" required
+                                class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm" 
+                                placeholder="Enter full name">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Address <span class="text-red-500">*</span></label>
+                            <input type="text" name="multiple_owners_address[]" required
+                                class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm" 
+                                placeholder="Enter address">
+                        </div>
+                    </div>
                 </div>
-                <div class="col-span-4">
+                <div class="col-span-12 md:col-span-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Passport Photo</label>
                     <div class="relative">
                         <input type="file" name="multiple_owners_passport[]" 
-                               class="w-full py-2.5 px-4 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:outline-none" 
-                               accept="image/*" 
-                               onchange="previewOwnerPhoto(event, '${rowId}')">
-                        <img class="owner-preview hidden w-16 h-16 object-cover mt-2 rounded-md shadow-sm" src="#" alt="Preview">
+                            class="w-full py-2.5 px-4 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:outline-none" 
+                            accept="image/*" 
+                            onchange="previewOwnerPhoto(event, '${rowId}')">
+                        <img class="owner-preview hidden w-16 h-20 object-contain mt-2 rounded-md shadow-sm border border-gray-200 bg-white" src="#" alt="Preview">
                     </div>
                 </div>
-                <div class="col-span-1 flex items-center justify-center">
+                <div class="col-span-12 md:col-span-1 flex items-center justify-center">
                     <button type="button" onclick="removeOwnerRow('${rowId}')" 
                             class="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

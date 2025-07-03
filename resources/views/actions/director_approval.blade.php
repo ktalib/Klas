@@ -122,20 +122,18 @@
                     <div style="display:{{$is_view}}">
 
                       <div class="grid grid-cols-3 gap-2 mb-4">
-                       <button class="tab-button active" data-tab="detterment">
-                        <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
-                        DOCUMENTS
-                      </button>
-                     
-                      <button class="tab-button " data-tab="summary">
-                        <i data-lucide="user" class="w-3.5 h-3.5 mr-1.5"></i>
-                        SUMMARY
-                      </button> 
-
-                      <button class="tab-button " data-tab="initial">
-                        <i data-lucide="banknote" class="w-3.5 h-3.5 mr-1.5"></i>
-                        APPROVAL
-                      </button>
+                        <button class="tab-button active" data-tab="summary">
+                          <i data-lucide="user" class="w-3.5 h-3.5 mr-1.5"></i>
+                          SUMMARY
+                        </button>
+                        <button class="tab-button" data-tab="detterment">
+                          <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
+                          DOCUMENTS
+                        </button>
+                        <button class="tab-button " data-tab="initial">
+                          <i data-lucide="banknote" class="w-3.5 h-3.5 mr-1.5"></i>
+                          APPROVAL
+                        </button>
                     
 
                     
@@ -150,7 +148,7 @@
                       </div>
                   
                       <!-- Summary Tab -->
-                      <div id="summary-tab" class="tab-content">
+                      <div id="summary-tab" class="tab-content active">
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                           <div class="p-4 border-b">
                             <h3 class="text-sm font-medium">Applicant Summary</h3>
@@ -414,7 +412,7 @@
                
                 
                       <!-- Detterment Bill Tab -->
-                        <div id="detterment-tab" class="tab-content active">
+                        <div id="detterment-tab" class="tab-content">
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                           <div class="p-4 border-b">
                           <h3 class="text-sm font-medium">Documents</h3>
@@ -639,11 +637,21 @@
                                 </div>
                               </div>
                               <div class="grid grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <label for="approval_date" class="block text-gray-700 mb-2">Approval/Decline Date</label>
-                                    <input type="date" class="w-full border rounded px-3 py-2" id="approval_date"
-                                        name="approval_date" required>
-                                </div>
+                                      <label for="approval_date" class="block text-gray-700 mb-2">Approval/Decline Date</label>
+                               
+                                <div class="flex items-center space-x-2">
+                                                    <input id="approval_date"
+                                        name="approval_date"  type="datetime-local"  
+                                                        value="{{ old('approval_date') ?? now()->format('Y-m-d\TH:i') }}"
+                                                        class="w-full p-2 border border-gray-300 rounded-md text-sm"
+                                                        max="{{ now()->format('Y-m-d\TH:i') }}"
+                                                    >
+                                                    <button type="button" onclick="document.getElementById('approval-date').value = '{{ now()->format('Y-m-d\TH:i') }}';"
+                                                        class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300">
+                                                        Use Current Date/Time
+                                                    </button>
+                                                </div>
+                                                <span class="text-xs text-gray-500">You cannot select a future date.</span>
                             </div>
                               <div id="reasonForDeclineContainer" class="mb-4 hidden">
                                 <label for="reasonForDecline" class="block text-sm font-medium text-gray-700">Reason For Decline</label>

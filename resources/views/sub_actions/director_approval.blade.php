@@ -726,14 +726,23 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="grid grid-cols-2 gap-4 mb-4">
-                                                    <div>
-                                                        <label for="approval_date"
-                                                            class="block text-gray-700 mb-2">Approval/Decline Date</label>
-                                                        <input type="date" class="w-full border rounded px-3 py-2"
-                                                            id="approval_date" name="approval_date" required>
-                                                    </div>
+                                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                      <label for="approval_date" class="block text-gray-700 mb-2">Approval/Decline Date</label>
+                               
+                                <div class="flex items-center space-x-2">
+                                                    <input id="approval_date"
+                                        name="approval_date"  type="datetime-local"  
+                                                        value="{{ old('approval_date') ?? now()->format('Y-m-d\TH:i') }}"
+                                                        class="w-full p-2 border border-gray-300 rounded-md text-sm"
+                                                        max="{{ now()->format('Y-m-d\TH:i') }}"
+                                                    >
+                                                    <button type="button" onclick="document.getElementById('approval-date').value = '{{ now()->format('Y-m-d\TH:i') }}';"
+                                                        class="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300">
+                                                        Use Current Date/Time
+                                                    </button>
                                                 </div>
+                                                <span class="text-xs text-gray-500">You cannot select a future date.</span>
+                            </div>
                                                 <div id="reasonForDeclineContainer" class="mb-4 hidden">
                                                     <label for="reasonForDecline"
                                                         class="block text-sm font-medium text-gray-700">Reason For

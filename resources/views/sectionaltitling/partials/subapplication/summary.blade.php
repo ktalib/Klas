@@ -107,7 +107,9 @@
                 <tr>
                   <td class="py-1 text-gray-600">File Number:</td>
                   <td class="py-1 font-medium" id="summary-file-number">
-                    <span id="fileNumberDisplay">{{ $motherApplication->fileno ?? 'N/A' }}</span>
+                    <span id="fileNumberDisplay">
+                      {{ old('fileno') ?? (isset($fileno) ? $fileno : (isset($prefix) && isset($currentYear) && isset($formattedSerialNumber) ? $prefix . '-' . $currentYear . '-' . $formattedSerialNumber : 'N/A')) }}
+                    </span>
                   </td>
                 </tr>
                 <tr>
@@ -238,7 +240,7 @@
         
         <div class="flex justify-between mt-8">
           <div class="flex space-x-4">
-            <button class="px-4 py-2 bg-white border border-gray-300 rounded-md" id="backStep3">Back</button>
+            <button class="px-4 py-2 bg-white border border-gray-300 rounded-md" id="backStep4">Back</button>
             <button type="button" id="printApplicationBtn" class="px-4 py-2 bg-white border border-gray-300 rounded-md flex items-center">
               <i data-lucide="printer" class="w-4 h-4 mr-2"></i>
               Print Application Slip
@@ -272,7 +274,9 @@
           <span>Date: <span id="print-date"></span></span>
         </div>
         <div class="flex justify-between">
-          <span>File Number: <span id="print-file-number">{{ $motherApplication->fileno ?? 'N/A' }}</span></span>
+          <span>File Number: <span id="print-file-number">
+            {{ old('fileno') ?? (isset($fileno) ? $fileno : (isset($prefix) && isset($currentYear) && isset($formattedSerialNumber) ? $prefix . '-' . $currentYear . '-' . $formattedSerialNumber : 'N/A')) }}
+          </span></span>
           <span>Land Use: <span id="print-land-use">{{ $motherApplication->land_use ?? 'N/A' }}</span></span>
         </div>
       </div>

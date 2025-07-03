@@ -37,7 +37,7 @@ class PrimaryFormController extends Controller
                 'corporate_name' => 'nullable',
                 'rc_number' => 'nullable',
                 'multiple_owners_names' => 'nullable|array',
-              
+                'multiple_owners_address' => 'nullable|array',
                 'multiple_owners_passport' => 'nullable|array',
                 'multiple_owners_passport.*' => 'nullable|image|max:5120',
                 'address_house_no' => 'nullable',
@@ -48,6 +48,7 @@ class PrimaryFormController extends Controller
                 'phone_number' => 'nullable',
                 'owner_email' => 'nullable|email',
                 'idType' => 'nullable',
+                'id_document' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png',
                 'residenceType' => 'nullable',
                 'units_count' => 'nullable',
                 'blocks_count' => 'nullable',
@@ -97,6 +98,21 @@ class PrimaryFormController extends Controller
             if ($request->hasFile('passport')) {
                 $passport = $request->file('passport');
                 $passportPath = $passport->store('passports', 'public');
+            }
+
+            // Handle ID document upload
+            $idDocumentPath = null;
+            if ($request->hasFile('id_document')) {
+                $idDocument = $request->file('id_document');
+                $originalName = $idDocument->getClientOriginalName();
+                $extension = $idDocument->getClientOriginalExtension();
+                $idDocumentPath = $idDocument->store('id_documents', 'public');
+                
+                Log::info('ID Document uploaded', [
+                    'path' => $idDocumentPath,
+                    'original_name' => $originalName,
+                    'type' => $extension
+                ]);
             }
 
             // Handle multiple owners passports upload
@@ -171,8 +187,10 @@ class PrimaryFormController extends Controller
                 'corporate_name' => $request->input('corporate_name'),
                 'rc_number' => $request->input('rc_number'),
                 'multiple_owners_names' => $request->has('multiple_owners_names') ? json_encode($request->input('multiple_owners_names')) : null,
+                'multiple_owners_address' => $request->has('multiple_owners_address') ? json_encode($request->input('multiple_owners_address')) : null,
                 'multiple_owners_passport' => !empty($multipleOwnersPassportPaths) ? json_encode($multipleOwnersPassportPaths) : null,
                 'passport' => $passportPath,
+                'id_document' => $idDocumentPath,
                 'fileno' => $fileNo,
                 'address' =>$request->input('address'),
                 'address_house_no' => $request->input('address_house_no'),

@@ -24,6 +24,7 @@ use App\Http\Controllers\STTransferOfTitleController;
 use App\Http\Controllers\DeedsDepartmentController;
 use App\Http\Controllers\LandsDepartmentController;
 use App\Http\Controllers\SubPlanningRecommendationController;
+
 // Public routes
 Route::get('/primary-applications/{id}', [PrimaryActionsController::class, 'show']);
 

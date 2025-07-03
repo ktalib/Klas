@@ -68,7 +68,7 @@
 
                <div class="grid grid-cols-2 gap-6 mb-6">
                    <div class="border border-gray-200 rounded-md p-4">
-                       <h4 class="font-medium mb-2">Application Letter</h4>
+                       <h4 class="font-medium mb-2">Application Letter <span class="text-red-500">*</span></h4>
                        <p class="text-sm text-gray-600 mb-4">Formal letter requesting sectional titling</p>
 
                        <div class="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
@@ -77,7 +77,7 @@
                            </div>
                            <div class="flex justify-center">
                                <input type="file" name="application_letter" id="application_letter"
-                                   accept=".pdf,.jpg,.jpeg,.png" class="hidden"
+                                   accept=".pdf,.jpg,.jpeg,.png" class="hidden" required
                                    onchange="updateFileName(this, 'application_letter_label')">
                                <label for="application_letter" id="application_letter_label"
                                    class="flex items-center text-blue-600 cursor-pointer">
@@ -90,7 +90,7 @@
                    </div>
 
                    <div class="border border-gray-200 rounded-md p-4">
-                       <h4 class="font-medium mb-2">Building Plan</h4>
+                       <h4 class="font-medium mb-2">Building Plan <span class="text-red-500">*</span></h4>
                        <p class="text-sm text-gray-600 mb-4">Approved building plan with architectural details</p>
 
                        <div class="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
@@ -99,7 +99,7 @@
                            </div>
                            <div class="flex justify-center">
                                <input type="file" name="building_plan" id="building_plan"
-                                   accept=".pdf,.jpg,.jpeg,.png" class="hidden"
+                                   accept=".pdf,.jpg,.jpeg,.png" class="hidden" required
                                    onchange="updateFileName(this, 'building_plan_label')">
                                <label for="building_plan" id="building_plan_label"
                                    class="flex items-center text-blue-600 cursor-pointer">
@@ -135,7 +135,7 @@
                    </div>
 
                    <div class="border border-gray-200 rounded-md p-4">
-                       <h4 class="font-medium mb-2">Ownership Document</h4>
+                       <h4 class="font-medium mb-2">Ownership Document <span class="text-red-500">*</span></h4>
                        <p class="text-sm text-gray-600 mb-4">Proof of ownership (CofO, deed, etc.)</p>
 
                        <div class="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
@@ -144,7 +144,7 @@
                            </div>
                            <div class="flex justify-center">
                                <input type="file" name="ownership_document" id="ownership_document"
-                                   accept=".pdf,.jpg,.jpeg,.png" class="hidden"
+                                   accept=".pdf,.jpg,.jpeg,.png" class="hidden" required
                                    onchange="updateFileName(this, 'ownership_document_label')">
                                <label for="ownership_document" id="ownership_document_label"
                                    class="flex items-center text-blue-600 cursor-pointer">

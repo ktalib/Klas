@@ -54,7 +54,7 @@
                                       <br>
                                      <br>
                                       <span class="font-semibold text-gray-600 uppercase text-sm">TO:</span>
-                                     <span class="ml-2 text-gray-800 font-medium uppercase">PERMANENT SECRETARY</span>
+                                     <span class="ml-2 text-gray-800 font-medium uppercase">DIRECTOR ST</span>
                                </div>
                                <div>
                                     
@@ -75,7 +75,7 @@
                          The physical site inspection conducted revealed that this application is accessible, conforms with existing land use, and has shared common boundaries.
                     </p>
                     <p class="mb-4">
-                         The property is sub-divided into <span class="font-bold">{{ $measurements->count() }}</span> portions. 
+                         The property is fragmented into <span class="font-bold">{{ $measurements->count() }}</span> portions. 
                          All portions are accessible, conform with existing land use, and share the following facilities: 
                          <span class="font-bold">{{ $memo->shared_facilities }}</span> respective recommended measurements (See Overleat for the measurements)
                     </p>

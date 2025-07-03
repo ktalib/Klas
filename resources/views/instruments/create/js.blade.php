@@ -74,6 +74,12 @@
                 firstParty: 'Surrenderer',
                 secondParty: 'Recipient'
             },
+            'deed-of-variation': {
+                id: 'deed-of-variation',
+                name: 'Deed of Variation',
+                firstParty: 'Party',
+                secondParty: 'Counterparty'
+            },
             'deed-of-assent': {
                 id: 'deed-of-assent',
                 name: 'Deed of Assent',
@@ -85,6 +91,30 @@
                 name: 'Deed of Release',
                 firstParty: 'Releasor',
                 secondParty: 'Releasee'
+            },
+            'right-of-occupancy': {
+                id: 'right-of-occupancy',
+                name: 'Right of Occupancy (R of O)',
+                firstParty: 'Holder',
+                secondParty: 'Authority'
+            },
+            'certificate-of-occupancy': {
+                id: 'certificate-of-occupancy',
+                name: 'Certificate of Occupancy (C of O)',
+                firstParty: 'Holder',
+                secondParty: 'Authority'
+            },
+            'sectional-titling-c-of-o': {
+                id: 'sectional-titling-c-of-o',
+                name: 'Sectional Titling Certificate of Occupancy',
+                firstParty: 'Unit Owner',
+                secondParty: 'Authority'
+            },
+            'sltr-c-of-o': {
+                id: 'sltr-c-of-o',
+                name: 'Systematic Land Titling and Registration (SLTR) Certificate of Occupancy',
+                firstParty: 'Holder',
+                secondParty: 'Authority'
             }
         };
 
@@ -96,11 +126,13 @@
             cancelBtn: document.getElementById('cancel-btn'),
             submitBtn: document.getElementById('submit-btn'),
             isTemporaryFileNo: document.getElementById('isTemporaryFileNo'),
-            fileNumberType: document.getElementById('fileNumberType'),
-            filePrefix: document.getElementById('filePrefix'),
-            fileSerialNo: document.getElementById('fileSerialNo'),
-            fileNo: document.getElementById('fileNo'),
+            isTemporaryRegNo: document.getElementById('isTemporaryRegNo'),
+            temporaryFileNo: document.getElementById('temporaryFileNo'),
+            regenerateTempBtn: document.getElementById('regenerate-temp-btn'),
+            temporaryFileSection: document.getElementById('temporary-file-section'),
+            regularFileSection: document.getElementById('regular-file-section'),
             regNoSection: document.getElementById('reg-no-section'),
+            rootRegNoSection: document.getElementById('rootRegNoSection'),
             firstPartyTitle: document.getElementById('first-party-title'),
             firstPartyLabel: document.getElementById('first-party-label'),
             secondPartyTitle: document.getElementById('second-party-title'),
@@ -117,21 +149,7 @@
             return `TEMP-${paddedCounter}`;
         }
 
-        function formatFileNumber(type, prefix, serialNo) {
-            if (!prefix || !serialNo) return '';
-            
-            switch (type) {
-                case 'mlsFileNo':
-                    return `${prefix}-${serialNo}`;
-                case 'kangisFileNo':
-                    return `${prefix} ${serialNo}`;
-                case 'newKangisFileNo':
-                    return `${prefix}${serialNo}`;
-                default:
-                    return `${prefix}-${serialNo}`;
-            }
-        }
-
+        
         function updatePartyLabels(instrumentType) {
             const type = instrumentTypes[instrumentType];
             if (!type) return;
@@ -333,6 +351,53 @@
                         </div>
                     `;
                     break;
+                case 'deed-of-variation':
+                    fieldsContainer.innerHTML = `
+                        <div class="space-y-2">
+                            <label for="variationDetails" class="label">Variation Details</label>
+                            <textarea id="variationDetails" name="variationDetails" class="textarea" placeholder="Describe the variation"></textarea>
+                        </div>
+                    `;
+                    break;
+                case 'right-of-occupancy':
+                    fieldsContainer.innerHTML = `
+                        <div class="space-y-2">
+                            <label for="rOfONumber" class="label">R of O Number</label>
+                            <input id="rOfONumber" name="rOfONumber" class="input" placeholder="Enter Right of Occupancy number">
+                        </div>
+                    `;
+                    break;
+                case 'certificate-of-occupancy':
+                    fieldsContainer.innerHTML = `
+                        <div class="space-y-2">
+                            <label for="cOfONumber" class="label">C of O Number</label>
+                            <input id="cOfONumber" name="cOfONumber" class="input" placeholder="Enter Certificate of Occupancy number">
+                        </div>
+                    `;
+                    break;
+                case 'sectional-titling-c-of-o':
+                    fieldsContainer.innerHTML = `
+                        <div class="space-y-2">
+                            <label for="unitNumber" class="label">Unit Number</label>
+                            <input id="unitNumber" name="unitNumber" class="input" placeholder="Enter unit number">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="sectionalCofONumber" class="label">Sectional C of O Number</label>
+                            <input id="sectionalCofONumber" name="sectionalCofONumber" class="input" placeholder="Enter Sectional C of O number">
+                        </div>
+                    `;
+                    break;
+                case 'sltr-c-of-o':
+                    fieldsContainer.innerHTML = `
+                        <div class="space-y-2">
+                            <label for="sltrCofONumber" class="label">SLTR C of O Number</label>
+                            <input id="sltrCofONumber" name="sltrCofONumber" class="input" placeholder="Enter SLTR C of O number">
+                        </div>
+                    `;
+                    break;
+                default:
+                    // For any new types not handled above, leave blank or add a comment
+                    break;
             }
         }
 
@@ -365,24 +430,28 @@
 
         function handleTemporaryFileNoChange() {
             const isChecked = elements.isTemporaryFileNo.checked;
-            
             if (isChecked) {
-                // Show root title reg no and hide root reg no
-                if (elements.regNoSection) elements.regNoSection.classList.remove('hidden');
-                document.getElementById('rootRegNoSection')?.classList.add('hidden');
+                elements.temporaryFileSection.classList.remove('hidden');
+                elements.regularFileSection.classList.add('hidden');
+                if (!elements.temporaryFileNo.value) {
+                    elements.temporaryFileNo.value = generateTemporaryFileNo();
+                }
             } else {
-                // Hide root title reg no and show root reg no
-                if (elements.regNoSection) elements.regNoSection.classList.add('hidden');
-                document.getElementById('rootRegNoSection')?.classList.remove('hidden');
+                elements.temporaryFileSection.classList.add('hidden');
+                elements.regularFileSection.classList.remove('hidden');
+                elements.temporaryFileNo.value = '';
             }
         }
 
-        function updateFileNumber() {
-            const type = elements.fileNumberType.value;
-            const prefix = elements.filePrefix.value;
-            const serialNo = elements.fileSerialNo.value;
-            
-            elements.fileNo.value = formatFileNumber(type, prefix, serialNo);
+        function handleTemporaryRegNoChange() {
+            const isChecked = elements.isTemporaryRegNo.checked;
+            if (isChecked) {
+                elements.regNoSection.classList.remove('hidden');
+                elements.rootRegNoSection.classList.add('hidden');
+            } else {
+                elements.regNoSection.classList.add('hidden');
+                elements.rootRegNoSection.classList.remove('hidden');
+            }
         }
 
         function handleSurveyInfoChange() {
@@ -417,8 +486,22 @@
             // Add instrument type
             data.instrumentType = currentInstrumentType;
             
-            // Add final file number
-            data.finalFileNo = elements.fileNo.value;
+            // Add final file number (temporary or regular)
+            if (elements.isTemporaryFileNo.checked) {
+                data.finalFileNo = elements.temporaryFileNo.value;
+                data.isTemporary = true;
+            } else {
+                // Get the active file number from the file number tabs
+                const activeTab = document.getElementById('activeFileTab')?.value;
+                if (activeTab === 'mlsFNo') {
+                    data.finalFileNo = document.getElementById('mlsFNo')?.value || '';
+                } else if (activeTab === 'kangisFileNo') {
+                    data.finalFileNo = document.getElementById('kangisFileNo')?.value || '';
+                } else if (activeTab === 'NewKANGISFileno') {
+                    data.finalFileNo = document.getElementById('NewKANGISFileno')?.value || '';
+                }
+                data.isTemporary = false;
+            }
             
             return data;
         }
@@ -444,13 +527,15 @@
         elements.submitBtn.addEventListener('click', handleSubmit);
 
         elements.isTemporaryFileNo.addEventListener('change', handleTemporaryFileNoChange);
-        elements.regenerateTempBtn.addEventListener('click', () => {
-            elements.temporaryFileNo.value = generateTemporaryFileNo();
-        });
-
-        elements.fileNumberType.addEventListener('change', updateFileNumber);
-        elements.filePrefix.addEventListener('input', updateFileNumber);
-        elements.fileSerialNo.addEventListener('input', updateFileNumber);
+        if (elements.isTemporaryRegNo) {
+            elements.isTemporaryRegNo.addEventListener('change', handleTemporaryRegNoChange);
+        }
+        
+        if (elements.regenerateTempBtn) {
+            elements.regenerateTempBtn.addEventListener('click', () => {
+                elements.temporaryFileNo.value = generateTemporaryFileNo();
+            });
+        }
 
         // Close dialog when clicking outside
         elements.registrationDialog.addEventListener('click', (e) => {
@@ -470,15 +555,20 @@
         function init() {
             setDefaultDates();
             lucide.createIcons();
-            
+
             // Add event listener for survey info checkbox
             const surveyCheckbox = document.getElementById('surveyInfo');
             if (surveyCheckbox) {
                 surveyCheckbox.addEventListener('change', handleSurveyInfoChange);
             }
-            
+
             // Initialize survey info section to be hidden
             handleSurveyInfoChange();
+
+            // Initialize registration number section visibility
+            handleTemporaryRegNoChange();
+            // Initialize file number section visibility
+            handleTemporaryFileNoChange();
         }
 
         // Initialize when DOM is loaded

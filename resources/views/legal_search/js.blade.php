@@ -22,258 +22,6 @@
       return `${prefix}/${prefix}/${suffix}`;
     }
 
-    // Sample land records data
-    const landRecords = [
-      {
-        id: 1,
-        fileNumber: "COM-RES-2021-078",
-        kangisFileNo: "KNML 12453",
-        newKangisFileNo: "KN0004",
-        guarantor: "Kano Market Development Authority",
-        guarantee: "Suleiman Abubakar Trading Co.",
-        lga: "Kano Municipal",
-        district: "Sabon Gari Market",
-        location: "Sabon Gari",
-        propertyType: "Commercial",
-        registrationParticulars: "Lease Agreement dated 05/04/2021",
-        lastTransaction: "Lease Agreement",
-        caveat: "No",
-        size: "1000 Ha",
-        plotNumber: "Plot 123",
-        planNumber: "KN/PL/2021/123",
-        history: [
-          {
-            id: 1,
-            date: "2021-04-05",
-            time: "10:30 AM",
-            transactionType: "Lease Agreement",
-            guarantor: "Kano Market Development Authority",
-            guarantee: "Suleiman Abubakar Trading Co.",
-            amount: "₦5,000,000",
-            caveat: "No",
-            size: "1000 Ha",
-            comments: "Initial market stall lease"
-          }
-        ],
-        propertyHistory: [
-          {
-            id: 1,
-            date: "2021-04-05",
-            time: "10:30 AM",
-            event: "Lease Agreement",
-            authority: "Kano Land Registry",
-            recipient: "Suleiman Abubakar Trading Co.",
-            documentNo: "77/77/11", // updated to XX/XX/YYY format
-            size: "1000 Ha",
-            comments: "First registration of property"
-          }
-        ],
-        instrumentRegistrations: [
-          {
-            id: 1,
-            registrationDate: "2021-04-10",
-            registrationTime: "11:45 AM",
-            instrumentType: "Lease Agreement",
-            registrationNumber: "55/55/83", // updated to XX/XX/YYY format
-            parties: "Kano Market Development Authority and Suleiman Abubakar Trading Co.",
-            propertyDescription: "Commercial stall at Sabon Gari Market",
-            registeredBy: "Land Registry Officer",
-            caveat: "No"
-          }
-        ],
-        cofoRecords: [
-          {
-            id: 1,
-            cofoNumber: "55/55/11",
-            issueDate: "2021-05-01",
-            holderName: "Suleiman Abubakar Trading Co.",
-            propertyDescription: "Commercial stall at Sabon Gari Market",
-            landUse: "Commercial",
-            term: "25 years",
-            commencementDate: "2021-04-05",
-            annualRent: "₦200,000",
-            caveat: "No"
-          }
-        ]
-      },
-      {
-        id: 2,
-        fileNumber: "MLSF/KN/2023/002",
-        kangisFileNo: "KG-002-2023",
-        newKangisFileNo: "KNG-2023-002",
-        guarantor: "Michael Johnson",
-        guarantee: "Sarah Williams",
-        lga: "Fagge",
-        district: "North",
-        location: "Fagge",
-        propertyType: "Residential",
-        registrationParticulars: "Deed of Assignment dated 20/06/2023",
-        lastTransaction: "Lease",
-        caveat: "No",
-        size: "750 Ha",
-        plotNumber: "Plot 456",
-        planNumber: "KN/PL/2023/456",
-        history: [
-          {
-            id: 2,
-            date: "2023-06-20",
-            time: "02:15 PM",
-            transactionType: "Lease",
-            guarantor: "Michael Johnson",
-            guarantee: "Sarah Williams",
-            amount: "₦3,500,000",
-            caveat: "No",
-            size: "750 Ha",
-            comments: "Property leased for 25 years"
-          },
-          {
-            id: 3,
-            date: "2023-08-15",
-            time: "11:30 AM",
-            transactionType: "Deed of Assignment",
-            guarantor: "Sarah Williams",
-            guarantee: "Ahmed Abdullahi",
-            amount: "₦4,200,000",
-            caveat: "No",
-            size: "750 Ha",
-            comments: "Transfer of ownership rights"
-          },
-          {
-            id: 4,
-            date: "2023-10-10",
-            time: "09:45 AM",
-            transactionType: "Power of Attorney",
-            guarantor: "Ahmed Abdullahi",
-            guarantee: "Fatima Hassan",
-            amount: "₦500,000",
-            caveat: "No",
-            size: "750 Ha",
-            comments: "Legal representation granted"
-          },
-          {
-            id: 5,
-            date: "2023-12-05",
-            time: "03:20 PM",
-            transactionType: "Deed of Mortgage",
-            guarantor: "Fatima Hassan",
-            guarantee: "First Bank of Nigeria",
-            amount: "₦8,000,000",
-            caveat: "No",
-            size: "750 Ha",
-            comments: "Property mortgaged for loan facility"
-          },
-          {
-            id: 6,
-            date: "2024-02-18",
-            time: "01:15 PM",
-            transactionType: "Deed of Mortgage",
-            guarantor: "Fatima Hassan",
-            guarantee: "Musa Ibrahim Kano",
-            amount: "₦12,500,000",
-            caveat: "No",
-            size: "750 Ha",
-            comments: "Property sold with building plan approval"
-          },
-          {
-            id: 7,
-            date: "2024-05-22",
-            time: "10:00 AM",
-            transactionType: "Transfer of Title",
-            guarantor: "Musa Ibrahim Kano",
-            guarantee: "Aisha Bello Muhammad",
-            amount: "₦15,000,000",
-            caveat: "No",
-            size: "750 Ha",
-            comments: "Final transfer of ownership completed"
-          }
-        ],
-        propertyHistory: [
-          {
-            id: 2,
-            date: "2023-06-25",
-            time: "02:30 PM",
-            event: "Lease Registration",
-            authority: "Kano Land Registry",
-            recipient: "Sarah Williams",
-            documentNo: "11/11/122", // updated to XX/XX/YYY format
-            size: "750 Ha",
-            comments: "Lease agreement registered"
-          },
-          {
-            id: 3,
-            date: "2023-08-20",
-            time: "12:00 PM",
-            event: "Ownership Transfer",
-            authority: "Kano Land Registry",
-            recipient: "Ahmed Abdullahi",
-            documentNo: "22/22/123", // updated to XX/XX/YYY format
-            size: "750 Ha",
-            comments: "Deed of assignment registered"
-          },
-          {
-            id: 4,
-            date: "2024-02-25",
-            time: "02:45 PM",
-            event: "Ownership Transfer",
-            authority: "Kano Land Registry",
-            recipient: "Musa Ibrahim Kano",
-            documentNo: "55/55/199", // updated to XX/XX/YYY format
-            size: "750 Ha",
-            comments: "Deed of Mortgage filed and approved"
-          }
-        ],
-        instrumentRegistrations: [
-          {
-            id: 2,
-            registrationDate: "2023-06-25",
-            registrationTime: "02:45 PM",
-            instrumentType: "Lease Agreement",
-            registrationNumber: "24/24/122", // updated to XX/XX/YYY format
-            parties: "Michael Johnson and Sarah Williams",
-            propertyDescription: "Residential property at Fagge North District",
-            registeredBy: "Land Registry Officer",
-            caveat: "No"
-          },
-          {
-            id: 3,
-            registrationDate: "2023-08-25",
-            registrationTime: "01:30 PM",
-            instrumentType: "Deed of Assignment",
-            registrationNumber: "77/77/221", // updated to XX/XX/YYY format
-            parties: "Sarah Williams and Ahmed Abdullahi",
-            propertyDescription: "Residential property at Fagge North District",
-            registeredBy: "Senior Registry Officer",
-            caveat: "No"
-          },
-          {
-            id: 4,
-            registrationDate: "2024-05-27",
-            registrationTime: "11:15 AM",
-            instrumentType: "Transfer of Title",
-            registrationNumber: "66/66/199", // updated to XX/XX/YYY format
-            parties: "Musa Ibrahim Kano and Aisha Bello Muhammad",
-            propertyDescription: "Residential property at Fagge North District",
-            registeredBy: "Chief Registry Officer",
-            caveat: "No"
-          } 
-        ],
-        cofoRecords: [
-          {
-            id: 2,
-            cofoNumber: "24/24/31",
-            issueDate: "2023-07-01",
-            holderName: "Sarah Williams",
-            propertyDescription: "Residential property at Fagge North District",
-            landUse: "Residential",
-            term: "99 years",
-            commencementDate: "2023-06-20",
-            annualRent: "₦150,000",
-            caveat: "No"
-          }
-        ]
-      }
-    ];
-
     // DOM Elements
     const searchModal = document.getElementById('search-modal');
     const searchRecordsBtn = document.getElementById('search-records-btn');
@@ -433,7 +181,8 @@
 
     // Reset search
     const resetSearch = () => {
-      document.getElementById('fileNumber').value = '';
+      document.getElementById('sectionalTitleFileNo').value = '';
+      document.getElementById('mlsFNo').value = '';
       document.getElementById('kangisFileNo').value = '';
       
       // Reset any other filters that might be added
@@ -491,6 +240,7 @@
       }
 
       const filterLabels = {
+        sectionalTitleFileNo: 'Sectional Title FileNo',
         newKangisFileNo: 'New KANGIS File No.',
         guarantorName: 'Guarantor Name',
         guaranteeName: 'Guarantee Name',
@@ -549,7 +299,7 @@
       });
 
       filterDiv.appendChild(removeBtn);
-      filtersContainer.insertBefore(filterDiv, addFilterBtn.parentNode);
+      document.getElementById('additional-filters-container').appendChild(filterDiv);
 
       // Add event listener to the new input/select
       const input = document.getElementById(filterId);
@@ -564,7 +314,8 @@
     const performSearch = () => {
       // Get all filter values
       const filters = {
-        fileNumber: document.getElementById('fileNumber').value,
+        sectionalTitleFileNo: document.getElementById('sectionalTitleFileNo').value,
+        mlsFNo: document.getElementById('mlsFNo').value,
         kangisFileNo: document.getElementById('kangisFileNo').value
       };
 
@@ -595,91 +346,94 @@
       noResultsMessage.classList.add('hidden');
       fileDetailsView.classList.add('hidden');
 
-      // Simulate API call with timeout
-      setTimeout(() => {
-        // Filter land records based on filters
-        searchResults = landRecords.filter(record => {
-          return Object.entries(filters).every(([key, value]) => {
-            if (!value) return true; // Skip empty filters
-            
-            const searchValue = value.toLowerCase();
-            
-            switch(key) {
-              case 'fileNumber':
-                return record.fileNumber.toLowerCase().includes(searchValue);
-              case 'kangisFileNo':
-                return record.kangisFileNo.toLowerCase().includes(searchValue);
-              case 'newKangisFileNo':
-                return record.newKangisFileNo.toLowerCase().includes(searchValue);
-              case 'guarantorName':
-                return record.guarantor.toLowerCase().includes(searchValue);
-              case 'guaranteeName':
-                return record.guarantee.toLowerCase().includes(searchValue);
-              case 'lga':
-                return record.lga === value;
-              case 'district':
-                return record.district.toLowerCase().includes(searchValue);
-              case 'location':
-                return record.location.toLowerCase().includes(searchValue);
-              case 'plotNumber':
-                return record.plotNumber.toLowerCase().includes(searchValue);
-              case 'planNumber':
-                return record.planNumber.toLowerCase().includes(searchValue);
-              case 'size':
-                return record.size.toLowerCase().includes(searchValue);
-              case 'caveat':
-                return record.caveat === value;
-              default:
-                return true;
+      // --- CHANGED LOGIC STARTS HERE ---
+      // Priority order: Sectional Title FileNo, mlsFNo, KANGIS File No, then others
+      let query = '';
+      if (filters.sectionalTitleFileNo) {
+        query = filters.sectionalTitleFileNo;
+      } else if (filters.mlsFNo) {
+        query = filters.mlsFNo;
+      } else if (filters.kangisFileNo) {
+        query = filters.kangisFileNo;
+      } else if (filters.newKangisFileNo) {
+        query = filters.newKangisFileNo;
+      } else {
+        // fallback: combine all filters as before
+        query = Object.values(filters).filter(v => v).join(' ');
+      }
+      // --- CHANGED LOGIC ENDS HERE ---
+
+      // AJAX call to the server
+      $.ajax({
+        url: '{{ route("legalsearch.search") }}',
+        type: 'POST',
+        data: {
+          _token: '{{ csrf_token() }}',
+          query: query
+        },
+        success: function(data) {
+          // Hide loading
+          searchLoading.classList.add('hidden');
+
+          // Combine results from all tables
+          searchResults = [
+            ...data.property_records,
+            ...data.mother_applications,
+            ...data.subapplications,
+            ...data.registered_instruments,
+            ...data.cofo
+          ];
+
+          // Update results count
+          resultsCount.textContent = searchResults.length;
+
+          // Show appropriate view
+          if (searchResults.length === 0) {
+            noResultsMessage.classList.remove('hidden');
+          } else {
+            // Automatically collapse filters when results are found
+            if (searchResults.length > 0 && !filtersCollapsed) {
+              filtersCollapsed = true;
+              filtersContainer.classList.add('hidden');
+              collapsedFilters.classList.remove('hidden');
+              toggleFiltersBtn.textContent = 'Expand Filters';
+              
+              // Update active filters summary
+              const activeFilters = Object.entries(filters)
+                .filter(([_, value]) => value)
+                .map(([key, value]) => {
+                  const filterLabels = {
+                    sectionalTitleFileNo: 'Sectional Title FileNo',
+                    mlsFNo: 'mlsFNo',
+                    kangisFileNo: 'KANGIS File No.',
+                    newKangisFileNo: 'New KANGIS File No.',
+                    guarantorName: 'Guarantor Name',
+                    guaranteeName: 'Guarantee Name',
+                    lga: 'LGA',
+                    district: 'District',
+                    location: 'Location',
+                    plotNumber: 'Plot Number',
+                    planNumber: 'Plan Number',
+                    size: 'Size',
+                    caveat: 'Caveat'
+                  };
+                  return `${filterLabels[key]}: ${value}`;
+                })
+                .join(', ');
+              
+              document.getElementById('active-filters-summary').textContent = activeFilters;
             }
-          });
-        });
-
-        // Update results count
-        resultsCount.textContent = searchResults.length;
-
-        // Hide loading
-        searchLoading.classList.add('hidden');
-
-        // Show appropriate view
-        if (searchResults.length === 0) {
-          noResultsMessage.classList.remove('hidden');
-        } else {
-          // Automatically collapse filters when results are found
-          if (searchResults.length > 0 && !filtersCollapsed) {
-            filtersCollapsed = true;
-            filtersContainer.classList.add('hidden');
-            collapsedFilters.classList.remove('hidden');
-            toggleFiltersBtn.textContent = 'Expand Filters';
             
-            // Update active filters summary
-            const activeFilters = Object.entries(filters)
-              .filter(([_, value]) => value)
-              .map(([key, value]) => {
-                const filterLabels = {
-                  fileNumber: 'File Number',
-                  kangisFileNo: 'KANGIS File No.',
-                  newKangisFileNo: 'New KANGIS File No.',
-                  guarantorName: 'Guarantor Name',
-                  guaranteeName: 'Guarantee Name',
-                  lga: 'LGA',
-                  district: 'District',
-                  location: 'Location',
-                  plotNumber: 'Plot Number',
-                  planNumber: 'Plan Number',
-                  size: 'Size',
-                  caveat: 'Caveat'
-                };
-                return `${filterLabels[key]}: ${value}`;
-              })
-              .join(', ');
-            
-            document.getElementById('active-filters-summary').textContent = activeFilters;
+            renderSearchResults();
           }
-          
-          renderSearchResults();
+        },
+        error: function(error) {
+          // Hide loading
+          searchLoading.classList.add('hidden');
+          noResultsMessage.classList.remove('hidden');
+          console.error('Error performing search:', error);
         }
-      }, 500);
+      });
     };
 
     // Render search results based on current view
@@ -699,23 +453,24 @@
     const renderTableResults = () => {
       tableResultsBody.innerHTML = '';
       
-      searchResults.forEach(file => {
+      searchResults.forEach((file, index) => {
         const row = document.createElement('tr');
         row.className = 'hover:bg-gray-50 transition-colors';
         row.innerHTML = `
-          <td class="p-2 text-sm">${file.fileNumber}</td>
-          <td class="p-2 text-sm">${file.kangisFileNo}</td>
-          <td class="p-2 text-sm">${file.newKangisFileNo}</td>
-          <td class="p-2 text-sm">${file.guarantor}</td>
-          <td class="p-2 text-sm">${file.guarantee}</td>
-          <td class="p-2 text-sm">${file.lga}</td>
-          <td class="p-2 text-sm">${file.location}</td>
-          <td class="p-2 text-sm">${file.plotNumber}</td>
-          <td class="p-2 text-sm">${file.registrationParticulars}</td>
-          <td class="p-2 text-sm">${file.size}</td>
-          <td class="p-2 text-sm font-medium ${file.caveat === 'Yes' ? 'text-red-600' : ''}">${file.caveat}</td>
+          <td class="p-2 text-sm">${file.sectionalTitleFileNo || file.ST_FileNo || file.stFileNo || 'N/A'}</td>
+          <td class="p-2 text-sm">${file.mlsFNo || file.MLSFileNo || file.fileNo || file.fileno || 'N/A'}</td>
+          <td class="p-2 text-sm">${file.kangisFileNo || file.KAGISFileNO || 'N/A'}</td>
+          <td class="p-2 text-sm">${file.NewKANGISFileno || file.NewKANGISFileNo || 'N/A'}</td>
+          <td class="p-2 text-sm">${getMappedValue(file, 'grantor')}</td>
+          <td class="p-2 text-sm">${getMappedValue(file, 'grantee')}</td>
+          <td class="p-2 text-sm">${getMappedValue(file, 'lga')}</td>
+          <td class="p-2 text-sm">${file.property_house_no && file.property_plot_no && file.property_street_name && file.property_district && file.property_lga ? `${file.property_house_no},${file.property_plot_no},${file.property_street_name},${file.property_district},${file.property_lga}` : getMappedValue(file, 'location')}</td>
+          <td class="p-2 text-sm">${getMappedValue(file, 'plotNo')}</td>
+          <td class="p-2 text-sm">${getMappedValue(file, 'transactionType')}</td>
+          <td class="p-2 text-sm">${getMappedValue(file, 'size')}</td>
+          <td class="p-2 text-sm font-medium ${file.caveat === 'Yes' ? 'text-red-600' : ''}">${file.caveat || 'N/A'}</td>
           <td class="p-2 text-sm">
-            <button class="view-file-btn inline-flex items-center px-2 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50" data-id="${file.id}">
+            <button class="view-file-btn inline-flex items-center px-2 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50" data-index="${index}">
                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0  5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
               </svg>
@@ -730,8 +485,11 @@
       // Add event listeners to view buttons
       document.querySelectorAll('.view-file-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          const fileId = parseInt(btn.getAttribute('data-id'));
-          selectedFile = searchResults.find(file => file.id === fileId);
+          const index = parseInt(btn.getAttribute('data-index'));
+          console.log('View button clicked for index:', index);
+          
+          selectedFile = searchResults[index];
+          console.log('Selected file:', selectedFile);
           
           // Close search modal
           searchModal.classList.add('hidden');
@@ -750,9 +508,10 @@
     const renderCardResults = () => {
       cardResults.innerHTML = '';
       
-      searchResults.forEach(file => {
+      searchResults.forEach((file, index) => {
         const card = document.createElement('div');
         card.className = 'bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer';
+        card.setAttribute('data-index', index);
         card.innerHTML = `
           <div class="p-4">
             <div class="flex justify-between items-start mb-3">
@@ -761,36 +520,40 @@
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
                   </svg>
-                  ${file.fileNumber}
+                  ST-FileNo: ${file.sectionalTitleFileNo || file.ST_FileNo || file.stFileNo || 'N/A'}
                 </div>
                 <div class="text-sm text-gray-500 mt-1">
-                  KANGIS: ${file.kangisFileNo} | New KANGIS: ${file.newKangisFileNo}
+                  mlsFNo: ${file.mlsFNo || file.MLSFileNo || file.fileNo || file.fileno || 'N/A'} | KANGIS: ${file.kangisFileNo || file.KAGISFileNO || 'N/A'} | New KANGIS: ${file.NewKANGISFileno || file.NewKANGISFileNo || 'N/A'}
                 </div>
               </div>
               <div>
-                <span class="text-gray-500">Guarantee:</span> ${file.guarantee}
+                <span class="text-gray-500">Guarantee:</span> ${getMappedValue(file, 'grantee')}
               </div>
               <div>
-                <span class="text-gray-500">LGA:</span> ${file.lga}
+                <span class="text-gray-500">LGA:</span> ${getMappedValue(file, 'lga')}
               </div>
               <div>
-                <span class="text-gray-500">Location:</span> ${file.location}
+                <span class="text-gray-500">Location:</span> ${file.property_house_no && file.property_plot_no && file.property_street_name && file.property_district && file.property_lga ? `${file.property_house_no},${file.property_plot_no},${file.property_street_name},${file.property_district},${file.property_lga}` : getMappedValue(file, 'location')}
               </div>
               <div>
-                <span class="text-gray-500">Plot No:</span> ${file.plotNumber}
+                <span class="text-gray-500">Plot No:</span> ${getMappedValue(file, 'plotNo')}
               </div>
               <div>
-                <span class="text-gray-500">Size:</span> ${file.size}
+                <span class="text-gray-500">Size:</span> ${getMappedValue(file, 'size')}
               </div>
               <div class="col-span-2">
-                <span class="text-gray-500">Transaction Type:</span> ${file.registrationParticulars}
+                <span class="text-gray-500">Transaction Type:</span> ${getMappedValue(file, 'transactionType')}
               </div>
             </div>
           </div>
         `;
         
         card.addEventListener('click', () => {
-          selectedFile = file;
+          const cardIndex = parseInt(card.getAttribute('data-index'));
+          console.log('Card clicked for index:', cardIndex);
+          
+          selectedFile = searchResults[cardIndex];
+          console.log('Selected file from card:', selectedFile);
           
           // Close search modal
           searchModal.classList.add('hidden');
@@ -809,100 +572,312 @@
     
     // Render file history (the side-by-side layout shown in the screenshot)
     const renderFileHistory = () => {
-      if (!selectedFile) return;
+      if (!selectedFile) {
+        console.log('No selected file in renderFileHistory');
+        return;
+      }
       
-      // Update file reference in subtitle
-      document.getElementById('file-reference').textContent = selectedFile.fileNumber;
+      console.log('Rendering file history for:', selectedFile);
       
-      // Update file information fields
-      document.getElementById('file-number-value').textContent = selectedFile.fileNumber;
-      document.getElementById('kangis-file-number-value').textContent = selectedFile.kangisFileNo;
-      document.getElementById('new-kangis-file-number-value').textContent = selectedFile.newKangisFileNo;
-      document.getElementById('current-guarantor-value').textContent = selectedFile.guarantor;
-      document.getElementById('current-guarantee-value').textContent = selectedFile.guarantee;
-      document.getElementById('lga-value').textContent = selectedFile.lga;
-      document.getElementById('district-value').textContent = selectedFile.district;
-      document.getElementById('property-type-value').textContent = selectedFile.propertyType || 'N/A';
-      document.getElementById('last-transaction-value').textContent = selectedFile.lastTransaction;
+      // Update file reference in subtitle (with .0 fix)
+      let fileRef = selectedFile.mlsFNo || selectedFile.MLSFileNo || selectedFile.fileNo || selectedFile.fileno || 'N/A';
+      if (typeof fileRef === 'number' && fileRef % 1 === 0) {
+        fileRef = Math.floor(fileRef).toString();
+      } else if (typeof fileRef === 'string' && fileRef.endsWith('.0')) {
+        fileRef = fileRef.replace('.0', '');
+      }
+      document.getElementById('file-reference').textContent = fileRef;
+      
+      // Update file information fields (with .0 fix and better field mapping)
+      let stFileNumber = selectedFile.sectionalTitleFileNo || selectedFile.ST_FileNo || selectedFile.stFileNo || 'N/A';
+      if (typeof stFileNumber === 'number' && stFileNumber % 1 === 0) {
+        stFileNumber = Math.floor(stFileNumber).toString();
+      } else if (typeof stFileNumber === 'string' && stFileNumber.endsWith('.0')) {
+        stFileNumber = stFileNumber.replace('.0', '');
+      }
+      document.getElementById('st-file-number-value').textContent = stFileNumber;
+      
+      let fileNumber = selectedFile.mlsFNo || selectedFile.MLSFileNo || selectedFile.fileNo || selectedFile.fileno || 'N/A';
+      if (typeof fileNumber === 'number' && fileNumber % 1 === 0) {
+        fileNumber = Math.floor(fileNumber).toString();
+      } else if (typeof fileNumber === 'string' && fileNumber.endsWith('.0')) {
+        fileNumber = fileNumber.replace('.0', '');
+      }
+      document.getElementById('file-number-value').textContent = fileNumber;
+      document.getElementById('kangis-file-number-value').textContent = selectedFile.kangisFileNo || selectedFile.KAGISFileNO || 'N/A';
+      document.getElementById('new-kangis-file-number-value').textContent = selectedFile.NewKANGISFileno || selectedFile.NewKANGISFileNo || 'N/A';
+      
+      // Enhanced guarantor/guarantee mapping for mother and sub applications
+      const guarantorValue = selectedFile.owner_fullname || selectedFile.mother_owner_fullname || 
+                           selectedFile.first_name || selectedFile.corporate_name || 
+                           selectedFile.multiple_owners_names || selectedFile.Assignor || 
+                           selectedFile.Grantor || selectedFile.Mortgagor || selectedFile.Lessor || 
+                           selectedFile.Surrenderor || selectedFile.originalAllottee || 'N/A';
+      
+      const guaranteeValue = selectedFile.sub_owner_fullname || selectedFile.multiple_owners_names || 
+                           selectedFile.owner_fullname || selectedFile.Assignee || 
+                           selectedFile.Grantee || selectedFile.Mortgagee || selectedFile.Lessee || 
+                           selectedFile.Surrenderee || selectedFile.currentAllottee || 'N/A';
+      
+      document.getElementById('current-guarantor-value').textContent = guarantorValue;
+      document.getElementById('current-guarantee-value').textContent = guaranteeValue;
+      
+      // Enhanced LGA mapping
+      const lgaValue = selectedFile.property_lga || selectedFile.address_lga || 
+                      selectedFile.lgsaOrCity || selectedFile.lga || selectedFile.lgaName || 'N/A';
+      document.getElementById('lga-value').textContent = lgaValue;
+      
+      // Enhanced district mapping
+      const districtValue = selectedFile.property_district || selectedFile.address_district || 
+                           selectedFile.district || selectedFile.districtName || 'N/A';
+      document.getElementById('district-value').textContent = districtValue;
+      
+      // Enhanced property type mapping - prioritize land_use
+      const propertyTypeValue = selectedFile.land_use || selectedFile.landUse || 
+                               selectedFile.landUseType || selectedFile.title_type || 
+                               selectedFile.instrument_type || selectedFile.Type || 
+                               selectedFile.residential_type || selectedFile.commercial_type || 
+                               selectedFile.industrial_type || selectedFile.mixed_type || 'N/A';
+      document.getElementById('property-type-value').textContent = propertyTypeValue;
+      
+      // Enhanced last transaction mapping
+      const lastTransactionValue = selectedFile.transaction_type || selectedFile.instrument_type || 
+                                  selectedFile.application_status || selectedFile.deeds_status || 
+                                  selectedFile.planning_recommendation_status || 'N/A';
+      document.getElementById('last-transaction-value').textContent = lastTransactionValue;
       
       // Render the transactions tables
       renderTransactionTables();
       
-      // Set up tab switching
-      document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          const tabName = tab.getAttribute('data-tab');
-          switchTab(tabName);
-        });
-      });
-      
+            
       // Default to property history tab
       switchTab('property-history');
     };
     
+    // Get related transactions for a selected file
+    const getRelatedTransactions = (file) => {
+      console.log('=== getRelatedTransactions called ===');
+      console.log('Selected file:', file);
+      console.log('Search results available:', searchResults);
+      console.log('Total search results count:', searchResults ? searchResults.length : 0);
+      
+      if (!searchResults || searchResults.length === 0 || !file) {
+        console.log('No search results or file available, returning empty array');
+        return [];
+      }
+      
+      // Get the file identifiers from the selected file
+      const selectedFileNumbers = [
+        file.mlsFNo,
+        file.MLSFileNo, 
+        file.fileNo,
+        file.fileno,
+        file.kangisFileNo,
+        file.KAGISFileNO,
+        file.NewKANGISFileno,
+        file.NewKANGISFileNo
+      ].filter(num => num && num !== 'N/A' && num !== null && num !== undefined);
+      
+      console.log('Selected file numbers to match:', selectedFileNumbers);
+      
+      // Filter search results to only include records that match the selected file's identifiers
+      const relatedRecords = searchResults.filter(result => {
+        const resultFileNumbers = [
+          result.mlsFNo,
+          result.MLSFileNo,
+          result.fileNo, 
+          result.fileno,
+          result.kangisFileNo,
+          result.KAGISFileNO,
+          result.NewKANGISFileno,
+          result.NewKANGISFileNo
+        ].filter(num => num && num !== 'N/A' && num !== null && num !== undefined);
+        
+        // Check if any of the selected file numbers match any of the result file numbers
+        const hasMatch = selectedFileNumbers.some(selectedNum => 
+          resultFileNumbers.some(resultNum => {
+            // Convert both to strings and remove .0 for comparison
+            const selectedStr = selectedNum.toString().replace('.0', '');
+            const resultStr = resultNum.toString().replace('.0', '');
+            return selectedStr === resultStr;
+          })
+        );
+        
+        if (hasMatch) {
+          console.log('Found matching record:', result);
+        }
+        
+        return hasMatch;
+      });
+      
+      console.log('Filtered related records:', relatedRecords);
+      console.log('Final return value count:', relatedRecords.length);
+      return relatedRecords;
+    };
+
+    // Helper function to remove .0 from values
+    const cleanNumericValue = (value) => {
+      if (!value || value === 'N/A') return value;
+      
+      // Convert to string if it's a number
+      let stringValue = value.toString();
+      
+      // Remove .0 from the end if present
+      if (stringValue.endsWith('.0')) {
+        stringValue = stringValue.replace('.0', '');
+      }
+      
+      return stringValue;
+    };
+
+    // Helper function to get mapped field value
+    const getMappedValue = (item, fieldType) => {
+      const fieldMappings = {
+        // Date fields - enhanced for applications
+        date: [
+          'transaction_date', 'deeds_date', 'deedsDate', 'certificateDate', 
+          'instrumentDate', 'approval_date', 'planning_approval_date',
+          'receipt_date', 'payment_date', 'accountant_signature_date',
+          'created_at', 'updated_at'
+        ],
+        
+        // Transaction type fields - enhanced for applications
+        transactionType: [
+          'transaction_type', 'instrument_type', 'title_type', 'typeForm', 
+          'landUseType', 'application_status', 'deeds_status',
+          'planning_recommendation_status', 'land_use', 'landUse'
+        ],
+        
+        // Grantor/From party fields - enhanced for applications
+        grantor: [
+          'owner_fullname', 'mother_owner_fullname', 
+          'first_name', 'corporate_name', 'multiple_owners_names',
+          'Assignor', 'assignor', 'assignorName',
+          'Grantor', 'Mortgagor', 'mortgagor', 
+          'Lessor', 'lessor', 'Surrenderor', 'surrenderor',
+          'originalAllottee', 'surrenderingPartyName',
+          'applicant_title'
+        ],
+        
+        // Grantee/To party fields - enhanced for applications
+        grantee: [
+          'sub_owner_fullname', 'multiple_owners_names', 'owner_fullname',
+          'Assignee', 'assignee', 'Grantee', 
+          'Mortgagee', 'mortgagee', 'Lessee', 'lessee',
+          'Surrenderee', 'surrenderee', 'currentAllottee',
+          'receivingPartyName', 'releaseeName',
+          'first_name', 'corporate_name'
+        ],
+        
+        // Registration number fields - enhanced
+        serialNo: [
+          'serialNo', 'serial_no', 'oldTitleSerialNo', 
+          'rootRegistrationNumber', 'particularsRegistrationNumber',
+          'volume_no', 'page_no'
+        ],
+        pageNo: ['pageNo', 'page_no', 'oldTitlePageNo'],
+        volumeNo: ['volumeNo', 'volume_no', 'oldTitleVolumeNo'],
+        
+        // Size fields - enhanced
+        size: ['size', 'plot_size', 'NoOfUnits', 'NoOfSections', 'NoOfBlocks'],
+        
+        // Comments fields - enhanced for applications
+        comments: [
+          'comments', 'additional_comments', 'recomm_comments', 
+          'director_comments', 'application_comment', 'planning_recomm_comments'
+        ],
+        
+        // Time fields
+        time: ['deeds_time', 'deedsTime'],
+        
+        // Plot number fields - enhanced for applications
+        plotNo: [
+          'plot_no', 'plotNo', 'plotNumber', 'property_plot_no', 
+          'address_plot_no', 'scheme_no'
+        ],
+        
+        // LGA fields - enhanced for applications
+        lga: [
+          'property_lga', 'address_lga', 'lga', 'lgaName', 
+          'lgsaOrCity'
+        ],
+        
+        // District fields - enhanced for applications
+        district: [
+          'property_district', 'address_district', 'district', 
+          'districtName'
+        ],
+        
+        // Location/Address fields - enhanced for applications
+        location: [
+          'location', 'propertyAddress', 'propertyDescription', 
+          'plotDescription', 'property_location', 'address',
+          'property_street_name', 'address_street_name',
+          'property_house_no', 'address_house_no'
+        ],
+        
+        // Land use fields - enhanced for applications
+        landUse: [
+          'land_use', 'landUse', 'landUseType', 'residential_type',
+          'commercial_type', 'industrial_type', 'mixed_type'
+        ]
+      };
+      
+      const fields = fieldMappings[fieldType] || [];
+      for (const field of fields) {
+        if (item[field] && item[field] !== null && item[field] !== '') {
+          let value = item[field];
+          // Remove .0 from numeric values that are actually integers
+          if (typeof value === 'number' && value % 1 === 0) {
+            value = Math.floor(value).toString();
+          } else if (typeof value === 'string' && value.endsWith('.0')) {
+            value = value.replace('.0', '');
+          }
+          return value;
+        }
+      }
+      return 'N/A';
+    };
+
     // Render all transaction tables
     const renderTransactionTables = () => {
+      // Get related transactions for the selected file
+      const relatedTransactions = getRelatedTransactions(selectedFile);
+      
+      console.log('Rendering transaction tables with:', relatedTransactions);
+      
       // Property History (merged view of transactions)
       const propertyHistoryTable = document.getElementById('property-history-table');
       propertyHistoryTable.innerHTML = '';
       
-      // Create a combined array of history items
-      const combinedHistory = [];
-      
-      // Add items from history array (previously property transactions)
-      if (selectedFile.history && selectedFile.history.length > 0) {
-        selectedFile.history.forEach(transaction => {
-          combinedHistory.push({
-            date: transaction.date,
-            time: transaction.time || generateRandomTime(), // Use existing time or generate random
-            transactionType: transaction.transactionType,
-            grantor: transaction.guarantor,
-            grantee: transaction.guarantee,
-            documentNo: '-',
-            size: transaction.size || 'N/A',
-            caveat: transaction.caveat,
-            comments: transaction.comments || 'N/A',
-            isTransaction: true
-          });
-        });
-      }
-      
-      // Add items from propertyHistory array
-      if (selectedFile.propertyHistory && selectedFile.propertyHistory.length > 0) {
-        selectedFile.propertyHistory.forEach(history => {
-          combinedHistory.push({
-            date: history.date,
-            time: history.time || generateRandomTime(), // Use existing time or generate random
-            transactionType: history.event,
-            grantor: history.authority,
-            grantee: history.recipient,
-            documentNo: history.documentNo,
-            size: history.size || 'N/A',
-            caveat: '-',
-            comments: history.comments || 'N/A',
-            isTransaction: false
-          });
-        });
-      }
-      
-      // Sort the combined history by date (newest first)
-      combinedHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
-      
-      if (combinedHistory.length > 0) {
-        combinedHistory.forEach(item => {
+      if (relatedTransactions.length > 0) {
+        relatedTransactions.forEach(item => {
+          console.log('Processing item:', item);
+          
+          const date = getMappedValue(item, 'date');
+          const transactionType = getMappedValue(item, 'transactionType');
+          const grantor = getMappedValue(item, 'grantor');
+          const grantee = getMappedValue(item, 'grantee');
+          const serialNo = getMappedValue(item, 'serialNo');
+          const pageNo = getMappedValue(item, 'pageNo');
+          const volumeNo = getMappedValue(item, 'volumeNo');
+          const size = getMappedValue(item, 'size');
+          const comments = getMappedValue(item, 'comments');
+          
+          console.log('Mapped values:', { date, transactionType, grantor, grantee, serialNo, pageNo, volumeNo, size, comments });
+          
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>
-              <div>${item.date}</div>
-              <div class="text-xs text-gray-600">${item.time}</div>
+              <div>${date}</div>
             </td>
-            <td>${item.transactionType}</td>
-            <td>${item.grantor}</td>
-            <td>${item.grantee}</td>
-            <td>${item.documentNo}</td>
-            <td>${item.size}</td>
-            <td class="${item.caveat === 'Yes' ? 'text-red-600 font-medium' : ''}">${item.caveat}</td>
-            <td>${item.comments}</td>
+            <td>${transactionType}</td>
+            <td>${grantor}</td>
+            <td>${grantee}</td>
+            <td>${cleanNumericValue(serialNo)}/${cleanNumericValue(pageNo)}/${cleanNumericValue(volumeNo)}</td>
+            <td>${size}</td>
+            <td class="${item.caveat === 'Yes' ? 'text-red-600 font-medium' : ''}">${item.caveat || 'N/A'}</td>
+            <td>${comments}</td>
             <td>
               <div class="flex space-x-2">
                 <button class="edit-action">
@@ -935,21 +910,31 @@
       const instrumentRegistrationTable = document.getElementById('instrument-registration-table');
       instrumentRegistrationTable.innerHTML = '';
       
-      if (selectedFile.instrumentRegistrations && selectedFile.instrumentRegistrations.length > 0) {
-        selectedFile.instrumentRegistrations.forEach(registration => {
-          // Ensure we have a consistent time field
-          registration.registrationTime = registration.registrationTime || generateRandomTime();
+      // Filter for instrument records (registered_instruments table or records with instrument_type)
+      const instrumentRecords = relatedTransactions.filter(item => 
+        getMappedValue(item, 'transactionType') !== 'N/A' && 
+        (item.instrument_type || item.MLSFileNo || item.KAGISFileNO || item.rootRegistrationNumber)
+      );
+      
+      if (instrumentRecords.length > 0) {
+        instrumentRecords.forEach(registration => {
+          const date = getMappedValue(registration, 'date');
+          const time = getMappedValue(registration, 'time');
+          const transactionType = getMappedValue(registration, 'transactionType');
+          const grantor = getMappedValue(registration, 'grantor');
+          const grantee = getMappedValue(registration, 'grantee');
+          const regNumber = getMappedValue(registration, 'serialNo');
           
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>
-              <div>${registration.registrationDate}</div>
-              <div class="text-xs text-gray-600">${registration.registrationTime}</div>
+              <div>${date}</div>
+              <div class="text-xs text-gray-600">${time}</div>
             </td>
-            <td>${registration.instrumentType}</td>
-            <td>${registration.registrationNumber}</td>
-            <td>${registration.parties}</td>
-            <td>${registration.registeredBy}</td>
+            <td>${transactionType}</td>
+            <td>${regNumber}</td>
+            <td>${grantor} to ${grantee}</td>
+            <td>${registration.created_by || registration.updated_by || 'N/A'}</td>
             <td>
               <div class="flex space-x-2">
                 <button class="edit-action">
@@ -982,21 +967,29 @@
       const cofoTable = document.getElementById('cofo-table');
       cofoTable.innerHTML = '';
       
-      if (selectedFile.cofoRecords && selectedFile.cofoRecords.length > 0) {
-        selectedFile.cofoRecords.forEach(cofo => {
-          // Add issue time if not present
-          cofo.issueTime = cofo.issueTime || generateRandomTime();
+      // Filter for CofO records (cofo table or records with certificateDate)
+      const cofoRecords = relatedTransactions.filter(item => 
+        item.certificateDate || item.mlsfNo || item.kangisFileNo || item.currentAllottee || item.originalAllottee
+      );
+      
+      if (cofoRecords.length > 0) {
+        cofoRecords.forEach(cofo => {
+          const serialNo = getMappedValue(cofo, 'serialNo');
+          const pageNo = getMappedValue(cofo, 'pageNo');
+          const volumeNo = getMappedValue(cofo, 'volumeNo');
+          const date = getMappedValue(cofo, 'date');
+          const grantee = getMappedValue(cofo, 'grantee');
+          const landUse = getMappedValue(cofo, 'landUse');
           
           const row = document.createElement('tr');
           row.innerHTML = `
-            <td>${cofo.cofoNumber}</td>
+            <td>${cleanNumericValue(serialNo)}/${cleanNumericValue(pageNo)}/${cleanNumericValue(volumeNo)}</td>
             <td>
-              <div>${cofo.issueDate}</div>
-              <div class="text-xs text-gray-600">${cofo.issueTime}</div>
+              <div>${date}</div>
             </td>
-            <td>${cofo.holderName}</td>
-            <td>${cofo.landUse}</td>
-            <td>${cofo.term}</td>
+            <td>${grantee}</td>
+            <td>${landUse}</td>
+            <td>${cofo.term || cofo.occupancy || cofo.Period || 'N/A'}</td>
             <td>
               <div class="flex space-x-2">
                 <button class="edit-action">
@@ -1069,8 +1062,14 @@
 
     
 
-    // Add event delegation for delete action buttons
+    // Add event delegation for delete action buttons and tabs
     document.addEventListener('click', (e) => {
+      // Tab switching
+      if (e.target.closest('.tab')) {
+        const tabName = e.target.closest('.tab').getAttribute('data-tab');
+        switchTab(tabName);
+      }
+
       if (e.target.closest('.delete-action')) {
         // In a real app, you would show a confirmation dialog
         alert('Delete functionality would be implemented here.');
@@ -1292,7 +1291,7 @@ const generateRegNo = () => {
     // Render legal search report
     const renderLegalSearchReport = () => {
       if (!selectedFile) return;
-      
+
       // Set current date and time
       const currentDate = new Date().toLocaleDateString('en-US', {
         year: 'numeric',
@@ -1306,107 +1305,289 @@ const generateRegNo = () => {
         hour12: true
       });
       
-      // Update report header with timestamp info
-      document.getElementById('report-file-reference').textContent = selectedFile.fileNumber;
+      // Update report header with timestamp info (with .0 fix)
+      let reportFileRef = selectedFile.mlsFNo || selectedFile.MLSFileNo || selectedFile.fileNo || selectedFile.fileno || 'N/A';
+      if (typeof reportFileRef === 'number' && reportFileRef % 1 === 0) {
+        reportFileRef = Math.floor(reportFileRef).toString();
+      } else if (typeof reportFileRef === 'string' && reportFileRef.endsWith('.0')) {
+        reportFileRef = reportFileRef.replace('.0', '');
+      }
+      document.getElementById('report-file-reference').textContent = reportFileRef;
       document.getElementById('report-timestamp').textContent = `These details are as at ${currentDate} ${currentTime}`;
       document.getElementById('report-date').textContent = `Date: ${currentDate}`;
       document.getElementById('report-time').textContent = `Time: ${currentTime}`;
       
       // Update property details
-      document.getElementById('report-file-numbers').textContent = `mlsfNo: ${selectedFile.fileNumber} | kangisFileNo: ${selectedFile.kangisFileNo} | NewKANGISFileNo: ${selectedFile.newKangisFileNo}`;
-      document.getElementById('report-plot-number').textContent = selectedFile.plotNumber || "GP No. 1067/1 & 1067/2";
+      document.getElementById('report-file-numbers').textContent = `ST-FileNo: ${selectedFile.sectionalTitleFileNo || selectedFile.ST_FileNo || selectedFile.stFileNo || 'N/A'} | mlsfNo: ${selectedFile.mlsFNo || selectedFile.MLSFileNo || selectedFile.fileNo || 'N/A'} | kangisFileNo: ${selectedFile.kangisFileNo || selectedFile.KAGISFileNO || 'N/A'} | NewKANGISFileNo: ${selectedFile.NewKANGISFileno || selectedFile.NewKANGISFileNo || 'N/A'}`;
+      document.getElementById('report-plot-number').textContent = selectedFile.plot_no || selectedFile.plotNo || "GP No. 1067/1 & 1067/2";
       document.getElementById('report-plan-number').textContent = selectedFile.planNumber || "LKN/RES/2021/3006";
-      document.getElementById('report-plot-description').textContent = `${selectedFile.district || "Niger Street Nassarawa District"}, ${selectedFile.lga || "Nassarawa"} LGA`;
+      document.getElementById('report-plot-description').textContent = `${selectedFile.district || selectedFile.districtName || "Niger Street Nassarawa District"}, ${selectedFile.lgsaOrCity || selectedFile.lga || selectedFile.lgaName || "Nassarawa"} LGA`;
       
       // Generate QR code URL
-      const qrCodeData = `File Number: MLSF: ${selectedFile.fileNumber} | KANGIS: ${selectedFile.kangisFileNo} | New KANGIS: ${selectedFile.newKangisFileNo}`;
+      const qrCodeData = `File Number: ST-FileNo: ${selectedFile.sectionalTitleFileNo || selectedFile.ST_FileNo || selectedFile.stFileNo || 'N/A'} | MLSF: ${selectedFile.mlsFNo || selectedFile.MLSFileNo || selectedFile.fileNo || 'N/A'} | KANGIS: ${selectedFile.kangisFileNo || selectedFile.KAGISFileNO || 'N/A'} | New KANGIS: ${selectedFile.NewKANGISFileno || selectedFile.NewKANGISFileNo || 'N/A'}`;
       const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrCodeData)}`;
       document.getElementById('report-qr-code').src = qrCodeUrl;
       
+      // Get related transactions for the selected file
+      const relatedTransactions = getRelatedTransactions(selectedFile);
+
+      // Helper to find reg instrument by file number
+      function findRegInstrumentByFileNo(fileNo) {
+        if (!searchResults) return null;
+        // Search in registered_instruments only
+        const regInstruments = searchResults.filter(
+          r =>
+            r.instrument_type ||
+            r.MLSFileNo ||
+            r.KAGISFileNO ||
+            r.rootRegistrationNumber
+        );
+        return regInstruments.find(
+          ri =>
+            ri.MLSFileNo == fileNo ||
+            ri.KAGISFileNO == fileNo ||
+            ri.NewKANGISFileNo == fileNo
+        );
+      }
+
+      // Helper to get Registration Particulars for each transaction
+      function getRegistrationParticulars(transaction) {
+        // property_records table
+        if (
+          transaction.hasOwnProperty('serialNo') &&
+          transaction.hasOwnProperty('pageNo') &&
+          transaction.hasOwnProperty('volumeNo')
+        ) {
+          return `${cleanNumericValue(transaction.serialNo)}/${cleanNumericValue(transaction.pageNo)}/${cleanNumericValue(transaction.volumeNo)}`;
+        }
+        // mother_applications table
+        if (
+          transaction.hasOwnProperty('owner_fullname') &&
+          transaction.hasOwnProperty('fileno')
+        ) {
+          let regInst = findRegInstrumentByFileNo(transaction.fileno);
+          if (regInst) {
+            return `${cleanNumericValue(regInst.volume_no)}/${cleanNumericValue(regInst.page_no)}/${cleanNumericValue(regInst.serial_no)}`;
+          }
+          return 'N/A/N/A/N/A';
+        }
+        // subapplications table
+        if (
+          transaction.hasOwnProperty('sub_owner_fullname') &&
+          transaction.hasOwnProperty('fileno')
+        ) {
+          let regInst = findRegInstrumentByFileNo(transaction.fileno);
+          if (regInst) {
+            return `${cleanNumericValue(regInst.volume_no)}/${cleanNumericValue(regInst.page_no)}/${cleanNumericValue(regInst.serial_no)}`;
+          }
+          return 'N/A/N/A/N/A';
+        }
+        // cofo table
+        if (
+          transaction.hasOwnProperty('oldTitleSerialNo') &&
+          transaction.hasOwnProperty('oldTitlePageNo') &&
+          transaction.hasOwnProperty('oldTitleVolumeNo')
+        ) {
+          return `${cleanNumericValue(transaction.oldTitleSerialNo)}/${cleanNumericValue(transaction.oldTitlePageNo)}/${cleanNumericValue(transaction.oldTitleVolumeNo)}`;
+        }
+        // registered_instruments table
+        if (
+          transaction.hasOwnProperty('instrument_type') ||
+          transaction.hasOwnProperty('rootRegistrationNumber')
+        ) {
+          return `${cleanNumericValue(transaction.volume_no)}/${cleanNumericValue(transaction.page_no)}/${cleanNumericValue(transaction.serial_no)}`;
+        }
+        return 'N/A/N/A/N/A';
+      }
+
       // Create combined array of all transactions
       const allTransactions = [];
-      
-      // Add items from history array
-      if (selectedFile.history && selectedFile.history.length > 0) {
-        selectedFile.history.forEach(transaction => {
-          allTransactions.push({
-            type: 'Property Transaction',
-            date: transaction.date,
-            time: transaction.time || generateRandomTime(),
-            transactionType: transaction.transactionType,
-            grantor: transaction.guarantor,
-            grantee: transaction.guarantee,
-            regNo: generateRegNo(),
-            size: transaction.size || 'N/A',
-            caveat: transaction.caveat,
-            comments: transaction.comments || 'N/A'
-          });
+
+      relatedTransactions.forEach(transaction => {
+        let regNo = getRegistrationParticulars(transaction);
+        let category = 'Property Record';
+        if (
+          transaction.hasOwnProperty('instrument_type') ||
+          transaction.hasOwnProperty('rootRegistrationNumber')
+        ) {
+          category = 'Instrument Registration';
+        } else if (
+          transaction.hasOwnProperty('oldTitleSerialNo') &&
+          transaction.hasOwnProperty('oldTitlePageNo') &&
+          transaction.hasOwnProperty('oldTitleVolumeNo')
+        ) {
+          category = 'Certificate of Occupancy';
+        } else if (
+          transaction.hasOwnProperty('owner_fullname') &&
+          transaction.hasOwnProperty('fileno')
+        ) {
+          category = 'Sectional Title';
+        } else if (
+          transaction.hasOwnProperty('sub_owner_fullname') &&
+          transaction.hasOwnProperty('fileno')
+        ) {
+          category = 'Sectional Title';
+        }
+
+        allTransactions.push({
+          type: transaction.transaction_type || transaction.instrument_type || transaction.title_type || 'Record',
+          date: transaction.transaction_date || transaction.deeds_date || transaction.certificateDate || transaction.approval_date || 'N/A',
+          time: transaction.deeds_time || generateRandomTime(),
+          transactionType: transaction.transaction_type || transaction.instrument_type || transaction.title_type || 'Record',
+          grantor: transaction.owner_fullname || transaction.mother_owner_fullname || transaction.Assignor || transaction.Grantor || transaction.originalAllottee || transaction.first_name || transaction.corporate_name || 'N/A',
+          grantee: transaction.sub_owner_fullname || transaction.multiple_owners_names || transaction.Assignee || transaction.Grantee || transaction.currentAllottee || 'N/A',
+          regNo: regNo,
+          size: transaction.size || transaction.plot_size || 'N/A',
+          caveat: transaction.caveat || 'N/A',
+          comments: transaction.comments || transaction.additional_comments || 'N/A',
+          category: category,
+          originalRecord: transaction
         });
+      });
+
+      // If we still don't have enough transactions, try to get them directly from the rendered tabs
+      if (allTransactions.length <= 1) {
+        console.log('=== BACKUP APPROACH: Getting data from rendered tabs ===');
+        
+        // Get data from Property History tab
+        const propertyHistoryTable = document.getElementById('property-history-table');
+        if (propertyHistoryTable && propertyHistoryTable.children.length > 0) {
+          console.log(`Found ${propertyHistoryTable.children.length} rows in Property History tab`);
+          for (let i = 0; i < propertyHistoryTable.children.length; i++) {
+            const row = propertyHistoryTable.children[i];
+            if (row.children.length >= 8) {
+              const backupTransaction = {
+                type: 'Property History',
+                date: cleanNumericValue(row.children[0].textContent.trim()),
+                time: generateRandomTime(),
+                transactionType: cleanNumericValue(row.children[1].textContent.trim()),
+                grantor: cleanNumericValue(row.children[2].textContent.trim()),
+                grantee: cleanNumericValue(row.children[3].textContent.trim()),
+                regNo: cleanNumericValue(row.children[4].textContent.trim()),
+                size: cleanNumericValue(row.children[5].textContent.trim()),
+                caveat: cleanNumericValue(row.children[6].textContent.trim()),
+                comments: cleanNumericValue(row.children[7].textContent.trim()),
+                category: 'Property History'
+              };
+              allTransactions.push(backupTransaction);
+              console.log(`Added backup transaction from Property History:`, backupTransaction);
+            }
+          }
+        }
+        
+        // Get data from Instrument Registration tab
+        const instrumentTable = document.getElementById('instrument-registration-table');
+        if (instrumentTable && instrumentTable.children.length > 0) {
+          console.log(`Found ${instrumentTable.children.length} rows in Instrument Registration tab`);
+          for (let i = 0; i < instrumentTable.children.length; i++) {
+            const row = instrumentTable.children[i];
+            if (row.children.length >= 5) {
+              const backupTransaction = {
+                type: 'Instrument Registration',
+                date: cleanNumericValue(row.children[0].textContent.trim()),
+                time: generateRandomTime(),
+                transactionType: cleanNumericValue(row.children[1].textContent.trim()),
+                grantor: cleanNumericValue(row.children[3].textContent.split(' to ')[0]) || 'N/A',
+                grantee: cleanNumericValue(row.children[3].textContent.split(' to ')[1]) || 'N/A',
+                regNo: cleanNumericValue(row.children[2].textContent.trim()),
+                size: 'N/A',
+                caveat: 'N/A',
+                comments: 'N/A',
+                category: 'Instrument Registration'
+              };
+              allTransactions.push(backupTransaction);
+              console.log(`Added backup transaction from Instrument Registration:`, backupTransaction);
+            }
+          }
+        }
+        
+        // Get data from CofO tab
+        const cofoTable = document.getElementById('cofo-table');
+        if (cofoTable && cofoTable.children.length > 0) {
+          console.log(`Found ${cofoTable.children.length} rows in CofO tab`);
+          for (let i = 0; i < cofoTable.children.length; i++) {
+            const row = cofoTable.children[i];
+            if (row.children.length >= 5) {
+              const backupTransaction = {
+                type: 'Certificate of Occupancy',
+                date: cleanNumericValue(row.children[1].textContent.trim()),
+                time: generateRandomTime(),
+                transactionType: 'Certificate of Occupancy',
+                grantor: 'Government',
+                grantee: cleanNumericValue(row.children[2].textContent.trim()),
+                regNo: cleanNumericValue(row.children[0].textContent.trim()),
+                size: 'N/A',
+                caveat: 'N/A',
+                comments: cleanNumericValue(row.children[3].textContent.trim()),
+                category: 'Certificate of Occupancy'
+              };
+              allTransactions.push(backupTransaction);
+              console.log(`Added backup transaction from CofO:`, backupTransaction);
+            }
+          }
+        }
+        
+        console.log(`After backup approach, total transactions: ${allTransactions.length}`);
       }
       
-      // Add items from propertyHistory array
-      if (selectedFile.propertyHistory && selectedFile.propertyHistory.length > 0) {
-        selectedFile.propertyHistory.forEach(history => {
-          allTransactions.push({
-            type: 'Property History',
-            date: history.date,
-            time: history.time || generateRandomTime(),
-            transactionType: history.event,
-            grantor: history.authority,
-            grantee: history.recipient,
-            regNo: generateRegNo(),
-            size: history.size || 'N/A',
-            caveat: '-',
-            comments: history.comments || 'N/A'
-          });
-        });
-      }
-    
-      // Add items from instrumentRegistrations array
-      if (selectedFile.instrumentRegistrations && selectedFile.instrumentRegistrations.length > 0) {
-        selectedFile.instrumentRegistrations.forEach(reg => {
-          allTransactions.push({
-            type: 'Instrument Registration',
-            date: reg.registrationDate,
-            time: reg.registrationTime || generateRandomTime(),
-            transactionType: reg.instrumentType,
-            grantor: reg.parties.split(' and ')[0],
-            grantee: reg.parties.split(' and ')[1] || '-',
-            regNo: generateRegNo(),
-            size: '-',
-            caveat: '-',
-            comments: `Registered by ${reg.registeredBy}`
-          });
-        });
-      }
-    
-      // Add items from cofoRecords array
-      if (selectedFile.cofoRecords && selectedFile.cofoRecords.length > 0) {
-        selectedFile.cofoRecords.forEach(cofo => {
-          allTransactions.push({
-            type: 'Certificate of Occupancy',
-            date: cofo.issueDate,
-            time: cofo.issueTime || generateRandomTime(),
-            transactionType: 'C of O Issuance',
-            grantor: 'Land Registry',
-            grantee: cofo.holderName,
-            regNo: generateRegNo(),
-            size: '-',
-            caveat: '-',
-            comments: `Land Use: ${cofo.landUse}, Term: ${cofo.term}`
-          });
-        });
-      }
-    
-      // Sort all transactions by date (newest first)
+      console.log('=== FINAL TRANSACTIONS ARRAY ===');
+      console.log('Total transactions processed:', allTransactions.length);
+      console.log('All transactions for report:', allTransactions);
+
+      
+      // Map to report row format
+      const mappedTransactions = allTransactions.map(transaction => {
+        const date = getMappedValue(transaction, 'date');
+        const time = getMappedValue(transaction, 'time');
+        const transactionType = getMappedValue(transaction, 'transactionType');
+        const grantor = getMappedValue(transaction, 'grantor');
+        const grantee = getMappedValue(transaction, 'grantee');
+        const serialNo = getMappedValue(transaction, 'serialNo');
+        const pageNo = getMappedValue(transaction, 'pageNo');
+        const volumeNo = getMappedValue(transaction, 'volumeNo');
+        const size = getMappedValue(transaction, 'size');
+        const comments = getMappedValue(transaction, 'comments');
+        let category = 'Property Record';
+        if (
+          transaction.instrument_type ||
+          transaction.rootRegistrationNumber ||
+          transaction.MLSFileNo ||
+          transaction.KAGISFileNO
+        ) {
+          category = 'Instrument Registration';
+        } else if (
+          transaction.certificateDate ||
+          transaction.currentAllottee ||
+          transaction.originalAllottee
+        ) {
+          category = 'Certificate of Occupancy';
+        }
+        return {
+          type: transactionType,
+          date: date,
+          time: time !== 'N/A' ? time : generateRandomTime(),
+          transactionType: transactionType,
+          grantor: grantor,
+          grantee: grantee,
+          regNo: `${serialNo}/${pageNo}/${volumeNo}`,
+          size: size,
+          caveat: transaction.caveat || 'N/A',
+          comments: comments,
+          category: category
+        };
+      });
+
+      // Sort by date (newest first)
       allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-    
+
       // Render the combined transactions table
       const transactionsTable = document.getElementById('report-transactions-table');
       transactionsTable.innerHTML = '';
-    
+
       if (allTransactions.length > 0) {
         allTransactions.forEach((transaction, index) => {
+          // Use the correct registration particulars for each row
+          const regParticulars = getRegistrationParticulars(transaction.originalRecord);
           const row = document.createElement('tr');
           row.innerHTML = `
             <td class="border border-gray-300 px-3 py-2">${index + 1}</td>
@@ -1414,13 +1595,13 @@ const generateRegNo = () => {
             <td class="border border-gray-300 px-3 py-2">${transaction.grantee}</td>
             <td class="border border-gray-300 px-3 py-2">
               ${transaction.transactionType}
-              <div class="text-xs text-gray-500">${transaction.type}</div>
+              <div class="text-xs text-gray-500">${transaction.category}</div>
             </td>
             <td class="border border-gray-300 px-3 py-2">
               <div>${transaction.date}</div>
               <div class="text-xs text-gray-600">${transaction.time}</div>
             </td>
-            <td class="border border-gray-300 px-3 py-2">${transaction.regNo}</td>
+            <td class="border border-gray-300 px-3 py-2">${cleanNumericValue(regParticulars)}</td>
             <td class="border border-gray-300 px-3 py-2">${transaction.size}</td>
             <td class="border border-gray-300 px-3 py-2 ${transaction.caveat === 'Yes' ? 'text-red-600' : ''}">${transaction.caveat}</td>
             <td class="border border-gray-300 px-3 py-2">${transaction.comments}</td>
@@ -1437,8 +1618,35 @@ const generateRegNo = () => {
     };
 
     // Add input event listeners for search fields
-    document.getElementById('fileNumber').addEventListener('input', performSearch);
+    document.getElementById('sectionalTitleFileNo').addEventListener('input', performSearch);
+    document.getElementById('mlsFNo').addEventListener('input', performSearch);
     document.getElementById('kangisFileNo').addEventListener('input', performSearch);
+
+    // Add clear button event listeners
+    document.querySelector('.sectional-clear-btn').addEventListener('click', () => {
+      document.getElementById('sectionalTitleFileNo').value = '';
+      performSearch();
+    });
+
+    document.querySelector('.mls-clear-btn').addEventListener('click', () => {
+      document.getElementById('mlsFNo').value = '';
+      performSearch();
+    });
+
+    document.querySelector('.kangis-clear-btn').addEventListener('click', () => {
+      document.getElementById('kangisFileNo').value = '';
+      performSearch();
+    });
+
+    // Add close modal button event listener
+    document.getElementById('close-modal-btn').addEventListener('click', () => {
+      searchModal.classList.add('hidden');
+    });
+
+    // Add search button event listener
+    document.getElementById('search-btn').addEventListener('click', () => {
+      performSearch();
+    });
 
     // Close modal when pressing Escape key
     document.addEventListener('keydown', (e) => {
@@ -1448,4 +1656,4 @@ const generateRegNo = () => {
       }
     });
   </script>
-      
+

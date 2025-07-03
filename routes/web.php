@@ -41,6 +41,7 @@ use App\Http\Controllers\LandingController;
  
 use App\Http\Controllers\GisController;
 use App\Http\Controllers\ProgrammeController;
+use App\Http\Controllers\InstrumentRegistrationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -445,10 +446,16 @@ Route::get('/propertycard/data-fallback', function() {
     ]);
 })->name('propertycard.data.fallback');
 
-Route::get('/legal_search', [LegalSearchController::class, 'index'])->name('legal_search.index');
-Route::get('/legal_search/report', [LegalSearchController::class, 'report'])->name('legal_search.report');
-//Route::post('/legal_search', [LegalSearchController::class, 'store'])->name('legal_search.store');
-Route::get('/legal_search/legal_search_report', [LegalSearchController::class, 'legal_search_report'])->name('legal_search.legal_search_report');
+Route::group(['middleware' => 'web'], function () {
+    Route::get('/legal_search', [LegalSearchController::class, 'index'])->name('legal_search.index');
+    Route::post('/legal_search/search', [LegalSearchController::class, 'search'])->name('legal_search.search');
+    Route::get('/legal_search/report', [LegalSearchController::class, 'report'])->name('legal_search.report');
+    //Route::post('/legal_search', [LegalSearchController::class, 'store'])->name('legal_search.store');
+    Route::get('/legal_search/legal_search_report', [LegalSearchController::class, 'legal_search_report'])->name('legal_search.legal_search_report');
+
+    // Add alias for JS compatibility
+    Route::post('/legal_search/search', [LegalSearchController::class, 'search'])->name('legalsearch.search');
+});
  
 Route::post('/deeds/insert', [DeedsController::class, 'insert'])->name('deeds.insert');
 Route::get('/deeds/getdeedsdublicate', [DeedsController::class, 'getDeedsDublicate'])->name('deeds.getDeedsDublicate');
@@ -471,6 +478,16 @@ Route::post('/sectionaltitling/store-mother-app', [SaveMainAppController::class,
 
 // Remove or comment out the duplicate route
 // Route::post('/sectionaltitling', [SaveMainAppController::class, 'storeMotherApp'])->name('sectionaltitling.storeMotherApp');
+
+// Instrument Registration routes
+Route::group(['middleware' => ['auth'], 'prefix' => 'instrument_registration'], function () {
+    Route::get('/', [InstrumentRegistrationController::class, 'InstrumentRegistration'])->name('instrument_registration.index');
+    Route::get('get-batch-data', [InstrumentRegistrationController::class, 'getBatchData']);
+    Route::get('get-next-serial', [InstrumentRegistrationController::class, 'getNextSerialNumber']);
+    Route::post('register-batch', [InstrumentRegistrationController::class, 'registerBatch']);
+    Route::post('register-single', [InstrumentRegistrationController::class, 'registerSingle']);
+    Route::post('decline', [InstrumentRegistrationController::class, 'declineRegistration']);
+});
 
 // Add a fallback route for debugging
 Route::fallback(function () {

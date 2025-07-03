@@ -25,8 +25,23 @@
         if (nextStep1) {
             nextStep1.addEventListener('click', function(e) {
                 e.preventDefault();
-                step1.classList.remove('active');
-                step2.classList.add('active');
+                
+                // Validate required fields for step 1
+                if (validateStep1()) {
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Step 1 Complete!',
+                        text: 'Basic information has been validated successfully.',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                    
+                    step1.classList.remove('active');
+                    step2.classList.add('active');
+                }
             });
         }
 
@@ -53,9 +68,24 @@
         if (nextStep4) {
             nextStep4.addEventListener('click', function(e) {
                 e.preventDefault();
-                step4.classList.remove('active');
-                step5.classList.add('active');
-                updateApplicationSummary(); // Make sure summary is updated
+                
+                // Validate required documents for step 4
+                if (validateStep4()) {
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Documents Validated!',
+                        text: 'All required documents have been uploaded successfully.',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                    
+                    step4.classList.remove('active');
+                    step5.classList.add('active');
+                    updateApplicationSummary(); // Make sure summary is updated
+                }
             });
         }
 
@@ -91,32 +121,35 @@
             });
         }
 
-        // Update the IDs for the summary step (now step 5)
-        document.getElementById('backStep5').addEventListener('click', function() {
-            document.getElementById('step5').classList.remove('active');
-            document.getElementById('step4').classList.add('active');
-        });
-
         // Close modal buttons
-        document.getElementById('closeModal').addEventListener('click', function() {
-            // In a real application, this would close the modal
-            alert('Application process canceled');
-        });
+        const closeModal = document.getElementById('closeModal');
+        const closeModal2 = document.getElementById('closeModal2');
+        const closeModal3 = document.getElementById('closeModal3');
+        const closeModal4 = document.getElementById('closeModal4');
 
-        document.getElementById('closeModal2').addEventListener('click', function() {
-            // In a real application, this would close the modal
-            alert('Application process canceled');
-        });
+        if (closeModal) {
+            closeModal.addEventListener('click', function() {
+                alert('Application process canceled');
+            });
+        }
 
-        document.getElementById('closeModal3').addEventListener('click', function() {
-            // In a real application, this would close the modal
-            alert('Application process canceled');
-        });
+        if (closeModal2) {
+            closeModal2.addEventListener('click', function() {
+                alert('Application process canceled');
+            });
+        }
 
-        document.getElementById('closeModal4').addEventListener('click', function() {
-            // In a real application, this would close the modal
-            alert('Application process canceled');
-        });
+        if (closeModal3) {
+            closeModal3.addEventListener('click', function() {
+                alert('Application process canceled');
+            });
+        }
+
+        if (closeModal4) {
+            closeModal4.addEventListener('click', function() {
+                alert('Application process canceled');
+            });
+        }
 
         // Improved contact address update functionality
         function initializeAddressUpdate() {
@@ -252,4 +285,399 @@
             });
         }
     }
+
+    // Comprehensive function to update application summary
+    function updateApplicationSummary() {
+        console.log('Updating application summary...');
+        
+        // Applicant Information
+        const applicantTypeEl = document.querySelector('input[name="applicantType"]:checked');
+        let applicantType = '-';
+        if (applicantTypeEl) {
+            applicantType = applicantTypeEl.value;
+        } else {
+            // Check hidden field as fallback
+            const hiddenApplicantType = document.getElementById('applicantType');
+            if (hiddenApplicantType && hiddenApplicantType.value) {
+                applicantType = hiddenApplicantType.value;
+            }
+        }
+
+        // Get name based on applicant type
+        let fullName = '-';
+        if (applicantType === 'individual') {
+            const titleEl = document.querySelector('select[name="applicant_title"]');
+            const firstNameEl = document.querySelector('input[name="first_name"]');
+            const middleNameEl = document.querySelector('input[name="middle_name"]');
+            const surnameEl = document.querySelector('input[name="surname"]');
+            
+            const title = titleEl ? titleEl.value : '';
+            const firstName = firstNameEl ? firstNameEl.value : '';
+            const middleName = middleNameEl ? middleNameEl.value : '';
+            const surname = surnameEl ? surnameEl.value : '';
+            
+            const nameParts = [title, firstName, middleName, surname].filter(part => part.trim() !== '');
+            fullName = nameParts.join(' ') || '-';
+        } else if (applicantType === 'corporate') {
+            const corporateNameEl = document.querySelector('input[name="corporate_name"]');
+            fullName = corporateNameEl ? corporateNameEl.value : '-';
+        } else if (applicantType === 'multiple') {
+            const multipleOwnersNames = document.querySelectorAll('input[name="multiple_owners_names[]"]');
+            const names = Array.from(multipleOwnersNames).map(input => input.value).filter(name => name.trim() !== '');
+            fullName = names.length > 0 ? names.join(', ') : '-';
+        }
+
+        // Contact Information
+        const emailEl = document.querySelector('input[name="owner_email"]');
+        const email = emailEl ? emailEl.value : '-';
+
+        const phoneEls = document.querySelectorAll('input[name="phone_number[]"]');
+        const phones = Array.from(phoneEls).map(el => el.value).filter(phone => phone.trim() !== '');
+        const phoneDisplay = phones.length > 0 ? phones.join(', ') : '-';
+
+        // Address Information - try both name and ID selectors
+        const houseNoEl = document.querySelector('input[name="address_house_no"]') || document.getElementById('ownerHouseNo');
+        const streetNameEl = document.querySelector('input[name="owner_street_name"]') || document.getElementById('ownerStreetName');
+        const districtEl = document.querySelector('input[name="owner_district"]') || document.getElementById('ownerDistrict');
+        const lgaEl = document.querySelector('input[name="owner_lga"]') || document.getElementById('ownerLga');
+        const stateEl = document.querySelector('input[name="owner_state"]') || document.getElementById('ownerState');
+
+        const houseNo = houseNoEl ? houseNoEl.value : '-';
+        const streetName = streetNameEl ? streetNameEl.value : '-';
+        const district = districtEl ? districtEl.value : '-';
+        const lga = lgaEl ? lgaEl.value : '-';
+        const state = stateEl ? stateEl.value : '-';
+        
+        // Debug logging for LGA
+        console.log('LGA Debug:', {
+            lgaEl: lgaEl,
+            lgaValue: lga,
+            lgaByName: document.querySelector('input[name="owner_lga"]'),
+            lgaById: document.getElementById('ownerLga')
+        });
+        
+        const addressParts = [houseNo, streetName, district, lga, state].filter(part => part !== '-' && part.trim() !== '');
+        const fullAddress = addressParts.length > 0 ? addressParts.join(', ') : '-';
+
+        // Property Details
+        const residenceTypeEl = document.querySelector('input[name="residenceType"]:checked');
+        const residenceType = residenceTypeEl ? residenceTypeEl.value : '-';
+        
+        const unitsCountEl = document.querySelector('input[name="units_count"]');
+        const unitsCount = unitsCountEl ? unitsCountEl.value : '-';
+        
+        const blocksCountEl = document.querySelector('input[name="blocks_count"]');
+        const blocksCount = blocksCountEl ? blocksCountEl.value : '-';
+        
+        const sectionsCountEl = document.querySelector('input[name="sections_count"]');
+        const sectionsCount = sectionsCountEl ? sectionsCountEl.value : '-';
+
+        // File Number - Get from active tab
+        let fileNumber = '-';
+        const activeFileTab = document.getElementById('activeFileTab');
+        if (activeFileTab && activeFileTab.value) {
+            const activeTabValue = activeFileTab.value;
+            if (activeTabValue === 'mlsFNo') {
+                const mlsFileNoEl = document.getElementById('mlsPreviewFileNumber');
+                fileNumber = mlsFileNoEl ? mlsFileNoEl.value : '-';
+            } else if (activeTabValue === 'kangisFileNo') {
+                const kangisFileNoEl = document.getElementById('kangisPreviewFileNumber');
+                fileNumber = kangisFileNoEl ? kangisFileNoEl.value : '-';
+            } else if (activeTabValue === 'NewKANGISFileno') {
+                const newKangisFileNoEl = document.getElementById('newKangisPreviewFileNumber');
+                fileNumber = newKangisFileNoEl ? newKangisFileNoEl.value : '-';
+            }
+        }
+
+        // Payment Information
+        const appFeeEl = document.querySelector('input[name="application_fee"]');
+        const procFeeEl = document.querySelector('input[name="processing_fee"]');
+        const sitePlanFeeEl = document.querySelector('input[name="site_plan_fee"]');
+        const receiptNumberEl = document.querySelector('input[name="receipt_number"]');
+        const paymentDateEl = document.querySelector('input[name="payment_date"]');
+
+        const appFee = appFeeEl ? parseFloat(appFeeEl.value) || 0 : 0;
+        const procFee = procFeeEl ? parseFloat(procFeeEl.value) || 0 : 0;
+        const sitePlanFee = sitePlanFeeEl ? parseFloat(sitePlanFeeEl.value) || 0 : 0;
+        const totalFee = appFee + procFee + sitePlanFee;
+        const receiptNumber = receiptNumberEl ? receiptNumberEl.value : '-';
+        const paymentDate = paymentDateEl ? paymentDateEl.value : '-';
+
+        const formatCurrency = (amount) => {
+            return '₦' + amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        };
+
+        // Property Address - try both name and ID selectors
+        const propertyHouseNoEl = document.querySelector('input[name="property_house_no"]');
+        const propertyPlotNoEl = document.querySelector('input[name="property_plot_no"]');
+        const propertyStreetNameEl = document.querySelector('input[name="property_street_name"]');
+        const propertyDistrictEl = document.querySelector('input[name="property_district"]');
+        const propertyLgaEl = document.querySelector('select[name="property_lga"]') || document.getElementById('propertyLga');
+        const propertyStateEl = document.querySelector('select[name="property_state"]') || document.getElementById('propertyState');
+
+        const propertyHouseNo = propertyHouseNoEl ? propertyHouseNoEl.value : '-';
+        const propertyPlotNo = propertyPlotNoEl ? propertyPlotNoEl.value : '-';
+        const propertyStreetName = propertyStreetNameEl ? propertyStreetNameEl.value : '-';
+        const propertyDistrict = propertyDistrictEl ? propertyDistrictEl.value : '-';
+        const propertyLga = propertyLgaEl ? propertyLgaEl.value : '-';
+        const propertyState = propertyStateEl ? propertyStateEl.value : '-';
+        
+        // Debug logging for Property LGA
+        console.log('Property LGA Debug:', {
+            propertyLgaEl: propertyLgaEl,
+            propertyLgaValue: propertyLga,
+            propertyLgaByName: document.querySelector('select[name="property_lga"]'),
+            propertyLgaById: document.getElementById('lgaName')
+        });
+        
+        const propertyAddressParts = [propertyHouseNo, propertyPlotNo, propertyStreetName, propertyDistrict, propertyLga, propertyState].filter(part => part !== '-' && part.trim() !== '');
+        const propertyFullAddress = propertyAddressParts.length > 0 ? propertyAddressParts.join(', ') : '-';
+
+        // Update summary fields if they exist
+        const updateElement = (id, value) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+            }
+        };
+
+        updateElement('summary-applicant-type', applicantType);
+        updateElement('summary-name', fullName);
+        updateElement('summary-email', email);
+        updateElement('summary-phone', phoneDisplay);
+        
+        updateElement('summary-residence-type', residenceType);
+        updateElement('summary-units', unitsCount);
+        updateElement('summary-blocks', blocksCount);
+        updateElement('summary-sections', sectionsCount);
+        updateElement('summary-file-number', fileNumber);
+        
+        updateElement('summary-house-no', houseNo);
+        updateElement('summary-street-name', streetName);
+        updateElement('summary-district', district);
+        updateElement('summary-lga', lga);
+        updateElement('summary-state', state);
+        updateElement('summary-full-address', fullAddress);
+        
+        updateElement('summary-application-fee', formatCurrency(appFee));
+        updateElement('summary-processing-fee', formatCurrency(procFee));
+        updateElement('summary-site-plan-fee', formatCurrency(sitePlanFee));
+        updateElement('summary-total-fee', formatCurrency(totalFee));
+        updateElement('summary-receipt-number', receiptNumber);
+        updateElement('summary-payment-date', paymentDate);
+        
+        updateElement('summary-property-house-no', propertyHouseNo);
+        updateElement('summary-property-plot-no', propertyPlotNo);
+        updateElement('summary-property-street-name', propertyStreetName);
+        updateElement('summary-property-district', propertyDistrict);
+        updateElement('summary-property-lga', propertyLga);
+        updateElement('summary-property-state', propertyState);
+        updateElement('summary-property-full-address', propertyFullAddress);
+        
+        // Update identification information
+        const idTypeEl = document.querySelector('input[name="idType"]:checked');
+        const idDocumentEl = document.getElementById('idDocumentUpload');
+        
+        const idType = idTypeEl ? idTypeEl.value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : '-';
+        const idDocumentName = idDocumentEl && idDocumentEl.files && idDocumentEl.files.length > 0 ? idDocumentEl.files[0].name : 'Not uploaded';
+        
+        updateElement('summary-id-type', idType);
+        updateElement('summary-id-document', idDocumentName);
+        
+        // Update uploaded documents
+        const documentsContainer = document.getElementById('summary-documents');
+        if (documentsContainer) {
+            documentsContainer.innerHTML = '';
+            const documents = [
+                { name: 'Application Letter', id: 'application_letter' },
+                { name: 'Building Plan', id: 'building_plan' },
+                { name: 'Architectural Design', id: 'architectural_design' },
+                { name: 'Ownership Document', id: 'ownership_document' }
+            ];
+            
+            documents.forEach(doc => {
+                const input = document.getElementById(doc.id);
+                const isUploaded = input && input.files && input.files.length > 0;
+                const fileName = isUploaded ? input.files[0].name : '';
+                
+                const docElement = document.createElement('div');
+                docElement.className = 'flex items-center justify-between p-2 bg-gray-50 rounded';
+                
+                const leftDiv = document.createElement('div');
+                leftDiv.className = 'flex items-center';
+                
+                const statusDot = document.createElement('span');
+                statusDot.className = `inline-block w-2 h-2 ${isUploaded ? 'bg-green-500' : 'bg-red-500'} rounded-full mr-2`;
+                
+                const docName = document.createElement('span');
+                docName.className = 'text-sm font-medium';
+                docName.textContent = doc.name;
+                
+                leftDiv.appendChild(statusDot);
+                leftDiv.appendChild(docName);
+                
+                if (isUploaded && fileName) {
+                    const fileNameSpan = document.createElement('span');
+                    fileNameSpan.className = 'text-xs text-gray-500 truncate max-w-32';
+                    fileNameSpan.textContent = fileName;
+                    docElement.appendChild(leftDiv);
+                    docElement.appendChild(fileNameSpan);
+                } else {
+                    docElement.appendChild(leftDiv);
+                }
+                
+                documentsContainer.appendChild(docElement);
+            });
+        }
+        
+        console.log('Application summary updated successfully');
+    }
+
+    // Make updateApplicationSummary globally accessible
+    window.updateApplicationSummary = updateApplicationSummary;
+
+    // Validation functions
+    function validateStep1() {
+        const errors = [];
+        
+        // Check applicant type
+        const applicantType = document.querySelector('input[name="applicantType"]:checked');
+        if (!applicantType) {
+            errors.push('Please select an applicant type');
+        }
+        
+        // Check applicant details based on type
+        if (applicantType) {
+            if (applicantType.value === 'individual') {
+                const title = document.getElementById('applicantTitle');
+                const firstName = document.getElementById('applicantName');
+                const surname = document.getElementById('applicantSurname');
+                
+                if (!title || !title.value) errors.push('Please select a title');
+                if (!firstName || !firstName.value.trim()) errors.push('Please enter first name');
+                if (!surname || !surname.value.trim()) errors.push('Please enter surname');
+            } else if (applicantType.value === 'corporate') {
+                const corporateName = document.getElementById('corporateName');
+                const rcNumber = document.getElementById('rcNumber');
+                
+                if (!corporateName || !corporateName.value.trim()) errors.push('Please enter corporate body name');
+                if (!rcNumber || !rcNumber.value.trim()) errors.push('Please enter RC number');
+            } else if (applicantType.value === 'multiple') {
+                const ownerNames = document.querySelectorAll('input[name="multiple_owners_names[]"]');
+                let hasValidOwner = false;
+                ownerNames.forEach(input => {
+                    if (input.value.trim()) hasValidOwner = true;
+                });
+                if (!hasValidOwner) errors.push('Please add at least one owner name');
+            }
+        }
+        
+        // Check contact information
+        const phone1 = document.querySelector('input[name="phone_number[]"]');
+        const email = document.querySelector('input[name="owner_email"]');
+        const ownerState = document.querySelector('select[name="owner_state"]') || document.getElementById('ownerState');
+        const ownerLga = document.querySelector('select[name="owner_lga"]') || document.getElementById('ownerLga');
+        
+        if (!phone1 || !phone1.value.trim()) errors.push('Please enter phone number');
+        if (!email || !email.value.trim()) errors.push('Please enter email address');
+        if (!ownerState || !ownerState.value) errors.push('Please select owner state');
+        if (!ownerLga || !ownerLga.value) errors.push('Please select owner LGA');
+        
+        // Check identification
+        const idType = document.querySelector('input[name="idType"]:checked');
+        const idDocument = document.getElementById('idDocumentUpload');
+        
+        if (!idType) errors.push('Please select means of identification');
+        if (!idDocument || !idDocument.files || idDocument.files.length === 0) {
+            errors.push('Please upload ID document');
+        }
+        
+        // Check property details
+        const unitsCount = document.querySelector('input[name="units_count"]');
+        const blocksCount = document.querySelector('input[name="blocks_count"]');
+        const sectionsCount = document.querySelector('input[name="sections_count"]');
+        const propertyHouseNo = document.querySelector('input[name="property_house_no"]');
+        const propertyStreetName = document.querySelector('input[name="property_street_name"]');
+        const propertyLga = document.querySelector('select[name="property_lga"]') || document.getElementById('propertyLga');
+        const propertyState = document.querySelector('select[name="property_state"]') || document.getElementById('propertyState');
+        
+        if (!unitsCount || !unitsCount.value.trim()) errors.push('Please enter number of units');
+        if (!blocksCount || !blocksCount.value.trim()) errors.push('Please enter number of blocks');
+        if (!sectionsCount || !sectionsCount.value.trim()) errors.push('Please enter number of sections');
+        if (!propertyHouseNo || !propertyHouseNo.value.trim()) errors.push('Please enter property house number');
+        if (!propertyStreetName || !propertyStreetName.value.trim()) errors.push('Please enter property street name');
+        if (!propertyState || !propertyState.value) errors.push('Please select property state');
+        if (!propertyLga || !propertyLga.value) errors.push('Please select property LGA');
+        
+        // Check file number
+        const activeFileTab = document.getElementById('activeFileTab');
+        if (activeFileTab && activeFileTab.value) {
+            if (activeFileTab.value === 'mlsFNo') {
+                const prefix = document.getElementById('mlsFileNoPrefix');
+                const number = document.getElementById('mlsFileNumber');
+                if (!prefix || !prefix.value) errors.push('Please select MLS file prefix');
+                if (!number || !number.value.trim()) errors.push('Please enter MLS file number');
+            } else if (activeFileTab.value === 'kangisFileNo') {
+                const prefix = document.getElementById('kangisFileNoPrefix');
+                const number = document.getElementById('kangisFileNumber');
+                if (!prefix || !prefix.value) errors.push('Please select KANGIS file prefix');
+                if (!number || !number.value.trim()) errors.push('Please enter KANGIS file number');
+            } else if (activeFileTab.value === 'NewKANGISFileno') {
+                const prefix = document.getElementById('newKangisFileNoPrefix');
+                const number = document.getElementById('newKangisFileNumber');
+                if (!prefix || !prefix.value) errors.push('Please select New KANGIS file prefix');
+                if (!number || !number.value.trim()) errors.push('Please enter New KANGIS file number');
+            }
+        }
+        
+        if (errors.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                html: '<div style="text-align: left;"><strong>Please fix the following errors:</strong><br><br>' + 
+                      errors.map(error => '• ' + error).join('<br>') + '</div>',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#dc3545'
+            });
+            return false;
+        }
+        
+        return true;
+    }
+
+    function validateStep4() {
+        const errors = [];
+        
+        // Check required documents
+        const requiredDocs = [
+            { id: 'application_letter', name: 'Application Letter' },
+            { id: 'building_plan', name: 'Building Plan' },
+            { id: 'ownership_document', name: 'Ownership Document' }
+        ];
+        
+        requiredDocs.forEach(doc => {
+            const input = document.getElementById(doc.id);
+            if (!input || !input.files || input.files.length === 0) {
+                errors.push(`Please upload ${doc.name}`);
+            }
+        });
+        
+        if (errors.length > 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Documents',
+                html: '<div style="text-align: left;"><strong>Please upload the following required documents:</strong><br><br>' + 
+                      errors.map(error => '• ' + error).join('<br>') + '</div>',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#f39c12'
+            });
+            return false;
+        }
+        
+        return true;
+    }
+
+    // Make validation functions globally accessible
+    window.validateStep1 = validateStep1;
+    window.validateStep4 = validateStep4;
 </script>

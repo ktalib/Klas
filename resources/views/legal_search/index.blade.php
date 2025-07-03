@@ -322,11 +322,21 @@
       border-radius: 0.5rem;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
       width: 95%;
-      max-width: 95%;
+      max-width: 1200px;
       max-height: 90vh;
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      margin: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+      .modal-content {
+        width: 98%;
+        max-width: 98%;
+        margin: 0.5rem;
+        max-height: 95vh;
+      }
     }
     
     .modal-header {
@@ -485,6 +495,44 @@
     .hidden {
       display: none;
     }
+    
+    /* Enhanced form styling */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    
+    @media (max-width: 640px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Input focus states */
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Button hover states */
+    button:hover {
+      transform: translateY(-1px);
+      transition: all 0.2s ease;
+    }
+    
+    /* Responsive table */
+    @media (max-width: 768px) {
+      .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      .table-responsive table {
+        min-width: 600px;
+      }
+    }
   </style>
 
 
@@ -597,7 +645,7 @@
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-sm font-medium">Most Common Search Type</span>
-                <span class="font-bold">File Number</span>
+                <span class="font-bold">mlsFNo</span>
               </div>
             </div>
           </div>
@@ -676,7 +724,11 @@
           
           <div class="space-y-4">
             <div class="form-row">
-              <span class="form-label">File Number (MLSF):</span>
+              <span class="form-label">ST-FileNo:</span>
+              <span class="form-value" id="st-file-number-value"></span>
+            </div>
+            <div class="form-row">
+              <span class="form-label">mlsFNo:</span>
               <span class="form-value" id="file-number-value"></span>
             </div>
             <div class="form-row">
@@ -971,88 +1023,128 @@
 
   <!-- Search Modal (initially hidden) -->
   <div id="search-modal" class="hidden modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
+    <div class="modal-content max-w-7xl">
+      <div class="modal-header flex justify-between items-center">
         <h2 class="modal-title">Search Land Records</h2>
+        <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
 
       <div class="flex flex-col h-full overflow-hidden">
         <!-- Search Section -->
         <div class="search-section">
-          <div class="flex justify-between items-center mb-2">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
             <h3 class="text-sm font-medium">Search Filters</h3>
-            <button id="toggle-filters-btn" class="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md">
-              Collapse Filters
-            </button>
+            <div class="flex gap-2">
+              <button id="toggle-filters-btn" class="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                Collapse Filters
+              </button>
+              <button id="search-btn" class="px-4 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                Search
+              </button>
+            </div>
           </div>
 
-          <div id="filters-container" class="flex flex-wrap items-center gap-2 mb-4">
-            <!-- File Number Filter -->
-            <div class="flex items-center gap-2 mb-2">
-              <span class="badge badge-outline">File Number</span>
-              <input type="text" id="fileNumber" placeholder="Enter file number" class="flex-grow px-3 py-2 border border-gray-300 rounded-md">
-              <button class="h-8 w-8 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+          <div id="filters-container" class="space-y-3 mb-4">
+            <!-- Primary Search Filters Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <!-- Sectional Title FileNo Filter -->
+              <div class="flex flex-col">
+                <label class="text-xs font-medium text-gray-700 mb-1">Sectional Title FileNo</label>
+                <div class="flex items-center gap-2">
+                  <input type="text" id="sectionalTitleFileNo" placeholder="Enter Sectional Title FileNo" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <button class="sectional-clear-btn h-8 w-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
 
-            <!-- KANGIS File No. Filter -->
-            <div class="flex items-center gap-2 mb-2">
-              <span class="badge badge-outline">KANGIS File No.</span>
-              <input type="text" id="kangisFileNo" placeholder="Enter KANGIS file number" class="flex-grow px-3 py-2 border border-gray-300 rounded-md">
-              <button class="h-8 w-8 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+              <!-- mlsFNo Filter -->
+              <div class="flex flex-col">
+                <label class="text-xs font-medium text-gray-700 mb-1">mlsFNo</label>
+                <div class="flex items-center gap-2">
+                  <input type="text" id="mlsFNo" placeholder="Enter mlsFNo" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <button class="mls-clear-btn h-8 w-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
 
-            <!-- Add Filter Button -->
-            <div class="relative" id="filter-dropdown-container">
-              <button id="add-filter-btn" class="inline-flex items-center gap-1 px-3 py-1 text-sm bg-white border border-gray-300 rounded-md">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Add Filter
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              <!-- Filter Dropdown (initially hidden) -->
-              <div id="filter-dropdown" class="hidden absolute top-full left-0 mt-1 z-50 w-64 bg-white rounded-md shadow-lg border border-gray-200">
-                <div class="p-2 max-h-[200px] overflow-y-auto">
-                  <button class="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 rounded-md" data-filter="newKangisFileNo">New KANGIS File No.</button>
-                  <button class="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 rounded-md" data-filter="guarantorName">Guarantor Name</button>
-                  <button class="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 rounded-md" data-filter="guaranteeName">Guarantee Name</button>
-                  <button class="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 rounded-md" data-filter="lga">LGA</button>
-                  <button class="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 rounded-md" data-filter="district">District</button>
-                  <button class="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 rounded-md" data-filter="location">Location</button>
-                  <button class="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 rounded-md" data-filter="plotNumber">Plot Number</button>
-                  <button class="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 rounded-md" data-filter="planNumber">Plan Number</button>
-                  <button class="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 rounded-md" data-filter="size">Size</button>
-                  <button class="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 rounded-md" data-filter="caveat">Caveat</button>
+              <!-- KANGIS File No. Filter -->
+              <div class="flex flex-col">
+                <label class="text-xs font-medium text-gray-700 mb-1">KANGIS File No.</label>
+                <div class="flex items-center gap-2">
+                  <input type="text" id="kangisFileNo" placeholder="Enter KANGIS file number" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <button class="kangis-clear-btn h-8 w-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
 
-            <!-- Reset Button -->
-            <button id="reset-search-btn" class="ml-auto inline-flex items-center gap-1 px-3 py-1 text-sm bg-white border border-gray-300 rounded-md">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Reset
-            </button>
+            <!-- Additional Filters Container -->
+            <div id="additional-filters-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <!-- Additional filters will be added here dynamically -->
+            </div>
+
+            <!-- Action Buttons Row -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pt-2 border-t border-gray-200">
+              <div class="flex flex-wrap gap-2">
+                <!-- Add Filter Button -->
+                <div class="relative" id="filter-dropdown-container">
+                  <button id="add-filter-btn" class="inline-flex items-center gap-1 px-3 py-2 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Filter
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  <!-- Filter Dropdown (initially hidden) -->
+                  <div id="filter-dropdown" class="hidden absolute top-full left-0 mt-1 z-50 w-64 bg-white rounded-md shadow-lg border border-gray-200">
+                    <div class="p-2 max-h-[200px] overflow-y-auto">
+                      <button class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-md" data-filter="newKangisFileNo">New KANGIS File No.</button>
+                      <button class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-md" data-filter="guarantorName">Guarantor Name</button>
+                      <button class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-md" data-filter="guaranteeName">Guarantee Name</button>
+                      <button class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-md" data-filter="lga">LGA</button>
+                      <button class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-md" data-filter="district">District</button>
+                      <button class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-md" data-filter="location">Location</button>
+                      <button class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-md" data-filter="plotNumber">Plot Number</button>
+                      <button class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-md" data-filter="planNumber">Plan Number</button>
+                      <button class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-md" data-filter="size">Size</button>
+                      <button class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-md" data-filter="caveat">Caveat</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Reset Button -->
+              <button id="reset-search-btn" class="inline-flex items-center gap-1 px-3 py-2 text-sm bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Reset All
+              </button>
+            </div>
           </div>
 
           <!-- Collapsed Filters (initially hidden) -->
-          <div id="collapsed-filters" class="hidden flex items-center gap-2 mb-2">
-            <div class="text-sm text-gray-500">
-              Filtered by: <span id="active-filters-summary">File Number, KANGIS File No.</span>
+          <div id="collapsed-filters" class="hidden flex flex-col sm:flex-row items-start sm:items-center gap-2 mb-4 p-3 bg-gray-50 rounded-md">
+            <div class="text-sm text-gray-600">
+              <span class="font-medium">Active Filters:</span> <span id="active-filters-summary">None</span>
             </div>
-            <button id="reset-search-collapsed-btn" class="ml-auto inline-flex items-center gap-1 px-3 py-1 text-sm bg-white border border-gray-300 rounded-md">
+            <button id="reset-search-collapsed-btn" class="inline-flex items-center gap-1 px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -1060,12 +1152,24 @@
             </button>
           </div>
 
-          <!-- View mode toggle -->
-          <div class="flex justify-between items-center">
-            <div class="text-sm text-gray-500"><span id="results-count">0</span> results found</div>
+          <!-- Results Header -->
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+            <div class="text-sm text-gray-600">
+              <span id="results-count">0</span> results found
+            </div>
             <div class="tabs">
-              <button class="tab active" data-view="table">Table View</button>
-              <button class="tab" data-view="cards">Card View</button>
+              <button class="tab active" data-view="table">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                Table
+              </button>
+              <button class="tab" data-view="cards">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                Cards
+              </button>
             </div>
           </div>
         </div>
@@ -1084,11 +1188,12 @@
 
           <!-- Table View Results (initially hidden) -->
           <div id="table-results" class="hidden border rounded-md overflow-hidden">
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto table-responsive">
               <table class="w-full min-w-[1000px]">
                 <thead class="bg-gray-100">
                   <tr>
-                    <th>File Number</th>
+                    <th>ST-FileNo</th>
+                    <th>mlsFNo</th>
                     <th>KANGIS File No.</th>
                     <th>New KANGIS</th>
                     <th>Guarantor</th>

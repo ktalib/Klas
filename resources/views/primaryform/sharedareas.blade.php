@@ -13,7 +13,17 @@
           <h3 class="text-lg font-bold">Application for Sectional Titling - Main Application</h3>
           <div class="ml-auto flex items-center">
             <span class="text-gray-600 mr-2">Land Use:</span>
-            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">{{ $motherApplication->land_use ?? 'N/A' }}</span>
+            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">
+               @if (request()->query('landuse') === 'Commercial')
+                              Commercial
+                            @elseif (request()->query('landuse') === 'Residential')
+                                Residential
+                            @elseif (request()->query('landuse') === 'Industrial')
+                                Industrial
+                            @else
+                                Mixed Use
+                            @endif 
+            </span>
           </div>
         </div>
         <p class="text-gray-600">Complete the form below to submit a new primary application for sectional titling</p>
@@ -48,6 +58,11 @@
   <div class="space-y-4">
     <p class="mb-2 text-gray-700">Select all shared areas that apply:</p>
     
+    <!-- Check All / Uncheck All Buttons -->
+    <div class="mb-2 flex gap-2">
+      <button type="button" class="px-3 py-1 bg-green-100 text-green-800 rounded text-sm border border-green-200 hover:bg-green-200" onclick="checkAllSharedAreas()">Check All</button>
+      <button type="button" class="px-3 py-1 bg-red-100 text-red-800 rounded text-sm border border-red-200 hover:bg-red-200" onclick="uncheckAllSharedAreas()">Uncheck All</button>
+    </div>
     <div class="grid grid-cols-3 gap-4">
       <div class="flex items-center">
         <input type="checkbox" id="hallways" name="shared_areas[]" value="hallways" class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
@@ -211,9 +226,30 @@
       document.getElementById('other_areas_detail').value = '';
     }
   }
+
+  // Check all shared areas except "Other"
+  function checkAllSharedAreas() {
+    document.querySelectorAll('input[name="shared_areas[]"]').forEach(cb => {
+        if (cb.value !== 'other') { 
+            cb.checked = true;
+        } else {
+            cb.checked = false;
+        }
+    });
+    toggleOtherAreasTextarea();
+  }
+
+  // Uncheck all shared areas
+  function uncheckAllSharedAreas() {
+    document.querySelectorAll('input[name="shared_areas[]"]').forEach(cb => {
+      cb.checked = false;
+    });
+    toggleOtherAreasTextarea();
+  }
   
   // Initialize on page load to handle pre-filled forms
   document.addEventListener('DOMContentLoaded', function() {
     toggleOtherAreasTextarea();
   });
+</script>
 </script>

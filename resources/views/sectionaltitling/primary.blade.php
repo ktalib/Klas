@@ -49,18 +49,18 @@
                             </a>
                         @endif
 
-                        <div class="relative">
-                            <select
-                                class="pl-4 pr-8 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none">
-                                <option>All...</option>
-                                <option>Approved</option>
-                                <option>Pending</option>
-                                <option>Declined</option>
-                            </select>
-                            <i data-lucide="chevron-down"
-                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-                        </div>
-                        {{-- <button style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background-color: #fff8f1; border: 2px solid #f97316; border-radius: 0.375rem; cursor: pointer; transition: background-color 0.2s ease;">
+                                    <div class="relative">
+                    <select id="statusFilter"
+                        class="pl-4 pr-8 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none">
+                        <option value="All...">All...</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Declined">Declined</option>
+                    </select>
+                    <i data-lucide="chevron-down"
+                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                    </div>
+                                        {{-- <button style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background-color: #fff8f1; border: 2px solid #f97316; border-radius: 0.375rem; cursor: pointer; transition: background-color 0.2s ease;">
                             <i data-lucide="upload" style="width: 1rem; height: 1rem; color: #ea580c;"></i>
                             <span style="font-weight: 500; color: #ea580c;">Import Field Data</span>
                         </button> --}}
@@ -255,13 +255,13 @@
                 </div>
 
                 <div class="flex justify-between items-center mt-6 text-sm">
-                    <div class="text-gray-500">Showing 5 of 68 applications</div>
+                    <div class="text-gray-500" id="showingCount">Showing 0 of 0 applications</div>
                     <div class="flex items-center space-x-2">
-                        <button class="px-3 py-1 border border-gray-200 rounded-md flex items-center">
+                        <button id="prevPageBtn" class="px-3 py-1 border border-gray-200 rounded-md flex items-center" disabled>
                             <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
                             <span>Previous</span>
                         </button>
-                        <button class="px-3 py-1 border border-gray-200 rounded-md flex items-center">
+                        <button id="nextPageBtn" class="px-3 py-1 border border-gray-200 rounded-md flex items-center" disabled>
                             <span>Next</span>
                             <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
                         </button>
@@ -277,7 +277,125 @@
 @include('sectionaltitling.action_modals.eRegistry_modal') 
 
 <script>
-  
+document.addEventListener('DOMContentLoaded', function() {
+    // Add ID to the filter select if it doesn't have one
+    const filterSelect = document.querySelector('select');
+    if (filterSelect && !filterSelect.id) {
+        filterSelect.id = 'statusFilter';
+    }
+    
+    // Pagination variables
+    window.primaryTablePagination = {
+        currentPage: 1,
+        rowsPerPage: 10,
+        filteredRows: [],
+        allRows: Array.from(document.querySelectorAll('tbody tr'))
+    };
+
+    function paginateTable(page = 1) {
+        const { rowsPerPage, filteredRows } = window.primaryTablePagination;
+        const totalRows = filteredRows.length;
+        const startIdx = (page - 1) * rowsPerPage;
+        const endIdx = startIdx + rowsPerPage;
+
+        filteredRows.forEach((row, idx) => {
+            row.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+        });
+
+        // Update showing count
+        const showingCount = document.getElementById('showingCount');
+        showingCount.textContent = `Showing ${Math.min(endIdx, totalRows) - startIdx > 0 ? Math.min(endIdx, totalRows) - startIdx : 0} of ${totalRows} applications`;
+
+        // Enable/disable buttons
+        document.getElementById('prevPageBtn').disabled = page === 1;
+        document.getElementById('nextPageBtn').disabled = endIdx >= totalRows;
+
+        window.primaryTablePagination.currentPage = page;
+    }
+
+    function filterTable(selectedStatus) {
+        const allRows = window.primaryTablePagination.allRows;
+        let filteredRows = [];
+
+        allRows.forEach(row => {
+            let showRow = false;
+            if (selectedStatus === 'All...') {
+                showRow = true;
+            } else {
+                const planningStatusBadge = row.querySelector('td:nth-child(9) .badge');
+                const directorStatusBadge = row.querySelector('td:nth-child(10) .badge');
+                if (planningStatusBadge && planningStatusBadge.textContent.trim() === selectedStatus) showRow = true;
+                if (directorStatusBadge && directorStatusBadge.textContent.trim() === selectedStatus) showRow = true;
+            }
+            row.style.display = showRow ? '' : 'none';
+            if (showRow) filteredRows.push(row);
+        });
+
+        window.primaryTablePagination.filteredRows = filteredRows;
+        paginateTable(1);
+    }
+
+    // Initial setup
+    window.primaryTablePagination.filteredRows = window.primaryTablePagination.allRows.filter(row => row.style.display !== 'none');
+    paginateTable(1);
+
+    // Filter event
+    const statusFilter = document.getElementById('statusFilter');
+    if (statusFilter) {
+        statusFilter.addEventListener('change', function() {
+            filterTable(this.value);
+        });
+    }
+
+    // Pagination events
+    document.getElementById('prevPageBtn').addEventListener('click', function() {
+        const { currentPage } = window.primaryTablePagination;
+        if (currentPage > 1) paginateTable(currentPage - 1);
+    });
+    document.getElementById('nextPageBtn').addEventListener('click', function() {
+        const { currentPage, filteredRows, rowsPerPage } = window.primaryTablePagination;
+        if (currentPage * rowsPerPage < filteredRows.length) paginateTable(currentPage + 1);
+    });
+
+    // Export to CSV
+    document.querySelector('button.flex.items-center.space-x-2.px-4.py-2.border.border-gray-200.rounded-md').addEventListener('click', function() {
+        exportVisibleTableToCSV();
+    });
+
+    function exportVisibleTableToCSV() {
+        const table = document.querySelector('table');
+        const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText.trim());
+        const { filteredRows, currentPage, rowsPerPage } = window.primaryTablePagination;
+        const startIdx = (currentPage - 1) * rowsPerPage;
+        const endIdx = startIdx + rowsPerPage;
+        const visibleRows = filteredRows.slice(startIdx, endIdx);
+
+        let csvContent = '';
+        csvContent += headers.join(',') + '\n';
+
+        visibleRows.forEach(row => {
+            const cells = Array.from(row.querySelectorAll('td')).map(td => {
+                // Remove commas and newlines from cell text
+                return '"' + td.innerText.replace(/"/g, '""').replace(/\n/g, ' ').replace(/,/g, ' ') + '"';
+            });
+            csvContent += cells.join(',') + '\n';
+        });
+
+        // Download CSV
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'primary_applications.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Re-filter and paginate on load
+    filterTable(statusFilter ? statusFilter.value : 'All...');
+});
 
         function toggleDropdown(event) {
             event.stopPropagation();
