@@ -217,6 +217,9 @@ class DeedsDepartmentController extends Controller
                     ];
                 }
             }
+            
+            // For secondary applications, we don't need CofO data
+            $cofoData = null;
         } else {
             // For primary applications, get the primary application
             $application = $this->getPrimaryApplication($d);
@@ -228,13 +231,141 @@ class DeedsDepartmentController extends Controller
             $deeds = DB::connection('sqlsrv')->table('landAdministration')
                 ->where('application_id', $application->id)
                 ->first();
+            
+            // Get CofO Registration Particulars from Cofo table for primary applications
+            $cofoData = $this->getCofORegistrationParticulars($application);
         }
 
         // Fetch all primary applications to satisfy the template's requirement
         $PrimaryApplications = DB::connection('sqlsrv')->table('dbo.mother_applications')->get();
 
-        return view('other_departments.deeds', compact('application', 'PrimaryApplications', 'PageTitle', 'PageDescription', 'deeds', 'isSecondary'));
-    }   
+        return view('other_departments.deeds', compact('application', 'PrimaryApplications', 'PageTitle', 'PageDescription', 'deeds', 'isSecondary', 'cofoData'));
+    }
+
+    /**
+     * Get CofO Registration Particulars from Cofo table for primary applications
+     */
+    private function getCofORegistrationParticulars($application)
+    {
+        try {
+            // Try to find CofO data using different file number fields
+            $fileNumber = null;
+            $cofoData = null;
+            
+            // Determine the correct file number to use
+            if (isset($application->fileno)) {
+                $fileNumber = $application->fileno;
+            } elseif (isset($application->primary_fileno)) {
+                $fileNumber = $application->primary_fileno;
+            } elseif (isset($application->mother_fileno)) {
+                $fileNumber = $application->mother_fileno;
+            }
+            
+            if ($fileNumber) {
+                // Search in Cofo table using various file number fields
+                $cofoData = DB::connection('sqlsrv')->table('Cofo')
+                    ->select('oldTitleSerialNo', 'oldTitlePageNo', 'oldTitleVolumeNo', 'fileNo')
+                    ->where(function($query) use ($fileNumber) {
+                        $query->where('fileNo', $fileNumber)
+                              ->orWhere('mlsfNo', $fileNumber)
+                              ->orWhere('kangisFileNo', $fileNumber)
+                              ->orWhere('NewKANGISFileno', $fileNumber);
+                    })
+                    ->whereNotNull('oldTitleSerialNo')
+                    ->whereNotNull('oldTitlePageNo')
+                    ->whereNotNull('oldTitleVolumeNo')
+                    ->first();
+            }
+            
+            return [
+                'data' => $cofoData,
+                'fileNumber' => $fileNumber,
+                'found' => $cofoData !== null
+            ];
+            
+        } catch (\Exception $e) {
+            \Log::error('Error fetching CofO Registration Particulars: ' . $e->getMessage());
+            return [
+                'data' => null,
+                'fileNumber' => null,
+                'found' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Store CofO Registration Particulars for primary applications
+     */
+    public function storeCofOParticulars(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'application_id' => 'required|integer',
+                'fileno' => 'required|string',
+                'oldTitleSerialNo' => 'required|string|max:255',
+                'oldTitlePageNo' => 'required|string|max:255',
+                'oldTitleVolumeNo' => 'required|string|max:255',
+                'deeds_time' => 'nullable|string',
+                'deeds_date' => 'nullable|date',
+            ]);
+
+            // Get the primary application to ensure it exists
+            $application = DB::connection('sqlsrv')->table('mother_applications')
+                ->where('id', $validatedData['application_id'])
+                ->first();
+
+            if (!$application) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Primary application not found!'
+                ], 404);
+            }
+
+            // Check if CofO record already exists for this file number
+            $existingCofo = DB::connection('sqlsrv')->table('Cofo')
+                ->where('fileNo', $validatedData['fileno'])
+                ->first();
+
+            if ($existingCofo) {
+                // Update existing record
+                DB::connection('sqlsrv')->table('Cofo')
+                    ->where('fileNo', $validatedData['fileno'])
+                    ->update([
+                        'oldTitleSerialNo' => $validatedData['oldTitleSerialNo'],
+                        'oldTitlePageNo' => $validatedData['oldTitlePageNo'],
+                        'oldTitleVolumeNo' => $validatedData['oldTitleVolumeNo'],
+                        'deedsTime' => $validatedData['deeds_time'],
+                        'deedsDate' => $validatedData['deeds_date'],
+                        'updated_at' => now()
+                    ]);
+            } else {
+                // Insert new record
+                DB::connection('sqlsrv')->table('Cofo')->insert([
+                    'fileNo' => $validatedData['fileno'],
+                    'oldTitleSerialNo' => $validatedData['oldTitleSerialNo'],
+                    'oldTitlePageNo' => $validatedData['oldTitlePageNo'],
+                    'oldTitleVolumeNo' => $validatedData['oldTitleVolumeNo'],
+                    'deedsTime' => $validatedData['deeds_time'],
+                    'deedsDate' => $validatedData['deeds_date'],
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'CofO Registration Particulars saved successfully!'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error storing CofO Registration Particulars: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 422);
+        }
+    }
    
 
  }

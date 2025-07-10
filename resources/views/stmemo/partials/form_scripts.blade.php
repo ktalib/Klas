@@ -5,6 +5,25 @@
         const tabContents = document.querySelectorAll('.tab-content');
         const mainFormButtons = document.getElementById('main-form-buttons');
 
+        // Set initial active tab to "Attach Site Plan" (notes)
+        const initialTab = document.querySelector('[data-tab="notes"]');
+        if (initialTab) {
+            // Remove active from all tabs first
+            tabs.forEach(t => t.classList.remove('active', 'border-blue-500', 'text-blue-600'));
+            tabs.forEach(t => t.classList.add('border-transparent', 'text-gray-500'));
+            
+            // Set notes tab as active
+            initialTab.classList.add('active', 'border-blue-500', 'text-blue-600');
+            initialTab.classList.remove('border-transparent', 'text-gray-500');
+            
+            // Hide all tab contents and show notes tab
+            tabContents.forEach(content => content.classList.add('hidden'));
+            document.getElementById('notes-tab').classList.remove('hidden');
+            
+            // Hide main form buttons for notes tab
+            mainFormButtons.classList.add('hidden');
+        }
+
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 // Remove active class from all tabs

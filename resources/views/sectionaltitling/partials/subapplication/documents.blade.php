@@ -2,9 +2,9 @@
     <div class="p-6">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-center text-gray-800">MINISTRY OF LAND AND PHYSICAL PLANNING</h2>
-          <button   class="text-gray-500 hover:text-gray-700" onclick="window.history.back()">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                      </button>
+        <button id="closeModal2" class="text-gray-500 hover:text-gray-700">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
       </div>
       
       <div class="mb-6">
@@ -134,7 +134,7 @@
         <div class="flex justify-between mt-8">
           <button class="px-4 py-2 bg-white border border-gray-300 rounded-md" id="backStep3">Back</button>
           <div class="flex items-center">
-            <span class="text-sm text-gray-500 mr-4">Step 2 of 3</span>
+            <span class="text-sm text-gray-500 mr-4">Step 3 of 4</span>
             <button class="px-4 py-2 bg-black text-white rounded-md" id="nextStep3">Next</button>
           </div>
         </div>

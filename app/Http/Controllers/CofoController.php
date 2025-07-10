@@ -51,6 +51,7 @@ class CofoController  extends Controller
                 'subapplications.application_status',
                 'subapplications.scheme_no',
                 'subapplications.planning_recommendation_status',
+                'subapplications.main_application_id',
                 'mother_applications.property_lga',
                 'mother_applications.land_use',
                 'st_cofo.certificate_number',
@@ -129,6 +130,55 @@ class CofoController  extends Controller
             if (!$application) {
                 return back()->with('error', 'Application not found');
             }
+
+            // Check prerequisites before allowing CofO generation
+            $validationErrors = [];
+            
+            // Debug: Log the application details
+            \Log::info('Checking prerequisites for application ID: ' . $application->id);
+            \Log::info('Main application ID: ' . ($application->main_application_id ?? 'NULL'));
+            \Log::info('Mother ID: ' . ($application->mother_id ?? 'NULL'));
+            
+            // Check if ST Memo has been generated (ST Memo is linked to the main application)
+            $memoApplicationId = $application->main_application_id ?? $application->mother_id;
+            \Log::info('Looking for memo with application_id: ' . $memoApplicationId);
+            
+            $hasSTMemo = DB::connection('sqlsrv')->table('memos')
+                ->where('application_id', $memoApplicationId)
+                ->exists(); // Remove the memo_status check for now to see if memo exists at all
+                
+            \Log::info('ST Memo exists: ' . ($hasSTMemo ? 'YES' : 'NO'));
+                
+            if (!$hasSTMemo) {
+                $validationErrors[] = 'ST Memo has not been generated for this application (Main App ID: ' . $memoApplicationId . ')';
+            }
+            
+            // Check if RofO has been generated (RofO is linked to the sub application)
+            \Log::info('Looking for RofO with sub_application_id: ' . $application->id);
+            
+            $hasRofo = DB::connection('sqlsrv')->table('rofo')
+                ->where('sub_application_id', $application->id)
+                ->exists(); // Remove the active check for now to see if rofo exists at all
+                
+            \Log::info('RofO exists: ' . ($hasRofo ? 'YES' : 'NO'));
+                
+            if (!$hasRofo) {
+                $validationErrors[] = 'RofO (Right of Occupancy) has not been generated for this application (Sub App ID: ' . $application->id . ')';
+            }
+            
+            // If there are validation errors, redirect back with error messages
+            if (!empty($validationErrors)) {
+                $errorMessage = 'Cannot generate Certificate of Occupancy. The following prerequisites are missing:';
+                foreach ($validationErrors as $error) {
+                    $errorMessage .= "\n• " . $error;
+                }
+                $errorMessage .= "\n\nPlease ensure all prerequisites are completed before generating the CofO.";
+                
+                \Log::error('Validation failed: ' . $errorMessage);
+                return back()->with('error', $errorMessage);
+            }
+            
+            \Log::info('All prerequisites met, proceeding with CofO generation');
 
             // Process owner names
             if (!empty($application->multiple_owners_names)) {

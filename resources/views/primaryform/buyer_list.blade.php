@@ -1,4 +1,4 @@
-<div class="form-section" id="step3">
+<div class="form-section" id="step5">
   <div class="p-6">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-bold text-center text-gray-800">MINISTRY OF LAND AND PHYSICAL PLANNING</h2>
@@ -38,15 +38,18 @@
         <div class="step-circle inactive">2</div>
       </div>
       <div class="flex items-center mr-4">
-        <div class="step-circle active">3</div>
+        <div class="step-circle inactive">3</div>
       </div>
       <div class="flex items-center mr-4">
         <div class="step-circle inactive">4</div>
       </div>
       <div class="flex items-center mr-4">
-        <div class="step-circle inactive">5</div>
+        <div class="step-circle active">5</div>
       </div>
-      <div class="ml-4">Step 3</div>
+      <div class="flex items-center mr-4">
+        <div class="step-circle inactive">6</div>
+      </div>
+      <div class="ml-4">Step 5 - Buyers List</div>
     </div>
 
     <div class="mb-6">
@@ -59,22 +62,29 @@
       <div class="bg-gray-50 p-4 rounded-md mb-6">
         <h3 class="font-medium mb-4">Add list of buyer</h3>
 
-        <div   x-data="{ buyers: {{ old('records') ? json_encode(old('records')) : '[{}]' }} }">
- 
-
- 
+        <div x-data="{ buyers: {{ old('records') ? json_encode(old('records')) : '[{}]' }} }">
               <div>
                 <template x-for="(buyer, index) in buyers" :key="index">
-                  <div class="flex items-start space-x-2 mb-4">
-                    <div class="grid grid-cols-4 gap-4 flex-grow">
+                  <div class="border border-gray-200 rounded-lg p-4 mb-4 bg-white">
+                    <div class="flex justify-between items-start mb-4">
+                      <h4 class="text-sm font-medium text-gray-700">Buyer <span x-text="index + 1"></span></h4>
+                      <button type="button" @click="buyers.splice(index, 1)"
+                        x-show="buyers.length > 1"
+                        class="bg-red-500 text-white p-1.5 rounded-md hover:bg-red-600 flex items-center justify-center">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                    
+                    <!-- Buyer Name Fields -->
+                    <div class="grid grid-cols-4 gap-4 mb-4">
                       <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                           Title <span class="text-red-500">*</span>
                         </label>
                         <select :name="'records[' + index + '][buyerTitle]'"
                           class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
-                          x-bind:value="buyer.buyerTitle || ''">
-                          <option value="" disabled>Select title</option>
+                          x-bind:value="buyer.buyerTitle || ''" required>
+                          <option value="">Select title</option>
                           <option value="Mr." x-bind:selected="buyer.buyerTitle == 'Mr.'">Mr.</option>
                           <option value="Mrs." x-bind:selected="buyer.buyerTitle == 'Mrs.'">Mrs.</option>
                           <option value="Chief" x-bind:selected="buyer.buyerTitle == 'Chief'">Chief</option>
@@ -102,35 +112,62 @@
                         </select>
                       </div>
                       <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Buyer
-                          Name</label>
-                        <input type="text" :name="'records[' + index + '][buyerName]'"
-                          class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm"
-                          placeholder="Enter Buyer Name" required
-                          x-bind:value="buyer.buyerName || ''">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                          First Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" :name="'records[' + index + '][firstName]'"
+                          class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm uppercase"
+                          placeholder="Enter First Name" required
+                          x-bind:value="buyer.firstName || ''"
+                          oninput="this.value = this.value.toUpperCase()">
                       </div>
                       <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Unit
-                          No</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                          Middle Name (Optional)
+                        </label>
+                        <input type="text" :name="'records[' + index + '][middleName]'"
+                          class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm uppercase"
+                          placeholder="Enter Middle Name"
+                          x-bind:value="buyer.middleName || ''"
+                          oninput="this.value = this.value.toUpperCase()">
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                          Surname <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" :name="'records[' + index + '][surname]'"
+                          class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm uppercase"
+                          placeholder="Enter Surname" required
+                          x-bind:value="buyer.surname || ''"
+                          oninput="this.value = this.value.toUpperCase()">
+                      </div>
+                    </div>
+                    
+                    <!-- Unit Details -->
+                    <div class="grid grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                          Unit No <span class="text-red-500">*</span>
+                        </label>
                         <input type="text" :name="'records[' + index + '][unit_no]'"
-                          class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm"
+                          class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                           placeholder="Enter Unit No" required
                           x-bind:value="buyer.unit_no || ''">
                       </div>
                       <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Unit
-                          Measurement (m)</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                          Unit Measurement (m²) <span class="text-red-500">*</span>
+                        </label>
                         <input type="number" step="0.01" :name="'records[' + index + '][unitMeasurement]'"
-                          class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm"
-                          placeholder="Enter Measurement" required
+                          class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
+                          placeholder="Enter Measurement" required min="0"
                           x-bind:value="buyer.unitMeasurement || ''">
                       </div>
                     </div>
-                    <button type="button" @click="buyers.splice(index, 1)"
-                      x-show="buyers.length > 1"
-                      class="bg-red-500 text-white p-1.5 rounded-md hover:bg-red-600 flex items-center justify-center mt-8">
-                      <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
+                    
+                    <!-- Hidden field for full buyer name -->
+                    <input type="hidden" :name="'records[' + index + '][buyerName]'" 
+                           :value="[buyer.buyerTitle, buyer.firstName, buyer.middleName, buyer.surname].filter(name => name && name.trim()).join(' ')">
                   </div>
                 </template>
               </div>
@@ -141,19 +178,16 @@
               </button>
 
               <hr class="my-4">
-
-       
-      
         </div>
 
 
         <div class="flex justify-between mt-8">
           <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md"
-            id="backStep3">Back</button>
+            id="backStep5">Back</button>
           <div class="flex items-center">
-            <span class="text-sm text-gray-500 mr-4">Step 3 of 5</span>
+            <span class="text-sm text-gray-500 mr-4">Step 5 of 6</span>
             <button type="button" class="px-4 py-2 bg-black text-white rounded-md"
-              id="nextStep3">Next</button>
+              id="nextStep5">Next</button>
           </div>
         </div>
       </div>

@@ -142,7 +142,16 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->size ?? 'N/A' }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $app->deeds_date ? date('Y-m-d', strtotime($app->deeds_date)) : 'N/A' }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm">
-                  <span class="badge badge-{{ $app->status }}">{{ ucfirst($app->status) }}</span>
+                  @if(in_array($app->instrument_type, ['ST Assignment (Transfer of Title)', 'Sectional Titling CofO']))
+                    <div class="flex flex-col space-y-1">
+                      <span class="badge badge-{{ $app->status }} text-xs">
+                        {{ $app->instrument_type === 'ST Assignment (Transfer of Title)' ? ' ' : ' ' }}: 
+                        {{ ucfirst($app->status) }}
+                      </span>
+                    </div>
+                  @else
+                    <span class="badge badge-{{ $app->status }}">{{ ucfirst($app->status) }}</span>
+                  @endif
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm relative" x-data="{ 
                   open: false,
@@ -301,6 +310,9 @@
 <!-- Include the external JavaScript file -->
 <script src="{{ asset('js/instrument_registration.js') }}?v={{ time() }}"></script>
 
+<!-- Include the updated JavaScript file for single registration modal -->
+<script src="{{ asset('js/instrument_registration_updated.js') }}?v={{ time() }}"></script>
+
 @if(session('success'))
 <script>
     Swal.fire({
@@ -330,6 +342,5 @@
 @endif
 
 @endsection
-
 
 

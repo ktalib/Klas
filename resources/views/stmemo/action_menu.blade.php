@@ -31,7 +31,7 @@
                 </a>
             </li>
             <!-- Site Plan -->
-            <li>
+            {{-- <li>
                 <a href="{{ route('stmemo.uploadSitePlan', $PrimaryApplication->id) }}"
                     class="flex items-center gap-2 px-4 py-2 text-sm {{ $sitePlanUploaded ? 'text-gray-400 cursor-not-allowed bg-gray-50' : 'text-gray-700 hover:bg-gray-100' }}"
                     @if ($sitePlanUploaded) tabindex="-1" aria-disabled="true" onclick="return false;" @endif>
@@ -39,7 +39,7 @@
                         class="w-4 h-4 {{ $sitePlanUploaded ? 'text-gray-400' : 'text-green-500' }}"></i>
                     Upload Site Plan
                 </a>
-            </li>
+            </li> --}}
             <li>
                 <a href="{{ route('stmemo.viewSitePlan', $PrimaryApplication->id) }}"
                     class="flex items-center gap-2 px-4 py-2 text-sm {{ $sitePlanUploaded ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-400 cursor-not-allowed bg-gray-50' }}"

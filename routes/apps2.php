@@ -225,6 +225,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/register-batch', [InstrumentRegistrationController::class, 'registerBatch'])->name('instrument_registration.register-batch');
         Route::post('/decline', [InstrumentRegistrationController::class, 'declineRegistration'])->name('instrument_registration.decline');
         
+        // New route for checking registration status
+        Route::get('/check-registration-status', [InstrumentRegistrationController::class, 'checkRegistrationStatus'])->name('instrument_registration.check-registration-status');
+        
+        // New route for checking overall completion status
+        Route::get('/overall-completion-status', [InstrumentRegistrationController::class, 'getOverallCompletionStatus'])->name('instrument_registration.overall-completion-status');
+        
         // Debug route
         Route::get('/debug', [InstrumentRegistrationController::class, 'debug'])->name('instrument_registration.debug');
     });

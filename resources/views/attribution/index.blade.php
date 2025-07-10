@@ -227,7 +227,7 @@
 </div>
 
         <div class="flex justify-between items-center mt-6 text-sm">
-          <div class="text-green-500">Showing 5 of 180 applications</div>
+          <div class="text-green-500"></div>
           <div class="flex items-center space-x-2">
             <button class="px-3 py-1 border border-gray-200 rounded-md flex items-center">
               <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>

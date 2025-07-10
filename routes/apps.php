@@ -49,6 +49,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/primaryform', [PrimaryFormController::class, 'store'])->name('primaryform.store');
 
     Route::post('/secondaryform', [SecondaryFormController::class, 'save'])->name('secondaryform.save');
+    Route::get('/sectionaltitling/edit_sub/{id}', [SecondaryFormController::class, 'edit'])->name('sectionaltitling.edit_sub');
+    Route::put('/sectionaltitling/update_sub/{id}', [SecondaryFormController::class, 'update'])->name('sectionaltitling.update_sub');
 
     Route::prefix('sub-application')->group(function () {
         Route::get('/{id}', [SubApplicationModalController::class, 'showSubApplication']);

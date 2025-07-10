@@ -10,10 +10,13 @@
         const nextStep2 = document.getElementById('nextStep2');
         const nextStep3 = document.getElementById('nextStep3');
         const nextStep4 = document.getElementById('nextStep4');
+        const nextStep5 = document.getElementById('nextStep5');
+        const prevStep4 = document.getElementById('prevStep4');
         const backStep2 = document.getElementById('backStep2');
         const backStep3 = document.getElementById('backStep3');
         const backStep4 = document.getElementById('backStep4');
         const backStep5 = document.getElementById('backStep5');
+        const backStep6 = document.getElementById('backStep6');
 
         // Form sections
         const step1 = document.getElementById('step1');
@@ -21,6 +24,7 @@
         const step3 = document.getElementById('step3');
         const step4 = document.getElementById('step4');
         const step5 = document.getElementById('step5');
+        const step6 = document.getElementById('step6');
 
         if (nextStep1) {
             nextStep1.addEventListener('click', function(e) {
@@ -56,21 +60,9 @@
         if (nextStep3) {
             nextStep3.addEventListener('click', function(e) {
                 e.preventDefault();
-                step3.classList.remove('active');
-                step4.classList.add('active');
-                // Update summary when moving to final step
-                if (typeof updateApplicationSummary === 'function') {
-                    updateApplicationSummary();
-                }
-            });
-        }
-
-        if (nextStep4) {
-            nextStep4.addEventListener('click', function(e) {
-                e.preventDefault();
                 
-                // Validate required documents for step 4
-                if (validateStep4()) {
+                // Validate documents for step 3
+                if (validateStep3()) {
                     // Show success message
                     Swal.fire({
                         icon: 'success',
@@ -82,10 +74,64 @@
                         position: 'top-end'
                     });
                     
+                    step3.classList.remove('active');
+                    step4.classList.add('active');
+                }
+            });
+        }
+
+        if (nextStep4) {
+            nextStep4.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Validate EDMS step
+                if (validateStep4()) {
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'EDMS Configuration Complete!',
+                        text: 'Electronic document management settings have been configured successfully.',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                    
                     step4.classList.remove('active');
                     step5.classList.add('active');
+                }
+            });
+        }
+
+        if (nextStep5) {
+            nextStep5.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Validate buyers list for step 5
+                if (validateStep5()) {
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Buyers List Complete!',
+                        text: 'Buyer information has been validated successfully.',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                    
+                    step5.classList.remove('active');
+                    step6.classList.add('active');
                     updateApplicationSummary(); // Make sure summary is updated
                 }
+            });
+        }
+
+        if (prevStep4) {
+            prevStep4.addEventListener('click', function(e) {
+                e.preventDefault();
+                step4.classList.remove('active');
+                step3.classList.add('active');
             });
         }
 
@@ -118,6 +164,14 @@
                 e.preventDefault();
                 step5.classList.remove('active');
                 step4.classList.add('active');
+            });
+        }
+
+        if (backStep6) {
+            backStep6.addEventListener('click', function(e) {
+                e.preventDefault();
+                step6.classList.remove('active');
+                step5.classList.add('active');
             });
         }
 
@@ -474,12 +528,27 @@
         updateElement('summary-property-state', propertyState);
         updateElement('summary-property-full-address', propertyFullAddress);
         
-        // Update identification information
-        const idTypeEl = document.querySelector('input[name="idType"]:checked');
-        const idDocumentEl = document.getElementById('idDocumentUpload');
+        // Update identification information based on applicant type
+        let idType = '-';
+        let idDocumentName = 'Not uploaded';
         
-        const idType = idTypeEl ? idTypeEl.value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : '-';
-        const idDocumentName = idDocumentEl && idDocumentEl.files && idDocumentEl.files.length > 0 ? idDocumentEl.files[0].name : 'Not uploaded';
+        if (applicantType === 'corporate') {
+            // For corporate body, show RC document
+            idType = 'RC Document';
+            const corporateDocumentEl = document.getElementById('corporateDocumentUpload');
+            if (corporateDocumentEl && corporateDocumentEl.files && corporateDocumentEl.files.length > 0) {
+                idDocumentName = corporateDocumentEl.files[0].name;
+            }
+        } else {
+            // For individual, show regular ID document
+            const idTypeEl = document.querySelector('input[name="idType"]:checked');
+            const idDocumentEl = document.getElementById('idDocumentUpload');
+            
+            idType = idTypeEl ? idTypeEl.value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : '-';
+            if (idDocumentEl && idDocumentEl.files && idDocumentEl.files.length > 0) {
+                idDocumentName = idDocumentEl.files[0].name;
+            }
+        }
         
         updateElement('summary-id-type', idType);
         updateElement('summary-id-document', idDocumentName);
@@ -545,7 +614,7 @@
         if (!applicantType) {
             errors.push('Please select an applicant type');
         }
-        
+
         // Check applicant details based on type
         if (applicantType) {
             if (applicantType.value === 'individual') {
@@ -563,35 +632,46 @@
                 if (!corporateName || !corporateName.value.trim()) errors.push('Please enter corporate body name');
                 if (!rcNumber || !rcNumber.value.trim()) errors.push('Please enter RC number');
             } else if (applicantType.value === 'multiple') {
+                // Only validate multiple owners fields
                 const ownerNames = document.querySelectorAll('input[name="multiple_owners_names[]"]');
                 let hasValidOwner = false;
                 ownerNames.forEach(input => {
                     if (input.value.trim()) hasValidOwner = true;
                 });
                 if (!hasValidOwner) errors.push('Please add at least one owner name');
+                // Do NOT validate main owner phone/email/LGA/ID for multiple
             }
         }
-        
-        // Check contact information
-        const phone1 = document.querySelector('input[name="phone_number[]"]');
-        const email = document.querySelector('input[name="owner_email"]');
-        const ownerState = document.querySelector('select[name="owner_state"]') || document.getElementById('ownerState');
-        const ownerLga = document.querySelector('select[name="owner_lga"]') || document.getElementById('ownerLga');
-        
-        if (!phone1 || !phone1.value.trim()) errors.push('Please enter phone number');
-        if (!email || !email.value.trim()) errors.push('Please enter email address');
-        if (!ownerState || !ownerState.value) errors.push('Please select owner state');
-        if (!ownerLga || !ownerLga.value) errors.push('Please select owner LGA');
-        
-        // Check identification
-        const idType = document.querySelector('input[name="idType"]:checked');
-        const idDocument = document.getElementById('idDocumentUpload');
-        
-        if (!idType) errors.push('Please select means of identification');
-        if (!idDocument || !idDocument.files || idDocument.files.length === 0) {
-            errors.push('Please upload ID document');
+
+        // Only validate main owner contact/ID if not multiple
+        if (applicantType && applicantType.value !== 'multiple') {
+            const phone1 = document.querySelector('input[name="phone_number[]"]');
+            const email = document.querySelector('input[name="owner_email"]');
+            const ownerState = document.querySelector('select[name="owner_state"]') || document.getElementById('ownerState');
+            const ownerLga = document.querySelector('select[name="owner_lga"]') || document.getElementById('ownerLga');
+            if (!phone1 || !phone1.value.trim()) errors.push('Please enter phone number');
+            if (!email || !email.value.trim()) errors.push('Please enter email address');
+            if (!ownerState || !ownerState.value) errors.push('Please select owner state');
+            if (!ownerLga || !ownerLga.value) errors.push('Please select owner LGA');
+            
+            // Validate ID document based on applicant type
+            if (applicantType.value === 'corporate') {
+                // For corporate body, check the corporate document upload
+                const corporateDocument = document.getElementById('corporateDocumentUpload');
+                if (!corporateDocument || !corporateDocument.files || corporateDocument.files.length === 0) {
+                    errors.push('Please upload ID document');
+                }
+            } else {
+                // For individual, check the regular ID document upload
+                const idType = document.querySelector('input[name="idType"]:checked');
+                const idDocument = document.getElementById('idDocumentUpload');
+                if (!idType) errors.push('Please select means of identification');
+                if (!idDocument || !idDocument.files || idDocument.files.length === 0) {
+                    errors.push('Please upload ID document');
+                }
+            }
         }
-        
+
         // Check property details
         const unitsCount = document.querySelector('input[name="units_count"]');
         const blocksCount = document.querySelector('input[name="blocks_count"]');
@@ -645,7 +725,7 @@
         return true;
     }
 
-    function validateStep4() {
+    function validateStep3() {
         const errors = [];
         
         // Check required documents
@@ -677,7 +757,92 @@
         return true;
     }
 
+    function validateStep4() {
+        // All EDMS required fields checks removed
+        return true;
+    }
+
+    function validateStep5() {
+        const errors = [];
+        
+        // Check if there's at least one buyer
+        const buyerTitles = document.querySelectorAll('select[name*="[buyerTitle]"]');
+        const buyerFirstNames = document.querySelectorAll('input[name*="[firstName]"]');
+        const buyerSurnames = document.querySelectorAll('input[name*="[surname]"]');
+        const unitNumbers = document.querySelectorAll('input[name*="[unit_no]"]');
+        const unitMeasurements = document.querySelectorAll('input[name*="[unitMeasurement]"]');
+        
+        if (buyerTitles.length === 0) {
+            errors.push('Please add at least one buyer');
+        } else {
+            // Validate each buyer
+            let hasValidBuyer = false;
+            
+            for (let i = 0; i < buyerTitles.length; i++) {
+                const title = buyerTitles[i]?.value?.trim();
+                const firstName = buyerFirstNames[i]?.value?.trim();
+                const surname = buyerSurnames[i]?.value?.trim();
+                const unitNo = unitNumbers[i]?.value?.trim();
+                const unitMeasurement = unitMeasurements[i]?.value?.trim();
+                
+                // Check if this buyer has any data
+                if (title || firstName || surname || unitNo || unitMeasurement) {
+                    hasValidBuyer = true;
+                    
+                    // Validate required fields for this buyer
+                    if (!title) {
+                        errors.push(`Buyer ${i + 1}: Please select a title`);
+                    }
+                    if (!firstName) {
+                        errors.push(`Buyer ${i + 1}: Please enter first name`);
+                    }
+                    if (!surname) {
+                        errors.push(`Buyer ${i + 1}: Please enter surname`);
+                    }
+                    if (!unitNo) {
+                        errors.push(`Buyer ${i + 1}: Please enter unit number`);
+                    }
+                    if (!unitMeasurement) {
+                        errors.push(`Buyer ${i + 1}: Please enter unit measurement`);
+                    } else if (parseFloat(unitMeasurement) <= 0) {
+                        errors.push(`Buyer ${i + 1}: Unit measurement must be greater than 0`);
+                    }
+                }
+            }
+            
+            if (!hasValidBuyer) {
+                errors.push('Please add at least one buyer with complete information');
+            }
+        }
+        
+        // Check for duplicate unit numbers
+        const unitNos = Array.from(unitNumbers)
+            .map(input => input.value.trim())
+            .filter(value => value !== '');
+        
+        const duplicateUnits = unitNos.filter((unit, index) => unitNos.indexOf(unit) !== index);
+        if (duplicateUnits.length > 0) {
+            errors.push(`Duplicate unit numbers found: ${[...new Set(duplicateUnits)].join(', ')}`);
+        }
+        
+        if (errors.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Buyers List Validation Error',
+                html: '<div style="text-align: left;"><strong>Please fix the following errors:</strong><br><br>' + 
+                      errors.map(error => '• ' + error).join('<br>') + '</div>',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#dc3545'
+            });
+            return false;
+        }
+        
+        return true;
+    }
+
     // Make validation functions globally accessible
     window.validateStep1 = validateStep1;
+    window.validateStep3 = validateStep3;
     window.validateStep4 = validateStep4;
+    window.validateStep5 = validateStep5;
 </script>

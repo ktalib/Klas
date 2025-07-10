@@ -529,12 +529,12 @@
                                                     <span>View Memo</span>
                                                 </a>
                                             </li>
-                                            <li>
+                                            {{-- <li>
                                                 <a href="{{ route('programmes.generate_memo', $application->id) }}?edit=yes" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                                     <i data-lucide="pencil" class="w-4 h-4 text-green-600"></i>
                                                     <span>Edit Memo</span>
                                                 </a>
-                                            </li>
+                                            </li> --}}
                                         </ul>
                                     </td>
                                 </tr>

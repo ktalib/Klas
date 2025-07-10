@@ -411,6 +411,9 @@ Route::get('sectionaltitling/get-billing-data2/{id}', [App\Http\Controllers\Appl
 Route::post('sectionaltitling/save-billing-data', [App\Http\Controllers\ApplicationMotherController::class, 'saveBillingData'])->name('sectionaltitling.saveBillingData');
 
 Route::get('sectionaltitling/viewrecorddetail',  [App\Http\Controllers\ApplicationMotherController::class, 'Veiwrecords'])->name('sectionaltitling.viewrecorddetail');
+Route::get('sectionaltitling/edit/{id}', [App\Http\Controllers\ApplicationMotherController::class, 'edit'])->name('sectionaltitling.edit');
+Route::put('sectionaltitling/update/{id}', [App\Http\Controllers\ApplicationMotherController::class, 'update'])->name('sectionaltitling.update');
+Route::delete('sectionaltitling/delete/{id}', [App\Http\Controllers\ApplicationMotherController::class, 'delete'])->name('sectionaltitling.delete');
 
 
 // Add this route in the appropriate section
@@ -487,6 +490,13 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'instrument_registration'], 
     Route::post('register-batch', [InstrumentRegistrationController::class, 'registerBatch']);
     Route::post('register-single', [InstrumentRegistrationController::class, 'registerSingle']);
     Route::post('decline', [InstrumentRegistrationController::class, 'declineRegistration']);
+    Route::get('check-registration-status', [InstrumentRegistrationController::class, 'checkRegistrationStatus']);
+    Route::get('file-completion-status', [InstrumentRegistrationController::class, 'getFileCompletionStatus']);
+    Route::get('overall-completion-status', [InstrumentRegistrationController::class, 'getOverallCompletionStatus']);
+    Route::get('view/{id}', [InstrumentRegistrationController::class, 'view'])->name('instrument_registration.view');
+    Route::get('edit/{id}', [InstrumentRegistrationController::class, 'edit'])->name('instrument_registration.edit');
+    Route::put('update/{id}', [InstrumentRegistrationController::class, 'update'])->name('instrument_registration.update');
+    Route::delete('delete/{id}', [InstrumentRegistrationController::class, 'destroy'])->name('instrument_registration.destroy');
 });
 
 // Add a fallback route for debugging
@@ -531,6 +541,7 @@ Route::get('/sectionaltitling', [\App\Http\Controllers\SectionalTitlingControlle
 Route::get('/sectionaltitling/primary', [\App\Http\Controllers\SectionalTitlingController::class, 'Primary'])->name('sectionaltitling.primary');
 Route::get('/sectionaltitling/secondary', [\App\Http\Controllers\SectionalTitlingController::class, 'Secondary'])->name('sectionaltitling.secondary');
 Route::get('/sectionaltitling/units', [\App\Http\Controllers\SectionalTitlingController::class, 'Units'])->name('sectionaltitling.units');
+Route::get('/sectionaltitling/buyer-list/{id}', [\App\Http\Controllers\SectionalTitlingController::class, 'getBuyerList'])->name('sectionaltitling.buyerList');
 Route::get('/map', [\App\Http\Controllers\SectionalTitlingController::class, 'Map'])->name('map.index');
 
  
@@ -577,6 +588,18 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'instruments'], function () 
 
 // COROI routes
 Route::get('/coroi', [App\Http\Controllers\CoroiController::class, 'index'])->name('coroi.index');
+Route::get('/coroi/search-by-fileno', [App\Http\Controllers\CoroiController::class, 'searchByFileno'])->name('coroi.search.fileno');
+Route::get('/coroi/search', function() {
+    return view('coroi.search');
+})->name('coroi.search');
+Route::get('/coroi/demo', function() {
+    return view('coroi.demo');
+})->name('coroi.demo');
+Route::get('/coroi/debug', [App\Http\Controllers\CoroiController::class, 'debug'])->name('coroi.debug');
+Route::get('/coroi/test', function() {
+    return view('coroi.test');
+})->name('coroi.test');
+Route::get('/coroi/test-database', [App\Http\Controllers\CoroiController::class, 'testDatabase'])->name('coroi.test.database');
 
 // User role routes for department-based filtering
 Route::get('/user-roles/by-department', 'App\Http\Controllers\UserRoleController@getByDepartment')
@@ -653,3 +676,13 @@ Route::prefix('debug')->group(function() {
 
 Route::get('/print_buyer_list', [ProgrammeController::class, 'printBuyerList']);
 Route::get('/print_buyer_list/{applicationId}', [ProgrammeController::class, 'printBuyerList']);
+
+// Final Conveyance Agreement
+Route::get('actions/final-conveyance-agreement/{id}/{buyer_id?}', [\App\Http\Controllers\PrimaryActionsController::class, 'finalConveyanceAgreement'])->name('actions.final-conveyance-agreement');
+Route::get('actions/final-conveyance/{id}', [\App\Http\Controllers\PrimaryActionsController::class, 'finalConveyance'])->name('actions.final-conveyance');
+Route::get('actions/generate-final-conveyance-document/{id}', [\App\Http\Controllers\PrimaryActionsController::class, 'generateFinalConveyanceDocument'])->name('actions.generate-final-conveyance-document');
+
+// Conveyance operations
+Route::get('conveyance/{id}', [\App\Http\Controllers\PrimaryActionsController::class, 'getConveyance'])->name('conveyance.get');
+Route::post('conveyance/update-buyer', [\App\Http\Controllers\PrimaryActionsController::class, 'updateSingleBuyer'])->name('conveyance.update.buyer');
+Route::post('conveyance/delete-buyer', [\App\Http\Controllers\PrimaryActionsController::class, 'deleteBuyer'])->name('conveyance.delete.buyer');

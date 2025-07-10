@@ -16,7 +16,7 @@ class  SectionalTitlingController extends Controller
 
     public function index()
     {
-        $PageTitle = 'Secondary Applications';
+        $PageTitle = 'Sectional Titling Module (STM)';
         $PageDescription = 'Process CofO for individually owned sections of multi-unit developments.';
         $Primary = DB::connection('sqlsrv')->table('dbo.mother_applications')
                 ->orderBy('created_at', 'desc')
@@ -116,7 +116,7 @@ class  SectionalTitlingController extends Controller
         $PageTitle = 'Unit Applications';
         $PageDescription = 'Process CofO for individually owned sections of multi-unit developments.';
 
-        $SecondaryApplications = DB::connection('sqlsrv')->table('dbo.subapplications')
+        $query = DB::connection('sqlsrv')->table('dbo.subapplications')
             ->leftJoin('dbo.mother_applications', 'dbo.subapplications.main_application_id', '=', 'dbo.mother_applications.id')
             ->select(
             'dbo.subapplications.fileno', 
@@ -151,8 +151,15 @@ class  SectionalTitlingController extends Controller
             'dbo.mother_applications.property_street_name',
             'dbo.mother_applications.property_district',
             'dbo.mother_applications.property_lga'
-            )
-            ->get();
+            );
+
+        // Check if main_application_id parameter exists in URL
+        if ($request->has('main_application_id')) {
+            $mainApplicationId = $request->get('main_application_id');
+            $query->where('dbo.subapplications.main_application_id', $mainApplicationId);
+        }
+
+        $SecondaryApplications = $query->get();
          
 
         return view('sectionaltitling.units', compact('SecondaryApplications', 'PageTitle', 'PageDescription')); 
@@ -167,8 +174,42 @@ class  SectionalTitlingController extends Controller
   
         return view('map.index', compact('PageTitle', 'PageDescription'));
     }
-  
 
+    public function getBuyerList($applicationId)
+    {
+        try {
+            // Query to get buyer list with unit measurements
+            $buyers = DB::connection('sqlsrv')
+                ->table('dbo.buyer_list as bl')
+                ->leftJoin('dbo.st_unit_measurements as sum', function($join) {
+                    $join->on('bl.application_id', '=', 'sum.application_id')
+                         ->on('bl.unit_no', '=', 'sum.unit_no');
+                })
+                ->select(
+                    'bl.application_id',
+                    'bl.unit_measurement_id',
+                    'bl.buyer_title',
+                    'bl.buyer_name',
+                    'bl.unit_no',
+                    'sum.buyer_id',
+                    'sum.measurement'
+                )
+                ->where('bl.application_id', $applicationId)
+                ->get();
 
+            return response()->json([
+                'success' => true,
+                'buyers' => $buyers,
+                'message' => 'Buyer list retrieved successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error retrieving buyer list: ' . $e->getMessage(),
+                'buyers' => []
+            ]);
+        }
+    }
   
 }

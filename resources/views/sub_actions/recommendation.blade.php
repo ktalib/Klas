@@ -200,17 +200,28 @@
                                                     Decision
                                                 </label>
                                                 <div class="flex items-center space-x-4">
-
-                                                    <label class="inline-flex items-center">
-                                                        <input type="radio" name="decision" value="Approved"
-                                                            class="form-radio" onchange="toggleObservationsAndReasonContainers(this)">
-                                                        <span class="ml-2 text-sm">Approve</span>
-                                                    </label>
-                                                    <label class="inline-flex items-center">
-                                                        <input type="radio" name="decision" value="Declined"
-                                                            class="form-radio" onchange="toggleObservationsAndReasonContainers(this)">
-                                                        <span class="ml-2 text-sm">Decline</span>
-                                                    </label>
+                                                <label class="inline-flex items-center">
+                                                    <input 
+                                                        type="radio" 
+                                                        name="decision" 
+                                                        value="Approved"
+                                                        class="form-radio"
+                                                        onchange="toggleObservationsAndReasonContainers(this)"
+                                                        {{ strtolower($application->planning_recommendation_status) === 'approved' ? 'checked disabled' : '' }}
+                                                    >
+                                                    <span class="ml-2 text-sm {{ strtolower($application->planning_recommendation_status) === 'approved' ? 'text-gray-400' : '' }}">Approve</span>
+                                                </label>
+                                                <label class="inline-flex items-center">
+                                                    <input 
+                                                        type="radio" 
+                                                        name="decision" 
+                                                        value="Declined"
+                                                        class="form-radio"
+                                                        onchange="toggleObservationsAndReasonContainers(this)"
+                                                        {{ strtolower($application->planning_recommendation_status) === 'declined' ? 'checked disabled' : (strtolower($application->planning_recommendation_status) === 'approved' ? 'disabled' : '') }}
+                                                    >
+                                                    <span class="ml-2 text-sm {{ strtolower($application->planning_recommendation_status) === 'approved' ? 'text-gray-400' : '' }}">Decline</span>
+                                                </label>
 
                                                     <script>
                                                         function toggleObservationsAndReasonContainers(radio) {

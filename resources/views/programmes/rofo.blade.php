@@ -5,11 +5,78 @@
 @endsection
 
 @section('styles')
-
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
 @endsection
 
 @section('content')
 <style>
+    /* Custom DataTables styling to match design */
+    .dataTables_wrapper {
+        font-family: inherit;
+        margin-top: 1rem;
+    }
+
+    .dataTables_length select,
+    .dataTables_filter input {
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .dataTables_length select:focus,
+    .dataTables_filter input:focus {
+        outline: none;
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .dataTables_info {
+        color: #6b7280;
+        font-size: 0.875rem;
+    }
+
+    .dataTables_paginate .paginate_button {
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        margin: 0 0.125rem;
+        background: white;
+        color: #374151;
+        text-decoration: none;
+    }
+
+    .dataTables_paginate .paginate_button:hover {
+        background-color: #f3f4f6;
+        border-color: #9ca3af;
+        color: #374151;
+    }
+
+    .dataTables_paginate .paginate_button.current {
+        background-color: #10b981;
+        border-color: #10b981;
+        color: white;
+    }
+
+    .dataTables_paginate .paginate_button.disabled {
+        color: #9ca3af;
+        cursor: not-allowed;
+    }
+
+    .dataTables_paginate .paginate_button.disabled:hover {
+        background-color: transparent;
+        border-color: #d1d5db;
+        color: #9ca3af;
+    }
+
+    /* Hide default DataTables search and length controls */
+    .dataTables_filter,
+    .dataTables_length {
+        display: none;
+    }
 
     .badge {
       display: inline-flex;
@@ -100,34 +167,94 @@
       cursor: pointer;
     }
 
-    /* Dropdown menu styles */
+    /* Enhanced Dropdown menu styles with better responsiveness */
     .action-menu {
-      position: absolute;
+      position: fixed;
       top: 100%;
       right: 0;
-      z-index: 50;
+      z-index: 9999;
       min-width: 200px;
-      max-width: 100%;
+      max-width: 280px;
       background: white;
-      border-radius: 0.375rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       border: 1px solid #e5e7eb;
+      overflow: hidden;
+      transform: translateY(5px);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .action-menu.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .action-menu li {
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .action-menu li:last-child {
+      border-bottom: none;
+    }
+
+    .action-menu a {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      color: #374151;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .action-menu a:hover {
+      background-color: #f9fafb;
+    }
+
+    .action-menu i {
+      margin-right: 0.5rem;
+      flex-shrink: 0;
     }
 
     .table-cell.relative {
       position: relative;
     }
 
-    @media (max-width: 640px) {
+    /* Responsive dropdown positioning */
+    @media (max-width: 768px) {
       .action-menu {
         position: fixed;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translateX(-50%) translateY(5px);
         top: auto;
-        bottom: 20px;
+        bottom: 80px;
         right: auto;
         width: 90%;
+        max-width: 320px;
       }
+
+      .action-menu.show {
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .action-menu {
+        width: 95%;
+        bottom: 60px;
+      }
+    }
+
+    /* Dropdown button hover effect */
+    .dropdown-toggle {
+      transition: all 0.15s ease;
+    }
+
+    .dropdown-toggle:hover {
+      background-color: #f3f4f6;
+      transform: scale(1.05);
     }
 
     /* Filter toggle styles */
@@ -141,7 +268,25 @@
     .filter-container.show {
         display: block;
     }
-  </style>
+
+    /* Table responsive improvements */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    @media (max-width: 768px) {
+        .table-cell {
+            padding: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .table-header {
+            padding: 0.5rem;
+            font-size: 0.875rem;
+        }
+    }
+</style>
 <div class="flex-1 overflow-auto">
     <!-- Header -->
     @include($headerPartial ?? 'admin.header')
@@ -175,10 +320,10 @@
                 </div>
             </div>
             
-            <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
+            {{-- <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
                 <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
                 <span>Export</span>
-            </button>
+            </button> --}}
         </div>
         
         <!-- Filters Container (Hidden by Default) -->
@@ -281,19 +426,19 @@
                     </button>
                     
                     <!-- Dropdown Menu for Not Generated RoFO -->
-                    <ul class="action-menu z-50 bg-white border rounded-lg shadow-lg hidden w-56">
+                    <ul class="action-menu">
                       <li>
                         <a href="{{ route('sectionaltitling.viewrecorddetail_sub', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                           <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
                           <span>View Record</span>
                         </a>
                       </li>
-                      <li>
+                      {{-- <li>
                         <a href="#" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                           <i data-lucide="edit" class="w-4 h-4 text-green-600"></i>
                           <span>Edit Record</span>
                         </a>
-                      </li>
+                      </li> --}}
                       <li>
                         <a href="{{ route('programmes.generate_rofo', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                           <i data-lucide="file-plus" class="w-4 h-4 text-indigo-600"></i>
@@ -316,7 +461,7 @@
         </div>
 
         <!-- Generated RoFO Table -->
-        <div id="generated-table" class="overflow-x-auto hidden">
+        <div id="generated-table" class="table-responsive hidden">
           <table id="generatedRofoTable" class="min-w-full divide-y divide-gray-200">
             <thead>
               <tr class="text-xs">
@@ -361,31 +506,31 @@
                     </button>
                     
                     <!-- Dropdown Menu For Generated RoFO -->
-                    <ul class="action-menu z-50 bg-white border rounded-lg shadow-lg hidden w-56">
+                    <ul class="action-menu">
                       <li>
                         <a href="{{ route('sectionaltitling.viewrecorddetail_sub', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                           <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
-                          <span>View Record</span>
+                          <span>View Application</span>
                         </a>
                       </li>
-                      <li>
+                      {{-- <li>
                         <a href="#" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                           <i data-lucide="edit" class="w-4 h-4 text-green-600"></i>
                           <span>Edit Record</span>
                         </a>
-                      </li>
+                      </li> --}}
                       <li>
                         <a href="{{ route('programmes.view_rofo', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                           <i data-lucide="clipboard" class="w-4 h-4 text-amber-600"></i>
                           <span>View RoFO</span>
                         </a>
                       </li>
-                      <li>
+                      {{-- <li>
                         <a href="{{ route('programmes.generate_rofo', $unitApplication->id) }}?edit=yes" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                           <i data-lucide="edit-3" class="w-4 h-4 text-purple-600"></i>
                           <span>Edit RoFO</span>
                         </a>
-                      </li>
+                      </li> --}}
                     </ul>
                 </td>
               </tr>
@@ -407,26 +552,21 @@
     <!-- Page Footer -->
     @include($footerPartial ?? 'admin.footer')
   </div>
+  <!-- DataTables JS -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
   <script>
-      function showTab(tabId) {
-    // Hide all tab contents
-    document.getElementById('primary-survey').classList.add('hidden');
-    document.getElementById('unit-survey').classList.add('hidden');
-    
-    // Reset all tab buttons
-    document.getElementById('primary-survey-tab').classList.remove('bg-green-600', 'text-white');
-    document.getElementById('primary-survey-tab').classList.add('bg-white', 'text-gray-700', 'border', 'border-gray-200');
-    document.getElementById('unit-survey-tab').classList.remove('bg-green-600', 'text-white');
-    document.getElementById('unit-survey-tab').classList.add('bg-white', 'text-gray-700', 'border', 'border-gray-200');
-    
-    // Show selected tab content
-    document.getElementById(tabId).classList.remove('hidden');
-    
-    // Highlight active tab button
-    document.getElementById(tabId + '-tab').classList.remove('bg-white', 'text-gray-700', 'border', 'border-gray-200');
-    document.getElementById(tabId + '-tab').classList.add('bg-green-600', 'text-white');
-  }
-  
+  // Global variables for DataTables
+  let notGeneratedTable, generatedTable;
+  let currentActiveTab = 'not-generated';
+
   function showOwners(owners) {
     let ownersList = '';
     owners.forEach(owner => {
@@ -442,142 +582,108 @@
     });
   }
   
-  // Existing customToggleDropdown function (if it exists)
+  // Enhanced dropdown functionality with better responsiveness
   function customToggleDropdown(button, event) {
-    // Prevent the click from propagating to the document
     event.stopPropagation();
     
     // Close all other dropdowns first
     document.querySelectorAll('.action-menu').forEach(menu => {
+      menu.classList.remove('show');
       menu.classList.add('hidden');
     });
     
-    // Toggle the visibility of the dropdown menu
+    // Get the dropdown menu
     const dropdown = button.nextElementSibling;
-    dropdown.classList.toggle('hidden');
     
-    // Ensure correct positioning for all screen sizes
-    if (window.innerWidth <= 640) {
-      // Mobile view - bottom centered
-      dropdown.style.position = 'fixed';
-      dropdown.style.left = '50%';
-      dropdown.style.transform = 'translateX(-50%)';
-      dropdown.style.bottom = '20px';
-      dropdown.style.top = 'auto'; 
-      dropdown.style.right = 'auto';
+    // Toggle visibility
+    if (dropdown.classList.contains('hidden')) {
+      dropdown.classList.remove('hidden');
+      
+      // Add show class for animation
+      setTimeout(() => {
+        dropdown.classList.add('show');
+      }, 10);
+      
+      // Position dropdown responsively
+      positionDropdown(dropdown, button);
     } else {
-      // Desktop view - position relative to button
-      dropdown.style.position = 'absolute';
-      dropdown.style.top = '100%';
-      dropdown.style.right = '0';
-      dropdown.style.left = 'auto';
-      dropdown.style.transform = 'none';
+      dropdown.classList.remove('show');
+      setTimeout(() => {
+        dropdown.classList.add('hidden');
+      }, 200);
+    }
+  }
+
+  function positionDropdown(dropdown, button) {
+    const rect = button.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+    
+    // Reset positioning
+    dropdown.style.position = 'fixed';
+    dropdown.style.top = '';
+    dropdown.style.bottom = '';
+    dropdown.style.left = '';
+    dropdown.style.right = '';
+    dropdown.style.transform = '';
+    dropdown.style.width = '';
+    dropdown.style.maxWidth = '';
+    
+    if (viewportWidth <= 768) {
+      // Mobile positioning - center at bottom
+      dropdown.style.left = '50%';
+      dropdown.style.bottom = '80px';
+      dropdown.style.transform = 'translateX(-50%)';
+      dropdown.style.width = '90%';
+      dropdown.style.maxWidth = '320px';
+    } else {
+      // Desktop positioning - always use fixed positioning to avoid overflow issues
+      const dropdownHeight = 200; // Approximate height of dropdown
+      
+      // Position horizontally - align to the right of the button
+      const rightSpace = viewportWidth - rect.right;
+      if (rightSpace >= 200) {
+        // Enough space on the right
+        dropdown.style.left = rect.right - 200 + 'px';
+      } else {
+        // Not enough space on the right, align to the left of the button
+        dropdown.style.left = Math.max(10, rect.left - 200) + 'px';
+      }
+      
+      // Position vertically
+      if (rect.bottom + dropdownHeight > viewportHeight - 20) {
+        // Position above button
+        dropdown.style.top = Math.max(10, rect.top - dropdownHeight) + 'px';
+      } else {
+        // Position below button
+        dropdown.style.top = rect.bottom + 5 + 'px';
+      }
+      
+      dropdown.style.width = '200px';
     }
   }
   
   // Close dropdowns when clicking elsewhere
   document.addEventListener('click', function() {
     document.querySelectorAll('.action-menu').forEach(menu => {
-      menu.classList.add('hidden');
+      menu.classList.remove('show');
+      setTimeout(() => {
+        menu.classList.add('hidden');
+      }, 200);
     });
   });
 
-  // Table filtering functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    const toggleFiltersBtn = document.getElementById('toggleFilters');
-    const filterContainer = document.getElementById('filterContainer');
-    const applyFilterBtn = document.getElementById('applyFilter');
-    const resetFilterBtn = document.getElementById('resetFilter');
-    const landUseFilter = document.getElementById('landUseFilter');
-    const dateFromFilter = document.getElementById('dateFrom');
-    const dateToFilter = document.getElementById('dateTo');
-    const searchInput = document.getElementById('searchInput');
-    const tableRows = document.querySelectorAll('#unitApplicationTable tbody tr:not(#noRecordsRow):not(#emptyRow)');
-    const noRecordsRow = document.getElementById('noRecordsRow');
-    const emptyRow = document.getElementById('emptyRow');
-    
-    // Toggle filters visibility
-    toggleFiltersBtn.addEventListener('click', function() {
-        filterContainer.classList.toggle('show');
+  // Handle window resize for dropdown repositioning
+  window.addEventListener('resize', function() {
+    document.querySelectorAll('.action-menu:not(.hidden)').forEach(menu => {
+      const button = menu.previousElementSibling;
+      positionDropdown(menu, button);
     });
-    
-    // Apply filters when button is clicked
-    applyFilterBtn.addEventListener('click', function() {
-      applyFilters();
-    });
-    
-    // Reset filters when reset button is clicked
-    resetFilterBtn.addEventListener('click', function() {
-      landUseFilter.value = '';
-      dateFromFilter.value = '';
-      dateToFilter.value = '';
-      applyFilters();
-    });
-    
-    // Apply search on typing with small delay
-    let searchTimeout;
-    searchInput.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(function() {
-            applyFilters();
-        }, 300);
-    });
-    
-    function applyFilters() {
-      const landUse = landUseFilter.value.toLowerCase();
-      const dateFrom = dateFromFilter.value ? new Date(dateFromFilter.value) : null;
-      const dateTo = dateToFilter.value ? new Date(dateToFilter.value) : null;
-      const searchTerm = searchInput.value.toLowerCase().trim();
-      
-      let visibleRowCount = 0;
-      
-      tableRows.forEach(row => {
-        const rowLandUse = row.getAttribute('data-land-use');
-        const rowDate = row.getAttribute('data-date') ? new Date(row.getAttribute('data-date')) : null;
-        const rowText = row.textContent.toLowerCase();
-        
-        let showRow = true;
-        
-        // Apply search filter if specified
-        if (searchTerm && !rowText.includes(searchTerm)) {
-            showRow = false;
-        }
-        
-        // Apply land use filter if specified
-        if (showRow && landUse && rowLandUse && !rowLandUse.includes(landUse)) {
-          showRow = false;
-        }
-        
-        // Apply date from filter if specified
-        if (showRow && dateFrom && rowDate && rowDate < dateFrom) {
-          showRow = false;
-        }
-        
-        // Apply date to filter if specified
-        if (showRow && dateTo && rowDate && rowDate > dateTo) {
-          showRow = false;
-        }
-        
-        // Show or hide row based on filters
-        row.style.display = showRow ? '' : 'none';
-        
-        if (showRow) {
-          visibleRowCount++;
-        }
-      });
-      
-      // Show "no records" message if no rows match the filters
-      if (visibleRowCount === 0 && tableRows.length > 0) {
-        noRecordsRow.style.display = '';
-        emptyRow.style.display = 'none';
-      } else {
-        noRecordsRow.style.display = 'none';
-        emptyRow.style.display = tableRows.length === 0 ? '' : 'none';
-      }
-    }
   });
 
   function showRofoTab(tabId) {
+    currentActiveTab = tabId;
+    
     // Hide all tab contents
     document.getElementById('generated-table').classList.add('hidden');
     document.getElementById('not-generated-table').classList.add('hidden');
@@ -595,87 +701,232 @@
     document.getElementById(tabId + '-tab').classList.remove('border-transparent');
     document.getElementById(tabId + '-tab').classList.add('border-green-600', 'text-green-600');
     
-    // Initialize or refresh filters for the visible table
-    applyFilters();
+    // Initialize DataTable for the visible table if not already initialized
+    if (tabId === 'not-generated' && !notGeneratedTable) {
+      initializeNotGeneratedTable();
+    } else if (tabId === 'generated' && !generatedTable) {
+      initializeGeneratedTable();
+    }
+    
+    // Refresh the current table
+    refreshCurrentTable();
   }
-  
-  // Update applyFilters function to handle both tables
-  function applyFilters() {
-    const landUse = landUseFilter.value.toLowerCase();
-    const dateFrom = dateFromFilter.value ? new Date(dateFromFilter.value) : null;
-    const dateTo = dateToFilter.value ? new Date(dateToFilter.value) : null;
-    const searchTerm = searchInput.value.toLowerCase().trim();
+
+  function initializeNotGeneratedTable() {
+    if ($.fn.DataTable.isDataTable('#notGeneratedRofoTable')) {
+      $('#notGeneratedRofoTable').DataTable().destroy();
+    }
     
-    // Determine which table is currently visible
-    const isGeneratedVisible = !document.getElementById('generated-table').classList.contains('hidden');
-    
-    // Get rows from the currently visible table
-    const tableRows = isGeneratedVisible 
-      ? document.querySelectorAll('#generatedRofoTable tbody tr:not(#noRecordsGeneratedRow):not(#emptyGeneratedRow)')
-      : document.querySelectorAll('#notGeneratedRofoTable tbody tr:not(#noRecordsNotGeneratedRow):not(#emptyNotGeneratedRow)');
-    
-    const noRecordsRow = isGeneratedVisible 
-      ? document.getElementById('noRecordsGeneratedRow')
-      : document.getElementById('noRecordsNotGeneratedRow');
-    
-    const emptyRow = isGeneratedVisible 
-      ? document.getElementById('emptyGeneratedRow')
-      : document.getElementById('emptyNotGeneratedRow');
-    
-    let visibleRowCount = 0;
-    
-    // Apply filters to the visible table
-    tableRows.forEach(row => {
-      const rowLandUse = row.getAttribute('data-land-use');
-      const rowDate = row.getAttribute('data-date') ? new Date(row.getAttribute('data-date')) : null;
-      const rowText = row.textContent.toLowerCase();
-      
-      let showRow = true;
-      
-      // Apply search filter if specified
-      if (searchTerm && !rowText.includes(searchTerm)) {
-          showRow = false;
-      }
-      
-      // Apply land use filter if specified
-      if (showRow && landUse && rowLandUse && !rowLandUse.includes(landUse)) {
-        showRow = false;
-      }
-      
-      // Apply date from filter if specified
-      if (showRow && dateFrom && rowDate && rowDate < dateFrom) {
-        showRow = false;
-      }
-      
-      // Apply date to filter if specified
-      if (showRow && dateTo && rowDate && rowDate > dateTo) {
-        showRow = false;
-      }
-      
-      // Show or hide row based on filters
-      row.style.display = showRow ? '' : 'none';
-      
-      if (showRow) {
-        visibleRowCount++;
+    notGeneratedTable = $('#notGeneratedRofoTable').DataTable({
+      responsive: true,
+      pageLength: 10,
+      lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+      dom: 'Bfrtip',
+      buttons: [
+        {
+          extend: 'excel',
+          text: 'Export Excel',
+          className: 'btn btn-success btn-sm'
+        },
+        {
+          extend: 'pdf',
+          text: 'Export PDF',
+          className: 'btn btn-danger btn-sm'
+        }
+      ],
+      columnDefs: [
+        { orderable: false, targets: -1 }, // Disable sorting on Actions column
+        { className: 'text-center', targets: -1 }
+      ],
+      language: {
+        search: "",
+        searchPlaceholder: "Search records...",
+        lengthMenu: "Show _MENU_ entries",
+        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+        infoEmpty: "Showing 0 to 0 of 0 entries",
+        infoFiltered: "(filtered from _MAX_ total entries)",
+        paginate: {
+          first: "First",
+          last: "Last",
+          next: "Next",
+          previous: "Previous"
+        }
+      },
+      initComplete: function() {
+        // Hide default search box since we have custom search
+        $('.dataTables_filter').hide();
       }
     });
+  }
+
+  function initializeGeneratedTable() {
+    if ($.fn.DataTable.isDataTable('#generatedRofoTable')) {
+      $('#generatedRofoTable').DataTable().destroy();
+    }
     
-    // Show "no records" message if no rows match the filters
-    if (visibleRowCount === 0 && tableRows.length > 0) {
-      noRecordsRow.style.display = '';
-      emptyRow.style.display = 'none';
-    } else {
-      noRecordsRow.style.display = 'none';
-      emptyRow.style.display = tableRows.length === 0 ? '' : 'none';
+    generatedTable = $('#generatedRofoTable').DataTable({
+      responsive: true,
+      pageLength: 10,
+      lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+      dom: 'Bfrtip',
+      buttons: [
+        {
+          extend: 'excel',
+          text: 'Export Excel',
+          className: 'btn btn-success btn-sm'
+        },
+        {
+          extend: 'pdf',
+          text: 'Export PDF',
+          className: 'btn btn-danger btn-sm'
+        }
+      ],
+      columnDefs: [
+        { orderable: false, targets: -1 }, // Disable sorting on Actions column
+        { className: 'text-center', targets: -1 }
+      ],
+      language: {
+        search: "",
+        searchPlaceholder: "Search records...",
+        lengthMenu: "Show _MENU_ entries",
+        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+        infoEmpty: "Showing 0 to 0 of 0 entries",
+        infoFiltered: "(filtered from _MAX_ total entries)",
+        paginate: {
+          first: "First",
+          last: "Last",
+          next: "Next",
+          previous: "Previous"
+        }
+      },
+      initComplete: function() {
+        // Hide default search box since we have custom search
+        $('.dataTables_filter').hide();
+      }
+    });
+  }
+
+  function refreshCurrentTable() {
+    if (currentActiveTab === 'not-generated' && notGeneratedTable) {
+      notGeneratedTable.draw();
+    } else if (currentActiveTab === 'generated' && generatedTable) {
+      generatedTable.draw();
     }
   }
 
-  // Initialize the tab system with the default tab
-  document.addEventListener('DOMContentLoaded', function() {
-    // ...existing DOMContentLoaded code...
+  function applyFilters() {
+    const searchTerm = document.getElementById('searchInput').value;
+    const landUse = document.getElementById('landUseFilter').value;
+    const dateFrom = document.getElementById('dateFrom').value;
+    const dateTo = document.getElementById('dateTo').value;
     
-    // Ensure the tab buttons and filter functionality are properly initialized
+    // Apply search to current DataTable
+    if (currentActiveTab === 'not-generated' && notGeneratedTable) {
+      notGeneratedTable.search(searchTerm).draw();
+    } else if (currentActiveTab === 'generated' && generatedTable) {
+      generatedTable.search(searchTerm).draw();
+    }
+    
+    // Apply custom filters (land use, date range)
+    applyCustomFilters(landUse, dateFrom, dateTo);
+  }
+
+  function applyCustomFilters(landUse, dateFrom, dateTo) {
+    // Custom filtering logic for land use and date range
+    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+      // Only apply to our tables
+      if (settings.nTable.id !== 'notGeneratedRofoTable' && settings.nTable.id !== 'generatedRofoTable') {
+        return true;
+      }
+      
+      // Land use filter (column index 5 for both tables)
+      const landUseColumn = data[5] || '';
+      if (landUse && landUseColumn.toLowerCase().indexOf(landUse.toLowerCase()) === -1) {
+        return false;
+      }
+      
+      // Date filter (column index 6 for not-generated, 7 for generated)
+      const dateColumnIndex = settings.nTable.id === 'generatedRofoTable' ? 7 : 6;
+      const dateColumn = data[dateColumnIndex] || '';
+      
+      if (dateFrom || dateTo) {
+        // Parse date from DD-MM-YYYY format
+        const dateParts = dateColumn.split('-');
+        if (dateParts.length === 3) {
+          const rowDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+          
+          if (dateFrom) {
+            const fromDate = new Date(dateFrom);
+            if (rowDate < fromDate) return false;
+          }
+          
+          if (dateTo) {
+            const toDate = new Date(dateTo);
+            if (rowDate > toDate) return false;
+          }
+        }
+      }
+      
+      return true;
+    });
+    
+    // Redraw the current table
+    refreshCurrentTable();
+  }
+
+  // Document ready function
+  $(document).ready(function() {
+    // Initialize the first tab
     showRofoTab('not-generated');
+    
+    // Filter functionality
+    const toggleFiltersBtn = document.getElementById('toggleFilters');
+    const filterContainer = document.getElementById('filterContainer');
+    const applyFilterBtn = document.getElementById('applyFilter');
+    const resetFilterBtn = document.getElementById('resetFilter');
+    const searchInput = document.getElementById('searchInput');
+    
+    // Toggle filters visibility
+    toggleFiltersBtn.addEventListener('click', function() {
+      filterContainer.classList.toggle('show');
+    });
+    
+    // Apply filters when button is clicked
+    applyFilterBtn.addEventListener('click', function() {
+      applyFilters();
+    });
+    
+    // Reset filters
+    resetFilterBtn.addEventListener('click', function() {
+      document.getElementById('landUseFilter').value = '';
+      document.getElementById('dateFrom').value = '';
+      document.getElementById('dateTo').value = '';
+      document.getElementById('searchInput').value = '';
+      
+      // Clear custom filters
+      $.fn.dataTable.ext.search.pop();
+      
+      // Clear search and redraw
+      if (currentActiveTab === 'not-generated' && notGeneratedTable) {
+        notGeneratedTable.search('').draw();
+      } else if (currentActiveTab === 'generated' && generatedTable) {
+        generatedTable.search('').draw();
+      }
+    });
+    
+    // Real-time search
+    let searchTimeout;
+    searchInput.addEventListener('input', function() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(function() {
+        const searchTerm = searchInput.value;
+        if (currentActiveTab === 'not-generated' && notGeneratedTable) {
+          notGeneratedTable.search(searchTerm).draw();
+        } else if (currentActiveTab === 'generated' && generatedTable) {
+          generatedTable.search(searchTerm).draw();
+        }
+      }, 300);
+    });
   });
   </script>
 @endsection

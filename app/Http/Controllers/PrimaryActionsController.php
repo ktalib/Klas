@@ -60,7 +60,7 @@ class PrimaryActionsController extends Controller
             ]);
 
             // Insert the data into the database
-            DB::connection('sqlsrv')->table('surveyCadastralRecord')->insert($validatedData);
+            DB::connection('sqlsrv')->table('surveyRecord')->insert($validatedData);
 
             // Return JSON response for AJAX
             return response()->json([
@@ -82,14 +82,15 @@ class PrimaryActionsController extends Controller
             // Validate the request data
             $validatedData = $request->validate([
                 'application_id' => 'required|integer',
+                'fileno' => 'required|string|max:255',
                 'serial_no' => 'required|string|max:255',
                 'page_no' => 'required|string|max:255',
                 'volume_no' => 'required|string|max:255',
-                'deeds_time' => 'required',
-                'deeds_date' => 'required|date',
+                'deeds_time' => 'nullable|string',
+                'deeds_date' => 'nullable|date',
             ]);
 
-            // Get the owner_fullname from mother_applications table
+            // Get the mother application
             $motherApplication = DB::connection('sqlsrv')->table('mother_applications')
                 ->where('id', $request->application_id)
                 ->first();
@@ -101,16 +102,65 @@ class PrimaryActionsController extends Controller
                 ], 404);
             }
 
-            // Add the Applicant_Name from mother_applications
-            $validatedData['Applicant_Name'] = $motherApplication->owner_fullname;
+            // Check if CofO record already exists for this file number
+            $existingCofo = DB::connection('sqlsrv')->table('Cofo')
+                ->where('fileNo', $validatedData['fileno'])
+                ->first();
 
-            // Insert the data into the database
-            DB::connection('sqlsrv')->table('landAdministration')->insert($validatedData);
+            if ($existingCofo) {
+                // Update existing CofO record
+                DB::connection('sqlsrv')->table('Cofo')
+                    ->where('fileNo', $validatedData['fileno'])
+                    ->update([
+                        'oldTitleSerialNo' => $validatedData['serial_no'],
+                        'oldTitlePageNo' => $validatedData['page_no'],
+                        'oldTitleVolumeNo' => $validatedData['volume_no'],
+                        'deedsTime' => $validatedData['deeds_time'],
+                        'deedsDate' => $validatedData['deeds_date'],
+                        'updated_at' => now()
+                    ]);
+            } else {
+                // Insert new CofO record
+                DB::connection('sqlsrv')->table('Cofo')->insert([
+                    'fileNo' => $validatedData['fileno'],
+                    'oldTitleSerialNo' => $validatedData['serial_no'],
+                    'oldTitlePageNo' => $validatedData['page_no'],
+                    'oldTitleVolumeNo' => $validatedData['volume_no'],
+                    'deedsTime' => $validatedData['deeds_time'],
+                    'deedsDate' => $validatedData['deeds_date'],
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+
+            // Also store in landAdministration table for backward compatibility
+            $landAdminData = [
+                'application_id' => $validatedData['application_id'],
+                'serial_no' => $validatedData['serial_no'],
+                'page_no' => $validatedData['page_no'],
+                'volume_no' => $validatedData['volume_no'],
+                'deeds_time' => $validatedData['deeds_time'],
+                'deeds_date' => $validatedData['deeds_date'],
+                'Applicant_Name' => $motherApplication->owner_fullname ?? ''
+            ];
+
+            // Check if landAdministration record exists
+            $existingLandAdmin = DB::connection('sqlsrv')->table('landAdministration')
+                ->where('application_id', $validatedData['application_id'])
+                ->first();
+
+            if ($existingLandAdmin) {
+                DB::connection('sqlsrv')->table('landAdministration')
+                    ->where('application_id', $validatedData['application_id'])
+                    ->update($landAdminData);
+            } else {
+                DB::connection('sqlsrv')->table('landAdministration')->insert($landAdminData);
+            }
 
             // Return JSON response for AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Deeds submitted successfully!'
+                'message' => 'CofO Registration Particulars saved successfully!'
             ]);
         } catch (\Exception $e) {
             // Return JSON error response
@@ -232,18 +282,90 @@ class PrimaryActionsController extends Controller
     public function updateConveyance(Request $request)
     {
         try {
+            // Always extract application_id from the request (works for both JSON and FormData)
+            $applicationId = $request->input('application_id');
+            if (!$applicationId) {
+                // Try to get from $_POST directly (for some edge cases)
+                $applicationId = $request->get('application_id');
+            }
+
+            // Fallback: If 'records' is not an array, try to parse it from the request
+            $records = $request->input('records');
+            if (!is_array($records)) {
+                // Try to parse from JSON if sent as a string
+                $records = json_decode($request->input('records'), true);
+            }
+            // If still not an array, try to build from form data (for multipart/form-data)
+            if (!is_array($records)) {
+                $records = [];
+                foreach ($request->all() as $key => $value) {
+                    if (preg_match('/^records\[(\d+)\]\[(\w+)\]$/', $key, $matches)) {
+                        $index = $matches[1];
+                        $field = $matches[2];
+                        $records[$index][$field] = $value;
+                    }
+                }
+                // Re-index array
+                $records = array_values($records);
+            }
+
+            // Now validate
             $validated = $request->validate([
-                'application_id'       => 'required|integer',
-                'records'              => 'required|array',
-                'records.*.buyerName'  => 'required|string',
-                'records.*.sectionNo'  => 'required|string',
-                'records.*.buyerTitle' => 'nullable|string',
+                // Use extracted application_id for validation
+                'application_id' => 'required|integer',
+                // Remove 'records' from validation here, validate manually below
             ]);
 
-            $applicationId = $validated['application_id'];
+            // Manual validation for records array
+            if (!is_array($records) || count($records) < 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'At least one buyer record is required.',
+                    'errors' => ['records' => ['At least one buyer record is required.']]
+                ], 422);
+            }
+            foreach ($records as $i => $record) {
+                if (empty($record['buyerName'])) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Buyer name is required for all buyers.",
+                        'errors' => ["records.$i.buyerName" => ['Buyer name is required.']]
+                    ], 422);
+                }
+                if (empty($record['sectionNo'])) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Unit number is required for all buyers.",
+                        'errors' => ["records.$i.sectionNo" => ['Unit number is required.']]
+                    ], 422);
+                }
+            }
+
+            // Use the extracted application_id for all logic
+            $applicationId = $applicationId ?? $validated['application_id'];
+
+            // Check if the application exists and get its status
+            $application = DB::connection('sqlsrv')->table('mother_applications')
+                ->where('id', $applicationId)
+                ->first();
+
+            if (!$application) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Application not found.'
+                ], 404);
+            }
+
+            // Check if both application status and planning recommendation are approved
+            if ($application->application_status == 'Approved' && $application->planning_recommendation_status == 'Approved') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot add buyers - Both Application Status and Planning Recommendation have been approved. No further modifications are allowed.'
+                ], 403);
+            }
 
             // Process each record
-            foreach ($validated['records'] as $record) {
+            foreach ($records as $record) {
                 // Check if this buyer already exists (by buyer name and unit no)
                 $existing = DB::connection('sqlsrv')
                     ->table('buyer_list')
@@ -252,9 +374,10 @@ class PrimaryActionsController extends Controller
                     ->where('unit_no', $record['sectionNo'])
                     ->first();
 
+                $buyerId = null;
                 if (!$existing) {
-                    // Insert new record
-                    DB::connection('sqlsrv')->table('buyer_list')->insert([
+                    // Insert new buyer record
+                    $buyerId = DB::connection('sqlsrv')->table('buyer_list')->insertGetId([
                         'application_id' => $applicationId,
                         'buyer_title' => $record['buyerTitle'] ?? '',
                         'buyer_name' => $record['buyerName'],
@@ -262,6 +385,41 @@ class PrimaryActionsController extends Controller
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
+                } else {
+                    $buyerId = $existing->id;
+                }
+
+                // Handle measurement data if provided
+                if (isset($record['measurement']) && !empty($record['measurement'])) {
+                    // Check if measurement record already exists
+                    $existingMeasurement = DB::connection('sqlsrv')
+                        ->table('st_unit_measurements')
+                        ->where('application_id', $applicationId)
+                        ->where('unit_no', $record['sectionNo'])
+                        ->first();
+
+                    if ($existingMeasurement) {
+                        // Update existing measurement
+                        DB::connection('sqlsrv')
+                            ->table('st_unit_measurements')
+                            ->where('application_id', $applicationId)
+                            ->where('unit_no', $record['sectionNo'])
+                            ->update([
+                                'buyer_id' => $buyerId,
+                                'measurement' => $record['measurement'],
+                                'updated_at' => now()
+                            ]);
+                    } else {
+                        // Insert new measurement record
+                        DB::connection('sqlsrv')->table('st_unit_measurements')->insert([
+                            'application_id' => $applicationId,
+                            'buyer_id' => $buyerId,
+                            'unit_no' => $record['sectionNo'],
+                            'measurement' => $record['measurement'],
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ]);
+                    }
                 }
             }
 
@@ -302,6 +460,7 @@ class PrimaryActionsController extends Controller
                 'records.*.buyerName' => 'required|string',
                 'records.*.sectionNo' => 'required|string',
                 'records.*.buyerTitle' => 'nullable|string',
+                'records.*.measurement' => 'nullable|numeric',
             ]);
 
             $applicationId = $validated['application_id'];
@@ -319,7 +478,7 @@ class PrimaryActionsController extends Controller
 
                 if (!$exists) {
                     // Insert the new buyer
-                    DB::connection('sqlsrv')->table('buyer_list')->insert([
+                    $buyerId = DB::connection('sqlsrv')->table('buyer_list')->insertGetId([
                         'application_id' => $applicationId,
                         'buyer_title' => $record['buyerTitle'] ?? '',
                         'buyer_name' => $record['buyerName'],
@@ -327,6 +486,18 @@ class PrimaryActionsController extends Controller
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
+                    
+                    // Handle measurement data if provided
+                    if (isset($record['measurement']) && !empty($record['measurement'])) {
+                        DB::connection('sqlsrv')->table('st_unit_measurements')->insert([
+                            'application_id' => $applicationId,
+                            'buyer_id' => $buyerId,
+                            'unit_no' => $record['sectionNo'],
+                            'measurement' => $record['measurement'],
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ]);
+                    }
                     
                     $insertedCount++;
                 }
@@ -369,6 +540,26 @@ class PrimaryActionsController extends Controller
                 'buyer_id'       => 'required|integer',
             ]);
 
+            // Check if the application exists and get its status
+            $application = DB::connection('sqlsrv')->table('mother_applications')
+                ->where('id', $validated['application_id'])
+                ->first();
+
+            if (!$application) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Application not found.'
+                ], 404);
+            }
+
+            // Check if both application status and planning recommendation are approved
+            if ($application->application_status == 'Approved' && $application->planning_recommendation_status == 'Approved') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot delete buyer - Both Application Status and Planning Recommendation have been approved. No further modifications are allowed.'
+                ], 403);
+            }
+
             // Delete the buyer record
             $deleted = DB::connection('sqlsrv')
                 ->table('buyer_list')
@@ -382,6 +573,13 @@ class PrimaryActionsController extends Controller
                     'message' => 'Buyer not found'
                 ], 404);
             }
+
+            // Also delete the measurement record if it exists
+            DB::connection('sqlsrv')
+                ->table('st_unit_measurements')
+                ->where('buyer_id', $validated['buyer_id'])
+                ->where('application_id', $validated['application_id'])
+                ->delete();
 
             // Get remaining records
             $records = DB::connection('sqlsrv')
@@ -475,8 +673,76 @@ class PrimaryActionsController extends Controller
             return redirect()->back()->with('error', 'Application not found');
         }
 
+        // Generate basic agreement content
+        $agreementContent = "<h2>Final Conveyance Agreement</h2>";
+        $agreementContent .= "<p>Application File No: <strong>" . ($application->file_no ?? 'N/A') . "</strong></p>";
+        $agreementContent .= "<p>Applicant: <strong>" . ($application->owner_fullname ?? 'N/A') . "</strong></p>";
+        $agreementContent .= "<p>Property Location: <strong>" . ($application->layout_name ?? 'N/A') . "</strong></p>";
+        $agreementContent .= "<p>Land Use: <strong>" . ($application->land_use ?? 'N/A') . "</strong></p>";
+        $agreementContent .= "<p>This document serves as the final conveyance agreement for the above mentioned property.</p>";
+
         return view('actions.final_conveyance', [
-            'application' => $application
+            'application' => $application,
+            'agreementContent' => $agreementContent,
+            'PageTitle' => 'Final Conveyance Agreement',
+            'PageDescription' => 'Manage buyers and generate final conveyance agreement'
+        ]);
+    }
+
+    public function finalConveyanceAgreement($id, $buyer_id = null)
+    {
+        $application = DB::connection('sqlsrv')->table('mother_applications')
+            ->where('id', $id)
+            ->first();
+
+        if (!$application) {
+            return redirect()->back()->with('error', 'Application not found');
+        }
+
+        // Always show the buyers management page first (with add/edit functionality)
+        return view('actions.final_conveyance', [
+            'application' => $application,
+            'PageTitle' => 'Generate Final Conveyance',
+            'PageDescription' => 'Manage buyers and generate final conveyance agreement'
+        ]);
+    }
+
+    /**
+     * Generate the final conveyance document with all buyers
+     */
+    public function generateFinalConveyanceDocument($id)
+    {
+        $application = DB::connection('sqlsrv')->table('mother_applications')
+            ->where('id', $id)
+            ->first();
+
+        if (!$application) {
+            return redirect()->back()->with('error', 'Application not found');
+        }
+
+        // Get all buyers for this application
+        $buyers = DB::connection('sqlsrv')->table('buyer_list')
+            ->where('application_id', $id)
+            ->get();
+
+        if ($buyers->isEmpty()) {
+            return redirect()->back()->with('error', 'No buyers found. Please add buyers first.');
+        }
+
+        // Mark the final conveyance as generated
+        DB::connection('sqlsrv')->table('mother_applications')
+            ->where('id', $id)
+            ->update([
+                'final_conveyance_generated' => 1,
+                'final_conveyance_generated_at' => now(),
+                'updated_at' => now()
+            ]);
+
+        return view('actions.FinalConveyanceAgreement', [
+            'application' => $application,
+            'buyers' => $buyers,
+            'PageTitle' => 'Final Conveyance Agreement Document',
+            'PageDescription' => 'Complete final conveyance agreement with all buyers'
         ]);
     }
 
@@ -526,7 +792,7 @@ class PrimaryActionsController extends Controller
     {
         try {
             $survey = DB::connection('sqlsrv')
-                ->table('surveyCadastralRecord')
+                ->table('surveyRecord')
                 ->where(function ($query) use ($applicationId) {
                     $query->where('application_id', $applicationId)
                         ->orWhere('sub_application_id', $applicationId);
@@ -598,7 +864,7 @@ class PrimaryActionsController extends Controller
 
             // Update the record in the database
             $updated = DB::connection('sqlsrv')
-                ->table('surveyCadastralRecord')
+                ->table('surveyRecord')
                 ->where(function ($query) use ($validatedData) {
                     $query->where('application_id', $validatedData['application_id'] ?? null)
                         ->orWhere('sub_application_id', $validatedData['sub_application_id'] ?? null);
@@ -641,7 +907,28 @@ class PrimaryActionsController extends Controller
                 'buyer_title'    => 'nullable|string',
                 'buyer_name'     => 'required|string',
                 'unit_no'        => 'required|string',
+                'measurement'    => 'nullable|numeric',
             ]);
+
+            // Check if the application exists and get its status
+            $application = DB::connection('sqlsrv')->table('mother_applications')
+                ->where('id', $validated['application_id'])
+                ->first();
+
+            if (!$application) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Application not found.'
+                ], 404);
+            }
+
+            // Check if both application status and planning recommendation are approved
+            if ($application->application_status == 'Approved' && $application->planning_recommendation_status == 'Approved') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot update buyer - Both Application Status and Planning Recommendation have been approved. No further modifications are allowed.'
+                ], 403);
+            }
 
             // Update the buyer record
             $updated = DB::connection('sqlsrv')
@@ -660,6 +947,39 @@ class PrimaryActionsController extends Controller
                     'success' => false,
                     'message' => 'Buyer not found or no changes made'
                 ]);
+            }
+
+            // Handle measurement data if provided
+            if (isset($validated['measurement']) && !empty($validated['measurement'])) {
+                // Check if measurement record already exists
+                $existingMeasurement = DB::connection('sqlsrv')
+                    ->table('st_unit_measurements')
+                    ->where('application_id', $validated['application_id'])
+                    ->where('unit_no', $validated['unit_no'])
+                    ->first();
+
+                if ($existingMeasurement) {
+                    // Update existing measurement
+                    DB::connection('sqlsrv')
+                        ->table('st_unit_measurements')
+                        ->where('application_id', $validated['application_id'])
+                        ->where('unit_no', $validated['unit_no'])
+                        ->update([
+                            'buyer_id' => $validated['buyer_id'],
+                            'measurement' => $validated['measurement'],
+                            'updated_at' => now()
+                        ]);
+                } else {
+                    // Insert new measurement record
+                    DB::connection('sqlsrv')->table('st_unit_measurements')->insert([
+                        'application_id' => $validated['application_id'],
+                        'buyer_id' => $validated['buyer_id'],
+                        'unit_no' => $validated['unit_no'],
+                        'measurement' => $validated['measurement'],
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                }
             }
 
             return response()->json([

@@ -22,32 +22,15 @@
           <h2 class="text-xl font-bold">Unit Applications</h2>
           
           <div class="flex items-center space-x-4">
-       
-                      <div class="relative">
-    <select id="statusFilter"
-        class="pl-4 pr-8 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none">
-        <option value="All...">All...</option>
-        <option value="Approved">Approved</option>
-        <option value="Pending">Pending</option>
-        <option value="Declined">Declined</option>
-    </select>
-    <i data-lucide="chevron-down"
-        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-</div>
-            
-           
-            
-            <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
+            <button id="exportBtn" class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
               <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
               <span>Export</span>
             </button>
-            
-            
           </div>
         </div>
         
         <div class="w-full">
-          <table class="w-full table-auto divide-y divide-gray-200">
+          <table id="unitsTable" class="w-full table-auto divide-y divide-gray-200">
             <thead>
               <tr class="text-xs">
             <th class="table-header text-green-500">PrimaryID</th>
@@ -59,6 +42,7 @@
             <th class="table-header text-green-500">Unit Owner</th>
             <th class="table-header text-green-500">UnitNo</th>
             <th class="table-header text-green-500">Phone Number</th>
+            <th class="table-header text-green-500">Application Date</th>
             <th class="table-header text-green-500">Actions</th> 
               </tr>
             </thead>
@@ -218,7 +202,13 @@
                 {{ $app->phone_number ?? 'N/A' }}
               @endif
             </td>
-      
+             
+             
+             
+<td class="table-cell px-1 py-1 truncate">
+    {{ $app->created_at ? \Carbon\Carbon::parse($app->created_at)->format('M d, Y') : 'N/A' }}
+</td>
+</qodoArtifact>
             <td class="table-cell px-1 py-1">
               @include('sectionaltitling.action_menu.unit_actions', ['app' => $app])
             </td>
@@ -226,19 +216,6 @@
               @endforeach
             </tbody>
           </table>
-        </div>
-        <div class="flex justify-between items-center mt-6 text-sm">
-          <div class="text-gray-500" id="showingCount">Showing 0 of 0 applications</div>
-          <div class="flex items-center space-x-2">
-            <button id="prevPageBtn" class="px-3 py-1 border border-gray-200 rounded-md flex items-center" disabled>
-              <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
-              <span>Previous</span>
-            </button>
-            <button id="nextPageBtn" class="px-3 py-1 border border-gray-200 rounded-md flex items-center" disabled>
-              <span>Next</span>
-              <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
-            </button>
-          </div>
         </div>
       </div>
     
@@ -254,146 +231,131 @@
  
 @endsection
 
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+
+<!-- jQuery and DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Add ID to the filter select if it doesn't have one
-    const filterSelect = document.querySelector('select');
-    if (filterSelect && !filterSelect.id) {
-        filterSelect.id = 'statusFilter';
-    }
-    
-    // Pagination variables
-    window.unitTablePagination = {
-        currentPage: 1,
-        rowsPerPage: 10,
-        filteredRows: [],
-        allRows: []
+$(document).ready(function() {
+    // Initialize DataTable
+    var table = $('#unitsTable').DataTable({
+        "pageLength": 10,
+        "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+        "order": [[0, "desc"]],
+        "columnDefs": [
+            {
+                "targets": [9], // Actions column
+                "orderable": false,
+                "searchable": false
+            }
+        ],
+        "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+        "language": {
+            "info": "Showing _START_ to _END_ of _TOTAL_ applications",
+            "infoEmpty": "Showing 0 to 0 of 0 applications",
+            "infoFiltered": "(filtered from _MAX_ total applications)",
+            "lengthMenu": "Show _MENU_ applications per page",
+            "search": "Search applications:",
+            "paginate": {
+                "first": "First",
+                "last": "Last",
+                "next": "Next",
+                "previous": "Previous"
+            }
+        },
+        "responsive": true,
+        "processing": true,
+        "autoWidth": false,
+        "buttons": [
+            {
+                extend: 'excel',
+                text: 'Export to Excel',
+                className: 'btn btn-success',
+                exportOptions: {
+                    columns: ':not(:last-child)' // Exclude actions column
+                }
+            },
+            {
+                extend: 'csv',
+                text: 'Export to CSV',
+                className: 'btn btn-info',
+                exportOptions: {
+                    columns: ':not(:last-child)' // Exclude actions column
+                }
+            },
+            {
+                extend: 'pdf',
+                text: 'Export to PDF',
+                className: 'btn btn-danger',
+                exportOptions: {
+                    columns: ':not(:last-child)' // Exclude actions column
+                },
+                orientation: 'landscape',
+                pageSize: 'A4'
+            }
+        ]
+    });
+
+    // Custom export button functionality
+    $('#exportBtn').on('click', function() {
+        // Show export options
+        var exportMenu = `
+            <div class="export-menu" style="position: absolute; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000;">
+                <button onclick="exportToExcel()" class="block w-full text-left px-3 py-2 hover:bg-gray-100">Export to Excel</button>
+                <button onclick="exportToCSV()" class="block w-full text-left px-3 py-2 hover:bg-gray-100">Export to CSV</button>
+                <button onclick="exportToPDF()" class="block w-full text-left px-3 py-2 hover:bg-gray-100">Export to PDF</button>
+            </div>
+        `;
+        
+        // Remove existing menu
+        $('.export-menu').remove();
+        
+        // Add menu
+        $(this).after(exportMenu);
+        
+        // Position menu
+        var menu = $('.export-menu');
+        var button = $(this);
+        menu.css({
+            'top': button.offset().top + button.outerHeight(),
+            'left': button.offset().left
+        });
+        
+        // Close menu when clicking outside
+        $(document).on('click.exportMenu', function(e) {
+            if (!$(e.target).closest('.export-menu, #exportBtn').length) {
+                $('.export-menu').remove();
+                $(document).off('click.exportMenu');
+            }
+        });
+    });
+
+    // Export functions
+    window.exportToExcel = function() {
+        table.button('.buttons-excel').trigger();
+        $('.export-menu').remove();
     };
 
-    function paginateTable(page = 1) {
-        const { rowsPerPage, filteredRows } = window.unitTablePagination;
-        const totalRows = filteredRows.length;
-        const startIdx = (page - 1) * rowsPerPage;
-        const endIdx = Math.min(startIdx + rowsPerPage, totalRows);
+    window.exportToCSV = function() {
+        table.button('.buttons-csv').trigger();
+        $('.export-menu').remove();
+    };
 
-        // Hide all rows first
-        filteredRows.forEach(row => {
-            row.style.display = 'none';
-        });
-
-        // Show only the rows for current page
-        for (let i = startIdx; i < endIdx; i++) {
-            if (filteredRows[i]) {
-                filteredRows[i].style.display = '';
-            }
-        }
-
-        // Update showing count
-        const showingCount = document.getElementById('showingCount');
-        const showing = Math.min(rowsPerPage, totalRows - startIdx);
-        showingCount.textContent = `Showing ${showing} of ${totalRows} applications`;
-
-        // Enable/disable buttons
-        document.getElementById('prevPageBtn').disabled = page === 1;
-        document.getElementById('nextPageBtn').disabled = endIdx >= totalRows;
-
-        window.unitTablePagination.currentPage = page;
-    }
-
-    function filterTable(selectedStatus) {
-        const allRows = window.unitTablePagination.allRows;
-        let filteredRows = [];
-
-        allRows.forEach(row => {
-            let showRow = false;
-            if (selectedStatus === 'All...') {
-                showRow = true;
-            } else {
-                // No badge columns in this table, so just show all for now or implement your own logic
-                // If you add status badges, update this logic accordingly
-                // Example: const statusBadge = row.querySelector('td:nth-child(9) .badge');
-                // if (statusBadge && statusBadge.textContent.trim() === selectedStatus) showRow = true;
-                // For now, fallback to always show
-                showRow = row.innerText.includes(selectedStatus);
-            }
-            row.style.display = showRow ? '' : 'none';
-            if (showRow) filteredRows.push(row);
-        });
-
-        window.unitTablePagination.filteredRows = filteredRows;
-        paginateTable(1);
-    }
-
-    // Initial setup - only count actual data rows, not empty or template rows
-    window.unitTablePagination.allRows = Array.from(document.querySelectorAll('tbody tr')).filter(row => {
-        // Filter out empty rows or rows without actual data
-        const cells = row.querySelectorAll('td');
-        return cells.length > 0 && row.textContent.trim() !== '';
-    });
-    window.unitTablePagination.filteredRows = window.unitTablePagination.allRows;
-    
-    // Debug: Log the actual count
-    console.log('Total rows found:', window.unitTablePagination.allRows.length);
-    console.log('Filtered rows:', window.unitTablePagination.filteredRows.length);
-    
-    paginateTable(1);
-
-    // Filter event
-    const statusFilter = document.getElementById('statusFilter');
-    if (statusFilter) {
-        statusFilter.addEventListener('change', function() {
-            filterTable(this.value);
-        });
-    }
-
-    // Pagination events
-    document.getElementById('prevPageBtn').addEventListener('click', function() {
-        const { currentPage } = window.unitTablePagination;
-        if (currentPage > 1) paginateTable(currentPage - 1);
-    });
-    document.getElementById('nextPageBtn').addEventListener('click', function() {
-        const { currentPage, filteredRows, rowsPerPage } = window.unitTablePagination;
-        if (currentPage * rowsPerPage < filteredRows.length) paginateTable(currentPage + 1);
-    });
-
-    // Export to CSV
-    document.querySelector('button.flex.items-center.space-x-2.px-4.py-2.border.border-gray-200.rounded-md').addEventListener('click', function() {
-        exportVisibleTableToCSV();
-    });
-
-    function exportVisibleTableToCSV() {
-        const table = document.querySelector('table');
-        const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText.trim());
-        const { filteredRows, currentPage, rowsPerPage } = window.unitTablePagination;
-        const startIdx = (currentPage - 1) * rowsPerPage;
-        const endIdx = startIdx + rowsPerPage;
-        const visibleRows = filteredRows.slice(startIdx, endIdx);
-
-        let csvContent = '';
-        csvContent += headers.join(',') + '\n';
-
-        visibleRows.forEach(row => {
-            const cells = Array.from(row.querySelectorAll('td')).map(td => {
-                return '"' + td.innerText.replace(/"/g, '""').replace(/\n/g, ' ').replace(/,/g, ' ') + '"';
-            });
-            csvContent += cells.join(',') + '\n';
-        });
-
-        // Download CSV
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'unit_applications.csv';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-
-    // Re-filter and paginate on load
-    filterTable(statusFilter ? statusFilter.value : 'All...');
+    window.exportToPDF = function() {
+        table.button('.buttons-pdf').trigger();
+        $('.export-menu').remove();
+    };
 });
 
 window.showFullNames = function(owners) {
@@ -416,4 +378,104 @@ window.showFullNames = function(owners) {
     });
   }
 }
+
+window.showMultipleOwners = function(names, passports) {
+    if (!Array.isArray(names)) {
+        names = [];
+    }
+    if (!Array.isArray(passports)) {
+        passports = [];
+    }
+    
+    let html = '<div class="space-y-2">';
+    names.forEach((name, index) => {
+        html += `<div class="flex items-center space-x-2">`;
+        if (passports[index]) {
+            html += `<img src="{{ asset('storage/app/public/') }}/${passports[index]}" alt="Passport" class="w-8 h-8 rounded-full object-cover">`;
+        }
+        html += `<span>${name}</span></div>`;
+    });
+    html += '</div>';
+    
+    Swal.fire({
+        title: 'Multiple Owners',
+        html: html,
+        icon: 'info',
+        confirmButtonText: 'Close',
+        width: '500px'
+    });
+}
+
+window.showPassportPreview = function(imageSrc, title) {
+    Swal.fire({
+        title: title,
+        imageUrl: imageSrc,
+        imageWidth: 300,
+        imageHeight: 400,
+        imageAlt: title,
+        confirmButtonText: 'Close'
+    });
+}
 </script>
+
+<style>
+/* Custom DataTables styling to match your design */
+.dataTables_wrapper {
+    font-family: inherit;
+}
+
+.dataTables_length select,
+.dataTables_filter input {
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.dataTables_info {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.dataTables_paginate .paginate_button {
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.75rem;
+    margin: 0 0.125rem;
+    color: #374151;
+    text-decoration: none;
+}
+
+.dataTables_paginate .paginate_button:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.dataTables_paginate .paginate_button.current {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+}
+
+.dataTables_paginate .paginate_button.disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.dataTables_paginate .paginate_button.disabled:hover {
+    background-color: transparent;
+    border-color: #d1d5db;
+}
+
+/* Hide default buttons container */
+.dt-buttons {
+    display: none;
+}
+
+.export-menu button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+</style>

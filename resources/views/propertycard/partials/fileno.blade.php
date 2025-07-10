@@ -24,13 +24,13 @@
 
     /* Fix for tab content visibility */
     .tabcontent {
-        display: none;
+        display: none !important;
         width: 100%; /* Ensure full width */
-        visibility: visible !important; /* Force visibility */
+        visibility: hidden;
     }
 
     .tabcontent.active {
-        display: block;
+        display: block !important;
         visibility: visible !important;
     }
 </style>
@@ -60,8 +60,8 @@
       <button type="button" class="{{ $prefix }}tablinks px-4 py-2 rounded-md hover:bg-gray-100" onclick="openFileTab('{{ $prefix }}', event, '{{ $prefix }}NewKANGISFilenoTab')">New KANGIS</button>
     </div>
     
-    <!-- Tab content divs - Add debug borders temporarily -->
-    <div id="{{ $prefix }}mlsFNoTab" class="tabcontent active" style="border: 1px solid transparent;">
+    <!-- Tab content divs -->
+    <div id="{{ $prefix }}mlsFNoTab" class="tabcontent active">
       <p class="text-sm text-gray-600 mb-2">MLS File Number</p>
       <div class="grid grid-cols-3 gap-4 mb-3">
       <div>
@@ -90,7 +90,7 @@
     </div>
     </div>  
 
-    <div id="{{ $prefix }}kangisFileNoTab" class="tabcontent" style="border: 1px solid transparent;">
+    <div id="{{ $prefix }}kangisFileNoTab" class="tabcontent">
       <p class="text-sm text-gray-600 mb-2">KANGIS File Number</p>
       <div class="grid grid-cols-3 gap-4 mb-3">
       <div>
@@ -119,7 +119,7 @@
     </div>
     </div> 
 
-    <div id="{{ $prefix }}NewKANGISFilenoTab" class="tabcontent" style="border: 1px solid transparent;">
+    <div id="{{ $prefix }}NewKANGISFilenoTab" class="tabcontent">
       <p class="text-sm text-gray-600 mb-2">
         New KANGIS File Number</p>
       <div class="grid grid-cols-3 gap-4 mb-3">

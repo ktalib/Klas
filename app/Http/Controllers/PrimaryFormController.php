@@ -26,11 +26,9 @@ class PrimaryFormController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validate the form data - making some fields optional to improve form submission success
-            $validated = $request->validate([
+            $rules = [
                 'applicantType' => 'required',
                 'applicant_title' => 'nullable',
-             
                 'first_name' => 'nullable',
                 'middle_name' => 'nullable',
                 'surname' => 'nullable',
@@ -40,6 +38,14 @@ class PrimaryFormController extends Controller
                 'multiple_owners_address' => 'nullable|array',
                 'multiple_owners_passport' => 'nullable|array',
                 'multiple_owners_passport.*' => 'nullable|image|max:5120',
+                'multiple_owners_email' => 'nullable|array',
+                'multiple_owners_email.*' => 'nullable|email',
+                'multiple_owners_phone' => 'nullable|array',
+                'multiple_owners_phone.*' => 'nullable|string',
+                'multiple_owners_identification_type' => 'nullable|array',
+                'multiple_owners_identification_type.*' => 'nullable|string',
+                'multiple_owners_identification_image' => 'nullable|array',
+                'multiple_owners_identification_image.*' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png',
                 'address_house_no' => 'nullable',
                 'owner_street_name' => 'nullable',
                 'owner_district' => 'nullable',
@@ -53,6 +59,7 @@ class PrimaryFormController extends Controller
                 'units_count' => 'nullable',
                 'blocks_count' => 'nullable',
                 'sections_count' => 'nullable',
+                'plot_size' => 'nullable|string|max:255',
                 'application_fee' => 'nullable',
                 'processing_fee' => 'nullable',
                 'site_plan_fee' => 'nullable',
@@ -68,7 +75,47 @@ class PrimaryFormController extends Controller
                 'shared_areas' => 'nullable|array',
                 'shared_areas.*' => 'nullable|string',
                 'other_areas_detail' => 'nullable|string|max:500',
-            ]);
+            ];
+
+            // Conditional validation
+            if ($request->input('applicantType') === 'multiple') {
+                $rules['multiple_owners_names'] = 'required|array|min:1';
+                $rules['multiple_owners_names.*'] = 'required|string';
+                $rules['multiple_owners_address'] = 'required|array|min:1';
+                $rules['multiple_owners_address.*'] = 'required|string';
+                $rules['multiple_owners_email'] = 'required|array|min:1';
+                $rules['multiple_owners_email.*'] = 'required|email';
+                $rules['multiple_owners_phone'] = 'required|array|min:1';
+                $rules['multiple_owners_phone.*'] = 'required|string';
+                $rules['multiple_owners_identification_type'] = 'required|array|min:1';
+                $rules['multiple_owners_identification_type.*'] = 'required|string';
+                $rules['multiple_owners_identification_image'] = 'required|array|min:1';
+                $rules['multiple_owners_identification_image.*'] = 'required|file|max:5120|mimes:pdf,jpg,jpeg,png';
+
+                // Main owner fields must be nullable (not required)
+                $rules['address_house_no'] = 'nullable';
+                $rules['owner_street_name'] = 'nullable';
+                $rules['owner_district'] = 'nullable';
+                $rules['owner_lga'] = 'nullable';
+                $rules['owner_state'] = 'nullable';
+                $rules['phone_number'] = 'nullable';
+                $rules['owner_email'] = 'nullable|email';
+                $rules['idType'] = 'nullable';
+                $rules['id_document'] = 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png';
+            } else {
+                // Main owner required fields
+                $rules['address_house_no'] = 'required';
+                $rules['owner_street_name'] = 'required';
+                $rules['owner_district'] = 'required';
+                $rules['owner_lga'] = 'required';
+                $rules['owner_state'] = 'required';
+                $rules['phone_number'] = 'required';
+                $rules['owner_email'] = 'required|email';
+                $rules['idType'] = 'required';
+                $rules['id_document'] = 'required|file|max:5120|mimes:pdf,jpg,jpeg,png';
+            }
+
+            $validated = $request->validate($rules);
 
             // Debug log to check what's being received
             Log::info('Form data received', [
@@ -122,6 +169,21 @@ class PrimaryFormController extends Controller
                     if ($passport && $passport->isValid()) {
                         $path = $passport->store('multiple_owners_passports', 'public');
                         $multipleOwnersPassportPaths[] = $path;
+                    } else {
+                        $multipleOwnersPassportPaths[] = null;
+                    }
+                }
+            }
+
+            // Handle multiple owners identification images upload
+            $multipleOwnersIdImagePaths = [];
+            if ($request->hasFile('multiple_owners_identification_image')) {
+                foreach ($request->file('multiple_owners_identification_image') as $idimg) {
+                    if ($idimg && $idimg->isValid()) {
+                        $path = $idimg->store('multiple_owners_id_images', 'public');
+                        $multipleOwnersIdImagePaths[] = $path;
+                    } else {
+                        $multipleOwnersIdImagePaths[] = null;
                     }
                 }
             }
@@ -189,6 +251,10 @@ class PrimaryFormController extends Controller
                 'multiple_owners_names' => $request->has('multiple_owners_names') ? json_encode($request->input('multiple_owners_names')) : null,
                 'multiple_owners_address' => $request->has('multiple_owners_address') ? json_encode($request->input('multiple_owners_address')) : null,
                 'multiple_owners_passport' => !empty($multipleOwnersPassportPaths) ? json_encode($multipleOwnersPassportPaths) : null,
+                'multiple_owners_email' => $request->has('multiple_owners_email') ? json_encode($request->input('multiple_owners_email')) : null,
+                'multiple_owners_phone' => $request->has('multiple_owners_phone') ? json_encode($request->input('multiple_owners_phone')) : null,
+                'multiple_owners_identification_type' => $request->has('multiple_owners_identification_type') ? json_encode($request->input('multiple_owners_identification_type')) : null,
+                'multiple_owners_identification_image' => !empty($multipleOwnersIdImagePaths) ? json_encode($multipleOwnersIdImagePaths) : null,
                 'passport' => $passportPath,
                 'id_document' => $idDocumentPath,
                 'fileno' => $fileNo,
@@ -207,6 +273,7 @@ class PrimaryFormController extends Controller
                 'property_district' => $request->input('property_district'),
                 'property_lga' => $request->input('property_lga'),
                 'property_state' => $request->input('property_state'),
+                'plot_size' => $request->input('plot_size'),
                 'NoOfUnits' => $request->input('units_count'),
                 'application_fee' => $request->input('application_fee'),
                 'processing_fee' => $request->input('processing_fee'),

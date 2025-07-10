@@ -84,16 +84,16 @@
                         </div>
                     
                         <!-- Tabs Navigation -->
-                        <div class="grid grid-cols-3 gap-2 mb-4">
-                            {{-- <button class="tab-button active" data-tab="initial">
-                                <i data-lucide="banknote" class="w-3.5 h-3.5 mr-1.5"></i>
-                                Add Buyers
-                            </button> --}}
-                            <button class="tab-button active" data-tab="detterment">
-                                <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
-                                Buyers List
-                            </button>
-                            <button class="tab-button" data-tab="final">
+                        @php
+                            $currentRoute = request()->route()->getName();
+                            $showAddBuyers = !str_contains($currentRoute, 'final-conveyance-agreement');
+                            $gridCols = $showAddBuyers ? 'grid-cols-3' : 'grid-cols-2';
+                            $defaultActiveTab = $showAddBuyers ? 'initial' : 'detterment';
+                        @endphp
+                        
+                        <div class="grid {{ $gridCols }} gap-2 mb-4">
+                         
+                            <button class="tab-button active"  data-tab="final">
                                 <i data-lucide="file-check" class="w-3.5 h-3.5 mr-1.5"></i>
                                 Final Conveyance Agreement
                             </button>
@@ -101,7 +101,8 @@
                         </div>
                     
                         <!-- Add Buyers Tab -->
-                        <div id="initial-tab" class="tab-content" x-data="{ buyers: [{}] }">
+                        @if($showAddBuyers)
+                        <div id="initial-tab" class="tab-content " x-data="{ buyers: [{}] }">
                             <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                                 <div class="p-4 border-b">
                                     <h3 class="text-sm font-medium">Add Buyers</h3>
@@ -114,7 +115,7 @@
                                     <div>
                                         <template x-for="(buyer, index) in buyers" :key="index">
                                             <div class="flex items-start space-x-2 mb-4">
-                                                <div class="grid grid-cols-3 gap-4 flex-grow">
+                                                <div class="grid grid-cols-4 gap-4 flex-grow">
                                                     <div>
                                                         <label class="block text-sm font-medium text-gray-700 mb-2">
                                                             Title <span class="text-red-500">*</span>
@@ -149,12 +150,16 @@
                                                         </select>
                                                     </div>
                                                     <div>
-                                                        <label class="block text-sm font-medium text-gray-700 mb-2">Buyer Name</label>
+                                                        <label class="block text-sm font-medium text-gray-700 mb-2">Buyer Name <span class="text-red-500">*</span></label>
                                                         <input type="text" :name="'records['+index+'][buyerName]'" class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm" placeholder="Enter Buyer Name" required>
                                                     </div>
                                                     <div>
-                                                        <label class="block text-sm font-medium text-gray-700 mb-2">Unit No</label>
+                                                        <label class="block text-sm font-medium text-gray-700 mb-2">Unit No <span class="text-red-500">*</span></label>
                                                         <input type="text" :name="'records['+index+'][sectionNo]'" class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm" placeholder="Enter Unit No" required>
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-sm font-medium text-gray-700 mb-2">Measurement (sqm)</label>
+                                                        <input type="number" step="0.01" :name="'records['+index+'][measurement]'" class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm" placeholder="Enter Measurement">
                                                     </div>
                                                 </div>
                                                 <button type="button" @click="buyers.splice(index, 1)" x-show="buyers.length > 1" class="bg-red-500 text-white p-1.5 rounded-md hover:bg-red-600 flex items-center justify-center mt-8">
@@ -187,13 +192,14 @@
                                 </form>
                             </div>
                         </div>
+                        @endif
                     
                         <!-- Buyers List Tab -->
-                        <div id="detterment-tab" class="tab-content active">
+                        <div id="detterment-tab" class="tab-content ">
                             <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                                 <div class="p-4 border-b">
                                     <h3 class="text-sm font-medium">Buyers List</h3>
-                                    <p class="text-xs text-gray-500"></p>
+                                    <p class="text-xs text-gray-500">View and manage the list of buyers</p>
                                 </div>
                                 <input type="hidden" id="application_id" value="{{$application->id}}">
                                 <input type="hidden" name="fileno" value="{{$application->fileno}}">
@@ -235,6 +241,13 @@
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
             
+            // Check if we should load buyers list on page load (when Add Buyers tab is hidden)
+            const showAddBuyers = {{ $showAddBuyers ? 'true' : 'false' }};
+            if (!showAddBuyers) {
+                // Load buyers list immediately when Add Buyers tab is hidden
+                loadBuyersList();
+            }
+            
             // Handle form submission to show SweetAlert with response data
             const buyersForm = document.getElementById('add-buyers-form');
             if (buyersForm) {
@@ -269,13 +282,14 @@
                             let recordsHtml = '<div class="overflow-x-auto">';
                             recordsHtml += '<table class="w-full min-w-full text-sm text-left">';
                             recordsHtml += '<thead class="text-xs uppercase bg-gray-50">';
-                            recordsHtml += '<tr><th class="py-2 px-4">Buyer Name</th><th class="py-2 px-4">Unit No</th></tr>';
+                            recordsHtml += '<tr><th class="py-2 px-4">Buyer Name</th><th class="py-2 px-4">Unit No</th><th class="py-2 px-4">Measurement</th></tr>';
                             recordsHtml += '</thead><tbody>';
                             
                             data.records.forEach(record => {
                                 recordsHtml += '<tr class="border-b">';
                                 recordsHtml += `<td class="py-2 px-4">${record.buyerTitle ? record.buyerTitle + ' ' : ''}${record.buyerName}</td>`;
                                 recordsHtml += `<td class="py-2 px-4">${record.sectionNo}</td>`;
+                                recordsHtml += `<td class="py-2 px-4">${record.measurement || 'N/A'}</td>`;
                                 recordsHtml += '</tr>';
                             });
                             
@@ -322,10 +336,6 @@
                     });
                 });
             }
-            
-            // ...existing tab button code...
-            // Auto-load buyers list on page load
-            loadBuyersList();
 
             tabButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -392,7 +402,8 @@
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buyer Name</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit No.</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Measurement (sqm)</th>
-                        
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                 `;
@@ -405,7 +416,12 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.unit_no || ''}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.measurement || 'N/A'}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      
+                            <button class="edit-buyer text-blue-600 hover:text-blue-900 mr-2" data-id="${record.id}">
+                                <i data-lucide="edit" class="w-4 h-4"></i>
+                            </button>
+                            <button class="delete-buyer text-red-600 hover:text-red-900" data-id="${record.id}">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
                         </td>
                     </tr>
                     `;
@@ -458,6 +474,10 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Unit No</label>
                                 <input id="unit-no" type="text" class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm" value="${record.unit_no || ''}">
                             </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Measurement (sqm)</label>
+                                <input id="measurement" type="number" step="0.01" class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm" value="${record.measurement || ''}">
+                            </div>
                             <input id="buyer-id" type="hidden" value="${record.id}">
                             `,
                             showCancelButton: true,
@@ -467,6 +487,7 @@
                                 const buyerTitle = document.getElementById('buyer-title').value;
                                 const buyerName = document.getElementById('buyer-name').value;
                                 const unitNo = document.getElementById('unit-no').value;
+                                const measurement = document.getElementById('measurement').value;
                                 const buyerId = document.getElementById('buyer-id').value;
                                 
                                 if (!buyerName || !unitNo) {
@@ -474,7 +495,7 @@
                                     return false;
                                 }
                                 
-                                return { buyerTitle, buyerName, unitNo, buyerId };
+                                return { buyerTitle, buyerName, unitNo, measurement, buyerId };
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
@@ -533,7 +554,8 @@
                         buyer_id: data.buyerId,
                         buyer_title: data.buyerTitle,
                         buyer_name: data.buyerName,
-                        unit_no: data.unitNo
+                        unit_no: data.unitNo,
+                        measurement: data.measurement
                     })
                 })
                 .then(response => response.json())
@@ -629,10 +651,3 @@
         });
     </script>
 @endsection
-  {{-- <button class="edit-buyer text-blue-600 hover:text-blue-900 mr-2" data-id="${record.id}">
-                            <i data-lucide="edit" class="w-4 h-4"></i>
-                        </button>
-                        
-                        <button class="delete-buyer text-red-600 hover:text-red-900" data-id="${record.id}">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button> --}}

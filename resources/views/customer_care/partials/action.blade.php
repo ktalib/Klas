@@ -40,12 +40,12 @@
        @click.away="open = false"
        class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
       <div class="py-1">
-        <a href="{{ route('customer-care.view-application', ['id' => $customer->id]) }}?type={{ $type ?? 'primary' }}" 
+        <a href="{{ route('sectionaltitling.viewrecorddetail', ['id' => $customer->id]) }}" 
            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
           <i data-lucide="file-text" class="inline-block w-4 h-4 mr-2 text-blue-500"></i> View Application
         </a>
         
-        <a href="{{ route('customer-care.open-file', ['id' => $customer->id]) }}?type={{ $type ?? 'primary' }}" 
+        <a href="#" 
            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
           <i data-lucide="folder-open" class="inline-block w-4 h-4 mr-2 text-amber-500"></i> Open File
         </a>

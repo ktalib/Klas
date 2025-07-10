@@ -243,58 +243,110 @@ class SectionalTitleHelper
 
             foreach ($records as $index => $record) {
                 // Extract buyer data
-                $buyerName = $record['buyerName'] ?? null;
                 $buyerTitle = $record['buyerTitle'] ?? null;
+                $firstName = $record['firstName'] ?? null;
+                $middleName = $record['middleName'] ?? null;
+                $surname = $record['surname'] ?? null;
+                $buyerName = $record['buyerName'] ?? null;
                 $unitNo = $record['unit_no'] ?? null;
                 $unitMeasurement = $record['unitMeasurement'] ?? null;
                 $sectionNo = $record['unit_no'] ?? 1; // Default to 1 if not provided
+
+                // If buyerName is not provided, construct it from individual name components
+                if (!$buyerName && ($firstName || $surname)) {
+                    $nameComponents = array_filter([$buyerTitle, $firstName, $middleName, $surname], function($component) {
+                        return !empty(trim($component));
+                    });
+                    $buyerName = implode(' ', $nameComponents);
+                }
 
                 if (!$buyerName || !$unitNo) {
                     Log::warning('Skipping incomplete buyer record', [
                         'record_index' => $index,
                         'buyer_name' => $buyerName,
-                        'unit_no' => $unitNo
+                        'unit_no' => $unitNo,
+                        'first_name' => $firstName,
+                        'surname' => $surname
                     ]);
                     continue; // Skip incomplete records
                 }
 
-                // Step 1: Insert into buyer_list
-                try {
-                    Log::info('Inserting buyer record', [
-                        'buyer_name' => $buyerName,
-                        'unit_no' => $unitNo
-                    ]);
-
-                    $buyerId = DB::connection('sqlsrv')->table('buyer_list')->insertGetId([
-                        'application_id' => $applicationId,
-                        'buyer_title' => $buyerTitle,
-                        'buyer_name' => $buyerName,
-                        'unit_no' => $unitNo,
-                        'created_at' => now(),
-                        'updated_at' => now()
-                    ]);
-
-                    Log::info('Buyer inserted successfully', [
-                        'buyer_id' => $buyerId
-                    ]);
-
-                    // Step 2: Insert into st_unit_measurements if table exists
-                    if ($buyerId && $unitMeasurement && $unitMeasurementsExists) {
+                // Step 1: Insert unit measurement first to get the ID
+                $unitMeasurementId = null;
+                if ($unitMeasurement && $unitMeasurementsExists) {
+                    try {
                         Log::info('Inserting unit measurement', [
-                            'buyer_id' => $buyerId,
+                            'unit_no' => $unitNo,
                             'measurement' => $unitMeasurement
                         ]);
 
-                        DB::connection('sqlsrv')->table('st_unit_measurements')->insert([
+                        $unitMeasurementId = DB::connection('sqlsrv')->table('st_unit_measurements')->insertGetId([
                             'application_id' => $applicationId,
-                            'buyer_id' => $buyerId,
                             'unit_no' => $sectionNo,
                             'measurement' => $unitMeasurement,
                             'created_at' => now(),
                             'updated_at' => now()
                         ]);
 
-                        Log::info('Unit measurement inserted successfully');
+                        Log::info('Unit measurement inserted successfully', [
+                            'unit_measurement_id' => $unitMeasurementId
+                        ]);
+                    } catch (Exception $e) {
+                        Log::error('Error inserting unit measurement', [
+                            'error' => $e->getMessage(),
+                            'unit_no' => $unitNo,
+                            'measurement' => $unitMeasurement
+                        ]);
+                        // Continue without unit measurement ID
+                    }
+                }
+
+                // Step 2: Insert into buyer_list
+                try {
+                    Log::info('Inserting buyer record', [
+                        'buyer_name' => $buyerName,
+                        'buyer_title' => $buyerTitle,
+                        'unit_no' => $unitNo,
+                        'unit_measurement_id' => $unitMeasurementId
+                    ]);
+
+                    $buyerId = DB::connection('sqlsrv')->table('buyer_list')->insertGetId([
+                        'application_id' => $applicationId,
+                        'unit_measurement_id' => $unitMeasurementId,
+                        'buyer_title' => $buyerTitle,
+                        'buyer_name' => $buyerName,
+                        'unit_no' => $unitNo,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                        'final_conveyance_generated' => 0,
+                        'final_conveyance_generated_at' => null
+                    ]);
+
+                    Log::info('Buyer inserted successfully', [
+                        'buyer_id' => $buyerId
+                    ]);
+
+                    // Step 3: Update unit measurement with buyer_id if it was created
+                    if ($unitMeasurementId && $unitMeasurementsExists) {
+                        try {
+                            DB::connection('sqlsrv')->table('st_unit_measurements')
+                                ->where('id', $unitMeasurementId)
+                                ->update([
+                                    'buyer_id' => $buyerId,
+                                    'updated_at' => now()
+                                ]);
+
+                            Log::info('Unit measurement updated with buyer_id', [
+                                'unit_measurement_id' => $unitMeasurementId,
+                                'buyer_id' => $buyerId
+                            ]);
+                        } catch (Exception $e) {
+                            Log::error('Error updating unit measurement with buyer_id', [
+                                'error' => $e->getMessage(),
+                                'unit_measurement_id' => $unitMeasurementId,
+                                'buyer_id' => $buyerId
+                            ]);
+                        }
                     }
                 } catch (Exception $e) {
                     Log::error('Error inserting buyer record', [

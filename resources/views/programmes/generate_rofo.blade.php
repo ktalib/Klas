@@ -122,7 +122,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Approval Date</label>
                                 <input type="date" name="approval_date" class="w-full p-2 border border-gray-300 rounded-md text-sm" required
-                                    value="{{ $existingRofo->approval_date ?? ($rofo->approval_date ?? Carbon\Carbon::now()->toDateString()) }}">
+                                    value="{{  Carbon\Carbon::now()->toDateString() }}">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Signed Date</label>

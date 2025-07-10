@@ -112,20 +112,23 @@
                                 <th class="table-header text-green-500">Land Use</th>
                                 <th class="table-header text-green-500">Owner</th>
                                 <th class="table-header text-green-500">Units</th>
+                                
+                               
+                                <th class="table-header text-green-500">Planning Recommendation</th> 
+                                 <th class="table-header text-green-500">ST Director's Approval</th>
+                                 <th class="table-header text-green-500">Site Plan</th>
                                 <th class="table-header text-green-500">Physical Planning Memo</th>
-                                <th class="table-header text-green-500">Site Plan</th>
-                                <th class="table-header text-green-500">Approval</th>
-                                <th class="table-header text-green-500">Planning Recommendation</th>
+                                {{-- <th class="table-header text-green-500">Planning Recommendation</th> --}}
                                 <th class="table-header text-green-500">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach ($PrimaryApplications as $PrimaryApplication)
                                 @php
-                                    $sitePlanDimensionExists = DB::connection('sqlsrv')
-                                        ->table('site_plan_dimensions')
-                                        ->where('application_id', $PrimaryApplication->id)
-                                        ->exists();
+                                    // $sitePlanDimensionExists = DB::connection('sqlsrv')
+                                    //     ->table('site_plan_dimensions')
+                                    //     ->where('application_id', $PrimaryApplication->id)
+                                    //     ->exists();
 
                                     $memoStatus = DB::connection('sqlsrv')
                                         ->table('memos')
@@ -218,33 +221,8 @@
                                         </div>
                                     </td>
                                     <td class="table-cell">{{ $PrimaryApplication->NoOfUnits }}</td>
-                                    <td class="table-cell">
-                                        @if($memoStatus)
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                <svg class="mr-1.5 h-2 w-2 text-green-400" fill="currentColor" viewBox="0 0 8 8">
-                                                    <circle cx="4" cy="4" r="3" />
-                                                </svg>
-                                                Generated
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                                <svg class="mr-1.5 h-2 w-2 text-gray-400" fill="currentColor" viewBox="0 0 8 8">
-                                                    <circle cx="4" cy="4" r="3" />
-                                                </svg>
-                                                Not Generated
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="table-cell">
-                                        @if ($PrimaryApplication->site_plan_status == 'Uploaded')
-                                            <span
-                                                class="inline-block px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded">Uploaded</span>
-                                        @else
-                                            <span
-                                                class="inline-block px-2 py-1 text-xs font-semibold bg-red-100 text-red-700 rounded">Not
-                                                Uploaded</span>
-                                        @endif
-                                    </td>
+                              
+                               
                                     <td class="table-cell">
                                         <div class="flex items-center">
                                             <span class="badge badge-{{ strtolower($PrimaryApplication->planning_recommendation_status) }}">
@@ -256,7 +234,30 @@
                                             @endif
                                         </div>
                                     </td>
-                                    <td class="table-cell">
+
+
+                                     <td class="table-cell">
+                                        <div class="flex items-center">
+                                            <span class="badge badge-{{ strtolower($PrimaryApplication->application_status) }}">
+                                                {{ $PrimaryApplication->application_status }}
+                                            </span>
+                                            @if($PrimaryApplication->application_status == 'Declined')
+                                                <i data-lucide="info" class="w-4 h-4 ml-1 text-blue-500 cursor-pointer" 
+                                                   onclick="showDeclinedInfo(event, 'Comment', {{ json_encode($PrimaryApplication->recomm_comments) }}, {{ json_encode($PrimaryApplication->director_comments) }})"></i>
+                                            @endif
+                                        </div>
+                                    </td>
+                                         <td class="table-cell">
+                                        @if ($PrimaryApplication->site_plan_status == 'Uploaded')
+                                            <span
+                                                class="inline-block px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded">Uploaded</span>
+                                        @else
+                                            <span
+                                                class="inline-block px-2 py-1 text-xs font-semibold bg-red-100 text-red-700 rounded">Not
+                                                Uploaded</span>
+                                        @endif
+                                    </td>
+                                    {{-- <td class="table-cell">
                                         @if($sitePlanDimensionExists)
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                                 <svg class="mr-1.5 h-2 w-2 text-green-400" fill="currentColor" viewBox="0 0 8 8">
@@ -270,6 +271,24 @@
                                                     <circle cx="4" cy="4" r="3" />
                                                 </svg>
                                                Pending
+                                            </span>
+                                        @endif
+                                    </td> --}}
+
+                                          <td class="table-cell">
+                                        @if($memoStatus)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <svg class="mr-1.5 h-2 w-2 text-green-400" fill="currentColor" viewBox="0 0 8 8">
+                                                    <circle cx="4" cy="4" r="3" />
+                                                </svg>
+                                                Generated
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                <svg class="mr-1.5 h-2 w-2 text-gray-400" fill="currentColor" viewBox="0 0 8 8">
+                                                    <circle cx="4" cy="4" r="3" />
+                                                </svg>
+                                                Not Generated
                                             </span>
                                         @endif
                                     </td>

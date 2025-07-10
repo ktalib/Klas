@@ -82,7 +82,7 @@
     <li>
       <a  href="{{ route('actions.payments', ['id' => $PrimaryApplication->id]) }}" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
        <i data-lucide="credit-card" class="w-4 h-4 text-green-500"></i>
-       <span>Payments</span>
+       <span>Bills & Payments</span>
       </a>
     </li>
  

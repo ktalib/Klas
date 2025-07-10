@@ -105,7 +105,7 @@ class UserController extends Controller
                         'email' => 'required|email|unique:users',
                         'password' => 'required|min:6',
                         'department_id' => 'required',
-                        'user_level' => 'required|string',
+                  
                         'user_role' => 'required|array',
                     ]
                 );
@@ -238,7 +238,7 @@ class UserController extends Controller
                        
                         'email' => 'required|email|unique:users,email,' . $id,
                         'department_id' => 'required|exists:departments,id',
-                        'user_level' => 'required|string',
+                       
                         'user_role' => 'required|array',
                     ]
                 );

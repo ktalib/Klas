@@ -112,17 +112,12 @@
                                     <input type="text" id="flat_no" name="flat_no" value="{{ $application->unit_number }}" 
                                         class="border border-gray-300 rounded-md w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
-                                
+                              
                                 <div>
                                     <label for="land_use" class="block text-sm font-medium text-gray-700 mb-1">Land Use <span class="text-red-600">*</span></label>
-                                    <select id="land_use" name="land_use" 
-                                        class="border border-gray-300 rounded-md w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                                        <option value="">Select Land Use</option>
-                                        <option value="Residential" {{ $application->land_use == 'Residential' ? 'selected' : '' }}@readonly(true)>Residential</option>
-                                        <option value="Commercial" {{ $application->land_use == 'Commercial' ? 'selected' : '' }}>Commercial</option>
-                                        <option value="Mixed Use" {{ $application->land_use == 'Mixed Use' ? 'selected' : '' }}>Mixed Use</option>
-                                        <option value="Industrial" {{ $application->land_use == 'Industrial' ? 'selected' : '' }}>Industrial</option>
-                                    </select>
+                              
+                                    <input type="text"id="land_use" name="land_use"  value="{{   $application->land_use }}" 
+                                        class="border border-gray-300 rounded-md w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                             </div>
                         </div>

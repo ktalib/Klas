@@ -42,7 +42,7 @@
             </div>
         
             <!-- Property Modal Dialogs -->
-            @include('propertycard.partials.add_property_record')
+            @include('propertycard.partials.add_property_record', ['is_ai_assistant' => false])
             @include('propertycard.partials.edit_property_record')
             @include('propertycard.partials.view_property_record')
         </div>

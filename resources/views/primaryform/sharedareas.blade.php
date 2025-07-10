@@ -205,7 +205,7 @@
         <div class="flex justify-between mt-8">
           <button class="px-4 py-2 bg-white border border-gray-300 rounded-md" id="backStep2">Back</button>
           <div class="flex items-center">
-            <span class="text-sm text-gray-500 mr-4">Step 2 of 5</span>
+            <span class="text-sm text-gray-500 mr-4">Step 2 of 6</span>
             <button class="px-4 py-2 bg-black text-white rounded-md" id="nextStep2">Next</button>
           </div>
         </div>

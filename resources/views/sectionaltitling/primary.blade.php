@@ -1,7 +1,13 @@
 @extends('layouts.app')
 @section('page-title')
-   {{$PageTitle}}  
+    {{$PageTitle}}  
 @endsection
+
+{{-- Add DataTables CSS --}}
+@push('styles')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+@endpush
 
 
 @include('sectionaltitling.partials.assets.css')
@@ -71,10 +77,28 @@
                             }
                         </style>
 
-                        <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
-                            <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
-                            <span>Export</span>
-                       </button>
+                        {{-- Replace the export button with export dropdown --}}
+                        <div class="relative inline-block">
+                            <button onclick="toggleExportDropdown(event)" class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
+                                <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
+                                <span>Export</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 ml-2"></i>
+                            </button>
+                            <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                                <button onclick="exportTable('excel')" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center">
+                                    <i data-lucide="file-text" class="w-4 h-4 mr-2 text-green-600"></i>
+                                    Export to Excel
+                                </button>
+                                <button onclick="exportTable('csv')" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center">
+                                    <i data-lucide="file" class="w-4 h-4 mr-2 text-blue-600"></i>
+                                    Export to CSV
+                                </button>
+                                <button onclick="exportTable('pdf')" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center">
+                                    <i data-lucide="file-text" class="w-4 h-4 mr-2 text-red-600"></i>
+                                    Export to PDF
+                                </button>
+                            </div>
+                        </div>
                             @if(
                                 !request()->has('survey') && 
                                 (
@@ -88,8 +112,8 @@
                                 )
                             )
                                 @if(request()->has('url') && request()->get('url') === 'infopro')
-                                    <div class="relative">
-                                        <button onclick="toggleDropdown(event)" class="flex items-center space-x-2 px-4 py-2 bg-gray-900 text-white rounded-md">
+                                    <div class="relative z-10">
+                                        <button type="button" onclick="toggleDropdown(event)" class="flex items-center space-x-2 px-4 py-2 bg-gray-900 text-white rounded-md">
                                             <i data-lucide="file-plus" class="w-4 h-4"></i>
                                             <span>New Primary Application</span>
                                             <i data-lucide="chevron-down" class="w-4 h-4 ml-2"></i>
@@ -116,6 +140,7 @@
                 </div>
 
                 <div class="overflow-x-auto">
+                    {{-- Replace the existing table structure with DataTables --}}
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead> 
                             <tr class="text-xs">
@@ -150,7 +175,9 @@
                                         </div>
                                     </td>
                                     <td class="table-cell">
-                                        @if ($PrimaryApplication->commercial_type)
+                                        @if ($PrimaryApplication->residential_type)
+                                            {{ $PrimaryApplication->residential_type }}
+                                        @elseif ($PrimaryApplication->commercial_type)
                                             {{ $PrimaryApplication->commercial_type }}
                                         @elseif ($PrimaryApplication->industrial_type)
                                             {{ $PrimaryApplication->industrial_type }}
@@ -253,20 +280,7 @@
                         </tbody>
                     </table>
                 </div>
-
-                <div class="flex justify-between items-center mt-6 text-sm">
-                    <div class="text-gray-500" id="showingCount">Showing 0 of 0 applications</div>
-                    <div class="flex items-center space-x-2">
-                        <button id="prevPageBtn" class="px-3 py-1 border border-gray-200 rounded-md flex items-center" disabled>
-                            <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
-                            <span>Previous</span>
-                        </button>
-                        <button id="nextPageBtn" class="px-3 py-1 border border-gray-200 rounded-md flex items-center" disabled>
-                            <span>Next</span>
-                            <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
-                        </button>
-                    </div>
-                </div>
+ 
             </div>
         </div>
 
@@ -503,4 +517,58 @@ document.addEventListener('DOMContentLoaded', function() {
     
                          </script>
     
-    @endsection
+    {{-- Add DataTables JS dependencies at the end of the file --}}
+    
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                // Initialize DataTable
+                const table = $('table').DataTable({
+                    dom: 'Bfrtip',
+                    pageLength: 10,
+                    responsive: true
+                });
+
+                // Handle status filter
+                $('#statusFilter').on('change', function() {
+                    const status = $(this).val();
+                    table.column(8).search(status === 'All...' ? '' : status).draw();
+                });
+            });
+
+            function toggleExportDropdown(event) {
+                event.stopPropagation();
+                const dropdown = document.getElementById('exportDropdown');
+                dropdown.classList.toggle('hidden');
+            }
+
+            document.addEventListener('click', () => {
+                document.getElementById('exportDropdown').classList.add('hidden');
+            });
+
+            function exportTable(type) {
+                const table = $('table').DataTable();
+                
+                switch(type) {
+                    case 'excel':
+                        table.button('.buttons-excel').trigger();
+                        break;
+                    case 'csv':
+                        table.button('.buttons-csv').trigger();
+                        break;
+                    case 'pdf':
+                        table.button('.buttons-pdf').trigger();
+                        break;
+                }
+            }
+        </script>
+   
+
+@endsection

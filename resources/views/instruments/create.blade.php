@@ -14,13 +14,13 @@
         <div class="p-6">
  
       <div class="min-h-screen p-6">
-        <div class="max-w-3xl mx-auto">
-            <div class="card p-3">
+        <div class="max-w-6xl mx-auto">
+            <div class="card p-6">
                 <h1 class="text-2xl font-bold mb-4">Instrument Registration System</h1>
                 <p class="text-gray-600 mb-6">Select an instrument type to register</p>
                 
-                <!-- Instrument Type Selection - All 12 Types -->
-                <div class="grid grid-cols-2 gap-3 mb-6">
+                <!-- Instrument Type Selection - All 18 Types -->
+                <div class="grid grid-cols-3 gap-3 mb-6">
                     <button class="instrument-type-btn p-2 border rounded-lg text-left bg-blue-50 border-blue-200 hover:bg-blue-100" data-type="power-of-attorney">
                         <h3 class="font-medium text-blue-800">Power of Attorney</h3>
                         <p class="text-xs text-black">A legal document granting authority to a person (the attorney) to act on behalf of another (the donor) in property-related matters.</p>
@@ -78,20 +78,20 @@
                         <p class="text-xs text-black">A document that discharges or releases a party from a previous claim, interest, or mortgage on a property.</p>
                     </button>
                     <button class="instrument-type-btn p-2 border rounded-lg text-left bg-sky-50 border-sky-200 hover:bg-sky-100" data-type="right-of-occupancy">
-                        <h3 class="font-medium text-sky-800">Right of Occupancy (R of O)</h3>
+                        <h3 class="font-medium text-sky-800">Right of Occupancy (RofO)</h3>
                         <p class="text-xs text-black">A statutory land tenure instrument granting an individual or entity the right to occupy and use land in accordance with the Land Use Act.</p>
                     </button>
                     <button class="instrument-type-btn p-2 border rounded-lg text-left bg-amber-50 border-amber-200 hover:bg-amber-100" data-type="certificate-of-occupancy">
-                        <h3 class="font-medium text-amber-800">Certificate of Occupancy (C of O)</h3>
+                        <h3 class="font-medium text-amber-800">Certificate of Occupancy (CofO)</h3>
                         <p class="text-xs text-black">An official government-issued certificate that legally proves the right to occupy and use a specific parcel of land.</p>
                     </button>
                     <button class="instrument-type-btn p-2 border rounded-lg text-left bg-slate-50 border-slate-200 hover:bg-slate-100" data-type="sectional-titling-c-of-o">
                         <h3 class="font-medium text-slate-800">Sectional Titling Certificate of Occupancy</h3>
-                        <p class="text-xs text-black">A specialized C of O issued for individual units within a multi-unit development, such as apartments or condominiums, under the Sectional Titling framework.</p>
+                        <p class="text-xs text-black">A specialized CofO issued for individual units within a multi-unit development, such as apartments or condominiums, under the Sectional Titling framework.</p>
                     </button>
                     <button class="instrument-type-btn p-2 border rounded-lg text-left bg-gray-50 border-gray-200 hover:bg-gray-100" data-type="sltr-c-of-o">
                         <h3 class="font-medium text-gray-800">Systematic Land Titling and Registration (SLTR) Certificate of Occupancy</h3>
-                        <p class="text-xs text-black">A C of O issued under the SLTR scheme to formalize land rights, especially in informal or previously undocumented settlements.</p>
+                        <p class="text-xs text-black">A CofO issued under the SLTR scheme to formalize land rights, especially in informal or previously undocumented settlements.</p>
                     </button>
                 </div>
             </div>

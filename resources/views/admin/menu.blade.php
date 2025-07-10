@@ -570,13 +570,15 @@
         </div>
         
         <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="regularApplications">
-          <a href="/physical-planning/regular/memo" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-            <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
-            <span>Memo</span>
-          </a>
+       
           <a href="/physical-planning/regular/planning-recommendation" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
             <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
             <span>Planning Recommendation</span>
+          </a>
+
+             <a href="/physical-planning/regular/memo" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+            <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
+            <span>Memo</span>
           </a>
         </div>
         @endif
@@ -592,13 +594,15 @@
         </div>
         
         <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stApplications">
-          <a href="{{route('stmemo.siteplan')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200" {{ request()->routeIs('stmemo.siteplan') ? 'active' : '' }}>
-            <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
-            <span>Memo</span>
-          </a>
+        
           <a href="{{route('programmes.approvals.planning_recomm')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.planning_recomm') && request()->query('url') !== 'view' ? 'active' : '' }}">
             <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
             <span>Planning Recommendation</span>
+          </a>
+
+            <a href="{{route('stmemo.siteplan')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200" {{ request()->routeIs('stmemo.siteplan') ? 'active' : '' }}>
+            <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
+            <span>Memo</span>
           </a>
         </div>
         @endif
@@ -755,8 +759,8 @@
 
     <!-- 11. GIS -->
     @if(
-      $hasRole('GIS Records') || $hasRole('GIS Reports') || $hasRole('GIS Approvals') ||
-      $hasRole('GIS E-Registry') || $hasRole('Survey Reports')
+      $hasRole('GIS - Records') || $hasRole('GIS – AI Digital Assistant') || $hasRole('GIS - GIS') ||
+      $hasRole('GIS - Approvals') || $hasRole('GIS - e-Registry') || $hasRole('GIS Reports')
     )
     <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
       <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="gis">
@@ -768,41 +772,40 @@
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="gis">
-      @if($hasRole('GIS Records'))
+      @if($hasRole('GIS - Records'))
       <a href="{{route('gis_record.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('gis_record.index') ? 'active' : '' }}">
         <i data-lucide="clipboard" class="h-4 w-4"></i>
         <span>Records</span>
       </a>
       @endif
-      @if($hasRole('GIS Reports'))
-      <a href="" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 ">
-        <i data-lucide="map" class="h-4 w-4"></i>
-        <span>GIS Reports</span>
+      @if($hasRole('GIS – AI Digital Assistant'))
+      <a href="#" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="bot" class="h-4 w-4"></i>
+        <span>AI Digital Assistant</span>
       </a>
       @endif
-      @if($hasRole('GIS Approvals'))
+      @if($hasRole('GIS - GIS'))
+      <a href="#" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="map" class="h-4 w-4"></i>
+        <span>GIS</span>
+      </a>
+      @endif
+      @if($hasRole('GIS - Approvals'))
       <a href="/gis/approvals" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
         <i data-lucide="check-circle" class="h-4 w-4"></i>
         <span>Approvals</span>
       </a>
       @endif
-      @if($hasRole('GIS E-Registry'))
+      @if($hasRole('GIS - e-Registry'))
       <a href="/gis/e-registry" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
         <i data-lucide="database" class="h-4 w-4"></i>
         <span>E-Registry</span>
       </a>
       @endif
-      @if($hasRole('Survey Reports'))
-     <a href="{{ route('survey_plan_extraction.index') }}?url=survey" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200  {{ request()->routeIs('survey_plan_extraction.index') && request()->query('url') === 'survey' ? 'active' : '' }}">
-          <i data-lucide="sparkles" class="h-4 w-4" style="color:#E7C117FF"></i>
-          <span>Survey Plan Extraction</span>
-        </a>
-      @endif 
-      
-      @if($hasRole('Survey Reports'))
-      <a href="/gis/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+      @if($hasRole('GIS Reports'))
+      <a href="#" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
         <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
-        <span>Survey Reports</span>
+        <span>GIS Reports</span>
       </a>
       @endif
       </div>
@@ -967,14 +970,14 @@
         </div>
         
         <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stSurvey">
-          <a href="/programmes/sltr/survey/attribution" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <a href="{{route('attribution.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('attribution.index') ? 'active' : '' }}">
             <i data-lucide="land-plot" class="h-3.5 w-3.5"></i>
             <span>Attribution</span>
           </a>
         </div>
         @endif
 
-        <a href="/programmes/sltr/reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <a href="{{route('programmes.report')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.report') ? 'active' : '' }}">
           <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
           <span>Reports</span>
         </a>

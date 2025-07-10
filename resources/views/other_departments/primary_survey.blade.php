@@ -20,7 +20,7 @@
                     <a href="{{ route('other_departments.survey_secondary') }}"
                         class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                         <i data-lucide="clipboard-list" class="w-4 h-4"></i>
-                        <span>View Secondary Applications</span>
+                        <span>View Unit Applications</span>
                     </a>
                     <div class="flex items-center space-x-4">
 
@@ -109,6 +109,8 @@
                                             {{ $PrimaryApplication->industrial_type }}
                                         @elseif ($PrimaryApplication->mixed_type)
                                             {{ $PrimaryApplication->mixed_type }}
+                                        @elseif ($PrimaryApplication->residential_type)
+                                            {{ $PrimaryApplication->residential_type }}
                                         @else
                                             N/A
                                         @endif

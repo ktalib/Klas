@@ -4,6 +4,31 @@
 @endsection
 @include('sectionaltitling.sub_app_css')
 @include('sectionaltitling.partials.assets.css')
+
+@push('styles')
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+<!-- Animate.css for SweetAlert animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<style>
+.swal-validation-popup {
+    font-family: inherit;
+}
+.swal-validation-title {
+    color: #dc2626 !important;
+    font-weight: 600;
+}
+.swal-validation-content {
+    color: #374151;
+}
+</style>
+@endpush
+
+@push('scripts')
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+@endpush
+
 @section('content')
 <!-- Main Content -->
 <div class="flex-1 overflow-auto">
@@ -110,7 +135,7 @@
                         }
                       @endphp
                       
-                      <form id="subApplicationForm" method="POST" action="{{ route('secondaryform.save') }}" enctype="multipart/form-data" class="space-y-6">
+                      <form id="subApplicationForm" method="POST" action="{{ route('secondaryform.save') }}" enctype="multipart/form-data" class="space-y-6" novalidate>
                         @csrf
                         
                         
@@ -127,7 +152,7 @@
                                   {{ $motherApplication->applicationID ?? 'N/A' }}
                                 </span>
                               </div>            
-                              <input type="hidden" name="main_application_id" value="{{ $motherApplication->applicationID ?? '' }}">
+                              <input type="hidden" name="main_application_id" value="{{ $mainApplicationId ?? '' }}">
                              
                             </div>
                             <div class="flex items-center">
@@ -217,8 +242,8 @@
                               <input type="text" class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700 cursor-not-allowed" name="fileno" value="{{ $prefix }}-{{ $currentYear }}-{{ $formattedSerialNumber }}" readonly>
                             </div>            
                             <div>
-                                <label class="block text-sm mb-1">Scheme No</label>
-                                <input type="text" id="schemeName" class="w-full p-2 border border-gray-300 rounded-md"    name="scheme_no" placeholder="enter scheme number. eg: ST/SP/0001">
+                                <label class="block text-sm mb-1">Scheme No <span class="text-red-500">*</span></label>
+                                <input type="text" id="schemeName" class="w-full p-2 border border-gray-300 rounded-md"    name="scheme_no" placeholder="enter scheme number. eg: ST/SP/0001" required>
                             </div>
                             
                         <div class="col-span-2">
@@ -265,107 +290,136 @@
                             
                          
                         </div>
-                      </div>
+                        </div>
 
                         <div class="bg-gray-50 p-4 rounded-md mb-6">
-            
+                  
                         <div class="mb-4">
                         <p class="text-sm mb-1">Unit Owner's Address</p>
                         <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label class="block text-sm mb-1">House No.</label>
-                                <input type="text" id="ownerHouseNo" class="w-full p-2 border border-gray-300 rounded-md" placeholder="House No." name="address_house_no">
-                            </div>
-                            <div>
-                                <label class="block text-sm mb-1">Street Name</label>
-                                <input type="text" id="ownerStreetName" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Street Name" name="address_street_name">
-                            </div>
+                          <div>
+                            <label class="block text-sm mb-1">House No.</label>
+                            <input type="text" id="ownerHouseNo" class="w-full p-2 border border-gray-300 rounded-md" placeholder="HOUSE NO." name="address_house_no" style="text-transform:uppercase" oninput="this.value = this.value.toUpperCase()">
+                          </div>
+                          <div>
+                            <label class="block text-sm mb-1">Street Name</label>
+                            <input type="text" id="ownerStreetName" class="w-full p-2 border border-gray-300 rounded-md" placeholder="STREET NAME" name="address_street_name" style="text-transform:uppercase" oninput="this.value = this.value.toUpperCase()">
+                          </div>
                         </div>
-    
+              
                         <div class="grid grid-cols-3 gap-4 mb-4">
-                            <div>
-                                <label class="block text-sm mb-1">District</label>
-                                <input type="text" id="ownerDistrict" class="w-full p-2 border border-gray-300 rounded-md" placeholder="District" name="address_district">
-                            </div>
-                            <div>
-                                <label class="block text-sm mb-1">LGA</label>
-                                <select id="ownerLga" name="address_lga" class="w-full p-2 border border-gray-300 rounded-md">
-                                    <option value="">Select LGA</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm mb-1">State</label>
-                                <select id="ownerState" name="address_state" class="w-full p-2 border border-gray-300 rounded-md" onchange="selectLGA(this)">
-                                    <option value="">Select State</option>
-                                </select>
-                            </div>
+                          <div>
+                            <label class="block text-sm mb-1">District</label>
+                            <input type="text" id="ownerDistrict" class="w-full p-2 border border-gray-300 rounded-md" placeholder="DISTRICT" name="address_district" style="text-transform:uppercase" oninput="this.value = this.value.toUpperCase()">
+                          </div>
+                          <div>
+                            <label class="block text-sm mb-1">LGA</label>
+                            <select id="ownerLga" name="address_lga" class="w-full p-2 border border-gray-300 rounded-md" style="text-transform:uppercase" disabled>
+                              <option value="">SELECT LGA</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label class="block text-sm mb-1">State</label>
+                            <select id="ownerState" name="address_state" class="w-full p-2 border border-gray-300 rounded-md" onchange="selectLGA(this)" style="text-transform:uppercase">
+                              <option value="">SELECT STATE</option>
+                            </select>
+                          </div>
                         </div>
-                               <input type="hidden" name="address" id="contactAddressDisplay">    
+                             <input type="hidden" name="address" id="contactAddressHidden">    
                         <div class="mb-4">
-                            <label class="block text-sm mb-1">Contact Address:</label>
-                            <div id="contactAddressDisplay" class="p-2 bg-gray-50 border border-gray-200 rounded-md">
-                                <span id="fullContactAddress"></span>
-                            </div>
+                          <label class="block text-sm mb-1">Contact Address:</label>
+                          <div id="contactAddressDisplay" class="p-2 bg-gray-50 border border-gray-200 rounded-md">
+                            <span id="fullContactAddress"></span>
+                          </div>
                         </div>
-     
+               
                           <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                              <label class="block text-sm mb-1">Phone No. 1</label>
-                              <input type="text" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter phone number" name="phone_number[]">
-                            </div>
-                            <div>
-                              <label class="block text-sm mb-1">Phone No. 2</label>
-                              <input type="text" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter alternate phone" name="phone_number[]">
-                            </div>
+                          <div>
+                            <label class="block text-sm mb-1">Phone No. 1</label>
+                            <input type="text" class="w-full p-2 border border-gray-300 rounded-md" placeholder="ENTER PHONE NUMBER" name="phone_number[]" style="text-transform:uppercase" oninput="this.value = this.value.toUpperCase()">
+                          </div>
+                          <div>
+                            <label class="block text-sm mb-1">Phone No. 2</label>
+                            <input type="text" class="w-full p-2 border border-gray-300 rounded-md" placeholder="ENTER ALTERNATE PHONE" name="phone_number[]" style="text-transform:uppercase" oninput="this.value = this.value.toUpperCase()">
+                          </div>
                           </div>
                           
                           <div>
-                            <label class="block text-sm mb-1">Email Address</label>
-                            <input type="email" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter email address" name="owner_email">
+                          <label class="block text-sm mb-1">Email Address</label>
+                          <input type="email" class="w-full p-2 border border-gray-300 rounded-md" placeholder="ENTER EMAIL ADDRESS" name="owner_email" style="text-transform:uppercase" oninput="this.value = this.value.toUpperCase()">
+                          </div>
+                        </div>
+                        </div>
+                    <div class="bg-gray-50 p-4 rounded-md grid grid-cols-1 md:grid-cols-2 gap-6 mb-6" id="mainIdentificationSection">
+                      <!-- Left column: Means of Identification options -->
+                      <div id="meansOfIdentificationOptions">
+                        <label class="block mb-2 font-medium">Means of Identification</label>
+                        <div class="grid grid-cols-1 gap-2">
+                          <label class="flex items-center">
+                            <input type="radio" name="identification_type" class="mr-2" value="national id" checked>
+                            <span>National ID</span>
+                          </label>
+                          <label class="flex items-center">
+                            <input type="radio" name="identification_type" class="mr-2" value="drivers license">
+                            <span>Driver's License</span>
+                          </label>
+                          <label class="flex items-center">
+                            <input type="radio" name="identification_type" class="mr-2" value="voters card">
+                            <span>Voter's Card</span>
+                          </label>
+                          <label class="flex items-center">
+                            <input type="radio" name="identification_type" class="mr-2" value="international passport">
+                            <span>International Passport</span>
+                          </label>
+                          <label class="flex items-center">
+                            <input type="radio" name="identification_type" class="mr-2" value="others">
+                            <span>Others</span>
+                          </label>
+                        </div>
+                      </div>
+                      <!-- Right column: Image upload and preview -->
+                      <div class="flex flex-col justify-between">
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-1" id="uploadIdentificationLabel">Upload Means of Identification <span class="text-red-500">*</span></label>
+                          <input type="file" name="identification_image" id="identification_image" accept="image/*,.pdf" class="w-full p-2 border border-gray-300 rounded-md bg-white">
+                          <p class="text-xs text-gray-500 mt-1">Accepted formats: JPG, PNG, PDF. Max size: 5MB.</p>
+                        </div>
+                        <div class="mt-4">
+                          <label class="block text-sm font-medium text-gray-700 mb-1">Preview</label>
+                          <div id="identification_preview" class="border border-gray-200 rounded-md bg-white flex items-center justify-center min-h-[120px]">
+                            <span class="text-gray-400 text-xs">No file selected</span>
                           </div>
                         </div>
                       </div>
-                     
-                    <div class="bg-gray-50 p-4 rounded-md grid grid-cols-2 gap-6 mb-6">
-                        <!-- Left column -->
-                        <div>
-                            <label class="block mb-2 font-medium">Means of identification</label>
-                            <div class="grid grid-cols-1 gap-2">
-                                <label class="flex items-center">
-                                    <input type="radio" name="identification_type" class="mr-2" value="national id" checked>
-                                    <span>National ID</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="radio" name="identification_type" class="mr-2" value="drivers license">
-                                    <span>Driver's License</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="radio" name="identification_type" class="mr-2" value="others">
-                                    <span>Others</span>
-                                </label>
-                            </div>
-                            <!-- Means of identification image upload -->
-                            <div class="mt-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Upload Means of Identification <span class="text-red-500">*</span></label>
-                                <input type="file" name="identification_image" accept="image/*" class="w-full p-2 border border-gray-300 rounded-md bg-white">
-                                <p class="text-xs text-gray-500 mt-1">Accepted formats: JPG, PNG, PDF. Max size: 5MB.</p>
-                            </div>
-                        </div>
-                        <!-- Right column -->
-                        <div>
-                            <div class="h-6"></div> <!-- Spacer to align with left column label -->
-                            <div class="grid grid-cols-1 gap-2">
-                                <label class="flex items-center">
-                                    <input type="radio" name="identification_type" class="mr-2" value="voters card">
-                                    <span>Voter's Card</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="radio" name="identification_type" class="mr-2" value="international passport">
-                                    <span>International Passport</span>
-                                </label>
-                            </div>
-                        </div>
-                        </div>            
+                    </div>
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                      const input = document.getElementById('identification_image');
+                      const preview = document.getElementById('identification_preview');
+                      input.addEventListener('change', function (e) {
+                        preview.innerHTML = '';
+                        const file = e.target.files[0];
+                        if (!file) {
+                          preview.innerHTML = '<span class="text-gray-400 text-xs">No file selected</span>';
+                          return;
+                        }
+                        if (file.type.startsWith('image/')) {
+                          const img = document.createElement('img');
+                          img.className = "max-h-32 mx-auto";
+                          img.style.maxWidth = "100%";
+                          img.alt = "Preview";
+                          img.src = URL.createObjectURL(file);
+                          preview.appendChild(img);
+                        } else if (file.type === 'application/pdf') {
+                          const icon = document.createElement('span');
+                          icon.innerHTML = '<svg class="w-8 h-8 text-red-500 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="block text-xs mt-2">PDF Selected</span>';
+                          preview.appendChild(icon);
+                        } else {
+                          preview.innerHTML = '<span class="text-red-500 text-xs">Unsupported file type</span>';
+                        }
+                      });
+                    });
+                    </script>
             
                       <div class="bg-gray-50 p-4 rounded-md mb-6">
                         <h3 class="font-medium mb-4">Unit Details</h3>
@@ -376,16 +430,16 @@
                         
                         <div class="grid grid-cols-3 gap-4 mb-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Block No</label>
-                                <input type="text" name="block_number" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter block number">
+                                <label class="block text-sm font-medium text-gray-700">Block No <span class="text-red-500">*</span></label>
+                                <input type="text" name="block_number" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter block number" required>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Section No (Floor) </label>
-                                <input type="text" name="floor_number" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter floor number">
+                                <label class="block text-sm font-medium text-gray-700">Section No (Floor) <span class="text-red-500">*</span></label>
+                                <input type="text" name="floor_number" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter floor number" required>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Unit No</label>
-                                <input type="text" name="unit_number" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter unit number">
+                                <label class="block text-sm font-medium text-gray-700">Unit No <span class="text-red-500">*</span></label>
+                                <input type="text" name="unit_number" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter unit number" required>
                             </div>
                         </div>
                         
@@ -408,21 +462,21 @@
                               <i data-lucide="file-text" class="w-4 h-4 mr-1 text-green-600"></i>
                               Application fee (₦)
                             </label>
-                            <input type="number" name="application_fee" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter application fee">
+                            <input type="number" name="application_fee" class="w-full p-2 border border-gray-300 rounded-md fee-input" placeholder="Enter application fee" value="0.00">
                           </div>
                           <div>
                             <label class="flex items-center text-sm mb-1">
                               <i data-lucide="file-check" class="w-4 h-4 mr-1 text-green-600"></i>
                               Processing fee (₦)
                             </label>
-                            <input  type="number" name="processing_fee" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter processing fee">
+                            <input type="number" name="processing_fee" class="w-full p-2 border border-gray-300 rounded-md fee-input" placeholder="Enter processing fee" value="0.00">
                           </div>
                           <div>
                             <label class="flex items-center text-sm mb-1">
                               <i data-lucide="map" class="w-4 h-4 mr-1 text-green-600"></i>
                            Survey Fee (₦)
                             </label>
-                            <input type="text" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter site plan fee">
+                            <input type="text" name="survey_fee" class="w-full p-2 border border-gray-300 rounded-md fee-input" placeholder="Enter survey fee" value="0.00">
                           </div>
                         </div>
                         
@@ -431,7 +485,7 @@
                             <i data-lucide="file-text" class="w-4 h-4 mr-1 text-green-600"></i>
                             <span>Total:</span>
                           </div>
-                          <span class="font-bold">₦0.00</span>
+                          <span class="font-bold" id="total-amount">₦0.00</span>
                         </div>
                         
                         <div class="grid grid-cols-2 gap-4">
@@ -530,43 +584,266 @@ element.addEventListener(event, callback);
 }
 }
 
+// Form Validation Functions
+function validateStep1() {
+    const errors = [];
+    
+    // Check if applicant type is selected
+    const applicantType = document.querySelector('input[name="applicantType"]:checked');
+    if (!applicantType) {
+        errors.push('Please select an applicant type');
+    } else {
+        const type = applicantType.value;
+        
+        // Validate based on applicant type
+        if (type === 'individual') {
+            // Individual validation
+            const title = document.getElementById('applicantTitle')?.value;
+            const firstName = document.getElementById('applicantName')?.value;
+            const surname = document.getElementById('applicantSurname')?.value;
+            
+            if (!title) errors.push('Please select a title');
+            if (!firstName || firstName.trim() === '') errors.push('Please enter first name');
+            if (!surname || surname.trim() === '') errors.push('Please enter surname');
+            
+            // Validate passport photo
+            const passport = document.getElementById('photoUpload')?.files[0];
+            if (!passport) errors.push('Please upload a passport photo');
+            
+        } else if (type === 'corporate') {
+            // Corporate validation
+            const corporateName = document.getElementById('corporateName')?.value;
+            const rcNumber = document.getElementById('rcNumber')?.value;
+            const rcDocument = document.getElementById('subCorporateDocumentUpload')?.files[0];
+            
+            if (!corporateName || corporateName.trim() === '') errors.push('Please enter corporate body name');
+            if (!rcNumber || rcNumber.trim() === '') errors.push('Please enter RC number');
+            if (!rcDocument) errors.push('Please upload RC document');
+            
+        } else if (type === 'multiple') {
+            // Multiple owners validation
+            const ownerRows = document.querySelectorAll('#ownersContainer > div');
+            if (ownerRows.length === 0) {
+                errors.push('Please add at least one owner');
+            } else {
+                ownerRows.forEach((row, index) => {
+                    const nameInput = row.querySelector('input[name="multiple_owners_names[]"]');
+                    const addressInput = row.querySelector('textarea[name="multiple_owners_address[]"]');
+                    const identificationInput = row.querySelector('input[name="multiple_owners_identification_image[]"]');
+                    
+                    if (!nameInput?.value || nameInput.value.trim() === '') {
+                        errors.push(`Please enter name for owner ${index + 1}`);
+                    }
+                    if (!addressInput?.value || addressInput.value.trim() === '') {
+                        errors.push(`Please enter address for owner ${index + 1}`);
+                    }
+                    if (!identificationInput?.files[0]) {
+                        errors.push(`Please upload identification for owner ${index + 1}`);
+                    }
+                });
+            }
+        }
+    }
+    
+    // Validate address fields (only for individual and corporate)
+    if (applicantType && applicantType.value !== 'multiple') {
+        const state = document.getElementById('ownerState')?.value;
+        const lga = document.getElementById('ownerLga')?.value;
+        const district = document.getElementById('ownerDistrict')?.value;
+        
+        if (!state) errors.push('Please select a state');
+        if (!lga) errors.push('Please select an LGA');
+        if (!district || district.trim() === '') errors.push('Please enter district');
+        
+        // Validate phone number
+        const phoneInputs = document.querySelectorAll('input[name="phone_number[]"]');
+        let hasValidPhone = false;
+        phoneInputs.forEach(input => {
+            if (input.value && input.value.trim() !== '') {
+                hasValidPhone = true;
+                // Basic phone validation
+                const phoneRegex = /^[\d\s\-\+\(\)]{10,}$/;
+                if (!phoneRegex.test(input.value.replace(/\s/g, ''))) {
+                    errors.push('Please enter a valid phone number');
+                }
+            }
+        });
+        if (!hasValidPhone) errors.push('Please enter at least one phone number');
+        
+        // Validate email
+        const email = document.querySelector('input[name="owner_email"]')?.value;
+        if (email && email.trim() !== '') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errors.push('Please enter a valid email address');
+            }
+        }
+    }
+    
+    // Validate identification (only for individual and corporate) - removed validation requirement
+    // if (applicantType && applicantType.value !== 'multiple') {
+    //     const identificationFile = document.getElementById('identification_image')?.files[0];
+    //     if (!identificationFile) {
+    //         errors.push('Please upload means of identification');
+    //     }
+    // }
+    
+    // Validate unit details
+    const blockNumber = document.querySelector('input[name="block_number"]')?.value;
+    const floorNumber = document.querySelector('input[name="floor_number"]')?.value;
+    const unitNumber = document.querySelector('input[name="unit_number"]')?.value;
+    
+    if (!blockNumber || blockNumber.trim() === '') errors.push('Please enter block number');
+    if (!floorNumber || floorNumber.trim() === '') errors.push('Please enter floor number');
+    if (!unitNumber || unitNumber.trim() === '') errors.push('Please enter unit number');
+    
+    // Validate scheme number
+    const schemeNo = document.getElementById('schemeName')?.value;
+    if (!schemeNo || schemeNo.trim() === '') errors.push('Please enter scheme number');
+    
+    return errors;
+}
+
+function validateStep2() {
+    const errors = [];
+    
+    // Check if at least one shared area is selected
+    const sharedAreas = document.querySelectorAll('input[name="shared_areas[]"]:checked');
+    if (sharedAreas.length === 0) {
+        errors.push('Please select at least one shared area');
+    }
+    
+    // If "Other" is selected, check if details are provided
+    const otherCheckbox = document.getElementById('other_areas');
+    if (otherCheckbox && otherCheckbox.checked) {
+        const otherDetails = document.getElementById('other_areas_detail')?.value;
+        if (!otherDetails || otherDetails.trim() === '') {
+            errors.push('Please specify other shared areas');
+        }
+    }
+    
+    return errors;
+}
+
+function validateStep3() {
+    const errors = [];
+    
+    // Check required documents
+    const requiredDocs = [
+        { name: 'application_letter', label: 'Application Letter' },
+        { name: 'building_plan', label: 'Building Plan' },
+        { name: 'architectural_design', label: 'Architectural Design' },
+        { name: 'ownership_document', label: 'Ownership Document' }
+    ];
+    
+    requiredDocs.forEach(doc => {
+        const fileInput = document.getElementById(doc.name);
+        if (!fileInput || !fileInput.files[0]) {
+            errors.push(`Please upload ${doc.label}`);
+        } else {
+            // Validate file size (5MB limit)
+            const file = fileInput.files[0];
+            if (file.size > 5 * 1024 * 1024) {
+                errors.push(`${doc.label} file size must be less than 5MB`);
+            }
+            
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+            if (!allowedTypes.includes(file.type)) {
+                errors.push(`${doc.label} must be a JPG, PNG, or PDF file`);
+            }
+        }
+    });
+    
+    return errors;
+}
+
+function showValidationErrors(errors) {
+    if (errors.length > 0) {
+        // Create formatted error list for SweetAlert
+        const errorList = errors.map(error => `• ${error}`).join('<br>');
+        
+        // Show SweetAlert with validation errors
+        Swal.fire({
+            icon: 'error',
+            title: 'Please correct the following errors:',
+            html: `<div style="text-align: left; font-size: 14px; line-height: 1.6;">${errorList}</div>`,
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#dc2626',
+            customClass: {
+                popup: 'swal-validation-popup',
+                title: 'swal-validation-title',
+                htmlContainer: 'swal-validation-content'
+            },
+            showClass: {
+                popup: 'animate__animated animate__fadeInDown animate__faster'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutUp animate__faster'
+            }
+        });
+        
+        return false;
+    }
+    
+    return true;
+}
+
 // Next from Step 1 to Step 2
 addSafeEventListener(nextStep1, 'click', function(e) {
-e.preventDefault();
-step1.classList.remove('active-tab');
-step2.classList.add('active-tab');
+    e.preventDefault();
+    
+    const errors = validateStep1();
+    if (!showValidationErrors(errors)) {
+        return;
+    }
+    
+    step1.classList.remove('active-tab');
+    step2.classList.add('active-tab');
 
-// Update step indicator (optional)
-document.querySelectorAll('.step-circle')[0].classList.remove('active-tab');
-document.querySelectorAll('.step-circle')[0].classList.add('inactive-tab');
-document.querySelectorAll('.step-circle')[1].classList.remove('inactive-tab');
-document.querySelectorAll('.step-circle')[1].classList.add('active-tab');
+    // Update step indicator
+    document.querySelectorAll('.step-circle')[0].classList.remove('active-tab');
+    document.querySelectorAll('.step-circle')[0].classList.add('inactive-tab');
+    document.querySelectorAll('.step-circle')[1].classList.remove('inactive-tab');
+    document.querySelectorAll('.step-circle')[1].classList.add('active-tab');
 });
 
 // Next from Step 2 to Step 3
 addSafeEventListener(nextStep2, 'click', function(e) {
-e.preventDefault();
-step2.classList.remove('active-tab');
-step3.classList.add('active-tab');
+    e.preventDefault();
+    
+    const errors = validateStep2();
+    if (!showValidationErrors(errors)) {
+        return;
+    }
+    
+    step2.classList.remove('active-tab');
+    step3.classList.add('active-tab');
 
-// Update step indicator (optional)
-document.querySelectorAll('.step-circle')[1].classList.remove('active-tab');
-document.querySelectorAll('.step-circle')[1].classList.add('inactive-tab');
-document.querySelectorAll('.step-circle')[2].classList.remove('inactive-tab');
-document.querySelectorAll('.step-circle')[2].classList.add('active-tab');
+    // Update step indicator
+    document.querySelectorAll('.step-circle')[1].classList.remove('active-tab');
+    document.querySelectorAll('.step-circle')[1].classList.add('inactive-tab');
+    document.querySelectorAll('.step-circle')[2].classList.remove('inactive-tab');
+    document.querySelectorAll('.step-circle')[2].classList.add('active-tab');
 });
 
 // Next from Step 3 to Step 4
 addSafeEventListener(nextStep3, 'click', function(e) {
-e.preventDefault();
-step3.classList.remove('active-tab');
-step4.classList.add('active-tab');
+    e.preventDefault();
+    
+    const errors = validateStep3();
+    if (!showValidationErrors(errors)) {
+        return;
+    }
+    
+    step3.classList.remove('active-tab');
+    step4.classList.add('active-tab');
 
-// Update step indicator (optional)
-document.querySelectorAll('.step-circle')[2].classList.remove('active-tab');
-document.querySelectorAll('.step-circle')[2].classList.add('inactive-tab');
-document.querySelectorAll('.step-circle')[3].classList.remove('inactive-tab');
-document.querySelectorAll('.step-circle')[3].classList.add('active-tab');
+    // Update step indicator
+    document.querySelectorAll('.step-circle')[2].classList.remove('active-tab');
+    document.querySelectorAll('.step-circle')[2].classList.add('inactive-tab');
+    document.querySelectorAll('.step-circle')[3].classList.remove('inactive-tab');
+    document.querySelectorAll('.step-circle')[3].classList.add('active-tab');
 });
 
 // Back from Step 2 to Step 1
@@ -634,40 +911,269 @@ addSafeEventListener(document.getElementById('closeModal4'), 'click', function()
 </script>
 
 <script>
+// Improved Amount Input Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const feeInputs = document.querySelectorAll('.fee-input');
+    const totalDisplay = document.getElementById('total-amount');
+    
+    // Function to calculate and update the total
+    function updateTotal() {
+        let total = 0;
+        feeInputs.forEach(input => {
+            const value = parseFloat(input.value) || 0;
+            total += value;
+        });
+        
+        // Format the total with 2 decimal places and the Naira symbol
+        if (totalDisplay) {
+            totalDisplay.textContent = '₦' + total.toFixed(2);
+        }
+    }
+
+    // Function to format amount as user types
+    function formatAmountInput(input, newDigit) {
+        // Get current value without decimal point
+        let currentValue = input.value.replace(/[^\d]/g, '');
+        
+        // Add the new digit
+        currentValue += newDigit;
+        
+        // Convert to number and divide by 100 to get proper decimal places
+        let numericValue = parseInt(currentValue) / 100;
+        
+        // Format to 2 decimal places
+        input.value = numericValue.toFixed(2);
+        
+        updateTotal();
+    }
+
+    // Add event listeners to all fee inputs
+    feeInputs.forEach(input => {
+        // Store original input type and change to text for better control
+        input.type = 'text';
+        input.setAttribute('inputmode', 'numeric');
+        
+        // Handle keydown events for number input
+        input.addEventListener('keydown', function(e) {
+            // Allow: backspace, delete, tab, escape, enter
+            if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+                // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                (e.keyCode === 65 && e.ctrlKey === true) ||
+                (e.keyCode === 67 && e.ctrlKey === true) ||
+                (e.keyCode === 86 && e.ctrlKey === true) ||
+                (e.keyCode === 88 && e.ctrlKey === true)) {
+                return;
+            }
+            
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+                return;
+            }
+            
+            e.preventDefault();
+            
+            // Handle backspace
+            if (e.keyCode === 8) {
+                let currentValue = input.value.replace(/[^\d]/g, '');
+                if (currentValue.length > 0) {
+                    currentValue = currentValue.slice(0, -1);
+                    if (currentValue.length === 0) {
+                        input.value = '0.00';
+                    } else {
+                        let numericValue = parseInt(currentValue) / 100;
+                        input.value = numericValue.toFixed(2);
+                    }
+                    updateTotal();
+                }
+                return;
+            }
+            
+            // Get the pressed digit
+            let digit;
+            if (e.keyCode >= 48 && e.keyCode <= 57) {
+                digit = String.fromCharCode(e.keyCode);
+            } else if (e.keyCode >= 96 && e.keyCode <= 105) {
+                digit = String.fromCharCode(e.keyCode - 48);
+            }
+            
+            if (digit !== undefined) {
+                formatAmountInput(input, digit);
+            }
+        });
+
+        // Handle focus event
+        input.addEventListener('focus', function() {
+            // Select all text for easy replacement
+            input.select();
+        });
+
+        // Handle blur event
+        input.addEventListener('blur', function() {
+            if (input.value === "" || isNaN(parseFloat(input.value))) {
+                input.value = "0.00";
+            } else {
+                // Always format to 2 decimal places
+                input.value = parseFloat(input.value).toFixed(2);
+            }
+            updateTotal();
+        });
+
+        // Handle paste events
+        input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            let paste = (e.clipboardData || window.clipboardData).getData('text');
+            let numericValue = parseFloat(paste.replace(/[^\d.]/g, ''));
+            if (!isNaN(numericValue)) {
+                input.value = numericValue.toFixed(2);
+                updateTotal();
+            }
+        });
+    });
+    
+    // Calculate initial total
+    updateTotal();
+});
+
 // Fetch all States for Unit Owner's Address
 fetch('https://nga-states-lga.onrender.com/fetch')
-    .then((res) => res.json())
+    .then((res) => {
+        if (!res.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return res.json();
+    })
     .then((data) => {
         var x = document.getElementById("ownerState");
         if (!x) return;
-        for (let index = 0; index < Object.keys(data).length; index++) {
-            var option = document.createElement("option");
-            option.text = data[index];
-            option.value = data[index];
-            x.add(option);
+        
+        // Clear existing options except the first one
+        while (x.options.length > 1) {
+            x.remove(1);
         }
+        
+        // Add states to dropdown
+        if (Array.isArray(data)) {
+            data.forEach(state => {
+                var option = document.createElement("option");
+                option.text = state;
+                option.value = state;
+                x.add(option);
+            });
+        } else {
+            console.error('Expected array but got:', typeof data);
+        }
+    })
+    .catch((error) => {
+        console.error('Error fetching states:', error);
     });
 
 // Fetch Local Governments based on selected state
 function selectLGA(target) {
     var state = target.value;
-    fetch('https://nga-states-lga.onrender.com/?state=' + state)
-        .then((res) => res.json())
+    var lgaSelect = document.getElementById("ownerLga");
+    if (!lgaSelect) return;
+
+    // Always clear LGA dropdown except first option
+    while (lgaSelect.options.length > 1) {
+        lgaSelect.remove(1);
+    }
+    lgaSelect.selectedIndex = 0;
+    lgaSelect.disabled = true;
+
+    // No state selected, keep LGA disabled
+    if (!state) return;
+
+    // Trigger address update
+    if (typeof updateAddressDisplay === "function") updateAddressDisplay();
+
+    fetch('https://nga-states-lga.onrender.com/?state=' + encodeURIComponent(state))
+        .then((res) => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+        })
         .then((data) => {
-            var x = document.getElementById("ownerLga");
-            if (!x) return;
-            // Remove all options except the first
-            var length = x.options.length;
-            for (let i = length - 1; i > 0; i--) {
-                x.remove(i);
+            if (Array.isArray(data)) {
+                data.forEach(lga => {
+                    var option = document.createElement("option");
+                    option.text = lga;
+                    option.value = lga;
+                    lgaSelect.add(option);
+                });
+                lgaSelect.disabled = false;
+            } else {
+                console.error('Expected array but got:', typeof data);
             }
-            for (let index = 0; index < Object.keys(data).length; index++) {
-                var option = document.createElement("option");
-                option.text = data[index];
-                option.value = data[index];
-                x.add(option);
-            }
+        })
+        .catch((error) => {
+            console.error('Error fetching LGAs for state ' + state + ':', error);
         });
 }
+
+// Fallback event listener for robustness
+document.addEventListener('DOMContentLoaded', function() {
+    var ownerState = document.getElementById('ownerState');
+    if (ownerState) {
+        ownerState.addEventListener('change', function() {
+            selectLGA(ownerState);
+        });
+    }
+});
+
+// Function to update UI based on applicant type for sub-application
+function updateSubApplicationIdentificationSection() {
+    const applicantType = document.querySelector('input[name="applicantType"]:checked')?.value;
+    const identificationSection = document.getElementById('mainIdentificationSection');
+
+    if (applicantType === 'corporate') {
+        // Hide the entire identification section for corporate body
+        if (identificationSection) {
+            identificationSection.style.display = 'none';
+        }
+    } else {
+        // Show identification section for individual and multiple owners
+        if (identificationSection) {
+            identificationSection.style.display = 'grid';
+        }
+    }
+}
+
+// Add event listeners for applicant type changes in sub-application
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('input[name="applicantType"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            updateSubApplicationIdentificationSection();
+        });
+    });
+    // Initial update on page load
+    updateSubApplicationIdentificationSection();
+    
+    // Add event listeners for address fields to update address display in real-time
+    const addressFields = ['ownerHouseNo', 'ownerStreetName', 'ownerDistrict', 'ownerLga', 'ownerState'];
+    addressFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', updateAddressDisplay);
+            field.addEventListener('change', updateAddressDisplay);
+        }
+    });
+    
+    function updateAddressDisplay() {
+        const houseNo = document.getElementById('ownerHouseNo')?.value || '';
+        const streetName = document.getElementById('ownerStreetName')?.value || '';
+        const district = document.getElementById('ownerDistrict')?.value || '';
+        const lga = document.getElementById('ownerLga')?.value || '';
+        const state = document.getElementById('ownerState')?.value || '';
+        
+        const parts = [houseNo, streetName, district, lga, state].filter(part => part);
+        const fullAddress = parts.join(', ');
+        
+        const fullContactAddressEl = document.getElementById('fullContactAddress');
+        const contactAddressHiddenEl = document.getElementById('contactAddressHidden');
+        
+        if (fullContactAddressEl) fullContactAddressEl.textContent = fullAddress;
+        if (contactAddressHiddenEl) contactAddressHiddenEl.value = fullAddress;
+    }
+});
 </script>
 @endsection

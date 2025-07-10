@@ -8,36 +8,44 @@
    
 <div class="flex-1 overflow-auto">
     <!-- Header -->
-    <div class="p-6 bg-white border-b border-gray-200">
-      <div class="flex justify-between items-center">
-        <div>
-          <h1 class="text-2xl font-bold">Sectional Titling Module (STM)</h1>
-          <p class="text-gray-500">Process CofO for individually owned sections of multi-unit developments</p>
-        </div>
-        <div class="flex items-center space-x-4">
-          <div class="relative">
-            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-            <input
-              type="text"
-              placeholder="Search applications..."
-              class="pl-10 pr-4 py-2 border border-gray-200 rounded-md w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div class="relative">
-            <i data-lucide="bell" class="w-5 h-5"></i>
-            <span class="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              2
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
+    
+   @include('admin.header')
+
+    <!-- Hero Section with Title -->
+ 
 
     <!-- Dashboard Content -->
     <div class="p-6">
       @include('sectionaltitling.partials.tabs')
-      <!-- Stats Cards - Screenshot 122 -->
-   @include('sectionaltitling.partials.statistic.statistic_card')
+      
+      <!-- Stats Cards and Image Section -->
+      <div class="flex gap-8 mb-8">
+        <!-- Left side: 2x2 Grid of Stats Cards -->
+        <div class="flex-1">
+          @include('sectionaltitling.partials.statistic.statistic_card')
+        </div>
+        
+        <!-- Right side: Enhanced Image Card -->
+        <div class="flex-shrink-0">
+          <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transform hover:scale-105 transition-all duration-300 max-w-lg">
+            <div class="relative">
+              <!-- Decorative gradient overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent z-10"></div>
+              <div class="relative bg-gradient-to-br from-gray-50 to-gray-100 p-8 flex items-center justify-center">
+                <img 
+                  src="{{ asset('storage/upload/logo/chart.jpeg') }}" 
+                  alt="Modern Building Complex" 
+                  class="block object-contain rounded-lg shadow-lg"
+                  style="max-width: 350px; height: auto;"
+                />
+              </div>
+              <!-- Floating badge -->
+               
+            </div>
+            
+          </div>
+        </div>
+      </div>
 
       <!-- Tabs -->
    

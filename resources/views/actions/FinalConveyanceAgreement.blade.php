@@ -1,4 +1,4 @@
-<div id="final-tab" class="tab-content">
+<div id="final-tab" class="tab-content active">
     <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
         <div class="p-4 border-b">
             <h3 class="text-sm font-medium">Final Conveyance Agreement</h3>
@@ -214,11 +214,6 @@
                     </div>
                 </section>
 
-                {{-- <section class="mb-6">
-                    <h2 class="text-base font-bold mb-2">OFFICIAL STAMP & SEAL</h2>
-                    <div class="border border-gray-400 p-8 text-center text-gray-400"> </div>
-                </section>
-                 --}}
                 <!-- Final Conveyance Records Section starts on a new page -->
                 <div class="page-break"></div>
                 
@@ -278,13 +273,6 @@
                     <i data-lucide="undo-2" class="w-3.5 h-3.5 mr-1.5"></i>
                     Back
                 </a>
-
-                <!-- Ensure this button is NOT inside a form -->
-                {{-- <button id="submit-final-conveyance" type="button"
-                    class="flex items-center px-3 py-1 text-xs bg-green-700 text-white rounded-md hover:bg-green-800">
-                    <i data-lucide="send-horizontal" class="w-3.5 h-3.5 mr-1.5"></i>
-                    Submit
-                </button> --}}
                 
                 <button id="print-conveyance" type="button"
                     class="flex items-center px-3 py-1 text-xs border border-gray-300 rounded-md bg-blue-600 text-white hover:bg-blue-700">
@@ -591,97 +579,6 @@ p, li {
             });
         } else {
             console.error("Print button not found");
-        }
-        
-        // Initialize submit button with better error handling
-        const submitButton = document.getElementById('submit-final-conveyance');
-        if (submitButton) {
-            console.log("Submit button found");
-            
-            submitButton.addEventListener('click', function(e) {
-                console.log("Submit button clicked");
-                
-                // Extra aggressive prevention of any form submission
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Get the application ID
-                const applicationId = document.getElementById('application_id').value;
-                if (!applicationId) {
-                    console.error("Application ID not found");
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Application ID not found'
-                    });
-                    return false;
-                }
-                
-                console.log("Submitting conveyance for application ID:", applicationId);
-                
-                // Show loading state
-                Swal.fire({
-                    title: 'Submitting...',
-                    html: 'Please wait...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-                
-                // Send AJAX request
-                fetch('{{ route("conveyance.finalize") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        application_id: applicationId,
-                        status: 'completed'
-                    })
-                })
-                .then(response => {
-                    console.log("Response status:", response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log("Data received:", data);
-                    
-                    if (data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: data.message || 'Final Conveyance Agreement submitted successfully',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            // Redirect to the primary applications page
-                            window.location.href = '{{ route("sectionaltitling.primary") }}';
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message || 'Failed to submit Final Conveyance Agreement'
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Submission error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'An unexpected error occurred: ' + error.message
-                    });
-                });
-                
-                return false; // Prevent default behavior
-            });
-        } else {
-            console.error("Submit button not found");
         }
     });
 </script>

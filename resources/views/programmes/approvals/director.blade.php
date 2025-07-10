@@ -229,6 +229,7 @@
                     <option>All...</option>
                     <option>Approved</option>
                     <option>Pending</option>
+                    <option>Awaiting Planning Rec</option>
                     <option>Declined</option>
                   </select>
                   <i data-lucide="chevron-down" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
@@ -268,6 +269,8 @@
                                 <span class="badge badge-approved">Approved</span>
                             @elseif($application->application_status == 'Declined')
                                 <span class="badge badge-declined">Declined</span>
+                            @elseif($application->planning_recommendation_status != 'Approved')
+                                <span class="badge badge-pending">Awaiting Planning Rec</span>
                             @else
                                 <span class="badge badge-pending">Pending</span>
                             @endif
@@ -295,11 +298,18 @@
                             </a>
                           </li>
                           <li>
-                            <a href="{{ route('actions.director-approval', ['id' => $application->id]) }}" 
-                               class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2 {{ $application->application_status == 'Approved' ? 'cursor-not-allowed opacity-50' : '' }}">
-                              <i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>
-                              <span>Approve</span>
-                            </a>
+                            @if($application->planning_recommendation_status == 'Approved' && $application->application_status != 'Approved')
+                              <a href="{{ route('actions.director-approval', ['id' => $application->id]) }}" 
+                                 class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>
+                                <span>Approve</span>
+                              </a>
+                            @else
+                              <div class="block w-full text-left px-4 py-2 flex items-center space-x-2 cursor-not-allowed opacity-50">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-gray-400"></i>
+                                <span>Approve</span>
+                              </div>
+                            @endif
                           </li>
                              <li>
                                 <a href="{{ $application->application_status == 'Approved' ? route('actions.director-approval', ['id' => $application->id]) . '?url=view' : '#' }}" 
@@ -341,6 +351,7 @@
                 <option>All...</option>
                 <option>Approved</option>
                 <option>Pending</option>
+                <option>Awaiting Planning Rec</option>
                 <option>Declined</option>
               </select>
               <i data-lucide="chevron-down" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
@@ -380,6 +391,8 @@
                       <span class="badge badge-approved">Approved</span>
                     @elseif($unitApplication->application_status == 'Declined')
                       <span class="badge badge-declined">Declined</span>
+                    @elseif($unitApplication->planning_recommendation_status != 'Approved')
+                      <span class="badge badge-pending">Awaiting Planning Rec</span>
                     @else
                       <span class="badge badge-pending">Pending</span>
                     @endif
@@ -404,11 +417,18 @@
                         </a>
                       </li>
                       <li>
-                        <a href="{{ route('sub-actions.director-approval', ['id' => $unitApplication->id]) }}" 
-                           class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2 {{ $unitApplication->application_status == 'Approved' ? 'cursor-not-allowed opacity-50' : '' }}">
-                          <i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>
-                          <span>Approve</span>
-                        </a>
+                        @if($unitApplication->planning_recommendation_status == 'Approved' && $unitApplication->application_status != 'Approved')
+                          <a href="{{ route('sub-actions.director-approval', ['id' => $unitApplication->id]) }}" 
+                             class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>
+                            <span>Approve</span>
+                          </a>
+                        @else
+                          <div class="block w-full text-left px-4 py-2 flex items-center space-x-2 cursor-not-allowed opacity-50">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-gray-400"></i>
+                            <span>Approve</span>
+                          </div>
+                        @endif
                       </li>
                       <li>
                         <a href="{{ $unitApplication->application_status == 'Approved' ? route('sub-actions.director-approval', ['id' => $unitApplication->id]) . '?url=view' : '#' }}" 

@@ -31,29 +31,36 @@
                 if (newKangisPrefix) newKangisPrefix.addEventListener('change', function() { updateNewKangisFileNumberPreview(prefix); });
                 if (newKangisNumber) newKangisNumber.addEventListener('input', function() { updateNewKangisFileNumberPreview(prefix); });
                     
-                // Make sure the active tab is properly displayed on page load
-                var activeTabName = document.getElementById(prefix + 'activeFileTab').value;
-                var tabToShow = prefix + "mlsFNoTab"; // Default
+                // Force show the first tab (MLS) by default
+                const firstTab = document.getElementById(prefix + 'mlsFNoTab');
+                const firstTabButton = document.querySelector('.' + prefix + 'tablinks');
                 
-                if (activeTabName === "kangisFileNo") {
-                    tabToShow = prefix + "kangisFileNoTab";
-                } else if (activeTabName === "NewKANGISFileno") {
-                    tabToShow = prefix + "NewKANGISFilenoTab";
-                }
-                
-                // Simulate a click on the appropriate tab button
-                var tabButtons = document.getElementsByClassName(prefix + "tablinks");
-                
-                for (var i = 0; i < tabButtons.length; i++) {
-                    var buttonOnclick = tabButtons[i].getAttribute("onclick") || "";
-                    if (buttonOnclick.includes(tabToShow)) {
-                        var fakeEvent = { currentTarget: tabButtons[i] };
-                        // Add a slight delay to ensure DOM is fully rendered
-                        setTimeout(function() {
-                            openFileTab(prefix, fakeEvent, tabToShow);
-                        }, 50);
-                        break;
+                if (firstTab && firstTabButton) {
+                    console.log("Forcing first tab to show:", prefix + 'mlsFNoTab');
+                    
+                    // Hide all tabs first
+                    const allTabs = document.querySelectorAll("[id^='" + prefix + "'][id$='Tab'][class*='tabcontent']");
+                    allTabs.forEach(tab => {
+                        tab.classList.remove('active');
+                        tab.style.display = 'none';
+                    });
+                    
+                    // Remove active class from all buttons
+                    const allButtons = document.getElementsByClassName(prefix + "tablinks");
+                    for (let i = 0; i < allButtons.length; i++) {
+                        allButtons[i].classList.remove('active');
                     }
+                    
+                    // Show the first tab
+                    firstTab.classList.add('active');
+                    firstTab.style.display = 'block';
+                    firstTab.style.visibility = 'visible';
+                    firstTabButton.classList.add('active');
+                    
+                    // Set the active tab value
+                    document.getElementById(prefix + 'activeFileTab').value = "mlsFNo";
+                    
+                    console.log("First tab should now be visible. Display:", getComputedStyle(firstTab).display);
                 }
             } catch (error) {
                 console.error("Error initializing file number component:", error);
@@ -171,48 +178,65 @@
 
         // Updated function to maintain values across tabs and support multiple instances
         function openFileTab(prefix, evt, tabName) {
-            console.log("Opening tab:", tabName);
+            console.log("Opening tab:", tabName, "for prefix:", prefix);
             
-            // Save current values before switching tabs
-            if (document.getElementById(prefix + 'activeFileTab').value === "mlsFNo") {
-                updateMlsFileNumberPreview(prefix);
-            } else if (document.getElementById(prefix + 'activeFileTab').value === "kangisFileNo") {
-                updateKangisFileNumberPreview(prefix);
-            } else if (document.getElementById(prefix + 'activeFileTab').value === "NewKANGISFileno") {
-                updateNewKangisFileNumberPreview(prefix);
-            }
-            
-            // Hide all tab content for this form instance
-            var tabcontent = document.querySelectorAll("[id^='" + prefix + "'][class*='tabcontent']");
-            for (var i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].classList.remove("active");
-                tabcontent[i].style.display = "none";
-            }
+            try {
+                // Save current values before switching tabs
+                const activeFileTab = document.getElementById(prefix + 'activeFileTab');
+                if (activeFileTab) {
+                    if (activeFileTab.value === "mlsFNo") {
+                        updateMlsFileNumberPreview(prefix);
+                    } else if (activeFileTab.value === "kangisFileNo") {
+                        updateKangisFileNumberPreview(prefix);
+                    } else if (activeFileTab.value === "NewKANGISFileno") {
+                        updateNewKangisFileNumberPreview(prefix);
+                    }
+                }
+                
+                // Hide all tab content for this form instance
+                var tabcontent = document.querySelectorAll("[id^='" + prefix + "'][id$='Tab'][class*='tabcontent']");
+                console.log("Found", tabcontent.length, "tab content elements for prefix", prefix);
+                
+                for (var i = 0; i < tabcontent.length; i++) {
+                    var tab = tabcontent[i];
+                    console.log("Hiding tab:", tab.id);
+                    tab.classList.remove("active");
+                    tab.style.display = "none";
+                    tab.style.visibility = "hidden";
+                }
 
-            // Remove active class from all tab buttons for this form instance
-            var tablinks = document.getElementsByClassName(prefix + "tablinks");
-            for (var i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active");
-            }
+                // Remove active class from all tab buttons for this form instance
+                var tablinks = document.getElementsByClassName(prefix + "tablinks");
+                for (var i = 0; i < tablinks.length; i++) {
+                    tablinks[i].classList.remove("active");
+                }
 
-            // Show the current tab and add active class to the button
-            var currentTab = document.getElementById(tabName);
-            if (currentTab) {
-                currentTab.classList.add("active");
-                currentTab.style.display = "block";
-            } else {
-                console.error("Tab not found:", tabName);
-            }
-            
-            evt.currentTarget.classList.add("active");
-            
-            // Set the active tab value based on the database field names
-            if (tabName === prefix + "mlsFNoTab") {
-                document.getElementById(prefix + 'activeFileTab').value = "mlsFNo";
-            } else if (tabName === prefix + "kangisFileNoTab") {
-                document.getElementById(prefix + 'activeFileTab').value = "kangisFileNo";
-            } else if (tabName === prefix + "NewKANGISFilenoTab") {
-                document.getElementById(prefix + 'activeFileTab').value = "NewKANGISFileno";
+                // Show the current tab and add active class to the button
+                var currentTab = document.getElementById(tabName);
+                if (currentTab) {
+                    console.log("Showing tab:", tabName);
+                    currentTab.classList.add("active");
+                    currentTab.style.display = "block";
+                    currentTab.style.visibility = "visible";
+                    console.log("Tab display after change:", getComputedStyle(currentTab).display);
+                } else {
+                    console.error("Tab not found:", tabName);
+                }
+                
+                if (evt && evt.currentTarget) {
+                    evt.currentTarget.classList.add("active");
+                }
+                
+                // Set the active tab value based on the database field names
+                if (tabName === prefix + "mlsFNoTab") {
+                    document.getElementById(prefix + 'activeFileTab').value = "mlsFNo";
+                } else if (tabName === prefix + "kangisFileNoTab") {
+                    document.getElementById(prefix + 'activeFileTab').value = "kangisFileNo";
+                } else if (tabName === prefix + "NewKANGISFilenoTab") {
+                    document.getElementById(prefix + 'activeFileTab').value = "NewKANGISFileno";
+                }
+            } catch (error) {
+                console.error("Error in openFileTab:", error);
             }
         }
 
@@ -384,13 +408,18 @@
                 function showDialog() {
                     dialog.classList.remove('hidden');
                     
-                    // Initialize file number component when dialog opens
+                    // Initialize manual file number component when dialog opens
                     setTimeout(() => {
-                        initFileNumberComponent('property_');
+                        console.log('Initializing manual file number component for property form...');
+                        
+                        // Force initialize the manual file number component
+                        if (window.initManualFileno) {
+                            window.initManualFileno();
+                        }
                         
                         // Setup form validation when dialog opens
                         setupFormValidation('property-record-form', 'property-submit-btn');
-                    }, 100);
+                    }, 200);
                 }
                 
                 function hideDialog() {
@@ -452,6 +481,346 @@
                         const propertyId = this.getAttribute('data-id');
                         showPropertyOptions(propertyId, this);
                     });
+                });
+
+                // Add click handlers to table rows to show details in Dynamic Property Cards
+                setupTableRowClickHandlers();
+            }
+
+            function setupTableRowClickHandlers() {
+                // Get all table rows with property data
+                document.querySelectorAll('.table tbody tr').forEach(row => {
+                    // Skip empty rows or rows without property data
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length <= 1) return;
+                    
+                    // Find the view button to get the property ID
+                    const viewButton = row.querySelector('.view-property');
+                    if (!viewButton) return;
+                    
+                    const propertyId = viewButton.getAttribute('data-id');
+                    
+                    // Add click handler to the entire row (excluding action buttons)
+                    row.style.cursor = 'pointer';
+                    row.addEventListener('click', function(e) {
+                        // Don't trigger if clicking on action buttons
+                        if (e.target.closest('.view-property, .edit-property, .delete-property')) {
+                            return;
+                        }
+                        
+                        // Highlight the selected row
+                        document.querySelectorAll('.table tbody tr').forEach(r => {
+                            r.classList.remove('bg-blue-50', 'selected-row');
+                        });
+                        this.classList.add('bg-blue-50', 'selected-row');
+                        
+                        // Load and display property details in Dynamic Property Cards
+                        loadPropertyDetailsInCards(propertyId);
+                    });
+                });
+            }
+
+            function loadPropertyDetailsInCards(propertyId) {
+                // Show loading state in the cards section
+                showLoadingInCards();
+                
+                // Fetch property data
+                fetch(`{{ url('/property-records') }}/${propertyId}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch property data');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success' && data.data) {
+                        displayPropertyDetailsInCards(data.data);
+                    } else {
+                        throw new Error(data.message || 'Failed to load property data');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading property details:', error);
+                    showErrorInCards(error.message);
+                });
+            }
+            // Make available globally for Blade inline script
+            window.loadPropertyDetailsInCards = loadPropertyDetailsInCards;
+
+            function showLoadingInCards() {
+                const cardsContainer = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-4.mb-6');
+                if (!cardsContainer) return;
+                
+                // Hide existing property cards but keep the "Add New" card and the server-side rendered selected card
+                const propertyCards = cardsContainer.querySelectorAll('.border:not(#add-property-card):not(#selected-property-detail-card)');
+                propertyCards.forEach(card => card.style.display = 'none');
+                
+                // Add loading card if it doesn't exist
+                let loadingCard = document.getElementById('loading-property-card');
+                if (!loadingCard) {
+                    loadingCard = document.createElement('div');
+                    loadingCard.id = 'loading-property-card';
+                    loadingCard.className = 'border rounded-lg shadow-sm p-6 text-center col-span-2';
+                    loadingCard.innerHTML = `
+                        <div class="flex flex-col items-center justify-center">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-3"></div>
+                            <p class="text-gray-500">Loading property details...</p>
+                        </div>
+                    `;
+                    cardsContainer.appendChild(loadingCard);
+                } else {
+                    loadingCard.style.display = 'block';
+                }
+            }
+
+            function showErrorInCards(errorMessage) {
+                const cardsContainer = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-4.mb-6');
+                if (!cardsContainer) return;
+                
+                // Remove loading card
+                const loadingCard = document.getElementById('loading-property-card');
+                if (loadingCard) loadingCard.remove();
+                
+                // Add error card
+                let errorCard = document.getElementById('error-property-card');
+                if (!errorCard) {
+                    errorCard = document.createElement('div');
+                    errorCard.id = 'error-property-card';
+                    errorCard.className = 'border rounded-lg shadow-sm p-6 text-center col-span-2 border-red-200 bg-red-50';
+                    cardsContainer.appendChild(errorCard);
+                }
+                
+                errorCard.innerHTML = `
+                    <div class="flex flex-col items-center justify-center">
+                        <div class="h-8 w-8 text-red-500 mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <p class="text-red-600 font-medium">Error loading property details</p>
+                        <p class="text-red-500 text-sm mt-1">${errorMessage}</p>
+                    </div>
+                `;
+                errorCard.style.display = 'block';
+            }
+
+            function displayPropertyDetailsInCards(property) {
+                const cardsContainer = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-4.mb-6');
+                if (!cardsContainer) return;
+                
+                // Remove loading and error cards
+                const loadingCard = document.getElementById('loading-property-card');
+                const errorCard = document.getElementById('error-property-card');
+                if (loadingCard) loadingCard.remove();
+                if (errorCard) errorCard.remove();
+                
+                // Hide existing property cards but keep the "Add New" card and preserve server-side rendered card
+                const propertyCards = cardsContainer.querySelectorAll('.border:not(#add-property-card):not(#selected-property-detail-card)');
+                propertyCards.forEach(card => card.style.display = 'none');
+                
+                // Create or update the selected property detail card
+                let detailCard = document.getElementById('selected-property-detail-card');
+                if (!detailCard) {
+                    detailCard = document.createElement('div');
+                    detailCard.id = 'selected-property-detail-card';
+                    detailCard.className = 'border rounded-lg shadow-lg overflow-hidden col-span-2 bg-blue-50 border-blue-200';
+                    cardsContainer.appendChild(detailCard);
+                }
+                
+                // Get file number to display
+                let fileNumber = 'No File Number';
+                if (property.kangisFileNo) {
+                    fileNumber = property.kangisFileNo;
+                } else if (property.mlsFNo) {
+                    fileNumber = property.mlsFNo;
+                } else if (property.NewKANGISFileno) {
+                    fileNumber = property.NewKANGISFileno;
+                }
+                
+                // Get party information based on transaction type
+                let fromParty = '';
+                let toParty = '';
+                let fromLabel = 'From';
+                let toLabel = 'To';
+                
+                switch ((property.transaction_type || '').toLowerCase()) {
+                    case 'assignment':
+                        fromParty = property.Assignor || '';
+                        toParty = property.Assignee || '';
+                        fromLabel = 'Assignor';
+                        toLabel = 'Assignee';
+                        break;
+                    case 'mortgage':
+                        fromParty = property.Mortgagor || '';
+                        toParty = property.Mortgagee || '';
+                        fromLabel = 'Mortgagor';
+                        toLabel = 'Mortgagee';
+                        break;
+                    case 'surrender':
+                        fromParty = property.Surrenderor || '';
+                        toParty = property.Surrenderee || '';
+                        fromLabel = 'Surrenderor';
+                        toLabel = 'Surrenderee';
+                        break;
+                    case 'sub-lease':
+                    case 'lease':
+                        fromParty = property.Lessor || '';
+                        toParty = property.Lessee || '';
+                        fromLabel = 'Lessor';
+                        toLabel = 'Lessee';
+                        break;
+                    default:
+                        fromParty = property.Grantor || '';
+                        toParty = property.Grantee || '';
+                        fromLabel = 'Grantor';
+                        toLabel = 'Grantee';
+                }
+                
+                detailCard.innerHTML = `
+                    <div class="bg-blue-100 p-4 border-b border-blue-200">
+                        <div class="flex justify-between items-center">
+                            <span class="bg-blue-200 text-blue-800 border-blue-300 px-3 py-1 rounded-full text-sm font-medium">
+                                ${property.title_type || 'N/A'} - Selected Record
+                            </span>
+                            <button class="text-blue-600 hover:text-blue-800 property-options" data-id="${property.id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                                    <circle cx="12" cy="12" r="1"></circle>
+                                    <circle cx="12" cy="5" r="1"></circle>
+                                    <circle cx="12" cy="19" r="1"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                        <h3 class="mt-2 font-bold text-lg text-blue-900">${fileNumber}</h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="space-y-4">
+                            <div class="text-sm">
+                                <strong>Description:</strong> ${property.property_description || 'No description available'}
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <strong>LGA/City:</strong> ${property.lgsaOrCity || 'N/A'}
+                                </div>
+                                <div>
+                                    <strong>Plot Number:</strong> ${property.plot_no || 'N/A'}
+                                </div>
+                                <div>
+                                    <strong>Layout:</strong> ${property.layout || 'N/A'}
+                                </div>
+                                <div>
+                                    <strong>Location:</strong> ${property.location || 'N/A'}
+                                </div>
+                            </div>
+                            
+                            <div class="border-t pt-3">
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <strong>Transaction Type:</strong> ${property.transaction_type || 'N/A'}
+                                    </div>
+                                    <div>
+                                        <strong>Transaction Date:</strong> ${property.transaction_date ? new Date(property.transaction_date).toLocaleDateString() : 'N/A'}
+                                    </div>
+                                    <div>
+                                        <strong>Registration No:</strong> ${property.regNo || 'N/A'}
+                                    </div>
+                                    <div>
+                                        <strong>Instrument Type:</strong> ${property.instrument_type || 'N/A'}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            ${fromParty || toParty ? `
+                            <div class="border-t pt-3">
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    ${fromParty ? `<div><strong>${fromLabel}:</strong> ${fromParty}</div>` : ''}
+                                    ${toParty ? `<div><strong>${toLabel}:</strong> ${toParty}</div>` : ''}
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 flex justify-between border-t bg-white">
+                        <div class="text-xs text-gray-500">
+                            <div>File Numbers:</div>
+                            ${property.mlsFNo ? `<div>MLS: ${property.mlsFNo}</div>` : ''}
+                            ${property.kangisFileNo ? `<div>KANGIS: ${property.kangisFileNo}</div>` : ''}
+                            ${property.NewKANGISFileno ? `<div>New KANGIS: ${property.NewKANGISFileno}</div>` : ''}
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="px-3 py-1 border rounded-md text-sm flex items-center view-property-details bg-blue-600 text-white hover:bg-blue-700" data-id="${property.id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-1">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                View Full Details
+                            </button>
+                            <button class="px-3 py-1 border rounded-md text-sm flex items-center edit-property bg-green-600 text-white hover:bg-green-700" data-id="${property.id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-1">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                detailCard.style.display = 'block';
+                
+                // Re-attach event listeners to the new buttons
+                const viewButton = detailCard.querySelector('.view-property-details');
+                const editButton = detailCard.querySelector('.edit-property');
+                const optionsButton = detailCard.querySelector('.property-options');
+                
+                if (viewButton) {
+                    viewButton.addEventListener('click', function() {
+                        viewPropertyDetails(property.id);
+                    });
+                }
+                
+                if (editButton) {
+                    editButton.addEventListener('click', function() {
+                        editProperty(property.id);
+                    });
+                }
+                
+                if (optionsButton) {
+                    optionsButton.addEventListener('click', function() {
+                        showPropertyOptions(property.id, this);
+                    });
+                }
+                
+                // Scroll to the cards section to show the details
+                cardsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function resetCardsView() {
+                const cardsContainer = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-4.mb-6');
+                if (!cardsContainer) return;
+                
+                // Remove the selected property detail card
+                const detailCard = document.getElementById('selected-property-detail-card');
+                if (detailCard) detailCard.remove();
+                
+                // Remove loading and error cards
+                const loadingCard = document.getElementById('loading-property-card');
+                const errorCard = document.getElementById('error-property-card');
+                if (loadingCard) loadingCard.remove();
+                if (errorCard) errorCard.remove();
+                
+                // Show all original property cards
+                const propertyCards = cardsContainer.querySelectorAll('.border:not(#add-property-card)');
+                propertyCards.forEach(card => card.style.display = 'block');
+                
+                // Remove selection from table rows
+                document.querySelectorAll('.table tbody tr').forEach(row => {
+                    row.classList.remove('bg-blue-50', 'selected-row');
                 });
             }
 
@@ -865,32 +1234,64 @@
                 });
                 
                 // Check for active file number (at least one must be filled)
-                const prefix = formId === 'property-record-form' ? 'property_' : 'edit_property_';
-                const activeFileTab = document.getElementById(prefix + 'activeFileTab');
-                
-                if (activeFileTab) {
-                    const activeTabValue = activeFileTab.value;
-                    let fileNumberFilled = false;
+                if (formId === 'property-record-form') {
+                    // For manual property form, check manual file number fields
+                    const activeFileTab = document.getElementById('manual_activeFileTab');
                     
-                    if (activeTabValue === 'mlsFNo') {
-                        const mlsNumber = document.getElementById(prefix + 'mlsFileNumber');
-                        if (mlsNumber && mlsNumber.value.trim()) {
-                            fileNumberFilled = true;
+                    if (activeFileTab) {
+                        const activeTabValue = activeFileTab.value;
+                        let fileNumberFilled = false;
+                        
+                        if (activeTabValue === 'mlsFNo') {
+                            const mlsNumber = document.getElementById('manual_mlsFileNumber');
+                            if (mlsNumber && mlsNumber.value.trim()) {
+                                fileNumberFilled = true;
+                            }
+                        } else if (activeTabValue === 'kangisFileNo') {
+                            const kangisNumber = document.getElementById('manual_kangisFileNumber');
+                            if (kangisNumber && kangisNumber.value.trim()) {
+                                fileNumberFilled = true;
+                            }
+                        } else if (activeTabValue === 'NewKANGISFileno') {
+                            const newKangisNumber = document.getElementById('manual_newKangisFileNumber');
+                            if (newKangisNumber && newKangisNumber.value.trim()) {
+                                fileNumberFilled = true;
+                            }
                         }
-                    } else if (activeTabValue === 'kangisFileNo') {
-                        const kangisNumber = document.getElementById(prefix + 'kangisFileNumber');
-                        if (kangisNumber && kangisNumber.value.trim()) {
-                            fileNumberFilled = true;
-                        }
-                    } else if (activeTabValue === 'NewKANGISFileno') {
-                        const newKangisNumber = document.getElementById(prefix + 'newKangisFileNumber');
-                        if (newKangisNumber && newKangisNumber.value.trim()) {
-                            fileNumberFilled = true;
+                        
+                        if (!fileNumberFilled) {
+                            isValid = false;
                         }
                     }
+                } else {
+                    // For edit form, use the original logic
+                    const prefix = 'edit_property_';
+                    const activeFileTab = document.getElementById(prefix + 'activeFileTab');
                     
-                    if (!fileNumberFilled) {
-                        isValid = false;
+                    if (activeFileTab) {
+                        const activeTabValue = activeFileTab.value;
+                        let fileNumberFilled = false;
+                        
+                        if (activeTabValue === 'mlsFNo') {
+                            const mlsNumber = document.getElementById(prefix + 'mlsFileNumber');
+                            if (mlsNumber && mlsNumber.value.trim()) {
+                                fileNumberFilled = true;
+                            }
+                        } else if (activeTabValue === 'kangisFileNo') {
+                            const kangisNumber = document.getElementById(prefix + 'kangisFileNumber');
+                            if (kangisNumber && kangisNumber.value.trim()) {
+                                fileNumberFilled = true;
+                            }
+                        } else if (activeTabValue === 'NewKANGISFileno') {
+                            const newKangisNumber = document.getElementById(prefix + 'newKangisFileNumber');
+                            if (newKangisNumber && newKangisNumber.value.trim()) {
+                                fileNumberFilled = true;
+                            }
+                        }
+                        
+                        if (!fileNumberFilled) {
+                            isValid = false;
+                        }
                     }
                 }
                 
@@ -1036,8 +1437,6 @@
                     editPropertyDialog.classList.add('hidden');
                 });
             }
-
-            // ...existing code...
 
             // Create View Property Dialog
             let viewPropertyDialog = document.getElementById('property-view-dialog');

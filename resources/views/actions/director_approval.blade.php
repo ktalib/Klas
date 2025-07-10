@@ -625,16 +625,30 @@
                               
                               <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700">Decision</label>
+                                @php
+                                  $isApproved = strtolower($application->application_status ?? '') === 'approved';
+                                  $currentStatus = strtolower($application->application_status ?? 'pending');
+                                @endphp
                                 <div class="mt-2 flex items-center space-x-4">
-                                <label class="inline-flex items-center">
-                                <input type="radio" name="decision" value="approve" class="form-radio" checked>
-                                <span class="ml-2">Approve</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                <input type="radio" name="decision" value="decline" class="form-radio">
-                                <span class="ml-2">Decline</span>
-                                </label>
+                                  <label class="inline-flex items-center {{ $isApproved ? 'opacity-50 cursor-not-allowed' : '' }}">
+                                    <input type="radio" name="decision" value="approve" class="form-radio"
+                                      {{ $isApproved ? 'disabled' : '' }}
+                                      {{ $currentStatus === 'approve' || $currentStatus === 'approved' ? 'checked' : '' }}>
+                                    <span class="ml-2">Approve</span>
+                                  </label>
+                                  <label class="inline-flex items-center {{ $isApproved ? 'opacity-50 cursor-not-allowed' : '' }}">
+                                    <input type="radio" name="decision" value="decline" class="form-radio"
+                                      {{ $isApproved ? 'disabled' : '' }}
+                                      {{ $currentStatus === 'decline' || $currentStatus === 'declined' ? 'checked' : '' }}>
+                                    <span class="ml-2">Decline</span>
+                                  </label>
+                                  <span class="ml-4 text-xs text-gray-600">
+                                    Current Status: <span class="font-semibold">{{ ucfirst($currentStatus) }}</span>
+                                  </span>
                                 </div>
+                                @if($isApproved)
+                                  <span class="text-xs text-gray-400 ml-2">Already approved. Decision cannot be changed.</span>
+                                @endif
                               </div>
                               <div class="grid grid-cols-2 gap-4 mb-4">
                                       <label for="approval_date" class="block text-gray-700 mb-2">Approval/Decline Date</label>
@@ -667,10 +681,14 @@
                                      Back
                                     </button>
                                
-                                    <button type="submit" class="flex items-center px-3 py-1 text-xs bg-green-700 text-white rounded-md hover:bg-gray-800">
+                                    <button 
+                                      type="submit" 
+                                      class="flex items-center px-3 py-1 text-xs rounded-md 
+                                      {{ $isApproved ? 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60' : 'bg-green-700 text-white hover:bg-gray-800' }}"
+                                      {{ $isApproved ? 'disabled' : '' }}>
                                       <i data-lucide="send-horizontal" class="w-3.5 h-3.5 mr-1.5"></i>
                                       Submit
-                                  </button>
+                                    </button>
                                 </div>
                               </div>             
                             </div>

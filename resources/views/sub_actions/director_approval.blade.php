@@ -164,16 +164,19 @@
                                     <i data-lucide="user" class="w-3.5 h-3.5 mr-1.5"></i>
                                     SUMMARY
                                 </button>
+
+                                 <button class="tab-button " data-tab="detterment">
+                                    <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
+                                    DOCUMENTS
+                                </button>
+
+                                
                                  <button class="tab-button" data-tab="initial">
                                     <i data-lucide="banknote" class="w-3.5 h-3.5 mr-1.5"></i>
                                     APPROVAL
                                 </button>
 
-                                <button class="tab-button " data-tab="detterment">
-                                    <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
-                                    DOCUMENTS
-                                </button>
-
+                               
                                
                                 
                                 {{-- <button class="tab-button" data-tab="final">
@@ -715,14 +718,28 @@
                                                     <label class="block text-sm font-medium text-gray-700">Decision</label>
                                                     <div class="mt-2 flex items-center space-x-4">
                                                         <label class="inline-flex items-center">
-                                                            <input type="radio" name="decision" value="approve"
-                                                                class="form-radio" checked>
-                                                            <span class="ml-2">Approve</span>
+                                                            <input 
+                                                                type="radio" 
+                                                                name="decision" 
+                                                                value="approve"
+                                                                class="form-radio"
+                                                                {{ strtolower($application->application_status) === 'approved' ? 'checked disabled' : 'checked' }}
+                                                            >
+                                                            <span class="ml-2 {{ strtolower($application->application_status) === 'approved' ? 'text-gray-400' : '' }}">
+                                                                Approve
+                                                            </span>
                                                         </label>
                                                         <label class="inline-flex items-center">
-                                                            <input type="radio" name="decision" value="decline"
-                                                                class="form-radio">
-                                                            <span class="ml-2">Decline</span>
+                                                            <input 
+                                                                type="radio" 
+                                                                name="decision" 
+                                                                value="decline"
+                                                                class="form-radio"
+                                                                {{ strtolower($application->application_status) === 'approved' ? 'disabled' : '' }}
+                                                            >
+                                                            <span class="ml-2 {{ strtolower($application->application_status) === 'approved' ? 'text-gray-400' : '' }}">
+                                                                Decline
+                                                            </span>
                                                         </label>
                                                     </div>
                                                 </div>
@@ -982,6 +999,9 @@
                         }
                     });
 
+                    // Map decision to proper status format
+                    const status = decision === 'approve' ? 'Approved' : 'Declined';
+
                     // AJAX request
                     fetch('{{ url('/sub-actions/director-approval/update') }}', {
                             method: 'POST',
@@ -992,7 +1012,7 @@
                             },
                             body: JSON.stringify({
                                 application_id: applicationId,
-                                status: decision,
+                                status: status,
                                 approval_date: approvalDate,
                                 comments: comments
                             })

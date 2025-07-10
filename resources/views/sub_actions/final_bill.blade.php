@@ -128,13 +128,15 @@
                     <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5 inline-block"></i>
                     Calculate
                   </button>
-                  <button type="button" id="preview-bill-btn" class="px-3 py-1 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                    <i data-lucide="eye" class="w-3.5 h-3.5 mr-1.5 inline-block"></i>
-                    Preview Bill
-                  </button>
+                 
                   <button type="button" id="save-bill-btn" class="px-3 py-1 text-xs bg-green-600 text-white rounded-md hover:bg-green-700">
                     <i data-lucide="save" class="w-3.5 h-3.5 mr-1.5 inline-block"></i>
                    Generate Bill
+                  </button>
+
+                   <button type="button" id="preview-bill-btn" class="px-3 py-1 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                    <i data-lucide="eye" class="w-3.5 h-3.5 mr-1.5 inline-block"></i>
+                    Preview Bill
                   </button>
                 </div>
               </div>

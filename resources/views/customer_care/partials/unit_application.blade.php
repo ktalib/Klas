@@ -135,7 +135,7 @@
             <td class="px-1 py-4">{{ $unit->phone_number ?? 'N/A' }}</td>
             <td class="px-1 py-4">{{ $unit->address ?? 'N/A' }}</td>
             <td class="px-1 py-4">
-              @include('customer_care.partials.action', ['customer' => $unit, 'type' => 'secondary'])
+              @include('customer_care.partials.unit_action', ['customer' => $unit, 'type' => 'secondary'])
             </td>
           </tr>
         @empty

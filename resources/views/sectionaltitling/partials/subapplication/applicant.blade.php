@@ -129,28 +129,53 @@
 
                 <!-- Corporate Body Information -->
                 <div class="mb-10" id="corporateFields" style="display: none;">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Corporate Body Information</h2>
-                    <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Name of Corporate Body <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" id="corporateName" name="corporate_name"
-                                    class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
-                                    placeholder="Enter corporate body name">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    RC Number <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" id="rcNumber" name="rc_number"
-                                    class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
-                                    placeholder="Enter RC number">
-                            </div>
-                        </div>
-                    </div>
-                </div>      
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Corporate Body Information</h2>
+                <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                Name of Corporate Body <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="corporateName" name="corporate_name"
+                class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
+                placeholder="Enter corporate body name">
+                </div>
+                <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                RC Number <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="rcNumber" name="rc_number"
+                class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
+                placeholder="Enter RC number">
+                </div>
+                </div>
+                
+                <!-- RC Document Upload Section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Upload RC Document <span class="text-red-500">*</span></label>
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
+                <div id="subCorporateDocumentPlaceholder" class="flex flex-col items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <p class="text-sm text-gray-600 mb-1">Click to upload RC document</p>
+                <p class="text-xs text-gray-500">JPG, PNG, PDF (max. 5MB)</p>
+                </div>
+                <img id="subCorporateDocumentPreview" class="hidden w-full h-32 object-cover rounded-md mt-2" src="#" alt="RC Document Preview">
+                <div id="subCorporateDocumentInfo" class="hidden mt-2 text-sm text-gray-600"></div>
+                <input type="file" id="subCorporateDocumentUpload" name="identification_image" accept="image/*,.pdf" class="hidden" required onchange="previewSubCorporateDocument(event)">
+                <button type="button" id="removeSubCorporateDocumentBtn" class="hidden mt-2 px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600" onclick="removeSubCorporateDocument()">Remove</button>
+                </div>
+                <div class="mt-2">
+                <button type="button" onclick="document.getElementById('subCorporateDocumentUpload').click()" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Choose File
+                </button>
+                </div>
+                </div>
+                </div>
+                </div>
+                </div>
                 
                 <!-- Multiple Owners Information -->
                 <div class="mb-10" id="multipleOwnersFields" style="display: none;">
@@ -183,35 +208,87 @@
             
             const row = document.createElement('div');
             row.id = rowId;
-            row.className = 'grid grid-cols-12 gap-4 p-4 border-b border-gray-100';
+            row.className = 'mb-4 p-4 border border-gray-200 rounded-lg bg-white shadow-sm';
 
             row.innerHTML = `  
-                <div class="col-span-7">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
-                    <input type="text" name="multiple_owners_names[]" 
-                           class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm" 
-                           placeholder="Enter full name">
-                    <div class="mt-2">
-                        <input type="text" name="multiple_owners_address[]" class="w-full p-2 border border-gray-300 rounded-md text-xs" placeholder="Address">
+                <div class="grid grid-cols-12 gap-4">
+                    <!-- Owner Details Section -->
+                    <div class="col-span-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="multiple_owners_names[]" 
+                               class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm" 
+                               placeholder="Enter full name">
+                        <div class="mt-2">
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Address <span class="text-red-500">*</span></label>
+                            <textarea name="multiple_owners_address[]" rows="2" class="w-full p-2 border border-gray-300 rounded-md text-xs" placeholder="Enter complete address"></textarea>
+                        </div>
+                        <div class="mt-2 grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Email</label>
+                                <input type="email" name="multiple_owners_email[]" 
+                                       class="w-full py-1 px-2 border border-gray-300 rounded-md text-xs" 
+                                       placeholder="Enter email">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Phone</label>
+                                <input type="tel" name="multiple_owners_phone[]" 
+                                       class="w-full py-1 px-2 border border-gray-300 rounded-md text-xs" 
+                                       placeholder="Enter phone">
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-span-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Passport Photo</label>
-                    <div class="relative">
-                        <input type="file" name="multiple_owners_passport[]" 
-                               class="w-full py-2.5 px-4 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:outline-none" 
-                               accept="image/*" 
-                               onchange="previewOwnerPhoto(event, '${rowId}')">
-                        <img class="owner-preview hidden w-16 h-16 object-cover mt-2 rounded-md shadow-sm" src="#" alt="Preview">
+                    
+                    <!-- Passport Photo Section -->
+                    <div class="col-span-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Passport Photo</label>
+                        <div class="relative">
+                            <input type="file" name="multiple_owners_passport[]" 
+                                   class="w-full py-2 px-3 border border-gray-300 rounded-lg file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:outline-none" 
+                                   accept="image/*" 
+                                   onchange="previewOwnerPhoto(event, '${rowId}')">
+                            <img class="owner-preview hidden w-16 h-16 object-cover mt-2 rounded-md shadow-sm" src="#" alt="Preview">
+                        </div>
                     </div>
-                </div>
-                <div class="col-span-1 flex items-center justify-center">
-                    <button type="button" onclick="removeOwnerRow('${rowId}')" 
-                            class="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+                    
+                    <!-- Means of Identification Section -->
+                    <div class="col-span-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Means of Identification <span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-2 gap-1 mb-2">
+                            <label class="flex items-center text-xs">
+                                <input type="radio" name="multiple_owners_identification_type_${ownerRowCount}" class="mr-1" value="national id" checked>
+                                <span>National ID</span>
+                            </label>
+                            <label class="flex items-center text-xs">
+                                <input type="radio" name="multiple_owners_identification_type_${ownerRowCount}" class="mr-1" value="drivers license">
+                                <span>Driver's License</span>
+                            </label>
+                            <label class="flex items-center text-xs">
+                                <input type="radio" name="multiple_owners_identification_type_${ownerRowCount}" class="mr-1" value="voters card">
+                                <span>Voter's Card</span>
+                            </label>
+                            <label class="flex items-center text-xs">
+                                <input type="radio" name="multiple_owners_identification_type_${ownerRowCount}" class="mr-1" value="international passport">
+                                <span>Int'l Passport</span>
+                            </label>
+                        </div>
+                        <input type="file" name="multiple_owners_identification_image[]" 
+                               class="w-full py-1 px-2 border border-gray-300 rounded-md text-xs bg-white" 
+                               accept="image/*,.pdf"
+                               onchange="previewOwnerIdentification(event, '${rowId}')">
+                        <div id="identification_preview_${rowId}" class="mt-1 border border-gray-200 rounded-md bg-white flex items-center justify-center min-h-[60px]">
+                            <span class="text-gray-400 text-xs">No file selected</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Remove Button -->
+                    <div class="col-span-1 flex items-center justify-center">
+                        <button type="button" onclick="removeOwnerRow('${rowId}')" 
+                                class="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             `;
             
@@ -246,15 +323,81 @@
             }
         }
 
+        function previewOwnerIdentification(event, rowId) {
+            const file = event.target.files[0];
+            const preview = document.getElementById(`identification_preview_${rowId}`);
+            
+            if (!file) {
+                preview.innerHTML = '<span class="text-gray-400 text-xs">No file selected</span>';
+                return;
+            }
+            
+            preview.innerHTML = '';
+            
+            if (file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.className = "max-h-14 mx-auto";
+                img.style.maxWidth = "100%";
+                img.alt = "Preview";
+                img.src = URL.createObjectURL(file);
+                preview.appendChild(img);
+            } else if (file.type === 'application/pdf') {
+                const icon = document.createElement('div');
+                icon.innerHTML = '<svg class="w-6 h-6 text-red-500 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="block text-xs mt-1">PDF Selected</span>';
+                preview.appendChild(icon);
+            } else {
+                preview.innerHTML = '<span class="text-red-500 text-xs">Unsupported file type</span>';
+            }
+        }
+
         function showMultipleOwnersFields() {
             document.getElementById('individualFields').style.display = 'none';
             document.getElementById('corporateFields').style.display = 'none';
             document.getElementById('multipleOwnersFields').style.display = 'block';
             
+            // Hide Unit Owner's Address section when multiple owners is selected
+            hideAddressSection();
+            
+            // Hide main Means of Identification section when multiple owners is selected
+            hideMainIdentificationSection();
+            
             // Clear existing rows
             document.getElementById('ownersContainer').innerHTML = '';
             // Add first row
             addOwnerRow();
+        }
+
+        function hideAddressSection() {
+            // Find and hide the Unit Owner's Address section
+            const allDivs = document.querySelectorAll('div.bg-gray-50.p-4.rounded-md.mb-6');
+            allDivs.forEach(div => {
+                const addressText = div.querySelector('p');
+                if (addressText && addressText.textContent.includes("Unit Owner's Address")) {
+                    div.style.display = 'none';
+                }
+            });
+        }
+
+        function hideMainIdentificationSection() {
+            // Find and hide the main Means of Identification section
+            const allDivs = document.querySelectorAll('div.bg-gray-50.p-4.rounded-md.grid.grid-cols-1.md\\:grid-cols-2.gap-6.mb-6');
+            allDivs.forEach(div => {
+                const identificationLabel = div.querySelector('label');
+                if (identificationLabel && identificationLabel.textContent.includes("Means of Identification")) {
+                    div.style.display = 'none';
+                }
+            });
+        }
+
+        function showMainIdentificationSection() {
+            // Find and show the main Means of Identification section
+            const allDivs = document.querySelectorAll('div.bg-gray-50.p-4.rounded-md.grid.grid-cols-1.md\\:grid-cols-2.gap-6.mb-6');
+            allDivs.forEach(div => {
+                const identificationLabel = div.querySelector('label');
+                if (identificationLabel && identificationLabel.textContent.includes("Means of Identification")) {
+                    div.style.display = 'grid';
+                }
+            });
         }
 
         // Photo upload preview functionality
@@ -293,16 +436,17 @@
             removePhotoBtn.classList.add('hidden');
         }
 
-        // Initialize the handlers when the document loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // Any initialization code can go here
-        });
-
         function showIndividualFields() {
             clearOtherFields('individualFields');
             document.getElementById('individualFields').style.display = 'block';
             document.getElementById('corporateFields').style.display = 'none';
             document.getElementById('multipleOwnersFields').style.display = 'none';
+            
+            // Show Unit Owner's Address section for individual
+            showAddressSection();
+            
+            // Show main Means of Identification section for individual
+            showMainIdentificationSection();
         }
 
         function showCorporateFields() {
@@ -310,6 +454,23 @@
             document.getElementById('individualFields').style.display = 'none';
             document.getElementById('corporateFields').style.display = 'block';
             document.getElementById('multipleOwnersFields').style.display = 'none';
+            
+            // Show Unit Owner's Address section for corporate
+            showAddressSection();
+            
+            // Show main Means of Identification section for corporate
+            showMainIdentificationSection();
+        }
+
+        function showAddressSection() {
+            // Show Unit Owner's Address section
+            const allDivs = document.querySelectorAll('div.bg-gray-50.p-4.rounded-md.mb-6');
+            allDivs.forEach(div => {
+                const addressText = div.querySelector('p');
+                if (addressText && addressText.textContent.includes("Unit Owner's Address")) {
+                    div.style.display = 'block';
+                }
+            });
         }
 
         function clearOtherFields(exceptId) {
@@ -360,5 +521,78 @@
             }
             fullnameInput.value = applicantName.trim();
         }
+
+        // Sub-application corporate document upload preview functionality
+        function previewSubCorporateDocument(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                const placeholder = document.getElementById('subCorporateDocumentPlaceholder');
+                const preview = document.getElementById('subCorporateDocumentPreview');
+                const info = document.getElementById('subCorporateDocumentInfo');
+                const removeBtn = document.getElementById('removeSubCorporateDocumentBtn');
+
+                // Validate file size (5MB limit)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Please select a file smaller than 5MB.');
+                    event.target.value = '';
+                    return;
+                }
+
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Please select a JPG, PNG, or PDF file.');
+                    event.target.value = '';
+                    return;
+                }
+
+                if (file.type === 'application/pdf') {
+                    // For PDF files, show file info instead of preview
+                    placeholder.classList.add('hidden');
+                    preview.classList.add('hidden');
+                    info.classList.remove('hidden');
+                    info.innerHTML = `
+                        <div class="flex items-center justify-center">
+                            <svg class="w-8 h-8 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div>
+                                <p class="font-medium">${file.name}</p>
+                                <p class="text-xs text-gray-500">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                            </div>
+                        </div>
+                    `;
+                    removeBtn.classList.remove('hidden');
+                } else {
+                    // For image files, show preview
+                    reader.onload = function(e) {
+                        placeholder.classList.add('hidden');
+                        preview.src = e.target.result;
+                        preview.classList.remove('hidden');
+                        info.classList.add('hidden');
+                        removeBtn.classList.remove('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        // Remove sub-application corporate document functionality
+        function removeSubCorporateDocument() {
+            const upload = document.getElementById('subCorporateDocumentUpload');
+            const placeholder = document.getElementById('subCorporateDocumentPlaceholder');
+            const preview = document.getElementById('subCorporateDocumentPreview');
+            const info = document.getElementById('subCorporateDocumentInfo');
+            const removeBtn = document.getElementById('removeSubCorporateDocumentBtn');
+
+            upload.value = '';
+            preview.src = '#';
+            preview.classList.add('hidden');
+            info.classList.add('hidden');
+            placeholder.classList.remove('hidden');
+            removeBtn.classList.add('hidden');
+        }
     </script>
+        
         

@@ -80,40 +80,46 @@
                                     <td class="table-cell px-1 py-1 truncate">{{ $app->fileno ?? 'N/A' }}</td>
 
                                     <td class="table-cell px-1 py-1 truncate">
-
                                         @php
-                                            $assignment = \DB::connection('sqlsrv')
-                                                ->table('Sectional_title_transfer')
-                                                ->where('application_id', $app->mother_id)
-                                                ->select('serial_no', 'page_no', 'volume_no')
-                                                ->first();
+                                            // Fetch ST FileNo from application object
+                                            $stFileNo = $app->st_fileno ?? $app->STFileNo ?? $app->fileno ?? null;
+                                            // Query registered_instruments for ST Assignment (Transfer of Title)
+                                            $assignmentReg = null;
+                                            if ($stFileNo) {
+                                                $assignmentReg = DB::connection('sqlsrv')
+                                                    ->table('registered_instruments')
+                                                    ->select('volume_no', 'page_no', 'serial_no', 'deeds_time', 'deeds_date')
+                                                    ->where('instrument_type', 'ST Assignment (Transfer of Title)')
+                                                    ->where('StFileNo', $stFileNo)
+                                                    ->first();
+                                            }
                                         @endphp
-                                        @if ($assignment)
-                                            {{ $assignment->serial_no ?? 'N/A' }}/{{ $assignment->page_no ?? 'N/A' }}/{{ $assignment->volume_no ?? 'N/A' }}</span>
+                                        @if ($assignmentReg)
+                                            {{ $assignmentReg->serial_no ?? 'N/A' }}/{{ $assignmentReg->page_no ?? 'N/A' }}/{{ $assignmentReg->volume_no ?? 'N/A' }}
+                                        @else
+                                            <span class="text-gray-400">N/A</span>
+                                        @endif
+                                    </td>
 
-                </div>
-            @else
-                <span class="text-gray-400">N/A</span>
-                @endif
-                </td>
-
-                <td class="table-cell px-1 py-1 truncate">
-
-                    @php
-                        $cofo = \DB::connection('sqlsrv')
-                            ->table('SectionalCofOReg')
-                            ->where('sub_application_id', $app->id)
-                            ->select('serial_no', 'page_no', 'volume_no')
-                            ->first();
-                    @endphp
-                    @if ($cofo)
-                        {{ $cofo->serial_no ?? 'N/A' }}/{{ $cofo->page_no ?? 'N/A' }}/{{ $cofo->volume_no ?? 'N/A' }}</span>
-
-            </div>
-        @else
-            <span class="text-gray-400">N/A</span>
-            @endif
-            </td>
+                                    <td class="table-cell px-1 py-1 truncate">
+                                        @php
+                                            // Query registered_instruments for ST CofO Registration
+                                            $cofoReg = null;
+                                            if ($stFileNo) {
+                                                $cofoReg = DB::connection('sqlsrv')
+                                                    ->table('registered_instruments')
+                                                    ->select('volume_no', 'page_no', 'serial_no', 'deeds_time', 'deeds_date')
+                                                    ->where('instrument_type', 'Sectional Titling CofO')
+                                                    ->where('StFileNo', $stFileNo)
+                                                    ->first();
+                                            } 
+                                        @endphp
+                                        @if ($cofoReg)
+                                            {{ $cofoReg->serial_no ?? 'N/A' }}/{{ $cofoReg->page_no ?? 'N/A' }}/{{ $cofoReg->volume_no ?? 'N/A' }}
+                                        @else
+                                            <span class="text-gray-400">N/A</span>
+                                        @endif
+                                    </td>
             <td class="table-cell px-1 py-1 truncate">{{ $app->land_use ?? 'N/A' }}</td>
             <td class="table-cell px-1 py-1">
                 <div class="flex items-center">
@@ -333,7 +339,7 @@
             </table>
         </div>
         <div class="flex justify-between items-center mt-6 text-sm">
-            <div class="text-gray-500">Showing 5 of 180 applications</div>
+            <div class="text-gray-500"></div>
             <div class="flex items-center space-x-2">
                 <button class="px-3 py-1 border border-gray-200 rounded-md flex items-center">
                     <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>

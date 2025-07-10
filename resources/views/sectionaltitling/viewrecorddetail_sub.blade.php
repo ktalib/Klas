@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('page-title')
-    {{ __('SECTIONAL TITLING  MODULE') }}
+    {{ __('Unit Application Details') }}
 @endsection
 
 
@@ -23,7 +23,7 @@
             <div class="bg-white rounded-lg overflow-hidden">
                 <!-- Header -->
                 <div class="bg-emerald-600 text-white p-4 rounded-t-lg">
-                    <h2 class="text-xl font-bold">ST FileNo - {{ $application->fileno ?? 'N/A' }}</h2>
+                    <h2 class="text-xl font-bold">STFileNo: {{ $application->fileno ?? 'N/A' }}</h2>
                 </div>
                 
                 <div class="p-6">
@@ -219,12 +219,33 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                                 Unit Owner Details
-                                <button onclick="openDocumentsModal()" class="ml-auto bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded-md flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    View Documents
-                                </button>
+                                
+                                <!-- Action Buttons -->
+                                @php
+                                    $isApproved = ($application->application_status == 'Approved' && $application->planning_recommendation_status == 'Approved');
+                                @endphp
+                                
+                                <div class="ml-auto flex items-center gap-3">
+                                    <!-- Edit Button -->
+                                    <button type="button"
+                                        onclick="editUnitApplication()"
+                                        class="flex items-center px-3 py-1 text-sm font-medium rounded-md transition duration-150 ease-in-out {{ $isApproved ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white' }}"
+                                        {{ $isApproved ? 'disabled' : '' }}
+                                        title="{{ $isApproved ? 'Cannot edit - Both Application Status and Planning Recommendation have been approved' : 'Edit Unit Application' }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                        Edit
+                                    </button>
+                                    
+                                    <!-- View Documents Button -->
+                                    <button onclick="openDocumentsModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded-md flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        View Documents
+                                    </button>
+                                </div>
                             </h3>
                         </div>
 
@@ -775,5 +796,26 @@ window.showFullNames = function(owners) {
       confirmButtonText: 'Close'
     });
   }
+}
+
+// Edit Unit Application Function
+function editUnitApplication() {
+    const applicationId = {{ $application->id ?? 'null' }};
+    
+    Swal.fire({
+        title: 'Edit Unit Application',
+        text: 'Are you sure you want to edit this unit application?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3b82f6',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, Edit',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Redirect to edit page for sub applications
+            window.location.href = `{{ route('sectionaltitling.edit_sub', '') }}/${applicationId}`;
+        }
+    });
 }
 </script>

@@ -343,4 +343,74 @@
     .slider.round:before {
         border-radius: 50%;
     }
+
+    /* Table row selection styles */
+    .table tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8fafc;
+    }
+
+    .table tbody tr.selected-row {
+        background-color: #dbeafe !important;
+        border-left: 4px solid #3b82f6;
+    }
+
+    .table tbody tr.selected-row:hover {
+        background-color: #bfdbfe !important;
+    }
+
+    /* Selected property detail card styles */
+    #selected-property-detail-card {
+        animation: slideIn 0.3s ease-out;
+        border: 2px solid #3b82f6;
+        box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Loading and error card styles */
+    #loading-property-card {
+        animation: fadeIn 0.2s ease-in;
+    }
+
+    #error-property-card {
+        animation: fadeIn 0.2s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Enhance the selected property card appearance */
+    #selected-property-detail-card .bg-blue-100 {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    }
+
+    /* Cursor pointer for clickable table rows */
+    .table tbody tr[style*="cursor: pointer"] {
+        cursor: pointer !important;
+    }
+
+    /* Button hover effects in the detail card */
+    #selected-property-detail-card .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
 </style>

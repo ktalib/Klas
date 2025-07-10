@@ -155,14 +155,28 @@
                                                 <div class="flex items-center space-x-4">
 
                                                     <label class="inline-flex items-center">
-                                                        <input type="radio" name="decision" value="approve"
-                                                            class="form-radio" onchange="toggleObservationsAndReasonContainers(this)">
-                                                        <span class="ml-2 text-sm">Approve</span>
+                                                        <input 
+                                                            type="radio" 
+                                                            name="decision" 
+                                                            value="approve"
+                                                            class="form-radio"
+                                                            onchange="toggleObservationsAndReasonContainers(this)"
+                                                            @if(strtolower($application->planning_recommendation_status ?? '') === 'approve' || strtolower($application->planning_recommendation_status ?? '') === 'approved') checked @endif
+                                                            @if(strtolower($application->planning_recommendation_status ?? '') === 'approve' || strtolower($application->planning_recommendation_status ?? '') === 'approved') disabled @endif
+                                                        >
+                                                        <span class="ml-2 text-sm @if(strtolower($application->planning_recommendation_status ?? '') === 'approve' || strtolower($application->planning_recommendation_status ?? '') === 'approved') text-gray-400 @endif">Approve</span>
                                                     </label>
                                                     <label class="inline-flex items-center">
-                                                        <input type="radio" name="decision" value="decline"
-                                                            class="form-radio" onchange="toggleObservationsAndReasonContainers(this)">
-                                                        <span class="ml-2 text-sm">Decline</span>
+                                                        <input 
+                                                            type="radio" 
+                                                            name="decision" 
+                                                            value="decline"
+                                                            class="form-radio"
+                                                            onchange="toggleObservationsAndReasonContainers(this)"
+                                                            @if(strtolower($application->planning_recommendation_status ?? '') === 'decline' || strtolower($application->planning_recommendation_status ?? '') === 'declined') checked @endif
+                                                            @if(strtolower($application->planning_recommendation_status ?? '') === 'approve' || strtolower($application->planning_recommendation_status ?? '') === 'approved') disabled @endif
+                                                        >
+                                                        <span class="ml-2 text-sm @if(strtolower($application->planning_recommendation_status ?? '') === 'approve' || strtolower($application->planning_recommendation_status ?? '') === 'approved') text-gray-400 @endif">Decline</span>
                                                     </label>
 
                                                     <script>
@@ -243,7 +257,16 @@
                                                     Back
                                                 </button>
                                                 <button id="planningRecommendationSubmitBtn" type="submit"
-                                                    class="flex items-center px-3 py-1 text-xs bg-green-700 text-white rounded-md hover:bg-gray-800">
+                                                    class="flex items-center px-3 py-1 text-xs rounded-md
+                                                        @if(strtolower($application->planning_recommendation_status ?? '') === 'approve' || strtolower($application->planning_recommendation_status ?? '') === 'approved')
+                                                            bg-gray-400 text-gray-200 cursor-not-allowed
+                                                        @else
+                                                            bg-green-700 text-white hover:bg-gray-800
+                                                        @endif"
+                                                    @if(strtolower($application->planning_recommendation_status ?? '') === 'approve' || strtolower($application->planning_recommendation_status ?? '') === 'approved')
+                                                        disabled
+                                                    @endif
+                                                >
                                                     <i data-lucide="send-horizontal" class="w-3.5 h-3.5 mr-1.5"></i>
                                                     Submit
                                                 </button>

@@ -158,7 +158,23 @@
                   <td class="px-6 py-4 whitespace-nowrap text-sm">John Doe</td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm">Jane Smith</td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm">
-                    <input type="text" class="w-full px-3 py-1 border rounded-md bg-gray-100 instrument-type-display" readonly>
+                    <select class="w-full px-3 py-1 border rounded-md instrument-type-select">
+                      <option value="">Select Type</option>
+                      <option value="ST Assignment (Transfer of Title)">ST Assignment (Transfer of Title)</option>
+                      <option value="Sectional Titling CofO">Sectional Titling CofO</option>
+                      <option value="Regular CofO">Regular CofO</option> 
+                      <option value="SLTR CofO">SLTR CofO</option> 
+                      <option value="Mortgage">Mortgage</option>
+                      <option value="Lease">Lease</option>
+                      <option value="Sub-Lease">Sub-Lease</option>
+                      <option value="Consent">Consent</option>
+                      <option value="Release">Release</option>
+                      <option value="Surrender">Surrender</option>
+                      <option value="Vesting Order">Vesting Order</option>
+                      <option value="Deed of Variation">Deed of Variation</option>
+                      <option value="Assent">Assent</option>
+                      <option value="Merger">Merger</option>
+                    </select>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm">1/1/1</td>
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm">

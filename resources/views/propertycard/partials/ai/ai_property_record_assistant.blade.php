@@ -131,15 +131,6 @@ tailwind.config = {
 .collapsible-content.expanded {
   max-height: 2000px;
 }
-
-/* Instrument card styles */
-.instrument-card {
-  border-left: 4px solid #3b82f6;
-}
-
-.instrument-card.editing {
-  border-left-color: #10b981;
-}
 </style>
 </head>
 <body class="min-h-screen bg-gray-50">
@@ -324,72 +315,12 @@ tailwind.config = {
         <h3 class="text-xl font-semibold text-gray-900">AI Extracted Property Details</h3>
       </div>
       <p id="extraction-confidence" class="text-sm text-gray-600 mt-1">
-        Review the details extracted by the AI. Add or modify instruments as needed, then save the record.
+        Review the details extracted by the AI and complete the form below to save the record.
       </p>
     </div>
    
     <div class="p-6 space-y-6">
-      <!-- Property Information Form -->
-      <div class="space-y-4">
-        <h4 class="text-lg font-medium text-gray-900 border-b pb-2">Property Information</h4>
-        
-        @include('propertycard.partials.fileno', ['prefix' => ''])
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">Plot No</label>
-            <input id="plot-no" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm transition-all focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10" placeholder="e.g., Plot 123" />
-          </div>
-          
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">LGA/City</label>
-            <input id="lga-city" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm transition-all focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10" placeholder="e.g., Lokoja" />
-          </div>
-
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">Title/Property Holder</label>
-            <input id="property-holder" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm transition-all focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10" placeholder="e.g., ALH. AUWALU BATURE GARKUWA" />
-          </div>
-        </div>
-        
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">Property Description</label>
-          <textarea id="property-description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm transition-all focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10" placeholder="Detailed property description..."></textarea>
-        </div>
-      </div>
-
-      <!-- Instruments Manager -->
-      <div class="border-t pt-6">
-        <div class="space-y-4">
-          <div class="flex items-center justify-between">
-            <h4 class="text-lg font-medium text-gray-900">Document Instruments</h4>
-            <button id="add-instrument-btn" class="inline-flex items-center justify-center rounded-md font-medium text-sm px-3 py-1 transition-all cursor-pointer bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 gap-2">
-              <i data-lucide="plus" class="h-4 w-4"></i>
-              Add Instrument
-            </button>
-          </div>
-          
-          <!-- No Instruments State -->
-          <div id="no-instruments" class="text-center py-8 text-gray-500 border-2 border-dashed border-gray-200 rounded-lg">
-            <i data-lucide="file-key-2" class="h-8 w-8 mx-auto mb-2 text-gray-400"></i>
-            <p class="text-sm">No instruments added yet</p>
-            <p class="text-xs text-gray-400">Click "Add Instrument" to get started</p>
-          </div>
-          
-          <!-- Instruments List -->
-          <div id="instruments-list" class="space-y-3">
-            <!-- Instruments will be inserted here -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Save Button -->
-      <div class="flex justify-end pt-4 border-t">
-        <button id="save-record-btn" class="inline-flex items-center justify-center rounded-md font-medium text-sm px-4 py-2 transition-all cursor-pointer border-0 bg-green-600 text-white hover:bg-green-700 gap-2">
-          <i data-lucide="check-circle" class="h-4 w-4"></i>
-          Save Property Record
-        </button>
-      </div>
+      @include('propertycard.partials.add_property_record', ['is_ai_assistant' => true])
     </div>
   </div>
 </div>
@@ -410,8 +341,6 @@ let extractedPropertyData = null;
 let keywordFindings = {};
 let currentAiStage = 'idle';
 let aiProgress = 0;
-let instruments = [];
-let editingInstrumentId = null;
 
 // Initialize PDF.js
 if (window.pdfjsLib) {
@@ -448,15 +377,9 @@ function setupEventListeners() {
   
   // Raw text toggle
   document.getElementById('toggle-raw-text').addEventListener('click', toggleRawText);
-  
-  // Instruments
-  document.getElementById('add-instrument-btn').addEventListener('click', addInstrument);
-  
-  // Property form auto-generation and validation - Initialize file number component
-  initFileNumberComponent('');
-  
-  // Save record
-  document.getElementById('save-record-btn').addEventListener('click', handleSaveRecord);
+
+  // Initialize file number component for the embedded form
+  initFileNumberComponent('property_');
 }
 
 async function handleFileChange(event) {
@@ -644,26 +567,6 @@ async function startAiPropertyProcessing() {
     aiProgress = 100;
     updateAiProcessingUI();
     
-    // Initialize instruments from extracted data
-    if (finalData.instrument) {
-      instruments = [{
-        id: Date.now().toString(),
-        type: finalData.instrument,
-        description: '',
-        parties: {
-          assignor: finalData.assignor || '',
-          assignee: finalData.assignee || ''
-        },
-        registrationDetails: {
-          serialNo: finalData.serialNo || '',
-          page: finalData.page || '',
-          vol: finalData.vol || '',
-          regNo: finalData.regNo || ''
-        },
-        notes: ''
-      }];
-    }
-    
     showExtractionResults();
     showToast('AI processing complete. Review extracted data.', 'success');
     
@@ -802,7 +705,6 @@ function extractPropertyInstrumentDetails(text, fileName) {
     originalFileName: fileName,
     extractedText: text,
     confidence: 0,
-    instruments: []
   };
   
   let foundFields = 0;
@@ -812,23 +714,18 @@ function extractPropertyInstrumentDetails(text, fileName) {
     newFileNumber: [
       /NEW\s+FILE\s+NUMBER[:\s]*([A-Z0-9/\s-]+?)(?:\s+PLOT|\s+TITLE|\s*$)/i,
       /NEW\s+FILE\s+NO[:\s]*([A-Z0-9/\s-]+?)(?:\s+PLOT|\s+TITLE|\s*$)/i,
-      // Look for patterns after "NEW FILE NUMBER" label
       /NEW\s+FILE\s+NUMBER.*?([A-Z]{2,4}\/[A-Z]{2,4}\/\d{4}\/\d{2,4})/i,
       /NEW\s+FILE\s+NUMBER.*?(LKN\/COM\/\d{4}\/\d{2,4})/i,
     ],
     plotNumber: [
       /PLOT\s+NUMBER[:\s]*([A-Z0-9\s-]+?)(?:\s+TITLE|\s+OLD|\s*$)/i,
       /PLOT\s+NO[:\s]*([A-Z0-9\s-]+?)(?:\s+TITLE|\s+OLD|\s*$)/i,
-      // Look for patterns after "PLOT NUMBER" label
       /PLOT\s+NUMBER.*?([A-Z0-9\s-]+?)(?:\s|$)/i,
     ],
     title: [
       /TITLE[:\s]*([A-Z\s.,'-]+?)(?:\s+OLD\s+FILE|\s+TO|\s*$)/i,
-      // More specific patterns for the TITLE field on recertification forms
       /TITLE[:\s]+([A-Z][A-Z\s.,'-]{5,50})(?:\s+OLD|\s+TO|\s*$)/i,
-      // Handle handwritten names after TITLE label
       /TITLE[:\s]*([A-Z][a-zA-Z\s.,'-]{10,60})(?:\s+OLD\s+FILE|\s+TO|\s*$)/i,
-      // Common Nigerian name patterns with titles
       /TITLE[:\s]*(ALH\.?\s+[A-Z\s.,'-]+?)(?:\s+OLD|\s+TO|\s*$)/i,
       /TITLE[:\s]*(ALHAJI\s+[A-Z\s.,'-]+?)(?:\s+OLD|\s+TO|\s*$)/i,
       /TITLE[:\s]*(DR\.?\s+[A-Z\s.,'-]+?)(?:\s+OLD|\s+TO|\s*$)/i,
@@ -836,13 +733,11 @@ function extractPropertyInstrumentDetails(text, fileName) {
       /TITLE[:\s]*(MR\.?\s+[A-Z\s.,'-]+?)(?:\s+OLD|\s+TO|\s*$)/i,
       /TITLE[:\s]*(MRS\.?\s+[A-Z\s.,'-]+?)(?:\s+OLD|\s+TO|\s*$)/i,
       /TITLE[:\s]*(MISS\.?\s+[A-Z\s.,'-]+?)(?:\s+OLD|\s+TO|\s*$)/i,
-      // Pattern to catch names that might have OCR artifacts
       /TITLE[:\s]*([A-Z][A-Za-z\s.,'-_]{8,50})(?:\s+OLD|\s+TO|\s*$)/i,
     ],
     oldFileNumber: [
       /OLD\s+FILE\s+NUMBER[:\s]*([A-Z0-9/\s-]+?)(?:\s+TO|\s*$)/i,
       /OLD\s+FILE\s+NO[:\s]*([A-Z0-9/\s-]+?)(?:\s+TO|\s*$)/i,
-      // Look for patterns after "OLD FILE NUMBER" label
       /OLD\s+FILE\s+NUMBER.*?([A-Z]{2,4}\/[A-Z]{2,4}\/\d{4}\/\d{2,4})/i,
       /OLD\s+FILE\s+NUMBER.*?(COM\/\d{4}\/\d{2,4})/i,
     ]
@@ -853,13 +748,9 @@ function extractPropertyInstrumentDetails(text, fileName) {
     const match = cleanText.match(pattern);
     if (match?.[1]) {
       const fileNo = match[1].trim().replace(/[_\s]+/g, '');
-      if (fileNo.length > 3) { // Ensure it's not just noise
+      if (fileNo.length > 3) {
         data.fileNo = fileNo;
-        
-        // Store the original file number for form population
         data.originalFileNo = fileNo;
-        
-        // Determine the file number type based on format
         if (fileNo.includes('KN') && !fileNo.includes('/')) {
           data.fileNumberType = 'NewKANGIS';
         } else if (fileNo.includes(' ') && (fileNo.includes('KNML') || fileNo.includes('MNKL') || fileNo.includes('MLKN') || fileNo.includes('KNGP'))) {
@@ -867,9 +758,8 @@ function extractPropertyInstrumentDetails(text, fileName) {
         } else if (fileNo.includes('-') || fileNo.includes('COM') || fileNo.includes('RES')) {
           data.fileNumberType = 'MLS';
         } else {
-          data.fileNumberType = 'MLS'; // default
+          data.fileNumberType = 'MLS';
         }
-        
         foundFields++;
         break;
       }
@@ -889,14 +779,14 @@ function extractPropertyInstrumentDetails(text, fileName) {
     }
   }
 
-  // Extract TITLE (property holder name) - enhanced for recertification forms
+  // Extract TITLE (property holder name)
   for (const pattern of recertificationPatterns.title) {
     const match = cleanText.match(pattern);
     if (match?.[1]) {
       const title = match[1].trim().replace(/[_\s]+/g, ' ').replace(/[,.]$/, '');
       if (title.length > 3 && title !== '_' && title !== '-') {
         data.propertyHolder = title;
-        data.assignee = title; // Use as assignee for consistency
+        data.assignee = title;
         foundFields++;
         break;
       }
@@ -916,7 +806,7 @@ function extractPropertyInstrumentDetails(text, fileName) {
     }
   }
 
-  // If no recertification data found, fall back to standard patterns
+  // Fallback for standard file numbers
   if (!data.fileNo) {
     const standardFileNoPatterns = [
       /(?:File\s*No\.?|FILE\s*NUMBER|File\s*Number)\s*:?\s*(LKN\/COM\/[A-Z0-9/\s-]+)/i,
@@ -933,11 +823,7 @@ function extractPropertyInstrumentDetails(text, fileName) {
       if (match?.[1]) {
         const fileNo = match[1].trim();
         data.fileNo = fileNo;
-        
-        // Store the original file number for form population
         data.originalFileNo = fileNo;
-        
-        // Determine the file number type based on format
         if (fileNo.includes('KN') && !fileNo.includes('/')) {
           data.fileNumberType = 'NewKANGIS';
         } else if (fileNo.includes(' ') && (fileNo.includes('KNML') || fileNo.includes('MNKL') || fileNo.includes('MLKN') || fileNo.includes('KNGP'))) {
@@ -945,16 +831,15 @@ function extractPropertyInstrumentDetails(text, fileName) {
         } else if (fileNo.includes('-') || fileNo.includes('COM') || fileNo.includes('RES')) {
           data.fileNumberType = 'MLS';
         } else {
-          data.fileNumberType = 'MLS'; // default
+          data.fileNumberType = 'MLS';
         }
-        
         foundFields++;
         break;
       }
     }
   }
 
-  // Enhanced LGA/City extraction
+  // LGA/City extraction
   const lgaPatterns = [
     /(?:LGA|Local\s*Government\s*Area)\s*:?\s*([A-Za-z\s]+?)(?:\s+State|\s+in\s+|\s*,|\s*\.|\n|$)/i,
     /(?:in\s+|at\s+)([A-Za-z\s]+?)\s+Local\s+Government/i,
@@ -972,27 +857,14 @@ function extractPropertyInstrumentDetails(text, fileName) {
     }
   }
   
-  // Enhanced Instrument type detection
+  // Instrument type detection
   const instrumentPatterns = [
-    /(DEED\s+OF\s+ASSIGNMENT)/i,
-    /(CERTIFICATE\s+OF\s+OCCUPANCY)/i,
-    /(RIGHT\s+OF\s+OCCUPANCY)/i,
-    /(DEED\s+OF\s+MORTGAGE)/i,
-    /(TRIPARTITE\s+MORTGAGE)/i,
-    /(DEED\s+OF\s+LEASE)/i,
-    /(DEED\s+OF\s+SUB-LEASE)/i,
-    /(DEED\s+OF\s+SUB-UNDER\s+LEASE)/i,
-    /(DEED\s+OF\s+SURRENDER)/i,
-    /(DEED\s+OF\s+ASSENT)/i,
-    /(DEED\s+OF\s+RELEASE)/i,
-    /(POWER\s+OF\s+ATTORNEY)/i,
-    /(IRREVOCABLE\s+POWER\s+OF\s+ATTORNEY)/i,
-    /(DEED\s+OF\s+SUB-DIVISION)/i,
-    /(DEED\s+OF\s+MERGER)/i,
-    /(SURVEY\s+PLAN)/i,
-    /(C\s+OF\s+O)/i,
-    /(R\s+OF\s+O)/i,
-    /(RECERTIFICATION)/i
+    /(DEED\s+OF\s+ASSIGNMENT)/i, /(CERTIFICATE\s+OF\s+OCCUPANCY)/i, /(RIGHT\s+OF\s+OCCUPANCY)/i,
+    /(DEED\s+OF\s+MORTGAGE)/i, /(TRIPARTITE\s+MORTGAGE)/i, /(DEED\s+OF\s+LEASE)/i,
+    /(DEED\s+OF\s+SUB-LEASE)/i, /(DEED\s+OF\s+SUB-UNDER\s+LEASE)/i, /(DEED\s+OF\s+SURRENDER)/i,
+    /(DEED\s+OF\s+ASSENT)/i, /(DEED\s+OF\s+RELEASE)/i, /(POWER\s+OF\s+ATTORNEY)/i,
+    /(IRREVOCABLE\s+POWER\s+OF\s+ATTORNEY)/i, /(DEED\s+OF\s+SUB-DIVISION)/i, /(DEED\s+OF\s+MERGER)/i,
+    /(SURVEY\s+PLAN)/i, /(C\s+OF\s+O)/i, /(R\s+OF\s+O)/i, /(RECERTIFICATION)/i
   ];
   
   for (const pattern of instrumentPatterns) {
@@ -1004,7 +876,7 @@ function extractPropertyInstrumentDetails(text, fileName) {
     }
   }
   
-  // Enhanced Parties extraction (if not already found in title)
+  // Parties extraction
   if (!data.assignor) {
     const assignorPatterns = [
       /(?:ASSIGNOR|VENDOR|GRANTOR)\s*:?\s*([A-Za-z\s.,'-]+?)(?:\s+(?:ASSIGNEE|PURCHASER|GRANTEE|Address|Property|Consideration))/i,
@@ -1039,7 +911,7 @@ function extractPropertyInstrumentDetails(text, fileName) {
     }
   }
   
-  // Enhanced Registration details extraction
+  // Registration details extraction
   const regDetailsPatterns = [
     /Registered\s+as\s+No\.?\s*(\d+)\s*\/?\s*Page\s*(\d+)\s*\/?\s*Volume\s*(\d+)/i,
     /Registration\s+No\.?\s*(\d+)\s*\/?\s*Page\s*(\d+)\s*\/?\s*Vol\.?\s*(\d+)/i,
@@ -1059,7 +931,7 @@ function extractPropertyInstrumentDetails(text, fileName) {
     }
   }
   
-  // Enhanced Description extraction
+  // Description extraction
   const descriptionPatterns = [
     /(?:Property\s*Description|ALL\s*THAT\s*parcel\s*of\s*land|Description\s*of\s*Property)\s*:?\s*([^.]+?)(?:\.|$)/i,
     /ALL\s+THAT\s+([^.]+?)(?:\.|situate)/i,
@@ -1076,7 +948,7 @@ function extractPropertyInstrumentDetails(text, fileName) {
     }
   }
   
-  // Calculate confidence based on found fields
+  // Calculate confidence
   const totalPossibleFields = 12;
   data.confidence = Math.min(100, Math.round((foundFields / totalPossibleFields) * 100));
   data.extractionStatus = data.confidence > 70 ? 'High Confidence' :
@@ -1089,25 +961,10 @@ function extractPropertyInstrumentDetails(text, fileName) {
 function analyzeTextForKeywords(text) {
   const findings = {};
   const keywords = [
-    'POWER OF ATTORNEY',
-    'IRREVOCABLE POWER OF ATTORNEY',
-    'DEED OF MORTGAGE',
-    'TRIPARTITE MORTGAGE',
-    'DEED OF ASSIGNMENT',
-    'DEED OF LEASE',
-    'DEED OF SUB-LEASE',
-    'DEED OF SUB-UNDER LEASE',
-    'DEED OF SUB-DIVISION',
-    'DEED OF MERGER',
-    'DEED OF SURRENDER',
-    'DEED OF ASSENT',
-    'DEED OF RELEASE',
-    'CERTIFICATE OF OCCUPANCY',
-    'C OF O',
-    'RIGHT OF OCCUPANCY',
-    'R OF O',
-    'SURVEY PLAN',
-    'RECERTIFICATION'
+    'POWER OF ATTORNEY', 'IRREVOCABLE POWER OF ATTORNEY', 'DEED OF MORTGAGE', 'TRIPARTITE MORTGAGE',
+    'DEED OF ASSIGNMENT', 'DEED OF LEASE', 'DEED OF SUB-LEASE', 'DEED OF SUB-UNDER LEASE',
+    'DEED OF SUB-DIVISION', 'DEED OF MERGER', 'DEED OF SURRENDER', 'DEED OF ASSENT', 'DEED OF RELEASE',
+    'CERTIFICATE OF OCCUPANCY', 'C OF O', 'RIGHT OF OCCUPANCY', 'R OF O', 'SURVEY PLAN', 'RECERTIFICATION'
   ];
   
   const pageMarkerRegex = /--- Page (\d+)(?:\s*$$OCR$$)?\s*---/gi;
@@ -1118,14 +975,7 @@ function analyzeTextForKeywords(text) {
     matches.forEach((currentMatch, i) => {
       const pageNum = parseInt(currentMatch[1], 10);
       const contentStartIndex = currentMatch.index + currentMatch[0].length;
-      let contentEndIndex;
-      
-      if (i + 1 < matches.length) {
-        contentEndIndex = matches[i + 1].index;
-      } else {
-        contentEndIndex = text.length;
-      }
-      
+      let contentEndIndex = (i + 1 < matches.length) ? matches[i + 1].index : text.length;
       const pageContent = text.substring(contentStartIndex, contentEndIndex);
       pageContents.push({ content: pageContent, pageNum });
     });
@@ -1159,11 +1009,9 @@ function hideAiProcessing() {
 }
 
 function updateAiProcessingUI() {
-  // Update progress bar
   document.getElementById('ai-progress-text').textContent = `${Math.round(aiProgress)}% Complete`;
   document.getElementById('ai-progress-bar').style.width = `${aiProgress}%`;
   
-  // Update stage indicators
   const stages = ['initializing', 'ocr', 'layoutAnalysis', 'dataExtraction', 'dataAssembly', 'complete'];
   const currentStageIndex = stages.indexOf(currentAiStage);
   
@@ -1172,21 +1020,17 @@ function updateAiProcessingUI() {
     const text = indicator.querySelector('.text-xs');
     
     if (index < currentStageIndex) {
-      // Completed stage
       circle.className = 'w-4 h-4 rounded-full bg-blue-500 mb-1';
       text.className = 'text-xs font-medium text-blue-600';
     } else if (index === currentStageIndex) {
-      // Current stage
       circle.className = 'w-4 h-4 rounded-full bg-blue-500 ring-4 ring-blue-100 animate-pulse mb-1';
       text.className = 'text-xs font-bold text-blue-700';
     } else {
-      // Future stage
       circle.className = 'w-4 h-4 rounded-full bg-gray-300 mb-1';
       text.className = 'text-xs text-gray-500';
     }
   });
   
-  // Update stage description
   updateStageDescription();
 }
 
@@ -1196,36 +1040,12 @@ function updateStageDescription() {
   const stageIcon = document.getElementById('ai-stage-icon');
   
   const stageInfo = {
-    'initializing': {
-      title: 'Initializing',
-      description: 'Initializing AI for property document analysis...',
-      icon: 'brain'
-    },
-    'ocr': {
-      title: 'OCR',
-      description: 'Performing OCR to extract text from the document...',
-      icon: 'file-digit'
-    },
-    'layoutAnalysis': {
-      title: 'Layout Analysis',
-      description: 'Analyzing document structure...',
-      icon: 'file-search'
-    },
-    'dataExtraction': {
-      title: 'Data Extraction',
-      description: 'Extracting key property details: File No, Parties, Plot, Instrument...',
-      icon: 'layers'
-    },
-    'dataAssembly': {
-      title: 'Data Assembly',
-      description: 'Structuring extracted information...',
-      icon: 'zap'
-    },
-    'complete': {
-      title: 'Complete',
-      description: 'Property document analysis complete! Review data in the form.',
-      icon: 'sparkles'
-    }
+    'initializing': { title: 'Initializing', description: 'Initializing AI for property document analysis...', icon: 'brain' },
+    'ocr': { title: 'OCR', description: 'Performing OCR to extract text from the document...', icon: 'file-digit' },
+    'layoutAnalysis': { title: 'Layout Analysis', description: 'Analyzing document structure...', icon: 'file-search' },
+    'dataExtraction': { title: 'Data Extraction', description: 'Extracting key property details: File No, Parties, Plot, Instrument...', icon: 'layers' },
+    'dataAssembly': { title: 'Data Assembly', description: 'Structuring extracted information...', icon: 'zap' },
+    'complete': { title: 'Complete', description: 'Property document analysis complete! Review data in the form.', icon: 'sparkles' }
   };
   
   const info = stageInfo[currentAiStage] || stageInfo['initializing'];
@@ -1234,19 +1054,17 @@ function updateStageDescription() {
   stageDescription.textContent = info.description;
   stageIcon.setAttribute('data-lucide', info.icon);
   
-  // Re-initialize Lucide icons
   lucide.createIcons();
 }
 
 function showExtractionResults() {
-  // Show keyword findings
   const instrumentsFound = Object.keys(keywordFindings).filter(keyword => keywordFindings[keyword].length > 0);
   if (instrumentsFound.length > 0) {
     const keywordCard = document.getElementById('keyword-findings');
     const description = document.getElementById('keyword-findings-description');
     const list = document.getElementById('keyword-findings-list');
     
-    description.textContent = `This file contains ${instrumentsFound.length} ${instrumentsFound.length === 1 ? 'instrument' : 'instruments'}:`;
+    description.textContent = `This file may contain ${instrumentsFound.length} document type(s):`;
     
     instrumentsFound.sort();
     list.innerHTML = instrumentsFound.map(instrument => `
@@ -1259,18 +1077,14 @@ function showExtractionResults() {
     keywordCard.classList.remove('hidden');
   }
   
-  // Show raw text
   if (rawExtractedText) {
     const rawTextCard = document.getElementById('raw-text-card');
-    const textarea = document.getElementById('raw-text-textarea');
-    textarea.value = rawExtractedText;
+    document.getElementById('raw-text-textarea').value = rawExtractedText;
     rawTextCard.classList.remove('hidden');
   }
   
-  // Show extracted details
   if (extractedPropertyData) {
     populatePropertyForm();
-    renderInstruments();
     document.getElementById('extracted-details').classList.remove('hidden');
   }
 }
@@ -1280,387 +1094,83 @@ function populatePropertyForm() {
   
   const data = extractedPropertyData;
   
-  // Set confidence display with additional info about file numbers and property holder
-  let confidenceText = `Review the details extracted by the AI. Add or modify instruments as needed, then save the record. Confidence: ${data.confidence}% (${data.extractionStatus})`;
-
+  let confidenceText = `Review the details extracted by the AI and complete the form below to save the record. Confidence: ${data.confidence}% (${data.extractionStatus})`;
   if (data.oldFileNo && data.fileNo) {
     confidenceText += ` | Found transition: ${data.oldFileNo} → ${data.fileNo}`;
   } else if (data.oldFileNo) {
     confidenceText += ` | Old File No: ${data.oldFileNo}`;
   }
-  
   if (data.propertyHolder) {
     confidenceText += ` | Property Holder: ${data.propertyHolder}`;
   }
-
   document.getElementById('extraction-confidence').textContent = confidenceText;
 
-  // Populate form fields with proper fallbacks
-  // Parse the extracted file number to fit the new tab-based format
   if (data.fileNo) {
     const fileNo = data.fileNo;
-    
-    // Determine which tab to use and populate accordingly
     if (fileNo.includes('KN') && !fileNo.includes('/')) {
-      // New KANGIS format (e.g., "KN1586")
       const match = fileNo.match(/^(KN)(\d+)$/);
       if (match) {
-        document.getElementById('newKangisFileNoPrefix').value = match[1];
-        document.getElementById('newKangisFileNumber').value = match[2];
-        updateNewKangisFileNumberPreview('');
-        // Switch to New KANGIS tab
-        const tabButton = document.querySelector('[onclick*="NewKANGISFilenoTab"]');
-        if (tabButton) {
-          openFileTab('', { currentTarget: tabButton }, 'NewKANGISFilenoTab');
-        }
+        document.getElementById('property_newKangisFileNoPrefix').value = match[1];
+        document.getElementById('property_newKangisFileNumber').value = match[2];
+        updateNewKangisFileNumberPreview('property_');
+        const tabButton = document.querySelector('[onclick*="property_NewKANGISFilenoTab"]');
+        if (tabButton) openFileTab('property_', { currentTarget: tabButton }, 'property_NewKANGISFilenoTab');
       }
     } else if (fileNo.includes(' ') && (fileNo.includes('KNML') || fileNo.includes('MNKL') || fileNo.includes('MLKN') || fileNo.includes('KNGP'))) {
-      // KANGIS format (e.g., "KNML 00001")
       const parts = fileNo.split(' ');
       if (parts.length === 2) {
-        document.getElementById('kangisFileNoPrefix').value = parts[0];
-        document.getElementById('kangisFileNumber').value = parts[1];
-        updateKangisFileNumberPreview('');
-        // Switch to KANGIS tab
-        const tabButton = document.querySelector('[onclick*="kangisFileNoTab"]');
-        if (tabButton) {
-          openFileTab('', { currentTarget: tabButton }, 'kangisFileNoTab');
-        }
-      }
-    } else if (fileNo.includes('-')) {
-      // MLS format (e.g., "COM-2022-572")
-      const parts = fileNo.split('-');
-      if (parts.length >= 2) {
-        document.getElementById('mlsFileNoPrefix').value = parts[0];
-        document.getElementById('mlsFileNumber').value = parts.slice(1).join('-');
-        updateMlsFileNumberPreview('');
-        // Switch to MLS tab (default, so no need to switch)
+        document.getElementById('property_kangisFileNoPrefix').value = parts[0];
+        document.getElementById('property_kangisFileNumber').value = parts[1];
+        updateKangisFileNumberPreview('property_');
+        const tabButton = document.querySelector('[onclick*="property_kangisFileNoTab"]');
+        if (tabButton) openFileTab('property_', { currentTarget: tabButton }, 'property_kangisFileNoTab');
       }
     } else {
-      // Try to parse other formats and convert to MLS as default
-      const parts = fileNo.split('/');
-      if (parts.length >= 2) {
-        let prefix = 'COM'; // default
-        if (parts[1] && parts[1].includes('RES')) prefix = 'RES';
-        else if (parts[1] && parts[1].includes('IND')) prefix = 'CON-IND';
-        
-        document.getElementById('mlsFileNoPrefix').value = prefix;
-        
-        // Combine remaining parts as serial number
-        const serial = parts.slice(2).join('-');
-        document.getElementById('mlsFileNumber').value = serial || '2024-001';
-        updateMlsFileNumberPreview('');
-      }
-    }
-  }
-
-  const plotNoField = document.getElementById('plot-no');
-  if (data.plotNo) {
-    plotNoField.value = data.plotNo;
-  }
-
-  const lgaCityField = document.getElementById('lga-city');
-  if (data.lgsaOrCity) {
-    lgaCityField.value = data.lgsaOrCity;
-  }
-
-  const propertyHolderField = document.getElementById('property-holder');
-  if (data.propertyHolder) {
-    propertyHolderField.value = data.propertyHolder;
-  }
-
-  const propertyDescField = document.getElementById('property-description');
-  if (data.description) {
-    propertyDescField.value = data.description;
-  }
-
-  // Trigger the complete file number update
-  updateCompleteFileNo();
-}
-
-function updateCompleteFileNo() {
-  // File number updates are now handled by the file number component
-  // This function is kept for compatibility but delegates to the component
-  updateFormFileData('');
-}
-
-
-function addInstrument() {
-  const newInstrument = {
-    id: Date.now().toString(),
-    type: extractedPropertyData?.instrument || '',
-    description: '',
-    parties: {
-      assignor: extractedPropertyData?.assignor || '',
-      assignee: extractedPropertyData?.assignee || extractedPropertyData?.propertyHolder || ''
-    },
-    registrationDetails: {
-      serialNo: extractedPropertyData?.serialNo || '',
-      page: extractedPropertyData?.page || '',
-      vol: extractedPropertyData?.vol || '',
-      regNo: extractedPropertyData?.regNo || ''
-    },
-    notes: ''
-  };
-
-  instruments.push(newInstrument);
-  editingInstrumentId = newInstrument.id;
-  renderInstruments();
-}
-
-function removeInstrument(id) {
-  instruments = instruments.filter(inst => inst.id !== id);
-  if (editingInstrumentId === id) {
-    editingInstrumentId = null;
-  }
-  renderInstruments();
-}
-
-function toggleInstrumentEdit(id) {
-  editingInstrumentId = editingInstrumentId === id ? null : id;
-  renderInstruments();
-}
-
-function updateInstrument(id, field, value) {
-  const instrument = instruments.find(inst => inst.id === id);
-  if (instrument) {
-    if (field.includes('.')) {
-      const [parent, child] = field.split('.');
-      if (!instrument[parent]) instrument[parent] = {};
-      instrument[parent][child] = value;
-      
-      // Auto-generate regNo when all parts are available
-      if (parent === 'registrationDetails') {
-        const details = instrument.registrationDetails;
-        if (details.serialNo && details.page && details.vol) {
-          details.regNo = `${details.serialNo}/${details.page}/${details.vol}`;
+      let prefix = 'COM';
+      let number = fileNo;
+      if (fileNo.includes('-')) {
+        const parts = fileNo.split('-');
+        if (parts.length >= 2) {
+          prefix = parts[0];
+          number = parts.slice(1).join('-');
+        }
+      } else if (fileNo.includes('/')) {
+        const parts = fileNo.split('/');
+        if (parts.length >= 2) {
+          if (parts[1] && parts[1].includes('RES')) prefix = 'RES';
+          else if (parts[1] && parts[1].includes('IND')) prefix = 'CON-IND';
+          number = parts.slice(2).join('-') || '2024-001';
         }
       }
-    } else {
-      instrument[field] = value;
+      document.getElementById('property_mlsFileNoPrefix').value = prefix;
+      document.getElementById('property_mlsFileNumber').value = number;
+      updateMlsFileNumberPreview('property_');
     }
-    renderInstruments();
   }
-}
-
-function renderInstruments() {
-  const container = document.getElementById('instruments-list');
-  const noInstruments = document.getElementById('no-instruments');
-
-  if (instruments.length === 0) {
-    container.innerHTML = '';
-    noInstruments.classList.remove('hidden');
-    return;
+  
+  if (data.plotNo) document.getElementById('plotNo').value = data.plotNo;
+  if (data.lgsaOrCity) document.getElementById('lga').value = data.lgsaOrCity;
+  
+  if (data.instrument) {
+    const transactionField = document.getElementById('transactionType-record');
+    if (transactionField) {
+      const instrumentMapping = {
+        'DEED OF ASSIGNMENT': 'Assignment', 'DEED OF MORTGAGE': 'Mortgage', 'TRIPARTITE MORTGAGE': 'Mortgage',
+        'DEED OF SURRENDER': 'Surrender', 'DEED OF SUB-LEASE': 'Sub-Lease', 'DEED OF RELEASE': 'Release',
+        'CERTIFICATE OF OCCUPANCY': 'Certificate of Occupancy', 'RIGHT OF OCCUPANCY': 'Right Of Occupancy',
+        'POWER OF ATTORNEY': 'Power of Attorney', 'IRREVOCABLE POWER OF ATTORNEY': 'Power of Attorney'
+      };
+      transactionField.value = instrumentMapping[data.instrument] || 'Other';
+      transactionField.dispatchEvent(new Event('change'));
+    }
   }
-
-  noInstruments.classList.add('hidden');
-
-  const instrumentTypes = [
-    'DEED OF ASSIGNMENT',
-    'CERTIFICATE OF OCCUPANCY',
-    'RIGHT OF OCCUPANCY',
-    'DEED OF MORTGAGE',
-    'TRIPARTITE MORTGAGE',
-    'DEED OF LEASE',
-    'DEED OF SUB-LEASE',
-    'DEED OF SUB-UNDER LEASE',
-    'DEED OF SURRENDER',
-    'DEED OF ASSENT',
-    'DEED OF RELEASE',
-    'POWER OF ATTORNEY',
-    'IRREVOCABLE POWER OF ATTORNEY',
-    'DEED OF SUB-DIVISION',
-    'DEED OF MERGER',
-    'SURVEY PLAN',
-    'RECERTIFICATION',
-    'OTHER'
-  ];
-
-  container.innerHTML = instruments.map((instrument, index) => {
-    const isEditing = editingInstrumentId === instrument.id;
-    
-    return `
-      <div class="bg-white rounded-lg border instrument-card ${isEditing ? 'editing' : ''}">
-        <div class="p-4 border-b border-gray-200">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-sm font-medium">Instrument #${index + 1}</span>
-              ${instrument.type ? `<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${instrument.type}</span>` : ''}
-            </div>
-            <div class="flex items-center gap-1">
-              <button onclick="toggleInstrumentEdit('${instrument.id}')" class="inline-flex items-center justify-center rounded-md font-medium text-sm px-2 py-1 transition-all cursor-pointer bg-transparent text-gray-700 hover:bg-gray-100">
-                <i data-lucide="edit-3" class="h-4 w-4"></i>
-              </button>
-              <button onclick="removeInstrument('${instrument.id}')" class="inline-flex items-center justify-center rounded-md font-medium text-sm px-2 py-1 transition-all cursor-pointer bg-transparent text-red-600 hover:bg-red-50">
-                <i data-lucide="trash-2" class="h-4 w-4"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        ${isEditing ? `
-          <div class="p-4 space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="space-y-2">
-                <label class="text-xs font-medium text-gray-700">Instrument Type</label>
-                <select onchange="updateInstrument('${instrument.id}', 'type', this.value)" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm transition-all focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10">
-                  <option value="">Select instrument type</option>
-                  ${instrumentTypes.map(type => `
-                    <option value="${type}" ${instrument.type === type ? 'selected' : ''}>${type}</option>
-                  `).join('')}
-                </select>
-              </div>
-              <div class="space-y-2">
-                <label class="text-xs font-medium text-gray-700">Description</label>
-                <input
-                  type="text"
-                  value="${instrument.description || ''}"
-                  onchange="updateInstrument('${instrument.id}', 'description', this.value)"
-                  placeholder="Brief description"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm transition-all focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
-                />
-              </div>
-            </div>
-            
-            <!-- Parties Section -->
-            <div class="space-y-2">
-              <label class="text-xs font-medium text-gray-700">Parties Involved</label>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-gray-50 rounded-md">
-                <div class="space-y-1">
-                  <label class="text-xs text-gray-600">Assignor/Grantor</label>
-                  <input
-                    type="text"
-                    value="${instrument.parties?.assignor || instrument.parties?.grantor || ''}"
-                    onchange="updateInstrument('${instrument.id}', 'parties.assignor', this.value)"
-                    placeholder="Name of assignor/grantor"
-                    class="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                  />
-                </div>
-                <div class="space-y-1">
-                  <label class="text-xs text-gray-600">Assignee/Grantee</label>
-                  <input
-                    type="text"
-                    value="${instrument.parties?.assignee || instrument.parties?.grantee || ''}"
-                    onchange="updateInstrument('${instrument.id}', 'parties.assignee', this.value)"
-                    placeholder="Name of assignee/grantee"
-                    class="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                  />
-                </div>
-                ${instrument.type?.includes('MORTGAGE') ? `
-                  <div class="space-y-1">
-                    <label class="text-xs text-gray-600">Mortgagor</label>
-                    <input
-                      type="text"
-                      value="${instrument.parties?.mortgagor || ''}"
-                      onchange="updateInstrument('${instrument.id}', 'parties.mortgagor', this.value)"
-                      placeholder="Name of mortgagor"
-                      class="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                    />
-                  </div>
-                  <div class="space-y-1">
-                    <label class="text-xs text-gray-600">Mortgagee</label>
-                    <input
-                      type="text"
-                      value="${instrument.parties?.mortgagee || ''}"
-                      onchange="updateInstrument('${instrument.id}', 'parties.mortgagee', this.value)"
-                      placeholder="Name of mortgagee"
-                      class="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                    />
-                  </div>
-                ` : ''}
-              </div>
-            </div>
-            
-            <!-- Registration Details Section -->
-            <div class="space-y-2">
-              <label class="text-xs font-medium text-gray-700">Registration Details</label>
-              <div class="grid grid-cols-3 gap-3 p-3 bg-gray-50 rounded-md">
-                <div class="space-y-1">
-                  <label class="text-xs text-gray-600">Serial No.</label>
-                  <input
-                    type="text"
-                    value="${instrument.registrationDetails?.serialNo || ''}"
-                    onchange="updateInstrument('${instrument.id}', 'registrationDetails.serialNo', this.value)"
-                    placeholder="e.g. 1"
-                    class="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                  />
-                </div>
-                <div class="space-y-1">
-                  <label class="text-xs text-gray-600">Page</label>
-                  <input
-                    type="text"
-                    value="${instrument.registrationDetails?.page || ''}"
-                    onchange="updateInstrument('${instrument.id}', 'registrationDetails.page', this.value)"
-                    placeholder="e.g. 1"
-                    class="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                  />
-                </div>
-                <div class="space-y-1">
-                  <label class="text-xs text-gray-600">Volume</label>
-                  <input
-                    type="text"
-                    value="${instrument.registrationDetails?.vol || ''}"
-                    onchange="updateInstrument('${instrument.id}', 'registrationDetails.vol', this.value)"
-                    placeholder="e.g. 2"
-                    class="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                  />
-                </div>
-              </div>
-              ${instrument.registrationDetails?.regNo ? `
-                <div class="mt-2 p-2 bg-green-50 border border-green-100 rounded-md">
-                  <div class="flex items-center justify-between">
-                    <span class="text-xs text-green-700">REG NO:</span>
-                    <span class="text-sm font-medium text-green-800">${instrument.registrationDetails.regNo}</span>
-                  </div>
-                </div>
-              ` : ''}
-            </div>
-            
-            <!-- Notes Section -->
-            <div class="space-y-2">
-              <label class="text-xs font-medium text-gray-700">Additional Notes</label>
-              <textarea
-                value="${instrument.notes || ''}"
-                onchange="updateInstrument('${instrument.id}', 'notes', this.value)"
-                placeholder="Any additional notes about this instrument..."
-                rows="2"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm transition-all focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
-              >${instrument.notes || ''}</textarea>
-            </div>
-            
-            <div class="flex justify-end pt-2">
-              <button onclick="toggleInstrumentEdit('${instrument.id}')" class="inline-flex items-center justify-center rounded-md font-medium text-sm px-3 py-1 transition-all cursor-pointer bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50">
-                Done Editing
-              </button>
-            </div>
-          </div>
-        ` : `
-          <div class="p-4">
-            <div class="text-sm text-gray-600 space-y-1">
-              ${instrument.description ? `
-                <p><span class="font-medium">Description:</span> ${instrument.description}</p>
-              ` : ''}
-              ${(instrument.parties?.assignor || instrument.parties?.grantor) ? `
-                <p><span class="font-medium">From:</span> ${instrument.parties.assignor || instrument.parties.grantor}</p>
-              ` : ''}
-              ${(instrument.parties?.assignee || instrument.parties?.grantee) ? `
-                <p><span class="font-medium">To:</span> ${instrument.parties.assignee || instrument.parties.grantee}</p>
-              ` : ''}
-              ${instrument.registrationDetails?.regNo ? `
-                <p><span class="font-medium">Reg No:</span> ${instrument.registrationDetails.regNo}</p>
-              ` : ''}
-              ${instrument.notes ? `
-                <p><span class="font-medium">Notes:</span> ${instrument.notes}</p>
-              ` : ''}
-            </div>
-          </div>
-        `}
-      </div>
-    `;
-  }).join('');
-
-  // Re-initialize Lucide icons
-  lucide.createIcons();
+  
+  if (data.serialNo) document.getElementById('serialNo').value = data.serialNo;
+  if (data.page) document.getElementById('pageNo').value = data.page;
+  if (data.vol) document.getElementById('volumeNo').value = data.vol;
+  
+  updateFormFileData('property_');
+  updateRegNoPreview();
 }
 
 function toggleRawText() {
@@ -1670,43 +1180,12 @@ function toggleRawText() {
 
   if (content.classList.contains('expanded')) {
     content.classList.remove('expanded');
-    icon.setAttribute('data-lucide', 'chevron-down');
-    button.innerHTML = '<i data-lucide="chevron-down" class="h-4 w-4"></i> Show';
+    button.innerHTML = '<i data-lucide="chevron-down" class="h-4 w-4 mr-1"></i> Show';
   } else {
     content.classList.add('expanded');
-    icon.setAttribute('data-lucide', 'chevron-up');
-    button.innerHTML = '<i data-lucide="chevron-up" class="h-4 w-4"></i> Hide';
+    button.innerHTML = '<i data-lucide="chevron-up" class="h-4 w-4 mr-1"></i> Hide';
   }
-
   lucide.createIcons();
-}
-
-function handleSaveRecord() {
-  if (!extractedPropertyData) return;
-
-  // Collect form data
-  // First update the file data to ensure all fields are current
-  updateFormFileData('');
-  
-  const formData = {
-    ...extractedPropertyData,
-    mlsFNo: document.getElementById('mlsFNo').value,
-    kangisFileNo: document.getElementById('kangisFileNo').value,
-    NewKANGISFileno: document.getElementById('NewKANGISFileno').value,
-    activeFileTab: document.getElementById('activeFileTab').value,
-    plotNo: document.getElementById('plot-no').value,
-    lgsaOrCity: document.getElementById('lga-city').value,
-    propertyHolder: document.getElementById('property-holder').value,
-    description: document.getElementById('property-description').value,
-    instruments: instruments
-  };
-
-  // Here you would typically save to your database
-  console.log('Saving property record:', formData);
-  showToast('Property record saved successfully!', 'success');
-
-  // Optionally reset the form after saving
-  // resetState();
 }
 
 function resetState() {
@@ -1719,14 +1198,10 @@ function resetState() {
   keywordFindings = {};
   currentAiStage = 'idle';
   aiProgress = 0;
-  instruments = [];
-  editingInstrumentId = null;
 
-  // Reset file input
   document.getElementById('file-input').value = '';
   document.getElementById('file-upload-text').textContent = 'Click to select a file';
 
-  // Hide all sections
   hideError();
   document.getElementById('image-preview').classList.add('hidden');
   document.getElementById('pdf-preview').classList.add('hidden');
@@ -1744,8 +1219,6 @@ function resetExtractionState() {
   keywordFindings = {};
   currentAiStage = 'idle';
   aiProgress = 0;
-  instruments = [];
-  editingInstrumentId = null;
 
   hideAiProcessing();
   document.getElementById('keyword-findings').classList.add('hidden');
@@ -1769,7 +1242,6 @@ function updateUI() {
   const startBtn = document.getElementById('start-ai-btn');
   const resetBtn = document.getElementById('reset-btn');
 
-  // Update start button state
   if (selectedFile && (currentAiStage === 'idle' || currentAiStage === 'complete')) {
     startBtn.disabled = false;
     startBtn.innerHTML = currentAiStage === 'complete' ? 
@@ -1783,14 +1255,12 @@ function updateUI() {
     startBtn.innerHTML = '<i data-lucide="wand-2" class="mr-2 h-4 w-4"></i>Extract Data with AI';
   }
 
-  // Update reset button visibility
   if (currentAiStage !== 'idle' || selectedFile) {
     resetBtn.classList.remove('hidden');
   } else {
     resetBtn.classList.add('hidden');
   }
 
-  // Re-initialize Lucide icons
   lucide.createIcons();
 }
 
@@ -1839,12 +1309,10 @@ function showToast(message, type = 'info') {
   toastContainer.appendChild(toast);
   lucide.createIcons();
 
-  // Animate in
   setTimeout(() => {
     toast.classList.remove('translate-x-full');
   }, 100);
 
-  // Auto remove after 5 seconds
   setTimeout(() => {
     removeToast(toastId);
   }, 5000);

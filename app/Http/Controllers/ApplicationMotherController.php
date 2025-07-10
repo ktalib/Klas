@@ -106,11 +106,32 @@ class ApplicationMotherController extends Controller
             ->table('dbo.subapplications AS sub')
             ->join('dbo.mother_applications AS main', 'sub.main_application_id', '=', 'main.id')
             ->select([
-                'sub.*', 'main.fileno as main_fileno', 'main.plot_size', 'main.land_use', 'main.plot_house_no',
-                'main.plot_street_name', 'main.owner_district', 'main.address', 'main.approval_date',
-                'main.applicant_type as main_applicant_type', 'main.applicant_title as main_applicant_title',
-                'main.first_name as main_first_name', 'main.middle_name as main_middle_name',
-                'main.surname as main_surname', 'main.corporate_name as main_corporate_name',
+                'sub.*',
+                'main.fileno as main_fileno',
+                'main.plot_size',
+                'main.land_use',
+                // Use correct address fields
+                'main.address_house_no',
+                'main.address_plot_no',
+                'main.address_street_name',
+                'main.address_district',
+                'main.address_lga',
+                'main.address_state',
+                // Property address fields if needed
+                'main.property_house_no',
+                'main.property_plot_no',
+                'main.property_street_name',
+                'main.property_district',
+                'main.property_lga',
+                'main.property_state',
+                'main.address',
+                'main.approval_date',
+                'main.applicant_type as main_applicant_type',
+                'main.applicant_title as main_applicant_title',
+                'main.first_name as main_first_name',
+                'main.middle_name as main_middle_name',
+                'main.surname as main_surname',
+                'main.corporate_name as main_corporate_name',
                 'main.multiple_owners_names as main_multiple_owners_names'
             ]);
             
@@ -813,6 +834,221 @@ class ApplicationMotherController extends Controller
         }
         
         return view('sectionaltitling.viewrecorddetail', compact('application' , 'PageTitle', 'PageDescription'));
+    }
+
+    public function edit($id)
+    {
+        $PageTitle = 'Edit Application';
+        $PageDescription = 'Edit Application Details';
+        
+        $application = DB::connection('sqlsrv')
+            ->table('dbo.mother_applications')
+            ->where('id', $id)
+            ->first();
+            
+        if (!$application) {
+            return redirect()->route('sectionaltitling.index')->with('error', 'Record not found');
+        }
+
+        // Check if application is approved (both application status and planning recommendation)
+        $isApproved = ($application->application_status == 'Approved' && $application->planning_recommendation_status == 'Approved');
+        
+        if ($isApproved) {
+            return redirect()->route('sectionaltitling.viewrecorddetail', ['id' => $id])
+                ->with('error', 'Cannot edit application - Both Application Status and Planning Recommendation have been approved.');
+        }
+        
+        return view('sectionaltitling.edit', compact('application', 'PageTitle', 'PageDescription'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $application = DB::connection('sqlsrv')
+                ->table('dbo.mother_applications')
+                ->where('id', $id)
+                ->first();
+                
+            if (!$application) {
+                return redirect()->route('sectionaltitling.index')->with('error', 'Record not found');
+            }
+
+            // Check if application is approved (both application status and planning recommendation)
+            $isApproved = ($application->application_status == 'Approved' && $application->planning_recommendation_status == 'Approved');
+            
+            if ($isApproved) {
+                return redirect()->route('sectionaltitling.viewrecorddetail', ['id' => $id])
+                    ->with('error', 'Cannot edit application - Both Application Status and Planning Recommendation have been approved.');
+            }
+
+            $rules = [
+                'applicant_type' => 'nullable|in:individual,corporate,multiple',
+                'applicant_title' => 'nullable',
+                'first_name' => 'nullable',
+                'middle_name' => 'nullable',
+                'surname' => 'nullable',
+                'corporate_name' => 'nullable',
+                'rc_number' => 'nullable',
+                'multiple_owners_names' => 'nullable|array',
+                'multiple_owners_names.*' => 'nullable|string',
+                'address_house_no' => 'nullable',
+                'address_street_name' => 'nullable',
+                'address_district' => 'nullable',
+                'address_lga' => 'nullable',
+                'address_state' => 'nullable',
+                'phone_number' => 'nullable',
+                'email' => 'nullable|email',
+                'property_plot_no' => 'nullable',
+                'property_street_name' => 'nullable',
+                'property_district' => 'nullable',
+                'property_lga' => 'nullable',
+                'property_state' => 'nullable',
+                'NoOfUnits' => 'nullable|integer',
+                'plot_size' => 'nullable',
+                'land_use' => 'nullable',
+                'residential_type' => 'nullable',
+                'commercial_type' => 'nullable',
+                'industrial_type' => 'nullable',
+                'application_fee' => 'nullable|numeric',
+                'processing_fee' => 'nullable|numeric',
+                'site_plan_fee' => 'nullable|numeric',
+                'payment_date' => 'nullable|date',
+                'receipt_number' => 'nullable',
+                'comments' => 'nullable',
+                'passport' => 'nullable|image|max:5120',
+                'id_document' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png',
+            ];
+
+            $validated = $request->validate($rules);
+
+            // Handle passport upload
+            if ($request->hasFile('passport')) {
+                // Delete old passport if exists
+                if ($application->passport) {
+                    Storage::disk('public')->delete($application->passport);
+                }
+                $validated['passport'] = $request->file('passport')->store('passports', 'public');
+            }
+
+            // Handle ID document upload
+            if ($request->hasFile('id_document')) {
+                // Delete old ID document if exists
+                if ($application->id_document) {
+                    Storage::disk('public')->delete($application->id_document);
+                }
+                $validated['id_document'] = $request->file('id_document')->store('id_documents', 'public');
+            }
+
+            // Format phone numbers if it's an array
+            if ($request->has('phone_number') && is_array($request->input('phone_number'))) {
+                $validated['phone_number'] = implode(', ', array_filter($request->input('phone_number')));
+            }
+
+            // Handle multiple owners names
+            if ($request->has('multiple_owners_names') && is_array($request->input('multiple_owners_names'))) {
+                $multipleOwnersNames = array_filter($request->input('multiple_owners_names'));
+                $validated['multiple_owners_names'] = !empty($multipleOwnersNames) ? json_encode($multipleOwnersNames) : null;
+            }
+
+            $validated['updated_at'] = now();
+
+            // Update the application
+            DB::connection('sqlsrv')
+                ->table('dbo.mother_applications')
+                ->where('id', $id)
+                ->update($validated);
+
+            Log::info('Application updated successfully', [
+                'application_id' => $id,
+                'updated_by' => Auth::user() ? Auth::user()->first_name : null
+            ]);
+
+            return redirect()->route('sectionaltitling.viewrecorddetail', ['id' => $id])
+                ->with('success', 'Application updated successfully!');
+
+        } catch (Exception $e) {
+            Log::error('Error updating application', [
+                'error' => $e->getMessage(),
+                'application_id' => $id,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error updating application: ' . $e->getMessage());
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $application = DB::connection('sqlsrv')
+                ->table('dbo.mother_applications')
+                ->where('id', $id)
+                ->first();
+                
+            if (!$application) {
+                return response()->json(['success' => false, 'message' => 'Record not found'], 404);
+            }
+
+            // Check if application is approved (both application status and planning recommendation)
+            $isApproved = ($application->application_status == 'Approved' && $application->planning_recommendation_status == 'Approved');
+            
+            if ($isApproved) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Cannot delete application - Both Application Status and Planning Recommendation have been approved.'
+                ], 403);
+            }
+
+            // Delete associated files
+            if ($application->passport) {
+                Storage::disk('public')->delete($application->passport);
+            }
+            if ($application->id_document) {
+                Storage::disk('public')->delete($application->id_document);
+            }
+
+            // Delete documents if they exist
+            if ($application->documents) {
+                $documents = json_decode($application->documents, true);
+                if (is_array($documents)) {
+                    foreach ($documents as $document) {
+                        if (isset($document['path'])) {
+                            Storage::disk('public')->delete($document['path']);
+                        }
+                    }
+                }
+            }
+
+            // Delete the application record
+            DB::connection('sqlsrv')
+                ->table('dbo.mother_applications')
+                ->where('id', $id)
+                ->delete();
+
+            Log::info('Application deleted successfully', [
+                'application_id' => $id,
+                'deleted_by' => Auth::user() ? Auth::user()->first_name : null
+            ]);
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Application deleted successfully!'
+            ]);
+
+        } catch (Exception $e) {
+            Log::error('Error deleting application', [
+                'error' => $e->getMessage(),
+                'application_id' => $id,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false, 
+                'message' => 'Error deleting application: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
  
