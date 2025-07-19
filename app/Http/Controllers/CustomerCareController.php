@@ -20,12 +20,7 @@ class CustomerCareController extends Controller
         
         // Fetch primary customer data from mother_applications table
         $customerCareData = DB::connection('sqlsrv')->table('mother_applications')
-            ->select(
-                'id', 'fileno', 'applicant_type', 'applicant_title', 
-                'first_name', 'surname', 'corporate_name', 
-                'multiple_owners_names', 'passport', 'multiple_owners_passport',
-                'address', 'phone_number', 'email'
-            )
+            ->select('*')
             ->get();
             
         // Fetch secondary customer data from sub_applications table

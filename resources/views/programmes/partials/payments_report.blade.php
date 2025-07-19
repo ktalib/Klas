@@ -36,6 +36,7 @@
     </div>
 </div>
 
+@if(request()->get('url') === 'report')
 <!-- Payment Type Breakdown -->
 <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6 mb-6">
   <h3 class="text-lg font-semibold mb-4">Payment Type Breakdown</h3>
@@ -77,3 +78,4 @@
     </div>
   </div>
 </div>
+@endif

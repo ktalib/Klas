@@ -29,7 +29,7 @@
          <div class="flex items-center mr-4">
           <div class="step-circle inactive-tab">3</div>
         </div>
-        <div class="flex items-center  mr-4">
+        <div class="flex items-center mr-4">
           <div class="step-circle active-tab">4</div>
         </div>
         <div class="ml-4">Step 4</div>
@@ -56,6 +56,12 @@
                 <td class="py-1 text-gray-600">Scheme No:</td>
                 <td class="py-1 font-medium" id="summary-scheme-no">
                   <span id="schemeNoDisplay"></span>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-1 text-gray-600">Main Application ID:</td>
+                <td class="py-1 font-medium" id="summary-main-id">
+                  <span id="mainIdDisplay"></span>
                 </td>
               </tr>
             </table>
@@ -167,6 +173,12 @@
                 <td class="py-1 text-gray-600">Block No:</td>
                 <td class="py-1 font-medium" id="summary-block-no">
                   <span id="blockNumberDisplay"></span>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-1 text-gray-600">Unit Size:</td>
+                <td class="py-1 font-medium" id="summary-unit-size">
+                  <span id="unitSizeDisplay"></span>
                 </td>
               </tr>
             </table>
@@ -422,6 +434,10 @@
             <tr>
               <td class="py-1 text-gray-600">Unit No:</td>
               <td class="py-1 font-medium" id="print-unit-no"></td>
+            </tr>
+            <tr>
+              <td class="py-1 text-gray-600">Unit Size:</td>
+              <td class="py-1 font-medium" id="print-unit-size"></td>
             </tr>
           </table>
         </div>
@@ -724,9 +740,11 @@ function updateApplicationSummary() {
   // File Information
   const stFileNo = document.querySelector('input[name="fileno"]')?.value || 'N/A';
   const schemeNo = document.querySelector('input[name="scheme_no"]')?.value || 'N/A';
+  const mainId = document.getElementById('mainIdHidden')?.value || 'N/A';
   
   document.getElementById('stFileNumberDisplay').textContent = stFileNo;
   document.getElementById('schemeNoDisplay').textContent = schemeNo;
+  document.getElementById('mainIdDisplay').textContent = mainId;
   
   // Applicant Information
   const applicantType = document.querySelector('input[name="applicantType"]:checked')?.value || 'Individual';
@@ -904,6 +922,7 @@ function updateUnitInformation() {
   document.getElementById('blockNumberDisplay').textContent = document.querySelector('input[name="block_number"]')?.value || 'N/A';
   document.getElementById('floorNumberDisplay').textContent = document.querySelector('input[name="floor_number"]')?.value || 'N/A';
   document.getElementById('unitNumberDisplay').textContent = document.querySelector('input[name="unit_number"]')?.value || 'N/A';
+  document.getElementById('unitSizeDisplay').textContent = document.querySelector('input[name="unit_size"]')?.value || 'N/A';
 }
 
 function updateAddressInformation() {
@@ -1104,6 +1123,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('print-block-no').textContent = document.getElementById('blockNumberDisplay').textContent;
     document.getElementById('print-floor-no').textContent = document.getElementById('floorNumberDisplay').textContent;
     document.getElementById('print-unit-no').textContent = document.getElementById('unitNumberDisplay').textContent;
+    document.getElementById('print-unit-size').textContent = document.getElementById('unitSizeDisplay').textContent;
     
     // Address Information
     document.getElementById('print-complete-address').textContent = document.getElementById('completeAddressDisplay').textContent;

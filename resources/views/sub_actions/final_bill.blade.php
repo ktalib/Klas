@@ -8,7 +8,7 @@
                   id="customize-tab" data-tabs-target="#customize-content" type="button" role="tab" 
                   aria-controls="customize" aria-selected="true">
             <i data-lucide="calculator" class="w-4 h-4 mr-1.5 inline-block"></i>
-            Generate Final Bill
+            Generate Bill Balance
           </button>
         </li>
         <li class="mr-2" role="presentation">
@@ -16,7 +16,7 @@
                   id="final-bill-tab" data-tabs-target="#final-bill-content" type="button" role="tab" 
                   aria-controls="final-bill" aria-selected="false">
             <i data-lucide="file-text" class="w-4 h-4 mr-1.5 inline-block"></i>
-            Final Bill
+            Bill Balance
           </button>
         </li>
       </ul>
@@ -27,7 +27,7 @@
       <!-- Customize Fees Tab Content -->
       <div class="block" id="customize-content" role="tabpanel" aria-labelledby="customize-tab">
         <div class="p-4 border border-gray-200 rounded-md">
-          <h4 class="text-sm font-medium mb-3">Generate Final Bill</h4>
+          <h4 class="text-sm font-medium mb-3">Generate Bill Balance</h4>
           <form id="fee-form" class="grid grid-cols-2 gap-4">
             <input type="hidden" name="sub_application_id" value="{{ $application->id }}">
             
@@ -71,7 +71,7 @@
               <h5 class="text-xs font-semibold mb-2">Charges & Fees</h5>
               <div class="grid grid-cols-2 gap-4">
                 @php
-                    // Add fallback if $fees is not defined
+                    // Add fallback if $fees is not defined (removed processing_fee)
                     $fees = $fees ?? [
                         'assignment_fee' => 50000,
                         'bill_balance' => 30525,
@@ -154,7 +154,7 @@
           </div>
           <div class="text-center">
             <h3 class="text-sm font-bold text-green-800">KANO STATE MINISTRY OF LAND AND PHYSICAL PLANNING</h3>
-            <p class="text-xs font-medium text-red-600">SECTIONAL TITLE FINAL BILL</p>
+            <p class="text-xs font-medium text-red-600">SECTIONAL TITLE BILL BALANCE</p>
           </div>
           <div class="w-12 h-12">
             <img src="{{ asset('assets/logo/logo3.jpeg') }}" alt="Ministry Logo" class="w-full h-full object-contain">
@@ -197,76 +197,43 @@
         <div class="border border-black mt-2">
           <table class="w-full text-xs bill-table">
             <thead>
-              <tr class="border-b border-black">
-                <th class="p-1.5 text-left border-r border-black">Land Use</th>
-                <th class="p-1.5 text-left border-r border-black">Survey / Processing Fees</th>
-                <th class="p-1.5 text-left">Dev. Charges ₦</th>
+              <tr>
+                <th width="40%">Land Use</th>
+                <th width="30%">Survey / Processing Fees</th>
+                <th width="30%">Dev. Charges ₦</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td class="p-1.5 border-r border-black">
+                <td>
                   @php
                     $landUse = strtolower($application->land_use ?? 'residential');
-                    // Make sure $fees is defined with defaults if needed
-                    $fees = $fees ?? [
-                        'assignment_fee' => 50000,
-                        'bill_balance' => 30525,
-                        'recertification_fee' => 5000,
-                        'total_amount' => 85525
-                    ];
                   @endphp
-                  
                   @if($landUse == 'residential')
-                    <p class="font-semibold">a.Assignment Fees</p>
-                    <p class="font-semibold">b.Bill Balance</p>
+                    <p><strong>a.Assignment Fees</strong></p>
+                    <p><strong>b.Bill Balance</strong></p>
                   @else
-                    <p class="font-semibold">a.Commercial Fees</p>
-                    <p class="pl-2">i.Assignment Fees</p>
-                    <p class="pl-2">ii.Bill Balance</p>
+                    <p><strong>a.Commercial Fees</strong></p>
+                    <p style="padding-left: 15px;">i.Assignment Fees</p>
+                    <p style="padding-left: 15px;">ii.Bill Balance</p>
                   @endif
                 </td>
-                <td class="p-1.5 border-r border-black" id="fee-col">
-                  <!-- Dynamically populated fees -->
-                  <p id="res-assignment-fee">N {{ number_format($fees['assignment_fee'], 2) }}</p>
-                  <p id="res-bill-balance">N {{ number_format($fees['bill_balance'], 2) }}</p>
+                <td>
+                  <p>N {{ number_format($bill->assignment_fee ?? 0, 2) }}</p>
+                  <p>N {{ number_format($bill->bill_balance ?? 0, 2) }}</p>
                 </td>
-                <td class="p-1.5">
-                  <!-- Fix: Change from dash to actual value with correct ID -->
-                  <p id="dev-charges">N {{ number_format($fees['dev_charges'] ?? 0, 2) }}</p>
+                <td>
+                  <p>N {{ number_format($bill->dev_charges ?? 0, 2) }}</p>
                 </td>
               </tr>
-              <tr class="border-t border-black">
-                <td class="p-1.5 border-r border-black">Recertification Fee	</td>
-                <td class="p-1.5 border-r border-black">N <span id="ground-rent-amount">{{ number_format($fees['recertification_fee'], 2) }}</span></td>
-                <td class="p-1.5">N __________________</td>
+              <tr>
+                <td>Recertification Fee</td>
+                <td>N {{ number_format($bill->recertification_fee ?? 0, 2) }}</td>
+                <td>N __________________</td>
               </tr>
-              <tr class="border-t border-black">
-                <td colspan="3" class="p-1.5">
-                  @php
-                  function numberToWords($number) {
-                    $formatter = new NumberFormatter('en', NumberFormatter::SPELLOUT);
-                    $words = $formatter->format($number);
-                    return ucfirst($words) . ' Naira Only';
-                  }
-                  
-                  $total = $fees['total_amount'] ?? 0;
-                  $totalInWords = '';
-                  
-                  // First try using NumberFormatter if available
-                  if (class_exists('NumberFormatter')) {
-                    try {
-                      $totalInWords = numberToWords($total);
-                    } catch (Exception $e) {
-                      // Fallback if error occurs
-                      $totalInWords = 'Unable to convert amount to words';
-                    }
-                  } else {
-                    // Simple fallback if NumberFormatter is not available
-                    $totalInWords = ucfirst($total_in_words ?? 'Amount in words not available');
-                  }
-                  @endphp
-                  <p>TOTAL: ₦ <span id="final-bill-total">{{ number_format($fees['total_amount'], 2) }}</span> (<span id="final-bill-total-words">{{ $totalInWords }}</span>)</p>
+              <tr>
+                <td colspan="3">
+                  <p><strong>TOTAL: ₦ {{ number_format($bill->total_amount ?? 0, 2) }}</strong> ({{ $total_in_words ?? '' }})</p>
                 </td>
               </tr>
             </tbody>
@@ -345,6 +312,21 @@
     
     // Preview bill (switch to bill tab)
     document.getElementById('preview-bill-btn').addEventListener('click', function() {
+      // Validate required fields first
+      const assignmentFee = document.getElementById('assignment_fee').value;
+      const billBalance = document.getElementById('bill_balance').value;
+      const recertificationFee = document.getElementById('recertification_fee').value;
+      
+      if (!assignmentFee || !billBalance || !recertificationFee) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Missing Information',
+          text: 'Please fill in all required fee fields before previewing the bill.',
+          confirmButtonColor: '#16a34a'
+        });
+        return;
+      }
+      
       // Calculate and update all values first
       calculateAndUpdateBill();
       
@@ -377,13 +359,13 @@
       });
     });
     
-    // Real-time calculation on input change
+    // Real-time calculation on input change (removed processing_fee)
     document.getElementById('assignment_fee').addEventListener('input', calculateAndUpdateBill);
     document.getElementById('bill_balance').addEventListener('input', calculateAndUpdateBill);
     document.getElementById('recertification_fee').addEventListener('input', calculateAndUpdateBill);
     document.getElementById('dev_charges').addEventListener('input', calculateAndUpdateBill);
     
-    // Calculate and update bill values
+    // Calculate and update bill values (removed processing_fee)
     function calculateAndUpdateBill() {
       const assignmentFee = parseFloat(document.getElementById('assignment_fee').value) || 0;
       const billBalance = parseFloat(document.getElementById('bill_balance').value) || 0;
@@ -395,7 +377,7 @@
       // Update calculated total in the form
       document.getElementById('calculated-total').textContent = '₦ ' + totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       
-      // Update the final bill preview
+      // Update the final bill preview (removed processing fee)
       document.getElementById('res-assignment-fee').textContent = 'N ' + assignmentFee.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       document.getElementById('res-bill-balance').textContent = 'N ' + billBalance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       document.getElementById('ground-rent-amount').textContent = groundRent.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");

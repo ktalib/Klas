@@ -65,7 +65,7 @@ class RofoController extends Controller
             )
             ->get();
 
-        // Process owner names
+        // Process owner names and check ST Memo prerequisites
         foreach ($subapplications as $application) {
             if (!empty($application->multiple_owners_names)) {
                 $ownerArray = json_decode($application->multiple_owners_names, true);
@@ -75,6 +75,13 @@ class RofoController extends Controller
             } else {
                 $application->owner_name = trim($application->applicant_title . ' ' . $application->first_name . ' ' . $application->surname);
             }
+
+            // Check if ST Memo prerequisite is met
+            $application->has_st_memo = DB::connection('sqlsrv')->table('memos')
+                ->join('subapplications as sub_check', 'memos.application_id', '=', 'sub_check.main_application_id')
+                ->where('memos.memo_type', 'primary')
+                ->where('sub_check.fileno', $application->fileno)
+                ->exists();
         }
 
         //select from mother_applications table
@@ -139,6 +146,17 @@ class RofoController extends Controller
 
             if (!$rofo) {
                 return back()->with('error', 'Application not found');
+            }
+
+            // Check ST Memos Prerequisites
+            $stMemoExists = DB::connection('sqlsrv')->table('memos')
+                ->join('subapplications as sub_check', 'memos.application_id', '=', 'sub_check.main_application_id')
+                ->where('memos.memo_type', 'primary')
+                ->where('sub_check.fileno', $rofo->fileno)
+                ->exists();
+
+            if (!$stMemoExists) {
+                return back()->with('error', 'ST Memo prerequisite not met. A primary ST Memo must be generated for the main application before generating RoFO.');
             }
 
             // Fetch land administration data

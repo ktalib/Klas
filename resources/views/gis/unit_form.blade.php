@@ -76,8 +76,8 @@
     </div>
     
     <!-- Unit Control Beacon Information -->
-    <h4 class="text-sm font-medium mb-3 mt-4">Unit Control Beacon Information</h4>
-    <div class="grid grid-cols-3 gap-4 mb-4">
+    {{-- <h4 class="text-sm font-medium mb-3 mt-4">Unit Control Beacon Information</h4> --}}
+    <div class="grid grid-cols-3 gap-4 mb-4" style="display: none">
         <div>
             <label for="UnitControlBeaconNo" class="block text-sm font-medium text-gray-700">Unit Control Beacon No</label>
             <input type="text" id="UnitControlBeaconNo" name="UnitControlBeaconNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
@@ -105,7 +105,13 @@
         </div>
         <div>
             <label for="UnitPosition" class="block text-sm font-medium text-gray-700">Unit Position</label>
-            <input type="text" id="UnitPosition" name="UnitPosition" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+            <select id="UnitPosition" name="UnitPosition" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+            <option value="">Select Position</option>
+            <option value="Left">Left</option>
+            <option value="Right">Right</option>
+            <option value="Middle">Middle</option>
+            <option value="Other">Other</option>
+            </select>
         </div>
     </div>
     

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sectional Title Final Bill</title>
+    <title>Sectional Title Bill Balance</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -124,7 +124,7 @@
             <img src="{{ asset('assets/logo/logo1.jpg') }}" alt="Kano State Logo" class="logo">
             <div class="title">
                 <h1>KANO STATE MINISTRY OF LAND AND PHYSICAL PLANNING</h1>
-                <h2>SECTIONAL TITLE FINAL BILL</h2>
+                <h2>SECTIONAL TITLE BILL BALANCE</h2>
             </div>
             <img src="{{ asset('assets/logo/logo3.jpeg') }}" alt="Ministry Logo" class="logo">
         </div>
@@ -174,24 +174,15 @@
                         @endphp
                         
                         @if($landUse == 'residential')
-                            <p><strong>a.Residential Fees</strong></p>
-                            <p style="padding-left: 15px;">i.Processing Fee</p>
-                            <p><strong>b.Survey Fees</strong></p>
-                            <p style="padding-left: 15px;">i.Block of Flats</p>
-                            <p style="padding-left: 15px;">ii.Apartment</p>
-                            <p><strong>c.Assignment Fees</strong></p>
-                            <p><strong>d.Bill Balance</strong></p>
+                            <p><strong>a.Assignment Fees</strong></p>
+                            <p><strong>b.Bill Balance</strong></p>
                         @else
-                            <p><strong>e.Commercial Fees</strong></p>
-                            <p style="padding-left: 15px;">i.Processing Fee</p>
-                            <p style="padding-left: 15px;">ii.Survey Fees</p>
-                            <p style="padding-left: 15px;">iii.Assignment Fees</p>
-                            <p style="padding-left: 15px;">iv.Bill Balance</p>
+                            <p><strong>a.Commercial Fees</strong></p>
+                            <p style="padding-left: 15px;">i.Assignment Fees</p>
+                            <p style="padding-left: 15px;">ii.Bill Balance</p>
                         @endif
                     </td>
                     <td>
-                        <p>N {{ number_format($bill->processing_fee, 2) }}</p>
-                        <p>N {{ number_format($bill->survey_fee, 2) }}</p>
                         <p>N {{ number_format($bill->assignment_fee, 2) }}</p>
                         <p>N {{ number_format($bill->bill_balance, 2) }}</p>
                     </td>

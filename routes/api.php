@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileIndexingController;
 use App\Http\Controllers\InstrumentController;
+use App\Http\Controllers\InstrumentTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,3 +66,6 @@ Route::get('/property-transaction', [FileIndexingController::class, 'getProperty
 
 // Instruments API Routes - Not requiring authentication for now to fix the immediate issue
 Route::post('/instruments/generate-particulars', [InstrumentController::class, 'generateParticulars']);
+
+// Instrument Types API Routes
+Route::get('/instrument-types', [InstrumentTypeController::class, 'getAll']);

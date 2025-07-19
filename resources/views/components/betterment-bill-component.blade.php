@@ -181,7 +181,8 @@
             console.log('Initial bill check:', data);
             if (data.success && data.bill) {
                 // Populate form with existing data
-                document.getElementById('bb-property-value').value = formatNumber(data.bill.property_value || 0);
+                const propertyValue = parseFloat(data.bill.property_value || 0);
+                document.getElementById('bb-property-value').value = formatNumber(propertyValue);
                 document.getElementById('bb-rate').value = data.bill.betterment_rate || 2.5;
                 
                 // Format and display betterment charges
@@ -190,9 +191,16 @@
                 
                 // Update reference ID
                 if (data.bill.ref_id) {
-                    document.getElementById('bb-ref-id').textContent = data.bill.ref_id;
                     document.getElementById('bb-ref-id-input').value = data.bill.ref_id;
                 }
+                
+                console.log('Bill data loaded:', {
+                    property_value: propertyValue,
+                    betterment_charges: bettermentValue,
+                    ref_id: data.bill.ref_id
+                });
+            } else {
+                console.log('No existing bill found');
             }
         })
         .catch(error => {
@@ -204,6 +212,7 @@
     function calculateBetterment() {
         const propertyValue = document.getElementById('bb-property-value').value.replace(/,/g, '');
         const bettermentRate = document.getElementById('bb-rate').value;
+        const landSize = document.getElementById('bb-land-size').value.replace(/,/g, '');
         
         if (!propertyValue || !bettermentRate) {
             Swal.fire({
@@ -215,10 +224,20 @@
             return;
         }
         
+        // Calculate land size factor (matching backend logic)
+        const size = parseFloat(landSize) || 1200;
+        let landSizeFactor;
+        if (size <= 500) landSizeFactor = 0.8;
+        else if (size <= 1000) landSizeFactor = 1.0;
+        else if (size <= 2000) landSizeFactor = 1.2;
+        else landSizeFactor = 1.5;
+        
         // Make AJAX request to calculate
         const requestData = {
             property_value: propertyValue,
-            betterment_rate: bettermentRate
+            betterment_rate: bettermentRate,
+            land_size: landSize,
+            land_size_factor: landSizeFactor
         };
         
         fetch('{{ route("betterment-bill.calculate") }}', {
@@ -261,7 +280,63 @@
         const formData = new FormData(formEl);
         
         // Remove commas from numeric values
-        formData.set('property_value', document.getElementById('bb-property-value').value.replace(/,/g, ''));
+        const propertyValue = document.getElementById('bb-property-value').value.replace(/,/g, '');
+        const landSize = document.getElementById('bb-land-size').value.replace(/,/g, '');
+        const bettermentRate = document.getElementById('bb-rate').value;
+        
+        // Validate required fields
+        if (!propertyValue || propertyValue <= 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Information',
+                text: 'Please enter a valid property value',
+                confirmButtonColor: '#16a34a'
+            });
+            return;
+        }
+        
+        if (!bettermentRate || bettermentRate <= 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Information',
+                text: 'Please enter a valid betterment rate',
+                confirmButtonColor: '#16a34a'
+            });
+            return;
+        }
+        
+        // Calculate first to ensure we have the amount
+        const size = parseFloat(landSize) || 1200;
+        let landSizeFactor;
+        if (size <= 500) landSizeFactor = 0.8;
+        else if (size <= 1000) landSizeFactor = 1.0;
+        else if (size <= 2000) landSizeFactor = 1.2;
+        else landSizeFactor = 1.5;
+        
+        const bettermentCharges = propertyValue * (bettermentRate / 100) * landSizeFactor;
+        
+        // Update the display
+        document.getElementById('bb-amount').textContent = '₦' + formatNumber(bettermentCharges.toFixed(2));
+        
+        formData.set('property_value', propertyValue);
+        formData.set('land_size', landSize);
+        formData.set('betterment_rate', bettermentRate);
+        
+        // Show loading
+        Swal.fire({
+            title: 'Saving Bill...',
+            text: 'Please wait while we save your betterment bill.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        // Debug: Log form data
+        console.log('Form data being sent:');
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
         
         fetch('{{ route("betterment-bill.store") }}', {
             method: 'POST',
@@ -270,24 +345,29 @@
             },
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
         .then(data => {
             console.log('Save response:', data);
             if (data.success) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Success',
-                    text: data.message,
+                    title: 'Success!',
+                    text: data.message + ' Amount: ₦' + data.betterment_charges,
                     confirmButtonColor: '#16a34a'
                 }).then(() => {
-                    // Switch to receipt tab
+                    // Refresh the data and switch to receipt tab
+                    checkExistingBill();
                     document.querySelector('.bb-tab-btn[data-tab="receipt"]').click();
                 });
             } else {
+                console.error('Save failed:', data);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: data.message,
+                    text: data.message || 'Error saving betterment bill',
                     confirmButtonColor: '#16a34a'
                 });
             }
@@ -297,7 +377,7 @@
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Error saving betterment bill',
+                text: 'Network error saving betterment bill',
                 confirmButtonColor: '#16a34a'
             });
         });
@@ -311,19 +391,30 @@
         fetch(`{{ route('betterment-bill.show', '') }}/${appId}`, {
             method: 'GET',
             headers: {
-                'X-Requested-With': 'XMLHttpRequest'
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            console.log('Receipt data:', data);
+            // Always show the receipt if bill exists, even if amount is zero
             if (data.success && data.bill) {
                 renderReceipt(data.bill, data.application);
             } else {
                 container.innerHTML = `
                     <div class="text-center p-8">
                         <p class="text-sm text-gray-500">No betterment bill has been generated yet.</p>
-                        <p class="text-xs text-gray-400 mt-2">Please generate a bill first.</p>
+                        <p class="text-xs text-gray-400 mt-2">Please generate a bill first using the "Generate Betterment Bill" tab.</p>
+                        <button type="button" onclick="document.querySelector('.bb-tab-btn[data-tab=\\"generate\\"]').click()" 
+                                class="mt-3 px-3 py-1 text-xs bg-green-600 text-white rounded">
+                            Go to Generate Bill
+                        </button>
                     </div>
                 `;
             }
@@ -332,7 +423,11 @@
             console.error('Load error:', error);
             container.innerHTML = `
                 <div class="text-center p-8">
-                    <p class="text-sm text-red-500">Error loading betterment bill</p>
+                    <p class="text-sm text-red-500">Error loading betterment bill: ${error.message}</p>
+                    <button type="button" onclick="loadBettermentBill()" 
+                            class="mt-3 px-3 py-1 text-xs bg-gray-600 text-white rounded">
+                        Retry
+                    </button>
                 </div>
             `;
         });

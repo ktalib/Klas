@@ -1,243 +1,325 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Betterment Bill Receipt</title>
     <style>
-        @media print {
-            body { margin: 0; padding: 0; }
-            @page { size: A4; margin: 0.5cm 0.5cm 0.5cm 0.5cm; } /* Further reduced top/bottom margin */
-        }
         body {
-            font-family: 'Arial', sans-serif;
-            line-height: 2.0; /* Slightly reduced */
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
             color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #fff;
         }
-        .container {
+        .receipt-container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 18px 10px 18px 10px; /* Slightly increased vertical padding */
+            border: 2px solid #166534;
+            padding: 30px;
+            position: relative;
         }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px; /* Reduced */
+            margin-bottom: 30px;
             border-bottom: 2px solid #166534;
-            padding-bottom: 8px; /* Reduced */
+            padding-bottom: 20px;
         }
         .logo {
-            width: 60px; /* Reduced */
-            height: 60px; /* Reduced */
-        }
-        .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            width: 80px;
+            height: 80px;
         }
         .title {
             text-align: center;
+            flex-grow: 1;
         }
         .title h1 {
+            font-size: 18px;
             color: #166534;
-            font-size: 15px; /* Reduced */
-            font-weight: bold;
             margin: 0;
-            text-transform: uppercase;
+            font-weight: bold;
         }
         .title h2 {
-            color: #4adc26;
-            font-size: 40; /* Reduced */
-            font-weight: bold;
-            margin: 3px 0 0 0; /* Reduced */
-        }
-        .details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 100; /* Further increased gap */
-            margin-bottom: 100px; /* Further increased margin */
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 10px; /* Reduced */
-        }
-        .detail-group p {
-            margin: 8px 0; /* Reduced */
-            font-size: 12px; /* Reduced */
-        }
-        .detail-label {
-            font-weight: bold;
-            display: inline-block;
-            min-width: 100px; /* Reduced */
-        }
-        .bill-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px; /* Reduced */
-        }
-        .bill-table th, .bill-table td {
-            border: 1px solid #e5e7eb;
-            padding: 7px; /* Reduced */
-            text-align: left;
-            font-size: 12px; /* Reduced */
-        }
-        .bill-table th {
-            background-color: #f3f4f6;
+            font-size: 16px;
+            color: #dc2626;
+            margin: 5px 0 0;
             font-weight: bold;
         }
-        .bill-table .amount-column {
-            text-align: right;
-        }
-        .bill-table .total-row {
-            background-color: #f3f4f6;
-            font-weight: bold;
-        }
-        .footer {
-            border-top: 1px solid #e5e7eb;
-            padding-top: 10px; /* Reduced */
-            font-size: 12px; /* Reduced */
-        }
-        .note {
-            margin-bottom: 6px; /* Reduced */
-        }
-        .watermark {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 70px; /* Reduced */
-            opacity: 0.1;
-            color: #166534;
-            z-index: -1;
-            pointer-events: none;
-        }
-        .signatures {
+        .receipt-info {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px; /* Reduced */
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+        .receipt-info div {
+            text-align: center;
+        }
+        .receipt-info .label {
+            font-weight: bold;
+            color: #166534;
+        }
+        .property-details {
+            margin-bottom: 30px;
+            background-color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .property-details h3 {
+            color: #166534;
+            margin-top: 0;
+            font-size: 14px;
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            font-size: 12px;
+        }
+        .details-grid p {
+            margin: 5px 0;
+        }
+        .details-grid .label {
+            font-weight: bold;
+            color: #374151;
+        }
+        .calculation-section {
+            margin-bottom: 30px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .calculation-header {
+            background-color: #166534;
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .calculation-body {
+            padding: 20px;
+        }
+        .calculation-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+        .calculation-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 16px;
+            background-color: #f3f4f6;
+            margin: 10px -20px -20px;
+            padding: 15px 20px;
+        }
+        .calculation-row .label {
+            color: #374151;
+        }
+        .calculation-row .value {
+            color: #166534;
+            font-weight: bold;
+        }
+        .footer-notes {
+            margin-top: 30px;
+            font-size: 12px;
+            background-color: #fef3c7;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+        }
+        .footer-notes h4 {
+            color: #92400e;
+            margin-top: 0;
+        }
+        .footer-notes p {
+            margin: 8px 0;
+        }
+        .signature-section {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
         }
         .signature-box {
-            border-top: 1px solid #333;
-            width: 140px; /* Reduced */
             text-align: center;
-            padding-top: 3px; /* Reduced */
-            font-size: 11px; /* Reduced */
+            width: 200px;
+        }
+        .signature-line {
+            border-top: 1px solid #000;
+            margin-top: 50px;
+            padding-top: 5px;
+            font-size: 12px;
+        }
+        @media print {
+            body {
+                padding: 0;
+                background-color: #fff;
+            }
+            .receipt-container {
+                border: 2px solid #166534;
+                padding: 20px;
+                max-width: 100%;
+            }
+            .no-print {
+                display: none !important;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Watermark -->
-        <div class="watermark">OFFICIAL</div>
-        
-        <!-- Header with logos -->
+    <div class="receipt-container">
+        <!-- Header with logos and title -->
         <div class="header">
-            <div class="logo">
-                <img src="{{ asset('assets/logo/logo3.jpeg') }}" alt="Ministry Logo">
-            </div>
+            <img src="{{ asset('assets/logo/logo1.jpg') }}" alt="Kano State Logo" class="logo">
             <div class="title">
-                <h1 style="font-size: 13px; white-space: nowrap;">KANO STATE MINISTRY OF LAND AND PHYSICAL PLANNING</h1>
-                <h1 style="font-size: 13px;">NO 2 DR BALA MUHAMMAD ROAD KANO</h1>
-                <h2>SECTIONAL TITLING DEPARTMENT</h2>
+                <h1>KANO STATE MINISTRY OF LAND AND PHYSICAL PLANNING</h1>
+                <h2>BETTERMENT CHARGES BILL</h2>
             </div>
-            <div class="logo">
-                <img src="{{ asset('assets/logo/logo1.jpg') }}" alt="Kano State Logo">
-               
+            <img src="{{ asset('assets/logo/logo3.jpeg') }}" alt="Ministry Logo" class="logo">
+        </div>
+        
+        <!-- Receipt Information -->
+        <div class="receipt-info">
+            <div>
+                <div class="label">Bill Reference</div>
+                <div>{{ $bill->ref_id ?? 'BB-' . $application->id . '-' . date('Ymd') }}</div>
+            </div>
+            <div>
+                <div class="label">Date Generated</div>
+                <div>{{ \Carbon\Carbon::parse($bill->created_at ?? now())->format('d/m/Y') }}</div>
+            </div>
+            <div>
+                <div class="label">File Number</div>
+                <div>{{ $application->fileno ?? 'N/A' }}</div>
             </div>
         </div>
         
-        <!-- Receipt Details -->
-        <p style="font-size:12px; margin-bottom:8px;"> Dear Sir/Madame,
-            I am directed to inform you that the total cost of processing of your application for Sectional Title located at {{ $application->property_house_no }} {{ $application->property_street_name}}  {{ $application->property_lga }} {{ $application->property_state }} with the following particulars;</p>
-        <div class="details">
-            
-            <div class="detail-group">
-               
-                <p><span class="detail-label"> FormNo:</span>{{ $application->id }}</p> 
-                  <p><span class="detail-label">Sectional Title:</span>{{ $application->main_id ?? 'N/A' }}</p> 
-               
-                <p><span class="detail-label">File No:</span> {{ $application->fileno }}</p>
-                <p><span class="detail-label">Name of Section Owner:</span> 
-                    @if(!empty($application->corporate_name))
-                        {{ $application->corporate_name }}
-                    @elseif(!empty($application->multiple_owners_names))
-                        {{ $application->multiple_owners_names }}
-                    @else
-                        {{ $application->applicant_title }} {{ $application->first_name }} {{ $application->surname }}
-                    @endif
-                </p>
-                <p><span class="detail-label">Land Use:</span> {{ $application->land_use }}</p>
-                <p><span class="detail-label">Location:</span> {{ $application->property_house_no }} {{ $application->property_street_name}}  {{ $application->property_lga }} {{ $application->property_state }} </p>
-                <p><span class="detail-label"> Approval:</span> {{ $application->approval_date}}</p>
-            </div>
-            <div class="detail-group">
-                <p><span class="detail-label">Bill Reference:</span> {{ $bill->ref_id }}</p>
-                <p><span class="detail-label">Date Generated:</span> {{ date('F j, Y', strtotime($bill->created_at)) }}</p>
-                <p><span class="detail-label">Land Size:</span> {{ number_format($application->property_size ?? 0) }} sqm</p>
-                <p><span class="detail-label">Number of Units:</span> {{ $application->NoOfUnits ?? 0 }}</p>
+        <!-- Property Details -->
+        <div class="property-details">
+            <h3>Property & Owner Details</h3>
+            <div class="details-grid">
+                <div>
+                    <p><span class="label">Application ID:</span> {{ $application->id }}</p>
+                    <p><span class="label">Owner Name:</span> 
+                        @if(!empty($application->corporate_name))
+                            {{ $application->corporate_name }}
+                        @elseif(!empty($application->multiple_owners_names))
+                            {{ $application->multiple_owners_names }}
+                        @else
+                            {{ $application->applicant_title ?? '' }} {{ $application->first_name ?? '' }} {{ $application->surname ?? '' }}
+                        @endif
+                    </p>
+                    <p><span class="label">Property Size:</span> {{ $application->property_size ?? 'N/A' }} sqm</p>
+                    <p><span class="label">Land Use:</span> {{ $application->land_use ?? 'N/A' }}</p>
+                </div>
+                <div>
+                    <p><span class="label">Property Location:</span> 
+                        {{ $application->property_house_no ?? '' }} 
+                        {{ $application->property_plot_no ?? '' }}, 
+                        {{ $application->property_street_name ?? '' }}, 
+                        {{ $application->property_district ?? '' }}, 
+                        {{ $application->property_lga ?? '' }}
+                    </p>
+                    <p><span class="label">Number of Units:</span> {{ $application->NoOfUnits ?? 'N/A' }}</p>
+                    <p><span class="label">Sectional Title File:</span> {{ $bill->Sectional_Title_File_No ?? 'N/A' }}</p>
+                </div>
             </div>
         </div>
         
-        <!-- Bill Table -->
-        <table class="bill-table">
-            <thead>
-                <tr>
-                    <th>Description</th>
-                    <th class="amount-column">Amount (₦)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <p>Property Value</p>
-                        <small style="color: #6b7280;">At {{ $bill->betterment_rate }}% betterment rate</small>
-                    </td>
-                    <td class="amount-column">₦{{ number_format($bill->property_value, 2) }}</td>
-                </tr>
-                <tr>
-                    <td>Betterment Charge</td>
-                    <td class="amount-column">₦{{ number_format($bill->Betterment_Charges, 2) }}</td>
-                </tr>
-                <tr class="total-row">
-                    <td>Total Amount</td>
-                    <td class="amount-column">₦{{ number_format($bill->Betterment_Charges, 2) }}</td>
-                </tr>
-            </tbody>
-        </table>
-        
-        <!-- Footer -->
-        <div class="footer">
-            <p class="note"><strong>Amount in words:</strong> 
-                {{ ucfirst((new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($bill->Betterment_Charges)) }} Naira Only
-            </p>
-            <p class="note">
-                You are hereby advised to settle this bill promptly in order to accelerate the processing of your Certificate of Occupancy. Payments can be made at the One-Stop-Shop 
-                and all KANGISdesignated banks. Ensure that you obtain a duly acknowledged Revenue Receipt issued at the KANGIS Office after concluding payment of the 
-                billed amount.
-                 Thank you.
-            </p>
- 
-            <!-- Signatures -->
-            <div class="signatures">
-                <div class="signature-box">
-                    <p> Date & Signature of Revenue Officer
-                    </p>
+        <!-- Calculation Section -->
+        <div class="calculation-section">
+            <div class="calculation-header">
+                BETTERMENT CHARGES CALCULATION
+            </div>
+            <div class="calculation-body">
+                <div class="calculation-row">
+                    <span class="label">Property Value:</span>
+                    <span class="value">₦ {{ number_format($bill->property_value ?? 0, 2) }}</span>
                 </div>
-                <div class="signature-box">
-                    <p> Date & Signature of Revenue Officer
-                    </p>
+                <div class="calculation-row">
+                    <span class="label">Betterment Rate:</span>
+                    <span class="value">{{ $bill->betterment_rate ?? 0 }}%</span>
+                </div>
+                <div class="calculation-row">
+                    <span class="label">Land Size Factor:</span>
+                    <span class="value">
+                        @php
+                            $landSize = floatval($application->property_size ?? 1200);
+                            if ($landSize <= 500) $factor = 0.8;
+                            elseif ($landSize <= 1000) $factor = 1.0;
+                            elseif ($landSize <= 2000) $factor = 1.2;
+                            else $factor = 1.5;
+                        @endphp
+                        {{ $factor }}
+                    </span>
+                </div>
+                <div class="calculation-row">
+                    <span class="label">TOTAL BETTERMENT CHARGES:</span>
+                    <span class="value">₦ {{ number_format($bill->Betterment_Charges ?? 0, 2) }}</span>
                 </div>
             </div>
-            
-            
+        </div>
+        
+        <!-- Amount in Words -->
+        <div style="text-align: center; margin: 20px 0; font-size: 14px; font-style: italic; color: #374151;">
+            <strong>Amount in Words:</strong> 
+            @php
+                $amount = floatval($bill->Betterment_Charges ?? 0);
+                if (class_exists('NumberFormatter')) {
+                    $formatter = new NumberFormatter('en', NumberFormatter::SPELLOUT);
+                    $amountInWords = ucfirst($formatter->format($amount)) . ' Naira Only';
+                } else {
+                    $amountInWords = 'Amount conversion not available';
+                }
+            @endphp
+            {{ $amountInWords }}
+        </div>
+        
+        <!-- Footer Notes -->
+        <div class="footer-notes">
+            <h4>Important Notes:</h4>
+            <p><strong>Payment Instructions:</strong> This betterment charge must be paid before the issuance of your sectional title certificate.</p>
+            <p><strong>Payment Location:</strong> Payments can be made at the KANGIS Cashier's Office or designated payment points.</p>
+            <p><strong>Receipt Required:</strong> Ensure you obtain a duly acknowledged revenue receipt for your payment.</p>
+            <p><strong>Validity:</strong> This bill is valid for 90 days from the date of generation.</p>
+            <p><strong>Enquiries:</strong> For any enquiries, please contact the Ministry of Land and Physical Planning with your reference number.</p>
+        </div>
+        
+        <!-- Signature Section -->
+        <div class="signature-section">
+            <div class="signature-box">
+                <div class="signature-line">
+                    Authorized Officer<br>
+                    Ministry of Land & Physical Planning
+                </div>
+            </div>
+            <div class="signature-box">
+                <div class="signature-line">
+                    Date: {{ \Carbon\Carbon::now()->format('d/m/Y') }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Print Buttons (hidden when printing) -->
+        <div class="no-print" style="text-align: center; margin-top: 30px;">
+            <button onclick="window.print()" style="padding: 10px 20px; background-color: #166534; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                Print Receipt
+            </button>
+            <button onclick="window.close()" style="padding: 10px 20px; background-color: #6b7280; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Close
+            </button>
         </div>
     </div>
     
     <script>
-        // Auto print when loaded
+        // Auto-print when the page loads (optional)
         window.onload = function() {
-            window.print();
-        };
+            // Uncomment the line below to auto-print when the page loads
+            // window.print();
+        }
     </script>
 </body>
 </html>

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class DepartmentController extends Controller
 {
@@ -19,11 +19,10 @@ class DepartmentController extends Controller
         if (Auth::user()->type != 'super admin' && !Auth::user()->can('manage user')) {
             return redirect()->back()->with('error', __('Permission Denied.'));
         }
-       $PageTitle = 'Departments';
-       $PageDescription='List of all departments';
+        $PageTitle = 'Departments';
+        $PageDescription = 'List of all departments';
 
-
-        $departments = Department::orderBy('name', 'asc')->get();
+        $departments = DB::connection('sqlsrv')->table('departments')->orderBy('name', 'asc')->get();
         return view('department.index', compact('departments', 'PageTitle', 'PageDescription'));
     }
 
@@ -54,8 +53,8 @@ class DepartmentController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:departments',
-            'code' => 'required|string|max:50|unique:departments',
+            'name' => 'required',
+            'code' => 'required',
             'description' => 'nullable|string'
         ]);
 
@@ -63,11 +62,13 @@ class DepartmentController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        Department::create([
+        DB::connection('sqlsrv')->table('departments')->insert([
             'name' => $request->name,
             'code' => $request->code,
             'description' => $request->description,
-            'is_active' => $request->has('is_active') ? 1 : 0
+            'is_active' => $request->has('is_active') ? 1 : 0,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return redirect()->route('departments.index')->with('success', __('Department created successfully'));
@@ -85,7 +86,7 @@ class DepartmentController extends Controller
             return redirect()->back()->with('error', __('Permission Denied.'));
         }
 
-        $department = Department::find($id);
+        $department = DB::connection('sqlsrv')->table('departments')->where('id', $id)->first();
         return view('department.edit', compact('department'));
     }
 
@@ -102,8 +103,6 @@ class DepartmentController extends Controller
             return redirect()->back()->with('error', __('Permission Denied.'));
         }
 
-        $department = Department::find($id);
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|unique:departments,name,' . $id,
             'code' => 'required|string|max:50|unique:departments,code,' . $id,
@@ -114,11 +113,12 @@ class DepartmentController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $department->update([
+        DB::connection('sqlsrv')->table('departments')->where('id', $id)->update([
             'name' => $request->name,
             'code' => $request->code,
             'description' => $request->description,
-            'is_active' => $request->has('is_active') ? 1 : 0
+            'is_active' => $request->has('is_active') ? 1 : 0,
+            'updated_at' => now(),
         ]);
 
         return redirect()->route('departments.index')->with('success', __('Department updated successfully'));
@@ -135,19 +135,19 @@ class DepartmentController extends Controller
         if (Auth::user()->type != 'super admin' && !Auth::user()->can('delete user')) {
             return redirect()->back()->with('error', __('Permission Denied.'));
         }
-        
-        $department = Department::find($id);
-        
+
         // Check if department has users or roles
-        if ($department->users()->count() > 0) {
+        $usersCount = DB::connection('sqlsrv')->table('users')->where('department_id', $id)->count();
+        if ($usersCount > 0) {
             return redirect()->back()->with('error', __('Cannot delete department with assigned users'));
         }
-        
-        if ($department->userRoles()->count() > 0) {
+
+        $rolesCount = DB::connection('sqlsrv')->table('user_roles')->where('department_id', $id)->count();
+        if ($rolesCount > 0) {
             return redirect()->back()->with('error', __('Cannot delete department with assigned roles'));
         }
-        
-        $department->delete();
+
+        DB::connection('sqlsrv')->table('departments')->where('id', $id)->delete();
         return redirect()->route('departments.index')->with('success', __('Department deleted successfully'));
     }
 }

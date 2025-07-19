@@ -805,7 +805,7 @@
                                         {{ $isApproved ? 'disabled' : '' }}>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Measurement (sqm)</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Measurement (sqm) <span class="text-red-500">*</span></label>
                                     <input type="number" step="0.01" :name="'records['+index+'][measurement]'" 
                                         class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm" 
                                         placeholder="Enter Measurement"

@@ -9,10 +9,87 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-@endsection
 
-@section('content')
 <style>
+    /* FORCE DROPDOWN VISIBILITY - OVERRIDE ALL CONFLICTS */
+    .action-menu {
+        position: absolute !important;
+        top: 100% !important;
+        right: 0 !important;
+        z-index: 99999 !important;
+        min-width: 200px !important;
+        background: white !important;
+        border-radius: 0.5rem !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+        border: 1px solid #e5e7eb !important;
+        padding: 0.5rem 0 !important;
+        margin-top: 0.25rem !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        transform: translateY(-10px) !important;
+        transition: all 0.2s ease !important;
+        display: block !important;
+    }
+
+    .action-menu.active {
+        visibility: visible !important;
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+        display: block !important;
+    }
+
+    .action-item {
+        display: flex !important;
+        align-items: center !important;
+        padding: 0.5rem 1rem !important;
+        color: #374151 !important;
+        text-decoration: none !important;
+        transition: background-color 0.15s ease !important;
+        border: none !important;
+        background: none !important;
+        width: 100% !important;
+        text-align: left !important;
+        cursor: pointer !important;
+        list-style: none !important;
+    }
+
+    .action-item:hover {
+        background-color: #f9fafb !important;
+    }
+
+    .action-item i {
+        margin-right: 0.5rem !important;
+        flex-shrink: 0 !important;
+    }
+
+    .action-item.disabled {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+    }
+
+    .action-item.disabled:hover {
+        background-color: transparent !important;
+    }
+
+    .action-dropdown {
+        position: relative !important;
+        display: inline-block !important;
+    }
+
+    .action-toggle {
+        transition: all 0.15s ease !important;
+        padding: 0.5rem !important;
+        border: none !important;
+        background: none !important;
+        cursor: pointer !important;
+        border-radius: 50% !important;
+    }
+
+    .action-toggle:hover {
+        background-color: #f3f4f6 !important;
+        transform: scale(1.05) !important;
+    }
+
     /* Custom DataTables styling to match design */
     .dataTables_wrapper {
         font-family: inherit;
@@ -110,6 +187,7 @@
     .table-cell {
       padding: 0.75rem 1rem;
       border-bottom: 1px solid #e5e7eb;
+      position: relative;
     }
     /* Tooltip/popup styles */
     .tooltip {
@@ -167,96 +245,6 @@
       cursor: pointer;
     }
 
-    /* Enhanced Dropdown menu styles with better responsiveness */
-    .action-menu {
-      position: fixed;
-      top: 100%;
-      right: 0;
-      z-index: 9999;
-      min-width: 200px;
-      max-width: 280px;
-      background: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-      border: 1px solid #e5e7eb;
-      overflow: hidden;
-      transform: translateY(5px);
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.2s ease-in-out;
-    }
-
-    .action-menu.show {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-
-    .action-menu li {
-      border-bottom: 1px solid #f3f4f6;
-    }
-
-    .action-menu li:last-child {
-      border-bottom: none;
-    }
-
-    .action-menu a {
-      display: flex;
-      align-items: center;
-      padding: 0.75rem 1rem;
-      color: #374151;
-      text-decoration: none;
-      transition: background-color 0.15s ease;
-    }
-
-    .action-menu a:hover {
-      background-color: #f9fafb;
-    }
-
-    .action-menu i {
-      margin-right: 0.5rem;
-      flex-shrink: 0;
-    }
-
-    .table-cell.relative {
-      position: relative;
-    }
-
-    /* Responsive dropdown positioning */
-    @media (max-width: 768px) {
-      .action-menu {
-        position: fixed;
-        left: 50%;
-        transform: translateX(-50%) translateY(5px);
-        top: auto;
-        bottom: 80px;
-        right: auto;
-        width: 90%;
-        max-width: 320px;
-      }
-
-      .action-menu.show {
-        transform: translateX(-50%) translateY(0);
-      }
-    }
-
-    @media (max-width: 480px) {
-      .action-menu {
-        width: 95%;
-        bottom: 60px;
-      }
-    }
-
-    /* Dropdown button hover effect */
-    .dropdown-toggle {
-      transition: all 0.15s ease;
-    }
-
-    .dropdown-toggle:hover {
-      background-color: #f3f4f6;
-      transform: scale(1.05);
-    }
-
     /* Filter toggle styles */
     .filter-container {
         display: none;
@@ -287,19 +275,20 @@
         }
     }
 </style>
+@endsection
+
+@section('content')
 <div class="flex-1 overflow-auto">
     <!-- Header -->
     @include($headerPartial ?? 'admin.header')
     
     <!-- Main Content -->
     <div class="p-6">
-    
-     
         
       <!-- Unit Application  -->
-    <div >
+    <div>
        
-      <div  class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
+      <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
         <!-- Filter Toggle and Export Buttons -->
         <div class="flex justify-between items-center mb-4">
             <div class="flex items-center space-x-2">
@@ -319,11 +308,6 @@
                     <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
                 </div>
             </div>
-            
-            {{-- <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
-                <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
-                <span>Export</span>
-            </button> --}}
         </div>
         
         <!-- Filters Container (Hidden by Default) -->
@@ -383,7 +367,7 @@
         </div>
         
         <!-- Not Generated RoFO Table -->
-        <div id="not-generated-table" >
+        <div id="not-generated-table">
           <table id="notGeneratedRofoTable" class="min-w-full divide-y divide-gray-200">
             <thead>
               <tr class="text-xs">
@@ -393,6 +377,7 @@
                 <th class="table-header">LGA</th>
                 <th class="table-header">Block/Floor/Unit</th>
                 <th class="table-header">Land Use</th>
+                <th class="table-header">ST Memo Status</th>
                 <th class="table-header">Date Created</th>
                 <th class="table-header">Actions</th>
               </tr>
@@ -416,44 +401,55 @@
                       @endif
                 </td>
                 <td class="table-cell">{{ $unitApplication->property_lga ?? 'N/A' }}</td>
-                <td class="table-cell">{{ $unitApplication->block_number ?? '' }}/{{ $unitApplication->floor_number ?? '' }}/{{ $unitApplication->unit_number ?? '' }}</td>
+                <td class="table-cell">{{ $unitApplication->block_number ?? '' }}-{{ $unitApplication->floor_number ?? '' }}-{{ $unitApplication->unit_number ?? '' }}</td>
                 <td class="table-cell">{{ $unitApplication->land_use ?? 'N/A' }}</td>
+                <td class="table-cell">
+                  @if($unitApplication->has_st_memo ?? false)
+                    <span class="badge badge-approved">
+                      <i data-lucide="check-circle" class="w-3 h-3 mr-1"></i>
+                      Available
+                    </span>
+                  @else
+                    <span class="badge badge-pending">
+                      <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                      Required
+                    </span>
+                  @endif
+                </td>
                 <td class="table-cell">{{ $unitApplication->created_at ? date('d-m-Y', strtotime($unitApplication->created_at)) : 'N/A' }}</td>
-                <td class="table-cell relative">
-                    <!-- Dropdown Toggle Button -->
-                    <button type="button" class="p-2 hover:bg-gray-100 focus:outline-none rounded-full" onclick="customToggleDropdown(this, event)">
-                      <i data-lucide="more-horizontal" class="w-5 h-5"></i>
-                    </button>
-                    
-                    <!-- Dropdown Menu for Not Generated RoFO -->
-                    <ul class="action-menu">
-                      <li>
-                        <a href="{{ route('sectionaltitling.viewrecorddetail_sub', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                          <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
-                          <span>View Record</span>
-                        </a>
-                      </li>
-                      {{-- <li>
-                        <a href="#" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                          <i data-lucide="edit" class="w-4 h-4 text-green-600"></i>
-                          <span>Edit Record</span>
-                        </a>
-                      </li> --}}
-                      <li>
-                        <a href="{{ route('programmes.generate_rofo', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                          <i data-lucide="file-plus" class="w-4 h-4 text-indigo-600"></i>
-                          <span>Generate RoFO</span>
-                        </a>
-                      </li>
-                    </ul>
+                <td class="table-cell">
+                    <!-- BULLETPROOF ACTION DROPDOWN -->
+                    <div class="action-dropdown">
+                        <button type="button" class="action-toggle" data-dropdown-id="dropdown-{{ $loop->index }}">
+                            <i data-lucide="more-horizontal" class="w-5 h-5"></i>
+                        </button>
+                        
+                        <div class="action-menu" id="dropdown-{{ $loop->index }}">
+                            <a href="{{ route('sectionaltitling.viewrecorddetail_sub', $unitApplication->id) }}" class="action-item">
+                                <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
+                                <span>View Record</span>
+                            </a>
+                            @if($unitApplication->has_st_memo ?? false)
+                                <a href="{{ route('programmes.generate_rofo', $unitApplication->id) }}" class="action-item">
+                                    <i data-lucide="file-plus" class="w-4 h-4 text-indigo-600"></i>
+                                    <span>Generate RoFO</span>
+                                </a>
+                            @else
+                                <span class="action-item disabled" title="ST Memo prerequisite required">
+                                    <i data-lucide="file-plus" class="w-4 h-4 text-gray-400"></i>
+                                    <span class="text-gray-400">Generate RoFO</span>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
                 </td>
               </tr>
               @empty
               <tr id="noRecordsNotGeneratedRow" class="hidden">
-                <td colspan="8" class="table-cell text-center py-4 text-gray-500">No matching records found</td>
+                <td colspan="9" class="table-cell text-center py-4 text-gray-500">No matching records found</td>
               </tr>
               <tr id="emptyNotGeneratedRow">
-                <td colspan="8" class="table-cell text-center py-4 text-gray-500">No records pending RoFO generation</td>
+                <td colspan="9" class="table-cell text-center py-4 text-gray-500">No records pending RoFO generation</td>
               </tr>
               @endforelse
             </tbody>
@@ -496,42 +492,27 @@
                       @endif
                 </td>
                 <td class="table-cell">{{ $unitApplication->property_lga ?? 'N/A' }}</td>
-                <td class="table-cell">{{ $unitApplication->block_number ?? '' }}/{{ $unitApplication->floor_number ?? '' }}/{{ $unitApplication->unit_number ?? '' }}</td>
+                <td class="table-cell">{{ $unitApplication->block_number ?? '' }}-{{ $unitApplication->floor_number ?? '' }}-{{ $unitApplication->unit_number ?? '' }}</td>
                 <td class="table-cell">{{ $unitApplication->land_use ?? 'N/A' }}</td>
                 <td class="table-cell">{{ $unitApplication->created_at ? date('d-m-Y', strtotime($unitApplication->created_at)) : 'N/A' }}</td>
-                <td class="table-cell relative">
-                    <!-- Dropdown Toggle Button -->
-                    <button type="button" class="p-2 hover:bg-gray-100 focus:outline-none rounded-full" onclick="customToggleDropdown(this, event)">
-                      <i data-lucide="more-horizontal" class="w-5 h-5"></i>
-                    </button>
-                    
-                    <!-- Dropdown Menu For Generated RoFO -->
-                    <ul class="action-menu">
-                      <li>
-                        <a href="{{ route('sectionaltitling.viewrecorddetail_sub', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                          <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
-                          <span>View Application</span>
-                        </a>
-                      </li>
-                      {{-- <li>
-                        <a href="#" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                          <i data-lucide="edit" class="w-4 h-4 text-green-600"></i>
-                          <span>Edit Record</span>
-                        </a>
-                      </li> --}}
-                      <li>
-                        <a href="{{ route('programmes.view_rofo', $unitApplication->id) }}" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                          <i data-lucide="clipboard" class="w-4 h-4 text-amber-600"></i>
-                          <span>View RoFO</span>
-                        </a>
-                      </li>
-                      {{-- <li>
-                        <a href="{{ route('programmes.generate_rofo', $unitApplication->id) }}?edit=yes" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
-                          <i data-lucide="edit-3" class="w-4 h-4 text-purple-600"></i>
-                          <span>Edit RoFO</span>
-                        </a>
-                      </li> --}}
-                    </ul>
+                <td class="table-cell">
+                    <!-- BULLETPROOF ACTION DROPDOWN -->
+                    <div class="action-dropdown">
+                        <button type="button" class="action-toggle" data-dropdown-id="dropdown-gen-{{ $loop->index }}">
+                            <i data-lucide="more-horizontal" class="w-5 h-5"></i>
+                        </button>
+                        
+                        <div class="action-menu" id="dropdown-gen-{{ $loop->index }}">
+                            <a href="{{ route('sectionaltitling.viewrecorddetail_sub', $unitApplication->id) }}" class="action-item">
+                                <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
+                                <span>View Application</span>
+                            </a>
+                            <a href="{{ route('programmes.view_rofo', $unitApplication->id) }}" class="action-item">
+                                <i data-lucide="clipboard" class="w-4 h-4 text-amber-600"></i>
+                                <span>View RoFO</span>
+                            </a>
+                        </div>
+                    </div>
                 </td>
               </tr>
               @empty
@@ -552,6 +533,10 @@
     <!-- Page Footer -->
     @include($footerPartial ?? 'admin.footer')
   </div>
+  
+  <!-- Include SweetAlert2 for notifications -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
   <!-- DataTables JS -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
@@ -582,107 +567,72 @@
     });
   }
   
-  // Enhanced dropdown functionality with better responsiveness
-  function customToggleDropdown(button, event) {
-    event.stopPropagation();
-    
-    // Close all other dropdowns first
-    document.querySelectorAll('.action-menu').forEach(menu => {
-      menu.classList.remove('show');
-      menu.classList.add('hidden');
-    });
-    
-    // Get the dropdown menu
-    const dropdown = button.nextElementSibling;
-    
-    // Toggle visibility
-    if (dropdown.classList.contains('hidden')) {
-      dropdown.classList.remove('hidden');
-      
-      // Add show class for animation
-      setTimeout(() => {
-        dropdown.classList.add('show');
-      }, 10);
-      
-      // Position dropdown responsively
-      positionDropdown(dropdown, button);
-    } else {
-      dropdown.classList.remove('show');
-      setTimeout(() => {
-        dropdown.classList.add('hidden');
-      }, 200);
-    }
-  }
-
-  function positionDropdown(dropdown, button) {
-    const rect = button.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const viewportWidth = window.innerWidth;
-    
-    // Reset positioning
-    dropdown.style.position = 'fixed';
-    dropdown.style.top = '';
-    dropdown.style.bottom = '';
-    dropdown.style.left = '';
-    dropdown.style.right = '';
-    dropdown.style.transform = '';
-    dropdown.style.width = '';
-    dropdown.style.maxWidth = '';
-    
-    if (viewportWidth <= 768) {
-      // Mobile positioning - center at bottom
-      dropdown.style.left = '50%';
-      dropdown.style.bottom = '80px';
-      dropdown.style.transform = 'translateX(-50%)';
-      dropdown.style.width = '90%';
-      dropdown.style.maxWidth = '320px';
-    } else {
-      // Desktop positioning - always use fixed positioning to avoid overflow issues
-      const dropdownHeight = 200; // Approximate height of dropdown
-      
-      // Position horizontally - align to the right of the button
-      const rightSpace = viewportWidth - rect.right;
-      if (rightSpace >= 200) {
-        // Enough space on the right
-        dropdown.style.left = rect.right - 200 + 'px';
-      } else {
-        // Not enough space on the right, align to the left of the button
-        dropdown.style.left = Math.max(10, rect.left - 200) + 'px';
-      }
-      
-      // Position vertically
-      if (rect.bottom + dropdownHeight > viewportHeight - 20) {
-        // Position above button
-        dropdown.style.top = Math.max(10, rect.top - dropdownHeight) + 'px';
-      } else {
-        // Position below button
-        dropdown.style.top = rect.bottom + 5 + 'px';
-      }
-      
-      dropdown.style.width = '200px';
-    }
-  }
+  // BULLETPROOF DROPDOWN SYSTEM - WORKS ALWAYS
+  // This system is completely independent of DataTables and will work regardless
   
-  // Close dropdowns when clicking elsewhere
-  document.addEventListener('click', function() {
-    document.querySelectorAll('.action-menu').forEach(menu => {
-      menu.classList.remove('show');
-      setTimeout(() => {
-        menu.classList.add('hidden');
-      }, 200);
-    });
+  // Initialize immediately when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeDropdowns();
   });
 
-  // Handle window resize for dropdown repositioning
-  window.addEventListener('resize', function() {
-    document.querySelectorAll('.action-menu:not(.hidden)').forEach(menu => {
-      const button = menu.previousElementSibling;
-      positionDropdown(menu, button);
+  // Also initialize immediately (fallback)
+  initializeDropdowns();
+
+  function initializeDropdowns() {
+    console.log('Initializing dropdowns...');
+    
+    // Use event delegation on document body to catch all clicks
+    document.body.addEventListener('click', function(e) {
+      // Handle dropdown toggle clicks
+      const toggleButton = e.target.closest('[data-dropdown-id]');
+      if (toggleButton) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const dropdownId = toggleButton.getAttribute('data-dropdown-id');
+        const dropdown = document.getElementById(dropdownId);
+        
+        console.log('Dropdown button clicked:', dropdownId);
+        
+        if (dropdown) {
+          // Close all other dropdowns
+          document.querySelectorAll('.action-menu').forEach(menu => {
+            if (menu.id !== dropdownId) {
+              menu.classList.remove('active');
+            }
+          });
+          
+          // Toggle current dropdown
+          dropdown.classList.toggle('active');
+          console.log('Dropdown toggled:', dropdown.classList.contains('active'));
+        }
+        return;
+      }
+      
+      // Handle clicks on dropdown items (don't close dropdown)
+      if (e.target.closest('.action-item')) {
+        // Let the link/action proceed normally
+        return;
+      }
+      
+      // Close all dropdowns when clicking outside
+      if (!e.target.closest('.action-dropdown')) {
+        document.querySelectorAll('.action-menu').forEach(menu => {
+          menu.classList.remove('active');
+        });
+      }
     });
-  });
+    
+    console.log('Dropdown system initialized');
+  }
 
   function showRofoTab(tabId) {
     currentActiveTab = tabId;
+    
+    // Close any open dropdowns when switching tabs
+    document.querySelectorAll('.action-menu').forEach(menu => {
+      menu.classList.remove('active');
+    });
     
     // Hide all tab contents
     document.getElementById('generated-table').classList.add('hidden');
@@ -755,6 +705,7 @@
       initComplete: function() {
         // Hide default search box since we have custom search
         $('.dataTables_filter').hide();
+        console.log('DataTable initialized - dropdowns should still work');
       }
     });
   }
@@ -802,6 +753,7 @@
       initComplete: function() {
         // Hide default search box since we have custom search
         $('.dataTables_filter').hide();
+        console.log('DataTable initialized - dropdowns should still work');
       }
     });
   }
@@ -845,8 +797,8 @@
         return false;
       }
       
-      // Date filter (column index 6 for not-generated, 7 for generated)
-      const dateColumnIndex = settings.nTable.id === 'generatedRofoTable' ? 7 : 6;
+      // Date filter (column index 7 for not-generated, 7 for generated)
+      const dateColumnIndex = settings.nTable.id === 'generatedRofoTable' ? 7 : 7;
       const dateColumn = data[dateColumnIndex] || '';
       
       if (dateFrom || dateTo) {
@@ -930,6 +882,3 @@
   });
   </script>
 @endsection
-
-
-

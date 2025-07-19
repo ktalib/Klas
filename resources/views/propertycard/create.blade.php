@@ -1,4 +1,3 @@
-{{-- filepath: c:\wamp64\www\gisedms\resources\views\propertycard\index.blade.php --}}
 @extends('layouts.app')
 @section('page-title')
 Property Records Assistant
@@ -7,10 +6,11 @@ Property Records Assistant
     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a></li>
     <li class="breadcrumb-item" aria-current="page"> {{ __('Property Records Assistant') }} </li>
 @endsection
-@push('script-page')
+ @section('content')
     <script src="{{ asset('assets/js/plugins/ckeditor/classic/ckeditor.js') }}"></script>
-   
-@endpush
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+ 
 <style>
     .modal {
         transition: opacity 0.25s ease;
@@ -43,7 +43,7 @@ Property Records Assistant
 
 </style>
 
-@section('content')
+
     <div class="container mx-auto mt-4 p-4">
 
         
@@ -81,8 +81,8 @@ Property Records Assistant
                     </div>
                 </div>
                 
-                <!-- Modal Content -->
-                <div class="p-2">
+                <!-- Modal Content with Alpine.js -->
+                <div class="p-2" x-data="propertyRecordForm()">
                     <form method="POST" action="{{ route('propertycard.saveRecord') }}" id="propertyCardForm">
                         @csrf
                         <input type="hidden" id="currentRecordId" name="currentRecordId" value="{{ isset($result) ? $result->id : '' }}">
@@ -116,46 +116,6 @@ Property Records Assistant
                                         <input type="text" id="Previewflenumber" name="Previewflenumber" class="w-full p-2 border border-gray-300 bg-gray-100 font-medium rounded-md" value="{{ isset($result) ? ($result->kangisFileNo ?: 'N/A') : 'N/A' }}" readonly style="color: black;">
                                     </div>
                                 </div>
-                                
-                                <script>
-                                    function updateFileNumberColor() {
-                                        const prefixEl = document.getElementById('fileNoPrefix');
-                                        const numberEl = document.getElementById('fileNumber');
-                                        const previewEl = document.getElementById('Previewflenumber');
-
-                                     
-
-                                        const prefix = prefixEl.value;
-                                        const number = numberEl.value.trim();
-                                        const preview = previewEl.value.trim();
-
-                                        // Change to red only when all fields are filled and valid
-                                        if (prefix && number && preview && preview !== 'N/A') {
-                                            // Validate format based on prefix
-                                            let isValid = true;
-                                            if (prefix === "KN") {
-                                                isValid = /^\d+$/.test(number);
-                                            } else if (["KNML", "MNKL", "MLKN", "KNGP"].includes(prefix)) {
-                                                isValid = /^\d{5}$/.test(number);
-                                            } else if (prefix.includes('-') || ["CON-COM", "CON-RES", "CON-AG", "CON-IND", "RES"].includes(prefix)) {
-                                                isValid = number.length > 0;
-                                            }
-
-                                            if (isValid) {
-                                                prefixEl.style.color = 'red';
-                                                numberEl.style.color = 'red';
-                                                previewEl.style.color = 'red';
-                                            }
-                                        }
-                                    }
-
-                                    // Call the function initially to set default colors
-                                    document.addEventListener('DOMContentLoaded', updateFileNumberColor);
-
-                                    // Add event listeners
-                                    document.getElementById('fileNoPrefix').addEventListener('change', updateFileNumberColor);
-                                    document.getElementById('fileNumber').addEventListener('input', updateFileNumberColor);
-                                </script>
 
                                 <div class="grid grid-cols-6 gap-2 mb-2">
                                     <div class="col-span-2">
@@ -190,21 +150,39 @@ Property Records Assistant
 
                                 <div class="grid grid-cols-2 gap-2 mb-2">
                                     <div>
-                                        <label for="originalAllottee" class="block text-xs text-gray-600 mb-1">Assignor</label>
-                                        <input type="text" id="originalAllottee" name="originalAllottee" class="w-full border rounded p-1 text-xs" value="{{ isset($result) ? ($result->originalAllottee ?: 'N/A') : 'N/A' }}" />
+                                        <label for="originalAllottee" class="block text-xs text-gray-600 mb-1" x-text="partyLabels.firstParty"></label>
+                                        <input type="text" id="originalAllottee" name="originalAllottee" class="w-full border rounded p-1 text-xs" value="{{ isset($result) ? ($result->originalAllottee ?: 'N/A') : 'N/A' }}" :placeholder="`Enter ${partyLabels.firstParty.toLowerCase()}'s name`" />
                                     </div>
                                     <div>
-                                        <label for="currentAllottee" class="block text-xs text-gray-600 mb-1">Assignee</label>
-                                        <input type="text" id="currentAllottee" name="currentAllottee" class="w-full border rounded p-1 text-xs" value="{{ isset($result) ? ($result->currentAllottee ?: 'N/A') : 'N/A' }}" />
+                                        <label for="currentAllottee" class="block text-xs text-gray-600 mb-1" x-text="partyLabels.secondParty"></label>
+                                        <input type="text" id="currentAllottee" name="currentAllottee" class="w-full border rounded p-1 text-xs" value="{{ isset($result) ? ($result->currentAllottee ?: 'N/A') : 'N/A' }}" :placeholder="`Enter ${partyLabels.secondParty.toLowerCase()}'s name`" />
                                     </div>
                                 </div>
 
                                 <div class="grid grid-cols-3 gap-2 mb-2">
                                     <div>
-                                        <label for="instrument" class="block text-xs text-gray-600 mb-1 ">Instrument</label>
+                                        <label for="instrument" class="block text-xs text-gray-600 mb-1">Instrument</label>
                                         <div class="relative">
-                                            <select id="instrument" class="w-full border rounded p-1 pr-6 appearance-none text-xs">
-                                                <option></option>
+                                            <select id="instrument" name="instrument" x-model="selectedInstrument" class="w-full border rounded p-1 pr-6 appearance-none text-xs">
+                                                <option value="">Select Transaction Type</option>
+                                                <option value="power-of-attorney">Power of Attorney</option>
+                                                <option value="irrevocable-power-of-attorney">Irrevocable Power of Attorney</option>
+                                                <option value="deed-of-mortgage">Deed of Mortgage</option>
+                                                <option value="tripartite-mortgage">Tripartite Mortgage</option>
+                                                <option value="deed-of-assignment">Deed of Assignment</option>
+                                                <option value="deed-of-lease">Deed of Lease</option>
+                                                <option value="deed-of-sub-lease">Deed of Sub-Lease</option>
+                                                <option value="deed-of-sub-under-lease">Deed of Sub-Under-Lease</option>
+                                                <option value="deed-of-sub-division">Deed of Sub-Division</option>
+                                                <option value="deed-of-merger">Deed of Merger</option>
+                                                <option value="deed-of-surrender">Deed of Surrender</option>
+                                                <option value="deed-of-variation">Deed of Variation</option>
+                                                <option value="deed-of-assent">Deed of Assent</option>
+                                                <option value="deed-of-release">Deed of Release</option>
+                                                <option value="right-of-occupancy">Right of Occupancy (R of O)</option>
+                                                <option value="certificate-of-occupancy">Certificate of Occupancy (C of O)</option>
+                                                <option value="sectional-titling-c-of-o">Sectional Titling Certificate of Occupancy</option>
+                                                <option value="sltr-c-of-o">Systematic Land Titling and Registration (SLTR) Certificate of Occupancy</option>
                                             </select>
                                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-700">
                                                 <svg class="h-3 w-3" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
@@ -248,8 +226,8 @@ Property Records Assistant
                                 <span class="text-right">Quick Search / Filter</span>
                                 <div class="border rounded">
                                     <div class="mb-1">
-                                        <input type="checkbox" id="schedule" class="mr-1 schedule-checkbox" />
-                                        <label for="schedule" class="text-xs">Schedule</label>
+                                        <input type="checkbox" id="scheduleFilter" class="mr-1 schedule-checkbox" />
+                                        <label for="scheduleFilter" class="text-xs">Schedule</label>
                                         <div class="relative mt-1">
                                             <select class="w-full border rounded p-1 pr-6 appearance-none text-xs schedule-input" disabled>
                                                 <option></option>
@@ -275,49 +253,27 @@ Property Records Assistant
                                         </div>
                                     </div>
 
-                                    {{-- <div class="mb-1">
-                                        <input type="checkbox" id="layout" class="mr-1 layout-checkbox" />
-                                        <label for="layout" class="text-xs">Layout</label>
-                                        <div class="relative mt-1">
-                                            <input type="text" id="layoutName" name="layoutName" class="w-full border rounded p-1 text-xs layout-input" value="{{ request('layoutName') }}" disabled />
-                                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-700">
-                                                <svg class="h-3 w-3" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path d="M19 9l-7 7-7-7"></path>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </div> --}}
-
                                     <div class="mb-1">
-                                        <input type="checkbox" id="grantor" class="mr-1 grantor-checkbox" />
-                                        <label for="grantor" class="text-xs">Assignor</label>
-                                        <input type="text" id="Assignor" name="originalAllottee" class="w-full border rounded p-1 mt-1 text-xs grantor-input" value="{{ request('originalAllottee') }}" disabled />
+                                        <input type="checkbox" id="grantor" x-model="grantorEnabled" class="mr-1 grantor-checkbox" />
+                                        <label for="grantor" class="text-xs" x-text="partyLabels.firstParty"></label>
+                                        <input type="text" id="Assignor" name="originalAllottee" 
+                                               class="w-full border rounded p-1 mt-1 text-xs grantor-input" 
+                                               value="{{ request('originalAllottee') }}" 
+                                               :disabled="!grantorEnabled"
+                                               :placeholder="`Enter ${partyLabels.firstParty.toLowerCase()}'s name`"
+                                               :class="grantorEnabled ? 'bg-white border-green-500 border-2 shadow-sm' : 'bg-gray-100 border-gray-300'" />
                                     </div>
 
                                     <div class="mb-1">
-                                        <input type="checkbox" id="Assignee" class="mr-1 grantee-checkbox" />
-                                        <label for="Assignee" class="text-xs">Assignee</label>
-                                        <input type="text" id="Assignee" name="currentAllottee" class="w-full border rounded p-1 mt-1 text-xs grantee-input" value="{{ request('currentAllottee') }}" disabled />
+                                        <input type="checkbox" id="grantee" x-model="granteeEnabled" class="mr-1 grantee-checkbox" />
+                                        <label for="grantee" class="text-xs" x-text="partyLabels.secondParty"></label>
+                                        <input type="text" id="Assignee" name="currentAllottee" 
+                                               class="w-full border rounded p-1 mt-1 text-xs grantee-input" 
+                                               value="{{ request('currentAllottee') }}" 
+                                               :disabled="!granteeEnabled"
+                                               :placeholder="`Enter ${partyLabels.secondParty.toLowerCase()}'s name`"
+                                               :class="granteeEnabled ? 'bg-white border-green-500 border-2 shadow-sm' : 'bg-gray-100 border-gray-300'" />
                                     </div>
-
-                                    {{-- <div class="mb-1">
-                                        <input type="checkbox" id="numberPageVol" class="mr-1 number-page-vol-checkbox" />
-                                        <label for="numberPageVol" class="text-xs">No. / Page / Vol.</label>
-                                        <div class="grid grid-cols-3 gap-1 mt-1">
-                                            <div>
-                                                <label class="block text-xs text-gray-600 mb-0.5">No.</label>
-                                                <input type="text" id="oldTitleSerialNo" name="oldTitleSerialNo" class="w-full border rounded p-1 text-xs number-input" value="{{ request('oldTitleSerialNo') }}" disabled />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs text-gray-600 mb-0.5">Page</label>
-                                                <input type="text" id="oldTitlePageNo" name="oldTitlePageNo" class="w-full border rounded p-1 text-xs page-input" value="{{ request('oldTitlePageNo') }}" disabled />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs text-gray-600 mb-0.5">Vol.</label>
-                                                <input type="text" id="oldTitleVolumeNo" name="oldTitleVolumeNo" class="w-full border rounded p-1 text-xs volume-input" value="{{ request('oldTitleVolumeNo') }}" disabled />
-                                            </div>
-                                        </div>
-                                    </div> --}}
 
                                     <div class="mb-2">
                                         <input type="checkbox" id="mlsfNoCheckbox" class="mr-1" />
@@ -354,687 +310,77 @@ Property Records Assistant
                                             </svg>
                                         </button>
                                     </div>
-
-                                    <script>
-                                    document.getElementById('refreshButton').addEventListener('click', function() {
-                                        // Reset all form fields
-                                        const form = document.getElementById('propertyCardForm');
-                                        const inputs = form.querySelectorAll('input[type="text"], select');
-                                        inputs.forEach(input => {
-                                            input.value = 'N/A';
-                                        });
-
-                                        // Reset record counter
-                                        document.getElementById('recordCounter').innerText = "0 of {{$recordCount}}";
-                                        document.getElementById('currentRecordId').value = '';
-
-                                        // Clear file number fields
-                                        document.getElementById('fileNoPrefix').value = '';
-                                        document.getElementById('fileNumber').value = '';
-                                        const previewElement = document.getElementById('Previewflenumber');
-                                        if (previewElement) {
-                                            previewElement.value = 'N/A';
-                                        }
-
-                                        // Reset checkbox states and disable inputs
-                                        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-                                        checkboxes.forEach(checkbox => {
-                                            checkbox.checked = false;
-                                            const inputClass = checkbox.id.replace('Checkbox', '-input');
-                                            const relatedInputs = document.getElementsByClassName(inputClass);
-                                            Array.from(relatedInputs).forEach(input => {
-                                                input.disabled = true;
-                                            });
-                                        });
-                                    });
-                                    </script>
                                 </div>
-                            </form>
+                            </div>
                         </div>
-                    </div>
-
-                  
+                    </form>
                 </div>
             </div>
         </div>
-
     </div>
 
-    <!-- Property Card Records Table -->
-  
-
-     <script>
-      
-            // Function to update the preview
-            function updatePreview() {
-                const prefix = document.getElementById('fileNoPrefix').value;
-                const number = document.getElementById('fileNumber').value.trim();
-                const mlsfNoValue = document.getElementById('mlsfNo').value.trim();
-                const kangisFileNoValue = document.getElementById('kangisFileNo').value.trim();
-                let previewValue = '';
-
-                if (mlsfNoValue && kangisFileNoValue) {
-                    previewValue = `MLS File #: ${mlsfNoValue} | Kangis File #: ${kangisFileNoValue}`;
-                } else {
-                    let baseFileNo = prefix;
-                    if (number) {
-                        if (prefix === "KN") {
-                            previewValue = /^\d+$/.test(number) ? prefix + String(number).padStart(4, '0') : prefix + number;
-                        } else if (prefix === "KNML" || prefix === "MNKL" || prefix === "MLKN" || prefix === "KNGP") {
-                            previewValue = /^\d+$/.test(number) ? prefix + " " + String(number).padStart(5, '0') : prefix + " " + number;
-                        } else if (prefix.includes('-') || prefix === "CON-COM" || prefix === "CON-RES" || prefix === "CON-AG" || prefix === "CON-IND" || prefix === "RES") {
-                            previewValue = prefix + "-" + number;
-                        } else {
-                            previewValue = prefix + " " + number;
-                        }
-                    }
-                    previewValue = previewValue || 'N/A';
-                }
-                document.getElementById('Previewflenumber').value = previewValue;
-            }
-        
-            // Initialize preview on page load
-            document.addEventListener('DOMContentLoaded', function() {
-                updatePreview();
-            });
-        
-            // Event listeners for real-time updates
-            document.getElementById('fileNoPrefix').addEventListener('change', updatePreview);
-            document.getElementById('fileNumber').addEventListener('input', updatePreview);
-            document.getElementById('mlsfNo').addEventListener('input', updatePreview);
-            document.getElementById('kangisFileNo').addEventListener('input', updatePreview);
-        
-            // Event listener for the Enter File Number button
-            document.getElementById('enterFileNumber').addEventListener('click', function() {
-                let fileNumber = document.getElementById('fileNumber');
-                let fileNoPrefix = document.getElementById('fileNoPrefix');
-        
-                // Enable fields
-                fileNumber.disabled = false;
-                fileNoPrefix.disabled = false;
-        
-                // Clear values
-                fileNumber.value = '';
-                fileNoPrefix.value = '';
-        
-                // Hide temp options
-                fileNoPrefix.querySelector('option[value="TempfileNoPrefix"]').style.display = 'none';
-        
-                // Clear the preview value when the Enter File Number button is clicked
-                document.getElementById('Previewflenumber').value = '';
-        
-                // Set focus to the prefix field
-                fileNoPrefix.focus();
-            });
-        
-            // Event listener for the Enter Root Title button
-            document.getElementById('enterRootTitleRegNo').addEventListener('click', function() {
-                let rootTitleRegNo = document.getElementById('rootTitleRegNo');
-                rootTitleRegNo.disabled = false;
-                rootTitleRegNo.value = '';
-                rootTitleRegNo.focus();
-            });
-
-
-            // Event listener for the Find button to search for a record
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('findButton').addEventListener('click', function() {
-            console.log('Find button clicked'); // Debug log
-
-            const lgaName = document.getElementById('lgaName').value;
-            const layoutName = document.getElementById('layoutName').value;
-            const Assignor = document.getElementById('Assignor').value;
-            const Assignee = document.getElementById('Assignee').value;
-            const oldTitleSerialNo = document.getElementById('oldTitleSerialNo').value;
-            const oldTitlePageNo = document.getElementById('oldTitlePageNo').value;
-            const oldTitleVolumeNo = document.getElementById('oldTitleVolumeNo').value;
-            const mlsfNo = document.getElementById('mlsfNo').value;
-            const kangisFileNo = document.getElementById('kangisFileNo').value;
-
-            const data = {
-                lgaName,
-                layoutName,
-                Assignor,
-                Assignee,
-                oldTitleSerialNo,
-                oldTitlePageNo,
-                oldTitleVolumeNo,
-                mlsfNo,
-                kangisFileNo,
-                _token: '{{ csrf_token() }}'
-            };
-
-            console.log('Data to be sent:', data); // Debug log
-
-            fetch('{{ route('propertycard.search') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': data._token
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                console.log('Response received:', response); // Debug log
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Data received:', data); // Debug log
-                if (data) {
-                    document.getElementById('fileNoPrefix').value = data.fileNoPrefix;
-                    document.getElementById('fileNumber').value = data.fileNumber;
-                    document.getElementById('Previewflenumber').value = data.Previewflenumber;
-                    document.getElementById('oldTitleSerialNo').value = data.oldTitleSerialNo;
-                    document.getElementById('oldTitlePageNo').value = data.oldTitlePageNo;
-                    document.getElementById('oldTitleVolumeNo').value = data.oldTitleVolumeNo;
-                    document.getElementById('lgaName').value = data.lgaName;
-                    document.getElementById('layoutName').value = data.layoutName;
-                    document.getElementById('Assignor').value = data.Assignor;
-                    document.getElementById('Assignee').value = data.Assignee;
-                    document.getElementById('mlsfNo').value = data.mlsfNo;
-                    document.getElementById('kangisFileNo').value = data.kangisFileNo;
-                } else {
-                    alert('No matching record found.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while searching for the record.');
-            });
-        });
-    });
-</script>
-
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+// Alpine.js component for Property Record Form
+function propertyRecordForm() {
+    return {
+        selectedInstrument: '',
+        grantorEnabled: false,
+        granteeEnabled: false,
         
-        const kangisFileNo = document.getElementById('kangisFileNo').value;
-        console.log('Searching for:', kangisFileNo);
-
-        fetch('{{ route('propertycard.search') }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                kangisFileNo: kangisFileNo
-            })
-        })
-        .then(response => response.json())
-        .then(response => {
-            console.log('Response:', response);
+        // Define instrument types with their corresponding party labels
+        instrumentTypes: {
+            'power-of-attorney': { firstParty: 'Grantor', secondParty: 'Grantee' },
+            'irrevocable-power-of-attorney': { firstParty: 'Grantor', secondParty: 'Grantee' },
+            'deed-of-mortgage': { firstParty: 'Mortgagor', secondParty: 'Mortgagee' },
+            'tripartite-mortgage': { firstParty: 'Mortgagor', secondParty: 'Mortgagee' },
+            'deed-of-assignment': { firstParty: 'Assignor', secondParty: 'Assignee' },
+            'deed-of-lease': { firstParty: 'Lessor', secondParty: 'Lessee' },
+            'deed-of-sub-lease': { firstParty: 'Sub-Lessor', secondParty: 'Sub-Lessee' },
+            'deed-of-sub-under-lease': { firstParty: 'Sub-Under-Lessor', secondParty: 'Sub-Under-Lessee' },
+            'deed-of-sub-division': { firstParty: 'Subdivider', secondParty: 'Beneficiary' },
+            'deed-of-merger': { firstParty: 'Merging Party', secondParty: 'Receiving Party' },
+            'deed-of-surrender': { firstParty: 'Surrenderer', secondParty: 'Recipient' },
+            'deed-of-variation': { firstParty: 'Party', secondParty: 'Counterparty' },
+            'deed-of-assent': { firstParty: 'Executor/Administrator', secondParty: 'Beneficiary' },
+            'deed-of-release': { firstParty: 'Releasor', secondParty: 'Releasee' },
+            'right-of-occupancy': { firstParty: 'Holder', secondParty: 'Authority' },
+            'certificate-of-occupancy': { firstParty: 'Holder', secondParty: 'Authority' },
+            'sectional-titling-c-of-o': { firstParty: 'Unit Owner', secondParty: 'Authority' },
+            'sltr-c-of-o': { firstParty: 'Holder', secondParty: 'Authority' }
+        },
+        
+        // Computed property for party labels
+        get partyLabels() {
+            if (this.selectedInstrument && this.instrumentTypes[this.selectedInstrument]) {
+                return this.instrumentTypes[this.selectedInstrument];
+            }
+            return { firstParty: 'Assignor', secondParty: 'Assignee' };
+        },
+        
+        // Watch for changes in selectedInstrument
+        init() {
+            console.log('🚀 Alpine.js Property Record Form initialized');
             
-            if (response.success && response.data) {
-                const data = response.data;
-                // Update all form fields with received data
-                document.getElementById('kangisFileNo').value = data.kangisFileNo || '';
-                document.getElementById('plotNo').value = data.plotNo || '';
-                document.getElementById('lgaName').value = data.lgaName || '';
-                document.getElementById('layoutName').value = data.layoutName || '';
-                document.getElementById('oldTitleSerialNo').value = data.oldTitleSerialNo || '';
-                document.getElementById('oldTitlePageNo').value = data.oldTitlePageNo || '';
-                document.getElementById('oldTitleVolumeNo').value = data.oldTitleVolumeNo || '';
-                document.getElementById('Assignor').value = data.originalAllottee || '';
-                document.getElementById('Assignee').value = data.currentAllottee || '';
+            // Watch for changes in selectedInstrument
+            this.$watch('selectedInstrument', (value) => {
+                console.log('📝 Instrument changed to:', value);
                 
-                // Enable fields that have data
-                if (data.lgaName) document.getElementById('lgaName').disabled = false;
-                if (data.layoutName) document.getElementById('layoutName').disabled = false;
-                if (data.oldTitleSerialNo) document.getElementById('oldTitleSerialNo').disabled = false;
-                if (data.oldTitlePageNo) document.getElementById('oldTitlePageNo').disabled = false;
-                if (data.oldTitleVolumeNo) document.getElementById('oldTitleVolumeNo').disabled = false;
-                if (data.originalAllottee) document.getElementById('Assignor').disabled = false;
-                if (data.currentAllottee) document.getElementById('Assignee').disabled = false;
-
-                // Check corresponding checkboxes for fields that have data
-                if (data.lgaName) document.querySelector('.lgsa-checkbox').checked = true;
-                if (data.layoutName) document.querySelector('.layout-checkbox').checked = true;
-                if (data.originalAllottee) document.querySelector('.grantor-checkbox').checked = true;
-                if (data.currentAllottee) document.querySelector('.grantee-checkbox').checked = true;
-            } else {
-                alert('No matching record found for ' + kangisFileNo);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error searching for record');
-        });
-    });
-});
-</script>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Enable/disable inputs based on checkbox state
-    document.querySelectorAll('.schedule-checkbox, .lgsa-checkbox, .layout-checkbox, .grantor-checkbox, .grantee-checkbox, .number-page-vol-checkbox, #mlsfNoCheckbox, #kangisFileNoCheckbox').forEach(function(element) {
-        element.addEventListener('change', function() {
-            let input;
-            if (this.id === 'mlsfNoCheckbox') {
-                input = document.getElementById('mlsfNo');
-            } else if (this.id === 'kangisFileNoCheckbox') {
-                input = document.getElementById('kangisFileNo');
-            } else if (this.classList.contains('number-page-vol-checkbox')) {
-                document.querySelectorAll('.number-input, .page-input, .volume-input').forEach(function(npvInput) {
-                    npvInput.disabled = !element.checked;
-                });
-                return;
-            } else {
-                const inputClass = this.classList[1].replace('-checkbox', '-input');
-                document.querySelectorAll('.' + inputClass).forEach(function(inputElement) {
-                    inputElement.disabled = !element.checked;
-                });
-                return;
-            }
-            input.disabled = !this.checked;
-        });
-    });
-});
- 
-// New event listener to handle Save button submission
-document.getElementById('saveButton').addEventListener('click', function() {
-    var form = document.getElementById('propertyCardForm');
-    var formData = new FormData(form);
-    fetch('{{ route('propertycard.saveRecord') }}', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: formData
-    })
-    .then(response => {
-       if (!response.ok) {
-           throw new Error('Network response was not ok, status: ' + response.status);
-       }
-       return response.json();
-    })
-    .then(data => {
-       if (data.success) {
-           Swal.fire({
-               icon: 'success',
-               title: 'Success',
-               text: 'Record saved successfully.'
-           });
-           form.reset(); // clear form fields
-       } else {
-           console.error('Save failed with data:', data);
-           Swal.fire({
-               icon: 'error',
-               title: 'Error',
-               text: 'Saving failed.'
-           });
-       }
-    })
-    .catch(error => {
-       console.error('Error occurred during saveRecord fetch:', error);
-       Swal.fire({
-           icon: 'error',
-           title: 'Error',
-           text: 'Error occurred: ' + error.message
-       });
-    });
-});
-
-// Add navigation event listeners for Previous and Next buttons
-document.getElementById('previousButton').addEventListener('click', function() {
-    const currentId = document.getElementById('currentRecordId').value;
-    fetch("{{ route('propertycard.navigate') }}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ direction: 'previous', currentId: currentId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.success) {
-            // Update hidden field and record counter
-            document.getElementById('currentRecordId').value = data.id;
-            document.getElementById('recordCounter').innerText = data.id + " of " + data.recordCount;
-            
-            // Update form fields (use similar mapping as in the search method)
-            document.getElementById('fileNoPrefix').value = data.fileNoPrefix;
-            document.getElementById('fileNumber').value = data.fileNumber;
-            document.getElementById('Previewflenumber').value = data.kangisFileNo;
-            document.getElementById('oldTitleSerialNo').value = data.oldTitleSerialNo;
-            document.getElementById('oldTitlePageNo').value = data.oldTitlePageNo;
-            document.getElementById('oldTitleVolumeNo').value = data.oldTitleVolumeNo;
-            document.getElementById('lgaName').value = data.lgaName;
-            document.getElementById('layoutName').value = data.layoutName;
-            document.getElementById('Assignor').value = data.originalAllottee;
-            document.getElementById('Assignee').value = data.currentAllottee;
-            document.getElementById('mlsfNo').value = data.mlsfNo;
-            document.getElementById('kangisFileNo').value = data.kangisFileNo;
-            document.getElementById('plotNo').value = data.plotNo;
-            document.getElementById('description').value = data.description;
-        } else {
-            alert("No previous record available");
-        }
-    })
-    .catch(error => console.error('Error:', error));
-});
-
-document.getElementById('nextButton').addEventListener('click', function() {
-    const currentId = document.getElementById('currentRecordId').value;
-    fetch("{{ route('propertycard.navigate') }}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ direction: 'next', currentId: currentId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.success) {
-            // Update hidden field and record counter display
-            document.getElementById('currentRecordId').value = data.id;
-            document.getElementById('recordCounter').innerText = data.id + " of " + data.recordCount;
-            
-            // Update form fields similarly
-            document.getElementById('fileNoPrefix').value = data.fileNoPrefix;
-            document.getElementById('fileNumber').value = data.fileNumber;
-            document.getElementById('Previewflenumber').value = data.kangisFileNo;
-            document.getElementById('oldTitleSerialNo').value = data.oldTitleSerialNo;
-            document.getElementById('oldTitlePageNo').value = data.oldTitlePageNo;
-            document.getElementById('oldTitleVolumeNo').value = data.oldTitleVolumeNo;
-            document.getElementById('lgaName').value = data.lgaName;
-            document.getElementById('layoutName').value = data.layoutName;
-            document.getElementById('Assignor').value = data.originalAllottee;
-            document.getElementById('Assignee').value = data.currentAllottee;
-            document.getElementById('mlsfNo').value = data.mlsfNo;
-            document.getElementById('kangisFileNo').value = data.kangisFileNo;
-            document.getElementById('plotNo').value = data.plotNo;
-            document.getElementById('description').value = data.description;
-        } else {
-            alert("No next record available");
-        }
-    })
-    .catch(error => console.error('Error:', error));
-});
-
-// Add these event listeners after your existing navigation code
-document.getElementById('firstButton').addEventListener('click', function() {
-    fetch("{{ route('propertycard.navigate') }}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ direction: 'first' })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.success) {
-            updateFormWithRecord(data);
-        } else {
-            alert("Could not load first record");
-        }
-    })
-    .catch(error => console.error('Error:', error));
-});
-
-document.getElementById('lastButton').addEventListener('click', function() {
-    fetch("{{ route('propertycard.navigate') }}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ direction: 'last' })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.success) {
-            updateFormWithRecord(data);
-        } else {
-            alert("Could not load last record");
-        }
-    })
-    .catch(error => console.error('Error:', error));
-});
-
-// Add this helper function to avoid code duplication
-function updateFormWithRecord(data) {
-    document.getElementById('currentRecordId').value = data.id;
-    document.getElementById('recordCounter').innerText = data.id + " of " + data.recordCount;
-    
-    document.getElementById('fileNoPrefix').value = data.fileNoPrefix;
-    document.getElementById('fileNumber').value = data.fileNumber;
-    document.getElementById('Previewflenumber').value = data.kangisFileNo;
-    document.getElementById('oldTitleSerialNo').value = data.oldTitleSerialNo;
-    document.getElementById('oldTitlePageNo').value = data.oldTitlePageNo;
-    document.getElementById('oldTitleVolumeNo').value = data.oldTitleVolumeNo;
-    document.getElementById('lgaName').value = data.lgaName;
-    document.getElementById('layoutName').value = data.layoutName;
-    document.getElementById('Assignor').value = data.originalAllottee;
-    document.getElementById('Assignee').value = data.currentAllottee;
-    document.getElementById('mlsfNo').value = data.mlsfNo;
-    document.getElementById('kangisFileNo').value = data.kangisFileNo;
-    document.getElementById('plotNo').value = data.plotNo;
-    document.getElementById('description').value = data.description;
-}
-</script>
- 
-<script>
-document.getElementById('findButton').addEventListener('click', function(e) {
-    e.preventDefault(); // Prevent form submission
-    
-    const searchData = {};
-    
-    // Only include enabled fields that have values
-    if (!document.getElementById('mlsfNo').disabled) {
-        const mlsfNo = document.getElementById('mlsfNo').value;
-        if (mlsfNo && mlsfNo !== 'N/A') searchData.mlsfNo = mlsfNo;
-    }
-    
-    if (!document.getElementById('kangisFileNo').disabled) {
-        const kangisFileNo = document.getElementById('kangisFileNo').value;
-        if (kangisFileNo && kangisFileNo !== 'N/A') searchData.kangisFileNo = kangisFileNo;
-    }
-    
-    if (!document.getElementById('oldTitleSerialNo').disabled) {
-        const serialNo = document.getElementById('oldTitleSerialNo').value;
-        if (serialNo && serialNo !== 'N/A') searchData.oldTitleSerialNo = serialNo;
-    }
-    
-    if (!document.getElementById('oldTitlePageNo').disabled) {
-        const pageNo = document.getElementById('oldTitlePageNo').value;
-        if (pageNo && pageNo !== 'N/A') searchData.oldTitlePageNo = pageNo;
-    }
-    
-    if (!document.getElementById('oldTitleVolumeNo').disabled) {
-        const volumeNo = document.getElementById('oldTitleVolumeNo').value;
-        if (volumeNo && volumeNo !== 'N/A') searchData.oldTitleVolumeNo = volumeNo;
-    }
-    
-    if (!document.getElementById('lgaName').disabled) {
-        const lgaName = document.getElementById('lgaName').value;
-        if (lgaName && lgaName !== 'N/A') searchData.lgaName = lgaName;
-    }
-    
-    if (!document.getElementById('Assignor').disabled) {
-        const assignor = document.getElementById('Assignor').value;
-        if (assignor && assignor !== 'N/A') searchData.originalAllottee = assignor;
-    }
-    
-    if (!document.getElementById('Assignee').disabled) {
-        const assignee = document.getElementById('Assignee').value;
-        if (assignee && assignee !== 'N/A') searchData.currentAllottee = assignee;
-    }
-
-    // Add CSRF token
-    searchData._token = '{{ csrf_token() }}';
-
-    console.log('Search data:', searchData); // Debug log
-
-    // Only proceed if we have at least one search criterion
-    if (Object.keys(searchData).length > 1) { // >1 because we always have _token
-        fetch('{{ route('propertycard.search') }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': searchData._token
-            },
-            body: JSON.stringify(searchData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update the form fields with the returned data
-                updateFormFields(data);
-            } else {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'No matching records found',
-                    text: data.message || 'No matching record found.'
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'An error occurred while searching'
-            });
-        });
-    } else {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Warning',
-            text: 'Please enable and enter at least one search criterion'
-        });
-    }
-});
- 
-// Add this helper function to update form fields
-function updateFormFields(data) {
-    const record = data.data; // Access the data object
-
-    const fields = {
-        'fileNoPrefix': 'fileNoPrefix',
-        'fileNumber': 'fileNumber',
-        'Previewflenumber': 'kangisFileNo', //Previewflenumber is displaying kangisFileNo
-        'oldTitleSerialNo': 'oldTitleSerialNo',
-        'oldTitlePageNo': 'oldTitlePageNo',
-        'oldTitleVolumeNo': 'oldTitleVolumeNo',
-        'lgaName': 'lgaName',
-        'layoutName': 'layoutName',
-        'plotNo': 'plotNo',
-        'description': 'description',
-        'Assignor': 'originalAllottee', // Corrected mapping
-        'Assignee': 'currentAllottee',  // Corrected mapping
-        'mlsfNo': 'mlsfNo',
-        'kangisFileNo': 'kangisFileNo'
-    };
-
-    for (const inputField in fields) {
-        if (fields.hasOwnProperty(inputField)) {
-            const dataField = fields[inputField];
-            const element = document.getElementById(inputField);
-            if (element && record[dataField] !== null && record[dataField] !== undefined) {
-                element.value = record[dataField];
-            } else if (element) {
-                element.value = 'N/A'; // Set to "N/A" if data is null or undefined
-            }
-        }
-    }
-
-    // Update the record counter
-    const recordCounter = document.getElementById('recordCounter');
-    if (recordCounter && record.id) {
-        recordCounter.innerText = record.id + " of " + '{{$recordCount}}';
-        document.getElementById('currentRecordId').value = record.id;
-    }
-}
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Set initial record counter value
-    const recordCounter = document.getElementById('recordCounter');
-    if (recordCounter && !document.getElementById('currentRecordId').value) {
-        recordCounter.innerText = "0 of {{$recordCount}}";
-    }
-
-    // Function to set text color based on input value
-    function setInputTextColor(inputElement) {
-        if (!['fileNoPrefix', 'fileNumber', 'Previewflenumber'].includes(inputElement.id) && 
-            inputElement.value && inputElement.value !== 'N/A' && inputElement.value !== 'NULL' && inputElement.value !== '') {
-            inputElement.style.color = 'red';
-        } else {
-            inputElement.style.color = 'red'; // Change default color to red
-        }
-    }
-
-    // Apply initial text color to all input fields except excluded ones
-    const inputFields = document.querySelectorAll('input[type="text"], select');
-    inputFields.forEach(function(inputElement) {
-        if (!['fileNoPrefix', 'fileNumber', 'Previewflenumber'].includes(inputElement.id)) {
-            setInputTextColor(inputElement);
-        }
-    });
-
-    // Add event listener to input fields to change text color on input
-    inputFields.forEach(function(inputElement) {
-        if (!['fileNoPrefix', 'fileNumber', 'Previewflenumber'].includes(inputElement.id)) {
-            inputElement.addEventListener('input', function() {
-                setInputTextColor(this);
+                if (value && value !== '') {
+                    console.log('✅ Enabling grantor and grantee fields');
+                    this.grantorEnabled = true;
+                    this.granteeEnabled = true;
+                } else {
+                    console.log('🔄 Disabling grantor and grantee fields');
+                    this.grantorEnabled = false;
+                    this.granteeEnabled = false;
+                }
+                
+                console.log('🏷️ Party labels updated to:', this.partyLabels);
             });
         }
-    });
-
-    function updateFormFields(data) {
-        const record = data.data;
-
-        const fields = {
-            'oldTitleSerialNo': 'oldTitleSerialNo',
-            'oldTitlePageNo': 'oldTitlePageNo', 
-            'oldTitleVolumeNo': 'oldTitleVolumeNo',
-            'lgaName': 'lgaName',
-            'layoutName': 'layoutName',
-            'plotNo': 'plotNo',
-            'description': 'description',
-            'Assignor': 'originalAllottee',
-            'Assignee': 'currentAllottee', 
-            'mlsfNo': 'mlsfNo',
-            'kangisFileNo': 'kangisFileNo'
-        };
-
-        for (const inputField in fields) {
-            if (fields.hasOwnProperty(inputField)) {
-                const dataField = fields[inputField];
-                const element = document.getElementById(inputField);
-                if (element && record[dataField] !== null && record[dataField] !== undefined) {
-                    element.value = record[dataField];
-                } else if (element) {
-                    element.value = 'N/A';
-                }
-                if (element) {
-                    setInputTextColor(element);
-                }
-            }
-        }
-        
-        const recordCounter = document.getElementById('recordCounter');
-        if (recordCounter && record.id) {
-            recordCounter.innerText = record.id + " of " + '{{$recordCount}}';
-            document.getElementById('currentRecordId').value = record.id;
-        }
     }
+}
 
-    document.getElementById('findButton').addEventListener('click', function(e) {
-        // ...existing code...
-    });
-});
+console.log('🎉 Alpine.js Property Record Form script loaded');
 </script>
-
 @endsection

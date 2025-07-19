@@ -71,6 +71,9 @@ class InstrumentRegistrationController extends Controller
                     'm.property_district as district',
                     'm.plot_size as size',
                     'm.property_plot_no as plotNumber',
+                    // Add property description fields from mother application
+                    'm.property_house_no',
+                    'm.property_street_name',
                     's.created_by as reg_created_by',
                     's.created_at',
                     DB::raw("CONCAT(COALESCE(users.first_name, ''), ' ', COALESCE(users.last_name, '')) as reg_creator_name")
@@ -135,19 +138,44 @@ class InstrumentRegistrationController extends Controller
                     }
                 }
 
+                // Build property description from mother application details
+                $propertyDescription = '';
+                $propertyParts = [];
+                
+                if (!empty($subApp->property_house_no)) {
+                    $propertyParts[] = 'House No: ' . $subApp->property_house_no;
+                }
+                if (!empty($subApp->plotNumber)) {
+                    $propertyParts[] = 'Plot No: ' . $subApp->plotNumber;
+                }
+                if (!empty($subApp->property_street_name)) {
+                    $propertyParts[] = $subApp->property_street_name;
+                }
+                if (!empty($subApp->district)) {
+                    $propertyParts[] = $subApp->district;
+                }
+                if (!empty($subApp->lga)) {
+                    $propertyParts[] = $subApp->lga;
+                }
+                
+                $propertyDescription = implode(', ', $propertyParts);
+                if (empty($propertyDescription)) {
+                    $propertyDescription = 'Property details not available';
+                }
+
                 // Create ST Assignment (Transfer of Title) record
                 $stAssignmentRecord = (object)[
                     'id' => $subApp->id . '_st_assignment',
                     'fileno' => $subApp->fileno,
                     'Deeds_Serial_No' => $stAssignmentSerialNo,
                     'instrument_type' => 'ST Assignment (Transfer of Title)',
-                    'Grantor' => $subApp->mother_applicant,
+                    'Grantor' => 'Kano State Government', // Always Kano State Government for ST Assignment
                     'Grantee' => $subApp->sub_applicant,
                     'GrantorAddress' => '',
                     'GranteeAddress' => '',
                     'duration' => '',
                     'leasePeriod' => '',
-                    'propertyDescription' => '',
+                    'propertyDescription' => $propertyDescription,
                     'lga' => $subApp->lga,
                     'district' => $subApp->district,
                     'size' => $subApp->size,
@@ -171,13 +199,13 @@ class InstrumentRegistrationController extends Controller
                     'fileno' => $subApp->fileno,
                     'Deeds_Serial_No' => $sectionalTitlingSerialNo,
                     'instrument_type' => 'Sectional Titling CofO',
-                    'Grantor' => $subApp->mother_applicant,
+                    'Grantor' => 'Kano State Government', // Always Kano State Government for Sectional Titling CofO
                     'Grantee' => $subApp->sub_applicant,
                     'GrantorAddress' => '',
                     'GranteeAddress' => '',
                     'duration' => '',
                     'leasePeriod' => '',
-                    'propertyDescription' => '',
+                    'propertyDescription' => $propertyDescription,
                     'lga' => $subApp->lga,
                     'district' => $subApp->district,
                     'size' => $subApp->size,
@@ -599,7 +627,7 @@ class InstrumentRegistrationController extends Controller
                                 'id' => $subApp->id . '_st_assignment',
                                 'fileno' => $subApp->fileno,
                                 'instrument_type' => 'ST Assignment (Transfer of Title)',
-                                'grantor' => $subApp->mother_applicant,
+                                'grantor' => 'Kano State Government', // Always Kano State Government for ST Assignment
                                 'grantee' => $subApp->sub_applicant,
                                 'lga' => $subApp->lga,
                                 'district' => $subApp->district,
@@ -677,7 +705,7 @@ class InstrumentRegistrationController extends Controller
                                 'id' => $subApp->id . '_sectional_cofo',
                                 'fileno' => $subApp->fileno,
                                 'instrument_type' => 'Sectional Titling CofO',
-                                'grantor' => $subApp->mother_applicant,
+                                'grantor' => 'Kano State Government', // Always Kano State Government for Sectional Titling CofO
                                 'grantee' => $subApp->sub_applicant,
                                 'lga' => $subApp->lga,
                                 'district' => $subApp->district,
@@ -750,7 +778,7 @@ class InstrumentRegistrationController extends Controller
                                 'id' => $subApp->id . '_st_assignment',
                                 'fileno' => $subApp->fileno,
                                 'instrument_type' => 'ST Assignment (Transfer of Title)',
-                                'grantor' => $subApp->mother_applicant,
+                                'grantor' => 'Kano State Government', // Always Kano State Government for ST Assignment
                                 'grantee' => $subApp->sub_applicant,
                                 'lga' => $subApp->lga,
                                 'district' => $subApp->district,
@@ -769,7 +797,7 @@ class InstrumentRegistrationController extends Controller
                                 'id' => $subApp->id . '_sectional_cofo',
                                 'fileno' => $subApp->fileno,
                                 'instrument_type' => 'Sectional Titling CofO',
-                                'grantor' => $subApp->mother_applicant,
+                                'grantor' => 'Kano State Government', // Always Kano State Government for Sectional Titling CofO
                                 'grantee' => $subApp->sub_applicant,
                                 'lga' => $subApp->lga,
                                 'district' => $subApp->district,
@@ -1094,11 +1122,17 @@ class InstrumentRegistrationController extends Controller
             $stFileNo = $request->file_no ?? $sourceRecord->fileno ?? null;
         }
         
+        // Override grantor for ST Assignment and Sectional Titling CofO
+        $grantor = $request->Grantor;
+        if (in_array($request->instrument_type, ['ST Assignment (Transfer of Title)', 'Sectional Titling CofO'])) {
+            $grantor = 'Kano State Government';
+        }
+        
         $baseData = [
             'particularsRegistrationNumber' => $serialData['deeds_serial_no'],
             'STM_Ref' => $stmReference,
             'instrument_type' => $request->instrument_type,
-            'Grantor' => $request->Grantor,
+            'Grantor' => $grantor, // Use the overridden grantor value
             'Grantee' => $request->Grantee,
             'instrumentDate' => $request->deeds_date,
             'deeds_date' => $request->deeds_date,
@@ -1162,12 +1196,41 @@ class InstrumentRegistrationController extends Controller
 
             case 'subapplications':
                 $motherApp = DB::connection('sqlsrv')->table('mother_applications')->where('id', $sourceRecord->main_application_id)->first();
+                
+                // Build property description for ST Assignment and Sectional Titling CofO
+                $propertyDescription = $request->propertyDescription ?? '';
+                if (empty($propertyDescription) && in_array($request->instrument_type, ['ST Assignment (Transfer of Title)', 'Sectional Titling CofO'])) {
+                    $propertyParts = [];
+                    
+                    if (!empty($motherApp->property_house_no)) {
+                        $propertyParts[] = 'House No: ' . $motherApp->property_house_no;
+                    }
+                    if (!empty($motherApp->property_plot_no)) {
+                        $propertyParts[] = 'Plot No: ' . $motherApp->property_plot_no;
+                    }
+                    if (!empty($motherApp->property_street_name)) {
+                        $propertyParts[] = $motherApp->property_street_name;
+                    }
+                    if (!empty($motherApp->property_district)) {
+                        $propertyParts[] = $motherApp->property_district;
+                    }
+                    if (!empty($motherApp->property_lga)) {
+                        $propertyParts[] = $motherApp->property_lga;
+                    }
+                    
+                    $propertyDescription = implode(', ', $propertyParts);
+                    if (empty($propertyDescription)) {
+                        $propertyDescription = 'Property details not available';
+                    }
+                }
+                
                 return array_merge($baseData, [
                     'MLSFileNo' => $sourceRecord->fileno ?? $request->file_no,
                     'lga' => $motherApp->property_lga ?? '',
                     'district' => $motherApp->property_district ?? '',
                     'size' => $motherApp->plot_size ?? '',
                     'plotNumber' => $motherApp->property_plot_no ?? '',
+                    'propertyDescription' => $propertyDescription,
                 ]);
 
             default:

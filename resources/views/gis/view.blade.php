@@ -219,7 +219,7 @@
                     
                     <!-- Unit Beacon Information if available -->
                     @if($gisData->UnitControlBeaconNo || $gisData->UnitControlBeaconX || $gisData->UnitControlBeaconY)
-                    <div class="mt-4 border-t pt-4">
+                    <div class="mt-4 border-t pt-4" style="display: none">
                         <h4 class="text-md font-semibold mb-3 text-gray-700">Unit Control Beacon Information</h4>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>

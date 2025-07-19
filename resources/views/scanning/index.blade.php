@@ -13,7 +13,7 @@
             <div class="container mx-auto py-6 space-y-6">
                 <!-- Page Header -->
                 <div class="flex flex-col space-y-2">
-                    <h1 class="text-2xl font-bold tracking-tight">Document Upload</h1>
+                    <h1 class="text-2xl font-bold tracking-tight">Upload Indexed Scanned File</h1>
                     <p class="text-muted-foreground">Upload scanned documents to their digital folders</p>
                 </div>
 
@@ -59,10 +59,8 @@
                 <!-- Tabs -->
                 <div class="tabs">
                     <div class="tabs-list grid w-full md:w-auto grid-cols-2">
-                        <button class="tab" role="tab" aria-selected="true" data-tab="upload">Upload
-                            Documents</button>
-                        <button class="tab" role="tab" aria-selected="false" data-tab="uploaded-files">Uploaded
-                            Documents</button>
+                        <button class="tab" role="tab" aria-selected="true" data-tab="upload">Upload Indexed Scanned File</button>
+                        <button class="tab" role="tab" aria-selected="false" data-tab="uploaded-files">Uploaded File</button>
                     </div>
 
                     <!-- Upload Tab -->
@@ -71,7 +69,7 @@
                             <div class="p-6 border-b">
                                 <div class="flex flex-col md:flex-row md:items-center justify-between">
                                     <div>
-                                        <h2 class="text-lg font-semibold">Document Upload</h2>
+                                        <h2 class="text-lg font-semibold">Upload Indexed Scanned File</h2>
                                         <p class="text-sm text-muted-foreground">Upload scanned documents to their digital
                                             folders</p>
                                     </div>
@@ -186,7 +184,7 @@
                             <div class="p-6 border-b">
                                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                     <div>
-                                        <h2 class="text-lg font-semibold">Uploaded Documents</h2>
+                                        <h2 class="text-lg font-semibold">Uploaded Files</h2>
                                         <p class="text-sm text-muted-foreground">Documents uploaded and ready for page
                                             typing</p>
                                     </div>

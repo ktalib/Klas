@@ -280,59 +280,43 @@
 
     <!-- 4. Deeds -->
     @if(
-      $hasRole('Deeds - Instrument Capture (New Records)') || $hasRole('Deeds - Instrument Registration (New Registration)') ||
-      $hasRole('Deeds - Property Records Assistant (Legacy Records)') || $hasRole('Deeds - Instrument Registration Reports')
+      $hasRole('Deeds - Property Records Assistant (Legacy Records)') || $hasRole('Deeds - Instrument Capture (New Records)') ||
+      $hasRole('Deeds - Instrument Registration (New Registration)') || $hasRole('Deeds - Instrument Registration Reports')
     )
     <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
       <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="deeds">
-        <div class="flex items-center gap-2"> 
-          <i data-lucide="book-open" class="h-6 w-6 module-icon-instrument text-amber-600"></i>
-          <span class="text-sm font-bold uppercase tracking-wider">Deeds</span>
-        </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="deeds"></i>
+      <div class="flex items-center gap-2"> 
+        <i data-lucide="book-open" class="h-6 w-6 module-icon-instrument text-amber-600"></i>
+        <span class="text-sm font-bold uppercase tracking-wider">Deeds</span>
+      </div>
+      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="deeds"></i>
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="deeds">
-        @if($hasRole('Deeds - Instrument Capture (New Records)'))
-        <a href="{{route('instruments.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('instruments.index') ? 'active' : '' }}">
-          <i data-lucide="file-input" class="h-4 w-4 text-amber-500"></i>
-          <span>Instrument Capture (New Records)</span>
-        </a>
-        @endif
-        @if($hasRole('Deeds - Instrument Registration (New Registration)'))
-        <a href="{{route('instrument_registration.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('instrument_registration.index') ? 'active' : '' }}">
-          <i data-lucide="book-open" class="h-4 w-4 text-amber-500"></i>
-          <span>Instrument Registration (New Registration)</span>
-        </a>
-        @endif
-{{--          
-        <a href="{{route('st_transfer.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('st_transfer.index') ? 'active' : '' }}">
-          <i data-lucide="calendar-sync" class="h-4 w-4 text-amber-500"></i>
-          <span>ST Assignment (Transfer of Title)</span>
-        </a>   --}}
-
-        @if($hasRole('CofO Registration'))
-         <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="cofoRegistration">
-          <div class="flex items-center gap-2">
-            <i data-lucide="file-badge" class="h-4 w-4 text-amber-500"></i>
-            <span>CofO Registration</span>
-          </div>
-          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="cofoRegistration"></i>
-        </div>
-        @endif
-        
-        @if($hasRole('Deeds - Property Records Assistant (Legacy Records)'))
-        <a href="{{route('propertycard.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('propertycard.index') ? 'active' : '' }}">
-          <i data-lucide="sparkles" class="h-4 w-4"></i>
-          <span>Property Records Assistant (Legacy Records)</span>
-        </a>
-        @endif
-        @if($hasRole('Deeds - Instrument Registration Reports'))
-        <a href="/instrument-registration-reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-          <i data-lucide="file-bar-chart" class="h-4 w-4 text-amber-500"></i>
-          <span>Instrument Registration Reports</span>
-        </a>
-        @endif
+      @if($hasRole('Deeds - Property Records Assistant (Legacy Records)'))
+      <a href="{{route('propertycard.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('propertycard.index') ? 'active' : '' }}">
+        <i data-lucide="sparkles" class="h-4 w-4"></i>
+        <span>Property Records Assistant (Legacy Records)</span>
+      </a>
+      @endif
+      @if($hasRole('Deeds - Instrument Capture (New Records)'))
+      <a href="{{route('instruments.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('instruments.index') ? 'active' : '' }}">
+        <i data-lucide="file-input" class="h-4 w-4 text-amber-500"></i>
+        <span>Instrument Capture (New Records)</span>
+      </a>
+      @endif
+      @if($hasRole('Deeds - Instrument Registration (New Registration)'))
+      <a href="{{route('instrument_registration.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('instrument_registration.index') ? 'active' : '' }}">
+        <i data-lucide="book-open" class="h-4 w-4 text-amber-500"></i>
+        <span>Instrument Registration (New Registration)</span>
+      </a>
+      @endif
+      @if($hasRole('Deeds - Instrument Registration Reports'))
+      <a href="/instrument-registration-reports" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+        <i data-lucide="file-bar-chart" class="h-4 w-4 text-amber-500"></i>
+        <span>Instrument Registration Reports</span>
+      </a>
+      @endif
       </div>
     </div>
     @endif
@@ -456,94 +440,109 @@
     )
     <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
       <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="lands">
-        <div class="flex items-center gap-2">
-          <i data-lucide="file-input" class="h-5 w-5"></i>
-          <span class="text-sm font-bold uppercase tracking-wider">Lands</span>
-        </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="lands"></i>
+      <div class="flex items-center gap-2">
+        <i data-lucide="landmark" class="h-5 w-5"></i>
+        <span class="text-sm font-bold uppercase tracking-wider">Lands</span>
+      </div>
+      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="lands"></i>
       </div>
 
       <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="lands">
-        @if($hasRole('Lands - File Tracker/Tracking - RFID'))
-        <a href="{{route('filetracker.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200  {{ request()->routeIs('filetracker.index') ? 'active' : '' }}">
-          <i data-lucide="file-search" class="h-4 w-4"></i>
-          <span>File Tracker/Tracking - RFID</span>
+      <!-- File Tracker Section -->
+      @if($hasRole('Lands - File Tracker/Tracking - RFID'))
+      <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="fileTracker">
+        <div class="flex items-center gap-2">
+        <i data-lucide="radio-tower" class="h-4 w-4 text-blue-500"></i>
+        <span>File Tracker/Tracking - RFID</span>
+        </div>
+      </div>
+      @endif
+
+      <!-- File Digital Archive Section -->
+      @if($hasRole('Lands - File Digital Archive – Doc-WARE')) 
+      <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="fileArchive">
+        <div class="flex items-center gap-2">
+        <i data-lucide="archive" class="h-4 w-4 text-blue-500"></i>
+        <span>File Digital Archive – Doc-WARE</span>
+        </div>
+      </div>
+      @endif
+
+      <!-- EDMS Section -->
+      @if($hasRole('EDMS - Indexing'))
+      <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="edms">
+        <div class="flex items-center gap-2">
+        <i data-lucide="database" class="h-4 w-4 text-blue-500"></i>
+        <span>EDMS</span>
+        </div>
+        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="edms"></i>
+      </div>
+
+      <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="edms">
+        <!-- Indexing -->
+        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="indexing">
+        <div class="flex items-center gap-2">
+          <i data-lucide="list" class="h-3.5 w-3.5 text-blue-400"></i>
+          <span>Indexing</span>
+        </div>
+        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="indexing"></i>
+        </div>
+
+        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="indexing">
+        @if($hasRole('EDMS - File Indexing Assistant'))
+        <a href="{{route('fileindexing.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('fileindexing.index') ? 'active' : '' }}">
+          <i data-lucide="file-search" class="h-3.5 w-3.5 text-blue-400"></i>
+          <span>File Indexing Assistant</span>
         </a>
         @endif
 
-        @if($hasRole('Lands - File Digital Archive – Doc-WARE'))
-        <a href="{{route('filearchive.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('filearchive.index') ? 'active' : '' }}">
-          <i data-lucide="file-archive" class="h-4 w-4"></i>
-          <span>Lands - File Digital Archive – Doc-WARE</span>
+        @if($hasRole('EDMS - Print File Labels'))
+        <a href="{{route('printlabel.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('printlabel.index') ? 'active' : '' }}">
+          <i data-lucide="printer" class="h-3.5 w-3.5 text-blue-400"></i>
+          <span>Print File Labels</span>
         </a>
         @endif
-        
-        @if($hasRole('EDMS - Indexing'))
-        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="edms">
-          <div class="flex items-center gap-2">
-            <i data-lucide="folder" class="h-4 w-4"></i>
-            <span>Indexing</span>
-          </div>
-          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="edms"></i>
         </div>
 
-        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="edms">
-          @if($hasRole('EDMS - File Indexing Assistant'))
-          <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="indexing">
-            <div class="flex items-center gap-2">
-              <i data-lucide="file-text" class="h-3.5 w-3.5"></i>
-              <span>File Indexing Assistant</span>
-            </div>
-            <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="indexing"></i>
-          </div>
+        <!-- Scanning -->
+        @if($hasRole('EDMS - Scanning'))
+        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="scanning">
+        <div class="flex items-center gap-2">
+          <i data-lucide="scan" class="h-3.5 w-3.5 text-blue-400"></i>
+          <span>Scanning</span>
+        </div>
+        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="scanning"></i>
+        </div>
 
-          <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="indexing">
-            <a href="{{route('fileindexing.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('fileindexing.index') ? 'active' : '' }}">
-              <span>File Indexing Assistant</span>
-            </a>
-            <a href="{{route('printlabel.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('printlabel.index') ? 'active' : '' }}">
-              <span> Print File Labels</span>
-            </a>
-          </div>
-          @endif
-          
-          @if($hasRole('EDMS - Scanning'))
-          <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="scanning">
-            <div class="flex items-center gap-2">
-              <i data-lucide="scan" class="h-3.5 w-3.5"></i>
-              <span> Scanning</span>
-            </div>
-            <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="scanning"></i>
-          </div>
-          
-          <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="scanning">
-            @if($hasRole('EDMS - Upload'))
-            <a href="{{route('scanning.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('scanning.index') ? 'active' : '' }}">
-              <i data-lucide="file-up" class="h-3.5 w-3.5"></i>
-              <span> Upload</span>
-            </a>
-            @endif
-            @if($hasRole('EDMS - Download'))
-            <a href="/file-digital-registry/download" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
-              <i data-lucide="file-down" class="h-3.5 w-3.5"></i>
-              <span>Download</span>
-            </a>
-            @endif
-          </div>
-          @endif
-          
-          @if($hasRole('EDMS - PageTyping'))
-          <a href="{{route('pagetyping.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('pagetyping.index') ? 'active' : '' }}">
-            <i data-lucide="file-text" class="h-3.5 w-3.5"></i>
-            <span>PageTyping</span>
-          </a>
-          @endif
+        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="scanning">
+        @if($hasRole('EDMS - Upload'))
+        <a href="{{route('scanning.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('scanning.index') ? 'active' : '' }}">
+          <i data-lucide="upload" class="h-3.5 w-3.5 text-blue-400"></i>
+          <span>Upload</span>
+        </a>
+        @endif
+
+        @if($hasRole('EDMS - Download'))
+        <a href="/file-digital-registry/download" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200">
+          <i data-lucide="download" class="h-3.5 w-3.5 text-blue-400"></i>
+          <span>Download</span>
+        </a>
+        @endif
         </div>
         @endif
+
+        <!-- PageTyping -->
+        @if($hasRole('EDMS - PageTyping'))
+        <a href="{{route('pagetyping.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('pagetyping.index') ? 'active' : '' }}">
+        <i data-lucide="type" class="h-3.5 w-3.5 text-blue-400"></i>
+        <span>PageTyping</span>
+        </a>
+        @endif
+      </div>
+      @endif
       </div>
     </div>
     @endif
- 
 
     <!-- 8. Physical Planning -->
     @if(
@@ -813,178 +812,211 @@
     @endif
 
     <!-- 12. Sectional Titling -->
-    @if(
-      $hasRole('ST - Overview') || $hasRole('ST - Primary Application') || $hasRole('ST - Unit Application') ||
-      $hasRole('ST - Field Data') || $hasRole('ST - Payments') || $hasRole('ST - Approvals') ||
-      $hasRole('ST - Memo') || $hasRole('ST - Certificate') || $hasRole('ST - e-Registry') || $hasRole('ST - GIS') || $hasRole('ST - Survey') ||
-      $hasRole('ST - Reports')
-    )
-    <div class="py-1 px-3 mb-0.5 border-t border-slate-100">
-      <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="sectionalTitling">
-        <div class="flex items-center gap-2">
-          <i data-lucide="building-2" class="h-5 w-5"></i>
-          <span class="text-sm font-bold uppercase tracking-wider">Sectional Titling</span>
-        </div>
-        <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="sectionalTitling"></i>
+ 
+@if(
+  $hasRole('ST - Overview') || $hasRole('ST - Primary Application') || $hasRole('ST - Unit Application') ||
+  $hasRole('ST - Field Data') || $hasRole('ST - Payments') || $hasRole('ST - Approvals') ||
+  $hasRole('ST - Memo') || $hasRole('ST - Certificate') || $hasRole('ST - e-Registry') || $hasRole('ST - GIS') || $hasRole('ST - Survey') ||
+  $hasRole('ST - Reports')
+)
+<div class="py-1 px-3 mb-0.5 border-t border-slate-100">
+  <div class="sidebar-module-header flex items-center justify-between py-2 px-3 mb-0.5 cursor-pointer hover:bg-slate-50 rounded-md" data-module="sectionalTitling">
+    <div class="flex items-center gap-2">
+      <i data-lucide="building-2" class="h-5 w-5"></i>
+      <span class="text-sm font-bold uppercase tracking-wider">Sectional Titling</span>
+    </div>
+    <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="sectionalTitling"></i>
+  </div>
+
+  <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="sectionalTitling">
+    @if($hasRole('ST - Overview'))
+    <a href="{{ route('sectionaltitling.index') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sectionaltitling.index') ? 'active' : '' }}">
+      <i data-lucide="file-text" class="h-4 w-4"></i>
+      <span>Overview</span>
+    </a>
+    @endif
+
+    @if($hasRole('ST - Primary Application') || $hasRole('ST - Unit Application'))
+    <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="applications">
+      <div class="flex items-center gap-2">
+        <i data-lucide="file-plus" class="h-4 w-4"></i>
+        <span>Applications</span>
       </div>
-
-      <div class="pl-4 mt-1 space-y-0.5 hidden" data-content="sectionalTitling">
-        @if($hasRole('ST - Overview'))
-        <a href="{{ route('sectionaltitling.index') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sectionaltitling.index') ? 'active' : '' }}">
-          <i data-lucide="file-text" class="h-4 w-4"></i>
-          <span>Overview</span>
-        </a>
-        @endif
-        @if($hasRole('ST - Primary Application'))
-        <a href="{{ route('sectionaltitling.primary') }}?url=infopro" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sectionaltitling.primary') && request()->query('url') === 'infopro' ? 'active' : '' }}">
-          <i data-lucide="file-plus" class="h-4 w-4"></i>
-          <span>Primary Applications</span>
-        </a>
-        @endif
-        @if($hasRole('ST - Unit Application'))
-        <a href="{{ route('sectionaltitling.units') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sectionaltitling.units') && !in_array(request()->query('url'), ['recommendation', 'phy_planning']) ? 'active' : '' }}">
-          <i data-lucide="file-plus-2" class="h-4 w-4"></i>
-          <span>Unit Applications</span>
-        </a>
-        @endif
-
-        @if($hasRole('ST - Field Data'))
-        <a href="{{route('programmes.field-data')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.field-data') ? 'active' : '' }}">
-          <i data-lucide="clipboard-list" class="h-4 w-4"></i>
-          <span>Field Data</span>
-        </a>
-        @endif
-        @if($hasRole('ST - Payments'))
-        <a href="{{route('programmes.payments')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.payments') ? 'active' : '' }}">
-          <i data-lucide="credit-card" class="h-4 w-4"></i>
-          <span>Payments</span>
-        </a>
-        @endif
-        
-        @if($hasRole('ST - Approvals'))
-        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stApprovals">
-          <div class="flex items-center gap-2">
-            <i data-lucide="check-circle" class="h-4 w-4"></i>
-            <span>Approvals</span>
-          </div>
-          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="stApprovals"></i>
-        </div>
-        
-        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stApprovals">
-          <a href="{{route('other_departments.survey_primary')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('other_departments.survey_primary') ? 'active' : '' }}">
-            <i data-lucide="building-2" class="h-3.5 w-3.5"></i>
-            <span>Other Departments</span>
-          </a>
-          <a href="{{ route('programmes.approvals.planning_recomm', ['url' => 'view']) }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.planning_recomm') && request()->query('url') === 'view' ? 'active' : '' }}">
-            <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
-            <span>Planning Recommendation</span>
-          </a>
-          <a href="{{route('programmes.approvals.director')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.director') ? 'active' : '' }}">
-            <i data-lucide="stamp" class="h-3.5 w-3.5"></i>
-            <span>Director's Approval</span>
-          </a>
-        </div>
-        @endif
-
-        @if($hasRole('ST - Memo'))
-        <a href="{{route('programmes.memo')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.memo') ? 'active' : '' }}">
-          <i data-lucide="clipboard-list" class="h-3.5 w-3.5"></i>
-          <span>ST Memo</span>
-        </a>
-        @endif
-
-        @if($hasRole('ST - Certificate') || $hasRole('ST - e-Registry') || $hasRole('ST - GIS') || $hasRole('ST - Survey') || $hasRole('ST - Reports'))
-        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="eRegistry">
-          <div class="flex items-center gap-2">
-            <i data-lucide="database" class="h-3.5 w-3.5"></i>
-            <span>Certificate</span>
-          </div>
-          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="eRegistry"></i>
-        </div>
-        
-        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="eRegistry">
-          @if($hasRole('ST - RofO'))
-          <a href="{{route('programmes.rofo')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.rofo') ? 'active' : '' }}">
-            <i data-lucide="folder" class="h-3.5 w-3.5"></i>
-            <span>RofO</span>
-          </a>
-          @endif
-          @if($hasRole('ST - CofO'))
-          <a href="{{route('programmes.certificates')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.certificates') ? 'active' : '' }}">
-            <i data-lucide="file-cog" class="h-4 w-4 "></i>
-            <span>CofO</span>
-          </a>
-          @endif
-        </div>
-        @endif
-
-        @if($hasRole('ST - e-Registry') || $hasRole('ST - GIS') || $hasRole('ST - Survey') || $hasRole('ST - Reports'))
-        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stERegistry">
-          <div class="flex items-center gap-2">
-            <i data-lucide="database" class="h-4 w-4"></i>
-            <span>e-Registry</span>
-          </div>
-          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="stERegistry"></i>
-        </div>
-        
-        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stERegistry">
-          @if($hasRole('ST - Files'))
-          <a href="{{route('programmes.eRegistry')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.eRegistry') ? 'active' : '' }}">
-            <i data-lucide="folder" class="h-3.5 w-3.5"></i>
-            <span>Files</span>
-          </a>
-          @endif
-        </div>
-        @endif
-        
-        @if($hasRole('ST - GIS'))
-        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stGis">
-          <div class="flex items-center gap-2">
-            <i data-lucide="map" class="h-4 w-4"></i>
-            <span>GIS</span>
-          </div>
-          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="stGis"></i>
-        </div>
-        
-        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stGis">
-          @if($hasRole('ST - GIS Attribution') || $hasRole('ST - Map'))
-          <a href="{{route('gis.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('gis.index') ? 'active' : '' }}">
-            <i data-lucide="database" class="h-3.5 w-3.5"></i>
-            <span>Attribution</span>
-          </a>
-          <a href="{{ route('map.index') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('map.index') ? 'active' : '' }}">
-            <i data-lucide="map-pin" class="h-3.5 w-3.5"></i>
-            <span>Map</span>
-          </a>
-          @endif
-        </div>
-        @endif
-        
-        @if($hasRole('ST - Survey'))
-        <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stSurvey">
-          <div class="flex items-center gap-2">
-            <i data-lucide="land-plot" class="h-4 w-4"></i>
-            <span>Survey</span>
-          </div>
-          <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="stSurvey"></i>
-        </div>
-        
-        <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stSurvey">
-          <a href="{{route('attribution.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('attribution.index') ? 'active' : '' }}">
-            <i data-lucide="land-plot" class="h-3.5 w-3.5"></i>
-            <span>Attribution</span>
-          </a>
-        </div>
-        @endif
-
-        <a href="{{route('programmes.report')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.report') ? 'active' : '' }}">
-          <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
-          <span>Reports</span>
-        </a>
-      </div>
+      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="applications"></i>
+    </div>
+    <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="applications">
+      @if($hasRole('ST - Primary Application'))
+      <a href="{{ route('sectionaltitling.primary') }}?url=infopro" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sectionaltitling.primary') && request()->query('url') === 'infopro' ? 'active' : '' }}">
+        <i data-lucide="file-plus" class="h-3.5 w-3.5"></i>
+        <span>Primary Applications</span>
+      </a>
+      @endif
+      @if($hasRole('ST - Unit Application'))
+      <a href="{{ route('sectionaltitling.units') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('sectionaltitling.units') && !in_array(request()->query('url'), ['recommendation', 'phy_planning']) ? 'active' : '' }}">
+        <i data-lucide="file-plus-2" class="h-3.5 w-3.5"></i>
+        <span>Unit Applications</span>
+      </a>
+      @endif
     </div>
     @endif
 
+    @if($hasRole('ST - Field Data'))
+    <a href="{{route('programmes.field-data')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.field-data') ? 'active' : '' }}">
+      <i data-lucide="clipboard-list" class="h-4 w-4"></i>
+      <span>Field Data Integration</span>
+    </a>
+    @endif
+
+    @if($hasRole('ST - Payments'))
+    <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stPayments">
+      <div class="flex items-center gap-2">
+        <i data-lucide="credit-card" class="h-4 w-4"></i>
+        <span>Bills & Payments</span>
+      </div>
+      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="stPayments"></i>
+    </div>
+    <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stPayments">
+      <a href="{{route('programmes.bills')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.bills') ? 'active' : '' }}">
+        <i data-lucide="receipt" class="h-3.5 w-3.5"></i>
+        <span>Bills</span>
+      </a>
+      <a href="{{route('programmes.payments')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.payments') ? 'active' : '' }}">
+        <i data-lucide="credit-card" class="h-3.5 w-3.5"></i>
+        <span>Payments</span>
+      </a>
+      <a href="{{route('programmes.payments')}}?url=report" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.payments') && request()->query('url') === 'report' ? 'active' : '' }}">
+        <i data-lucide="file-bar-chart" class="h-3.5 w-3.5"></i>
+        <span>Payments Report</span>
+      </a>
+    </div>
+    @endif
+    
+    @if($hasRole('ST - Approvals'))
+    <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stApprovals">
+      <div class="flex items-center gap-2">
+        <i data-lucide="check-circle" class="h-4 w-4"></i>
+        <span>Approvals</span>
+      </div>
+      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="stApprovals"></i>
+    </div>
+    
+    <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stApprovals">
+      <a href="{{route('other_departments.survey_primary')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('other_departments.survey_primary') ? 'active' : '' }}">
+        <i data-lucide="building-2" class="h-3.5 w-3.5"></i>
+        <span>Other Departments</span>
+      </a>
+      <a href="{{ route('programmes.approvals.planning_recomm', ['url' => 'view']) }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.planning_recomm') && request()->query('url') === 'view' ? 'active' : '' }}">
+        <i data-lucide="clipboard-check" class="h-3.5 w-3.5"></i>
+        <span>Planning Recommendation</span>
+      </a>
+      <a href="{{route('programmes.approvals.director')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.approvals.director') ? 'active' : '' }}">
+        <i data-lucide="stamp" class="h-3.5 w-3.5"></i>
+        <span>Director's Approval</span>
+      </a>
+    </div>
+    @endif
+
+    @if($hasRole('ST - Memo'))
+    <a href="{{route('programmes.memo')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.memo') ? 'active' : '' }}">
+      <i data-lucide="clipboard-list" class="h-4 w-4"></i>
+      <span>ST Memo</span>
+    </a>
+    @endif
+
+    @if($hasRole('ST - Certificate'))
+    <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="certificate">
+      <div class="flex items-center gap-2">
+        <i data-lucide="award" class="h-4 w-4"></i>
+        <span>Certificate</span>
+      </div>
+      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="certificate"></i>
+    </div>
+    
+    <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="certificate">
+      @if($hasRole('ST - RofO'))
+      <a href="{{route('programmes.rofo')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.rofo') ? 'active' : '' }}">
+        <i data-lucide="folder" class="h-3.5 w-3.5"></i>
+        <span>RofO</span>
+      </a>
+      @endif
+      @if($hasRole('ST - CofO'))
+      <a href="{{route('programmes.certificates')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.certificates') ? 'active' : '' }}">
+        <i data-lucide="file-cog" class="h-3.5 w-3.5"></i>
+        <span>CofO</span>
+      </a>
+      @endif
+    </div>
+    @endif
+
+    @if($hasRole('ST - e-Registry'))
+    <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="eRegistry">
+      <div class="flex items-center gap-2">
+        <i data-lucide="database" class="h-4 w-4"></i>
+        <span>e-Registry</span>
+      </div>
+      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="eRegistry"></i>
+    </div>
+    
+    <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="eRegistry">
+      @if($hasRole('ST - Files'))
+      <a href="{{route('programmes.eRegistry')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.eRegistry') ? 'active' : '' }}">
+        <i data-lucide="folder" class="h-3.5 w-3.5"></i>
+        <span>Files</span>
+      </a>
+      @endif
+    </div>
+    @endif
+    
+    @if($hasRole('ST - GIS'))
+    <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stGis">
+      <div class="flex items-center gap-2">
+        <i data-lucide="map" class="h-4 w-4"></i>
+        <span>GIS</span>
+      </div>
+      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="stGis"></i>
+    </div>
+    
+    <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stGis">
+      @if($hasRole('ST - GIS Attribution') || $hasRole('ST - Map'))
+      <a href="{{route('gis.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('gis.index') ? 'active' : '' }}">
+        <i data-lucide="database" class="h-3.5 w-3.5"></i>
+        <span>Attribution</span>
+      </a>
+      
+      @endif
+    </div>
+    @endif
+    
+    @if($hasRole('ST - Survey'))
+    <div class="sidebar-submodule-header flex items-center justify-between py-1.5 px-3 cursor-pointer rounded-md" data-section="stSurvey">
+      <div class="flex items-center gap-2">
+        <i data-lucide="land-plot" class="h-4 w-4"></i>
+        <span>Survey</span>
+      </div>
+      <i data-lucide="chevron-right" class="h-4 w-4 transition-transform duration-200" data-chevron="stSurvey"></i>
+    </div>
+    
+    <div class="pl-4 mt-1 mb-1 space-y-0.5 hidden" data-content="stSurvey">
+      <a href="{{route('attribution.index')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('attribution.index') ? 'active' : '' }}">
+        <i data-lucide="land-plot" class="h-3.5 w-3.5"></i>
+        <span>Attribution</span>
+      </a>
+    </div>
+    @endif
+
+    @if($hasRole('ST - Reports'))
+    <a href="{{ route('map.index') }}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('map.index') ? 'active' : '' }}">
+        <i data-lucide="map-pin" class="h-3.5 w-3.5"></i>
+        <span>Sectinal Titling Map</span>
+      </a>
+    <a href="{{route('programmes.report')}}" class="sidebar-item flex items-center gap-2 py-2 px-3 rounded-md transition-all duration-200 {{ request()->routeIs('programmes.report') ? 'active' : '' }}">
+      <i data-lucide="file-bar-chart" class="h-4 w-4"></i>
+      <span>Reports</span>
+    </a>
+    @endif
+  </div>
+</div>
+@endif
     <!-- 13. SLTR/First Registration -->
     @if(
       $hasRole('SLTR - Overview') || $hasRole('SLTR - Application') || $hasRole('SLTR - Claimants') ||

@@ -3,6 +3,11 @@
            @php
                $sitePlanExists = DB::connection('sqlsrv')->table('site_plans')->where('application_id', $application->id)->exists();
                $sitePlanStatus = $sitePlanExists ? 'Uploaded' : 'Not Uploaded';
+               // Get the uploaded file info if exists
+               $sitePlanFile = null;
+               if ($sitePlanExists) {
+                   $sitePlanFile = DB::connection('sqlsrv')->table('site_plans')->where('application_id', $application->id)->first();
+               }
            @endphp
            
            <div class="flex justify-between items-center mb-4">
@@ -11,6 +16,26 @@
                    <span id="site-plan-status-text">{{ $sitePlanStatus }}</span>
                </span>
            </div>
+           
+           {{-- Preview uploaded file if exists --}}
+           @if($sitePlanExists && $sitePlanFile && $sitePlanFile->site_file)
+               <div class="mb-4">
+                   <label class="block text-sm font-medium text-gray-700 mb-1">Uploaded Site Plan Preview:</label>
+                   @php
+                       $fileUrl = asset('storage/site_plans/' . $sitePlanFile->site_file);
+                       $extension = strtolower(pathinfo($sitePlanFile->site_file, PATHINFO_EXTENSION));
+                   @endphp
+                   @if(in_array($extension, ['jpg','jpeg','png']))
+                       <img src="{{ $fileUrl }}" alt="Site Plan Image" class="max-w-xs rounded border border-gray-300 mb-2">
+                   @elseif($extension === 'pdf')
+                       <a href="{{ $fileUrl }}" target="_blank" class="inline-flex items-center px-3 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200">
+                           <i data-lucide="file-text" class="w-4 h-4 mr-2"></i> View PDF
+                       </a>
+                   @else
+                       <a href="{{ $fileUrl }}" target="_blank" class="text-blue-600 underline">Download File</a>
+                   @endif
+               </div>
+           @endif
            
            <form id="sitePlanForm" action="{{ route('stmemo.saveSitePlan') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
@@ -108,16 +133,55 @@
         // File input handling
         fileInput.addEventListener('change', function(e) {
             if (fileInput.files.length > 0) {
-                fileName.textContent = fileInput.files[0].name;
+                const file = fileInput.files[0];
+                fileName.textContent = file.name;
+                // Preview logic
+                const previewContainer = filePreview.querySelector('.flex.items-center');
+                // Remove previous preview if any
+                const oldPreview = filePreview.querySelector('.file-preview-content');
+                if (oldPreview) oldPreview.remove();
+
+                const ext = file.name.split('.').pop().toLowerCase();
+                let previewElem;
+                if (['jpg','jpeg','png'].includes(ext)) {
+                    previewElem = document.createElement('img');
+                    previewElem.className = 'file-preview-content max-h-32 ml-2 rounded border border-gray-300';
+                    previewElem.style.maxWidth = '120px';
+                    previewElem.alt = 'Preview';
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewElem.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                    previewContainer.appendChild(previewElem);
+                } else if (ext === 'pdf') {
+                    previewElem = document.createElement('a');
+                    previewElem.className = 'file-preview-content ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs';
+                    previewElem.textContent = 'Preview PDF';
+                    previewElem.target = '_blank';
+                    // Create a blob URL for preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewElem.href = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                    previewContainer.appendChild(previewElem);
+                }
                 filePreview.classList.remove('hidden');
             } else {
                 filePreview.classList.add('hidden');
+                // Remove preview if any
+                const oldPreview = filePreview.querySelector('.file-preview-content');
+                if (oldPreview) oldPreview.remove();
             }
         });
-        
+
         removeFileBtn.addEventListener('click', function() {
             fileInput.value = '';
             filePreview.classList.add('hidden');
+            // Remove preview if any
+            const oldPreview = filePreview.querySelector('.file-preview-content');
+            if (oldPreview) oldPreview.remove();
         });
         
         // File drag and drop support

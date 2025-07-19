@@ -1,3 +1,11 @@
+@php
+    // Planning Recommendation must be 'Approved'
+    $planningRecommendationApproved = strtolower($PrimaryApplication->planning_recommendation_status) === 'approved';
+    // Director's Approval must be 'Approved'
+    $directorApprovalApproved = strtolower($PrimaryApplication->application_status) === 'approved';
+    // Only allow ST Memo generation if both are approved
+    $canGenerateSTMemo = $planningRecommendationApproved && $directorApprovalApproved;
+@endphp
 <div class="relative inline-block text-left">
     <button class="flex items-center px-2 py-1 text-xs border border-gray-200 rounded-md bg-white hover:bg-gray-50"
         onclick="toggleDropdown(event)">
@@ -15,10 +23,21 @@
             <!-- ST Memo -->
             <li>
                 <a href="javascript:void(0)"
-                    onclick="if(!{{ $stMemoGenerated ? 'true' : 'false' }}) generateSTMemo({{ $PrimaryApplication->id }})"
-                    class="flex items-center gap-2 px-4 py-2 text-sm {{ $stMemoGenerated ? 'text-gray-400 cursor-not-allowed bg-gray-50' : 'text-gray-700 hover:bg-gray-100' }}"
-                    @if ($stMemoGenerated) tabindex="-1" aria-disabled="true" @endif>
-                    <i data-lucide="check" class="w-4 h-4 {{ $stMemoGenerated ? 'text-gray-400' : 'text-red-500' }}"></i>
+                    onclick="@if($canGenerateSTMemo && !$stMemoGenerated) generateSTMemo({{ $PrimaryApplication->id }}) @endif"
+                    class="flex items-center gap-2 px-4 py-2 text-sm
+                        @if(!$canGenerateSTMemo || $stMemoGenerated)
+                            text-gray-400 cursor-not-allowed bg-gray-50
+                        @else
+                            text-gray-700 hover:bg-gray-100
+                        @endif"
+                    @if(!$canGenerateSTMemo || $stMemoGenerated) tabindex="-1" aria-disabled="true" onclick="return false;" @endif>
+                    <i data-lucide="check"
+                        class="w-4 h-4
+                            @if(!$canGenerateSTMemo || $stMemoGenerated)
+                                text-gray-400
+                            @else
+                                text-red-500
+                            @endif"></i>
                     Generate Physical Planning Memo
                 </a>
             </li>

@@ -30,9 +30,386 @@ class ProgrammesController extends Controller
     }
 
 
+        public function bills()
+    {
+        $PageTitle = 'Bills Management';
+        $PageDescription = 'Manage Initial Bills, Betterment Bills, and Bill Balance';
+        
+        // Get all file numbers for Select2 dropdown
+        $primaryFiles = DB::connection('sqlsrv')->table('mother_applications')
+            ->select('id', 'fileno', 'first_name', 'surname', 'corporate_name')
+            ->whereNotNull('fileno')
+            ->get()
+            ->map(function($item) {
+                $ownerName = !empty($item->corporate_name) 
+                    ? $item->corporate_name 
+                    : trim($item->first_name . ' ' . $item->surname);
+                return [
+                    'id' => $item->id,
+                    'fileno' => $item->fileno,
+                    'owner_name' => $ownerName,
+                    'type' => 'primary'
+                ];
+            });
+
+        $unitFiles = DB::connection('sqlsrv')->table('subapplications')
+            ->select('id', 'fileno', 'first_name', 'surname', 'corporate_name')
+            ->whereNotNull('fileno')
+            ->get()
+            ->map(function($item) {
+                $ownerName = !empty($item->corporate_name) 
+                    ? $item->corporate_name 
+                    : trim($item->first_name . ' ' . $item->surname);
+                return [
+                    'id' => $item->id,
+                    'fileno' => $item->fileno,
+                    'owner_name' => $ownerName,
+                    'type' => 'unit'
+                ];
+            });
+
+        $allFiles = $primaryFiles->merge($unitFiles)->sortBy('fileno');
+
+        // Get initial bills data from billing table
+        $billingInitialBills = DB::connection('sqlsrv')->table('billing')
+            ->leftJoin('mother_applications', 'billing.application_id', '=', 'mother_applications.id')
+            ->leftJoin('subapplications', 'billing.sub_application_id', '=', 'subapplications.id')
+            ->select(
+                'billing.*',
+                'mother_applications.application_fee as primary_application_fee',
+                'mother_applications.processing_fee as primary_processing_fee', 
+                'mother_applications.site_plan_fee as primary_site_plan_fee',
+                'mother_applications.payment_date as primary_payment_date',
+                'mother_applications.receipt_number as primary_receipt_number',
+                'mother_applications.fileno as primary_fileno',
+                'mother_applications.first_name as primary_first_name',
+                'mother_applications.surname as primary_surname',
+                'mother_applications.corporate_name as primary_corporate_name',
+                'subapplications.application_fee as unit_application_fee',
+                'subapplications.processing_fee as unit_processing_fee',
+                'subapplications.site_plan_fee as unit_site_plan_fee', 
+                'subapplications.payment_date as unit_payment_date',
+                'subapplications.receipt_number as unit_receipt_number',
+                'subapplications.fileno as unit_fileno',
+                'subapplications.first_name as unit_first_name',
+                'subapplications.surname as unit_surname',
+                'subapplications.corporate_name as unit_corporate_name'
+            )
+            ->where(function($query) {
+                $query->whereNotNull('billing.Scheme_Application_Fee')
+                      ->orWhereNotNull('billing.Site_Plan_Fee')
+                      ->orWhereNotNull('billing.Unit_Application_Fees')
+                      ->orWhereNotNull('mother_applications.application_fee')
+                      ->orWhereNotNull('mother_applications.processing_fee')
+                      ->orWhereNotNull('mother_applications.site_plan_fee')
+                      ->orWhereNotNull('subapplications.application_fee')
+                      ->orWhereNotNull('subapplications.processing_fee')
+                      ->orWhereNotNull('subapplications.site_plan_fee');
+            })
+            ->get();
+
+        // Get initial bills data directly from subapplications table for unit applications
+        $unitInitialBills = DB::connection('sqlsrv')->table('subapplications')
+            ->select(
+                'id',
+                'id as sub_application_id',
+                'application_fee as unit_application_fee',
+                'processing_fee as unit_processing_fee',
+                'site_plan_fee as unit_site_plan_fee',
+                'payment_date as unit_payment_date',
+                'receipt_number as unit_receipt_number',
+                'fileno as unit_fileno',
+                'first_name as unit_first_name',
+                'surname as unit_surname',
+                'corporate_name as unit_corporate_name',
+                'created_at',
+                'Payment_Status'
+            )
+            ->where(function($query) {
+                $query->whereNotNull('application_fee')
+                      ->orWhereNotNull('processing_fee')
+                      ->orWhereNotNull('site_plan_fee');
+            })
+            ->get();
+
+        // Get initial bills data directly from mother_applications table for primary applications
+        $primaryInitialBills = DB::connection('sqlsrv')->table('mother_applications')
+            ->select(
+                'id',
+                'id as application_id',
+                'application_fee as primary_application_fee',
+                'processing_fee as primary_processing_fee',
+                'site_plan_fee as primary_site_plan_fee',
+                'payment_date as primary_payment_date',
+                'receipt_number as primary_receipt_number',
+                'fileno as primary_fileno',
+                'first_name as primary_first_name',
+                'surname as primary_surname',
+                'corporate_name as primary_corporate_name',
+                'created_at',
+                'Payment_Status'
+            )
+            ->where(function($query) {
+                $query->whereNotNull('application_fee')
+                      ->orWhereNotNull('processing_fee')
+                      ->orWhereNotNull('site_plan_fee');
+            })
+            ->get();
+
+        // Combine all initial bills
+        $initialBills = $billingInitialBills->merge($unitInitialBills)->merge($primaryInitialBills);
+
+        // Get betterment bills data
+        $bettermentBills = DB::connection('sqlsrv')->table('billing')
+            ->leftJoin('mother_applications', 'billing.application_id', '=', 'mother_applications.id')
+            ->leftJoin('subapplications', 'billing.sub_application_id', '=', 'subapplications.id')
+            ->select(
+                'billing.*',
+                'mother_applications.fileno as primary_fileno',
+                'mother_applications.first_name as primary_first_name',
+                'mother_applications.surname as primary_surname',
+                'mother_applications.corporate_name as primary_corporate_name',
+                'subapplications.fileno as unit_fileno',
+                'subapplications.first_name as unit_first_name',
+                'subapplications.surname as unit_surname',
+                'subapplications.corporate_name as unit_corporate_name'
+            )
+            ->whereNotNull('billing.Betterment_Charges')
+            ->get();
+
+        // Get final bills data
+        $finalBills = DB::connection('sqlsrv')->table('final_bills')
+            ->leftJoin('mother_applications', 'final_bills.application_id', '=', 'mother_applications.id')
+            ->leftJoin('subapplications', 'final_bills.sub_application_id', '=', 'subapplications.id')
+            ->select(
+                'final_bills.*',
+                'mother_applications.fileno as primary_fileno',
+                'mother_applications.first_name as primary_first_name',
+                'mother_applications.surname as primary_surname',
+                'mother_applications.corporate_name as primary_corporate_name',
+                'subapplications.fileno as unit_fileno',
+                'subapplications.first_name as unit_first_name',
+                'subapplications.surname as unit_surname',
+                'subapplications.corporate_name as unit_corporate_name'
+            )
+            ->get();
+
+        // Process owner names for all bill types
+        foreach ([$initialBills, $bettermentBills, $finalBills] as $billCollection) {
+            foreach ($billCollection as $bill) {
+                if (!empty($bill->primary_fileno)) {
+                    $bill->fileno = $bill->primary_fileno;
+                    $bill->owner_name = !empty($bill->primary_corporate_name) 
+                        ? $bill->primary_corporate_name 
+                        : trim(($bill->primary_first_name ?? '') . ' ' . ($bill->primary_surname ?? ''));
+                } else {
+                    $bill->fileno = $bill->unit_fileno;
+                    $bill->owner_name = !empty($bill->unit_corporate_name) 
+                        ? $bill->unit_corporate_name 
+                        : trim(($bill->unit_first_name ?? '') . ' ' . ($bill->unit_surname ?? ''));
+                }
+            }
+        }
+
+        // Convert bill collections to arrays for blade filtering
+        $initialBills = $initialBills->toArray();
+        $bettermentBills = $bettermentBills->toArray();
+        $finalBills = $finalBills->toArray();
+
+        return view('programmes.bills', compact(
+            'PageTitle', 
+            'PageDescription', 
+            'allFiles', 
+            'initialBills', 
+            'bettermentBills', 
+            'finalBills'
+        ));
+    }
+
+    /**
+     * View bill details
+     */
+    public function viewBill($type, $id)
+    {
+        try {
+            $bill = $this->getBillData($type, $id);
+            
+            if (!$bill) {
+                return response()->json(['error' => 'Bill not found'], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'bill' => $bill,
+                'html' => view('programmes.partials.bill-details', compact('bill', 'type'))->render()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to load bill details: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Print bill
+     */
+    public function printBill($type, $id)
+    {
+        try {
+            $bill = $this->getBillData($type, $id);
+            
+            if (!$bill) {
+                abort(404, 'Bill not found');
+            }
+
+            return view('programmes.partials.bill-print', compact('bill', 'type'));
+        } catch (\Exception $e) {
+            abort(500, 'Failed to load bill for printing: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Download bill as PDF
+     */
+    public function downloadBill($type, $id)
+    {
+        try {
+            $bill = $this->getBillData($type, $id);
+            
+            if (!$bill) {
+                abort(404, 'Bill not found');
+            }
+
+            // Generate PDF using DomPDF or similar
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadView('programmes.partials.bill-pdf', compact('bill', 'type'));
+            
+            $filename = $this->generateBillFilename($bill, $type);
+            
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            abort(500, 'Failed to generate PDF: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get bill data based on type and ID
+     */
+    private function getBillData($type, $id)
+    {
+        switch ($type) {
+            case 'initial':
+                $bill = DB::connection('sqlsrv')->table('billing')
+                    ->leftJoin('mother_applications', 'billing.application_id', '=', 'mother_applications.id')
+                    ->leftJoin('subapplications', 'billing.sub_application_id', '=', 'subapplications.id')
+                    ->select(
+                        'billing.*',
+                        'mother_applications.fileno as primary_fileno',
+                        'mother_applications.first_name as primary_first_name',
+                        'mother_applications.surname as primary_surname',
+                        'mother_applications.corporate_name as primary_corporate_name',
+                        'mother_applications.property_street_name as primary_property_street',
+                        'mother_applications.property_lga as primary_property_lga',
+                        'subapplications.fileno as unit_fileno',
+                        'subapplications.first_name as unit_first_name',
+                        'subapplications.surname as unit_surname',
+                        'subapplications.corporate_name as unit_corporate_name',
+                        'subapplications.property_location as unit_property_location'
+                    )
+                    ->where(function($query) use ($id) {
+                        $query->where('billing.application_id', $id)
+                              ->orWhere('billing.sub_application_id', $id);
+                    })
+                    ->where(function($query) {
+                        $query->whereNotNull('billing.Scheme_Application_Fee')
+                              ->orWhereNotNull('billing.Site_Plan_Fee')
+                              ->orWhereNotNull('billing.Unit_Application_Fees');
+                    })
+                    ->first();
+                
+                // Add a fallback ID if the bill doesn't have one
+                if ($bill && !isset($bill->id)) {
+                    $bill->id = $bill->application_id ?? $bill->sub_application_id ?? $id;
+                }
+                return $bill;
+
+            case 'betterment':
+                $bill = DB::connection('sqlsrv')->table('billing')
+                    ->leftJoin('mother_applications', 'billing.application_id', '=', 'mother_applications.id')
+                    ->leftJoin('subapplications', 'billing.sub_application_id', '=', 'subapplications.id')
+                    ->select(
+                        'billing.*',
+                        'mother_applications.fileno as primary_fileno',
+                        'mother_applications.first_name as primary_first_name',
+                        'mother_applications.surname as primary_surname',
+                        'mother_applications.corporate_name as primary_corporate_name',
+                        'mother_applications.property_street_name as primary_property_street',
+                        'mother_applications.property_lga as primary_property_lga',
+                        'subapplications.fileno as unit_fileno',
+                        'subapplications.first_name as unit_first_name',
+                        'subapplications.surname as unit_surname',
+                        'subapplications.corporate_name as unit_corporate_name',
+                        'subapplications.property_location as unit_property_location'
+                    )
+                    ->where(function($query) use ($id) {
+                        $query->where('billing.application_id', $id)
+                              ->orWhere('billing.sub_application_id', $id);
+                    })
+                    ->whereNotNull('billing.Betterment_Charges')
+                    ->first();
+                
+                // Add a fallback ID if the bill doesn't have one
+                if ($bill && !isset($bill->id)) {
+                    $bill->id = $bill->application_id ?? $bill->sub_application_id ?? $id;
+                }
+                return $bill;
+
+            case 'balance':
+                $bill = DB::connection('sqlsrv')->table('final_bills')
+                    ->leftJoin('mother_applications', 'final_bills.application_id', '=', 'mother_applications.id')
+                    ->leftJoin('subapplications', 'final_bills.sub_application_id', '=', 'subapplications.id')
+                    ->select(
+                        'final_bills.*',
+                        'mother_applications.fileno as primary_fileno',
+                        'mother_applications.first_name as primary_first_name',
+                        'mother_applications.surname as primary_surname',
+                        'mother_applications.corporate_name as primary_corporate_name',
+                        'mother_applications.property_street_name as primary_property_street',
+                        'mother_applications.property_lga as primary_property_lga',
+                        'subapplications.fileno as unit_fileno',
+                        'subapplications.first_name as unit_first_name',
+                        'subapplications.surname as unit_surname',
+                        'subapplications.corporate_name as unit_corporate_name',
+                        'subapplications.property_location as unit_property_location'
+                    )
+                    ->where('final_bills.id', $id)
+                    ->first();
+                
+                // Add a fallback ID if the bill doesn't have one
+                if ($bill && !isset($bill->id)) {
+                    $bill->id = $bill->application_id ?? $bill->sub_application_id ?? $id;
+                }
+                return $bill;
+
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Generate filename for bill download
+     */
+    private function generateBillFilename($bill, $type)
+    {
+        $fileno = $bill->primary_fileno ?? $bill->unit_fileno ?? 'Unknown';
+        $date = date('Y-m-d');
+        $typeLabel = ucfirst($type);
+        
+        return "{$typeLabel}_Bill_{$fileno}_{$date}.pdf";
+    }
+ 
+
     public function Payments()
     {
-        $PageTitle = 'PAYMENTS';
+        $PageTitle = 'Payments';
         $PageDescription = '';
 
         // Get payment data

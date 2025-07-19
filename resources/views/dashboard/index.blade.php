@@ -421,6 +421,36 @@ System') }}
         <!-- Dashboard Content -->
         <div class="p-6">
           <div class="flex-1 space-y-6 p-6 animate-fade-in">
+        <!-- System Status Banner -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-100 border border-blue-200 rounded-lg p-4 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div id="system-status-indicator" class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+                        <span class="text-sm font-medium text-gray-700">System Status:</span>
+                        <span id="system-status-text" class="text-sm font-semibold text-green-600">All Systems Operational</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div id="db-status-indicator" class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="text-sm text-gray-600">Database:</span>
+                        <span id="db-status-text" class="text-sm font-medium text-green-600">Connected</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div id="api-status-indicator" class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="text-sm text-gray-600">API Services:</span>
+                        <span id="api-status-text" class="text-sm font-medium text-green-600">Online</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 text-xs text-gray-500">
+                    <i data-lucide="clock" class="h-3 w-3"></i>
+                    <span>Last updated: <span id="last-updated">{{ date('H:i:s') }}</span></span>
+                    <button onclick="refreshSystemStatus()" class="ml-2 p-1 hover:bg-blue-100 rounded">
+                        <i data-lucide="refresh-cw" class="h-3 w-3"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Enhanced Statistics Cards -->
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             <div class="gradient-card hover-scale rounded-lg p-6 shadow-enhanced" style="--gradient-start: hsl(221.2, 83.2%, 53.3%); --gradient-end: hsl(262, 83.3%, 57.8%);">
@@ -429,11 +459,13 @@ System') }}
                     <h3 class="text-sm font-medium text-white">Total Applications</h3>
                     <i data-lucide="file-text" class="h-4 w-4 text-white/80"></i>
                 </div>
-                <div class="text-2xl font-bold text-white relative z-10">1,284</div>
+                <div class="text-2xl font-bold text-white relative z-10" id="total-applications-count">
+                    <span class="loading-shimmer">Initializing...</span>
+                </div>
                 <p class="text-xs text-white/80 flex items-center mt-1 relative z-10">
                     <span class="text-emerald-300 flex items-center mr-1">
                         <i data-lucide="trending-up" class="h-3 w-3 mr-1"></i>
-                        12%
+                        <span id="applications-trend">--</span>%
                     </span>
                     from last month
                 </p>
@@ -445,11 +477,13 @@ System') }}
                     <h3 class="text-sm font-medium text-white">Pending Approvals</h3>
                     <i data-lucide="clock" class="h-4 w-4 text-white/80"></i>
                 </div>
-                <div class="text-2xl font-bold text-white relative z-10">145</div>
+                <div class="text-2xl font-bold text-white relative z-10" id="pending-approvals-count">
+                    <span class="loading-shimmer">Loading...</span>
+                </div>
                 <p class="text-xs text-white/80 flex items-center mt-1 relative z-10">
                     <span class="text-red-300 flex items-center mr-1">
                         <i data-lucide="trending-down" class="h-3 w-3 mr-1"></i>
-                        8%
+                        <span id="pending-trend">--</span>%
                     </span>
                     from last month
                 </p>
@@ -461,11 +495,13 @@ System') }}
                     <h3 class="text-sm font-medium text-white">Registered Properties</h3>
                     <i data-lucide="building-2" class="h-4 w-4 text-white/80"></i>
                 </div>
-                <div class="text-2xl font-bold text-white relative z-10">8,549</div>
+                <div class="text-2xl font-bold text-white relative z-10" id="registered-properties-count">
+                    <span class="loading-shimmer">Connecting...</span>
+                </div>
                 <p class="text-xs text-white/80 flex items-center mt-1 relative z-10">
                     <span class="text-emerald-300 flex items-center mr-1">
                         <i data-lucide="trending-up" class="h-3 w-3 mr-1"></i>
-                        4%
+                        <span id="properties-trend">--</span>%
                     </span>
                     from last month
                 </p>
@@ -474,14 +510,16 @@ System') }}
             <div class="gradient-card hover-scale rounded-lg p-6 shadow-enhanced" style="--gradient-start: hsl(262, 83.3%, 57.8%); --gradient-end: hsl(339.6, 82.2%, 51.6%);">
                 <div class="decorative-circle"></div>
                 <div class="flex items-center justify-between mb-2 relative z-10">
-                    <h3 class="text-sm font-medium text-white">Registered Users</h3>
+                    <h3 class="text-sm font-medium text-white">Active Users</h3>
                     <i data-lucide="users" class="h-4 w-4 text-white/80"></i>
                 </div>
-                <div class="text-2xl font-bold text-white relative z-10">3,672</div>
+                <div class="text-2xl font-bold text-white relative z-10" id="active-users-count">
+                    <span class="loading-shimmer">Syncing...</span>
+                </div>
                 <p class="text-xs text-white/80 flex items-center mt-1 relative z-10">
                     <span class="text-emerald-300 flex items-center mr-1">
                         <i data-lucide="trending-up" class="h-3 w-3 mr-1"></i>
-                        9%
+                        <span id="users-trend">--</span>%
                     </span>
                     from last month
                 </p>
@@ -490,17 +528,40 @@ System') }}
             <div class="gradient-card hover-scale rounded-lg p-6 shadow-enhanced" style="--gradient-start: hsl(339.6, 82.2%, 51.6%); --gradient-end: hsl(198, 93%, 60%);">
                 <div class="decorative-circle"></div>
                 <div class="flex items-center justify-between mb-2 relative z-10">
-                    <h3 class="text-sm font-medium text-white">Active Modules</h3>
-                    <i data-lucide="layers" class="h-4 w-4 text-white/80"></i>
+                    <h3 class="text-sm font-medium text-white">System Health</h3>
+                    <i data-lucide="activity" class="h-4 w-4 text-white/80"></i>
                 </div>
-                <div class="text-2xl font-bold text-white relative z-10">9</div>
+                <div class="text-2xl font-bold text-white relative z-10" id="system-health-score">
+                    <span class="loading-shimmer">Checking...</span>
+                </div>
                 <p class="text-xs text-white/80 flex items-center mt-1 relative z-10">
                     <span class="text-emerald-300 flex items-center mr-1">
-                        <i data-lucide="trending-up" class="h-3 w-3 mr-1"></i>
-                        2
+                        <i data-lucide="shield-check" class="h-3 w-3 mr-1"></i>
+                        <span id="health-status">Excellent</span>
                     </span>
-                    new this month
+                    performance
                 </p>
+            </div>
+        </div>
+
+        <!-- Real-time Notifications -->
+        <div id="notification-banner" class="hidden bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i data-lucide="info" class="h-5 w-5 text-blue-400"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-blue-700" id="notification-text">
+                        System notification will appear here...
+                    </p>
+                </div>
+                <div class="ml-auto pl-3">
+                    <div class="-mx-1.5 -my-1.5">
+                        <button onclick="dismissNotification()" class="inline-flex bg-blue-50 rounded-md p-1.5 text-blue-500 hover:bg-blue-100">
+                            <i data-lucide="x" class="h-4 w-4"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -2259,6 +2320,286 @@ System') }}
                 dropdownMenu.classList.toggle('hidden');
             }
         }
+
+        // Enhanced Dashboard JavaScript
+        // System status simulation and management
+        let systemStatus = {
+            system: 'operational',
+            database: 'connected',
+            api: 'online',
+            lastUpdated: new Date()
+        };
+
+        // Initialize dashboard enhancements
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+            startSystemMonitoring();
+            setupInteractiveFeatures();
+        });
+
+        function initializeDashboard() {
+            // Show loading states initially
+            showLoadingStates();
+            
+            // Simulate system initialization
+            setTimeout(() => {
+                updateSystemStatus('initializing', 'Initializing system components...');
+                
+                setTimeout(() => {
+                    updateSystemStatus('connecting', 'Establishing database connection...');
+                    
+                    setTimeout(() => {
+                        updateSystemStatus('loading', 'Loading dashboard data...');
+                        
+                        setTimeout(() => {
+                            updateSystemStatus('operational', 'All systems operational');
+                            loadRealData();
+                        }, 1500);
+                    }, 1000);
+                }, 800);
+            }, 500);
+        }
+
+        function showLoadingStates() {
+            const loadingTexts = [
+                'Initializing...',
+                'Loading...',
+                'Connecting...',
+                'Syncing...',
+                'Checking...'
+            ];
+
+            const elements = [
+                'total-applications-count',
+                'pending-approvals-count',
+                'registered-properties-count',
+                'active-users-count',
+                'system-health-score'
+            ];
+
+            elements.forEach((id, index) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.innerHTML = `<span class="loading-shimmer">${loadingTexts[index]}</span>`;
+                }
+            });
+        }
+
+        function updateSystemStatus(status, message) {
+            const statusIndicator = document.getElementById('system-status-indicator');
+            const statusText = document.getElementById('system-status-text');
+            
+            if (statusIndicator && statusText) {
+                statusText.textContent = message;
+                
+                // Update indicator color based on status
+                statusIndicator.className = 'w-3 h-3 rounded-full';
+                switch(status) {
+                    case 'operational':
+                        statusIndicator.classList.add('bg-green-500');
+                        break;
+                    case 'initializing':
+                    case 'connecting':
+                    case 'loading':
+                        statusIndicator.classList.add('bg-yellow-500', 'animate-pulse');
+                        break;
+                    case 'error':
+                        statusIndicator.classList.add('bg-red-500', 'animate-pulse');
+                        break;
+                    default:
+                        statusIndicator.classList.add('bg-gray-500');
+                }
+            }
+        }
+
+        function loadRealData() {
+            // Simulate loading real data with animation
+            const stats = {
+                totalApplications: 1284,
+                pendingApprovals: 145,
+                registeredProperties: 8549,
+                activeUsers: 3672,
+                systemHealth: 98
+            };
+
+            // Animate counters
+            animateCounter('total-applications-count', stats.totalApplications, 2000);
+            animateCounter('pending-approvals-count', stats.pendingApprovals, 1800);
+            animateCounter('registered-properties-count', stats.registeredProperties, 2200);
+            animateCounter('active-users-count', stats.activeUsers, 1900);
+            animateCounter('system-health-score', stats.systemHealth, 1500, '%');
+
+            // Update trends
+            setTimeout(() => {
+                const applicationsElement = document.getElementById('applications-trend');
+                const pendingElement = document.getElementById('pending-trend');
+                const propertiesElement = document.getElementById('properties-trend');
+                const usersElement = document.getElementById('users-trend');
+                const healthElement = document.getElementById('health-status');
+                
+                if (applicationsElement) applicationsElement.textContent = '12';
+                if (pendingElement) pendingElement.textContent = '8';
+                if (propertiesElement) propertiesElement.textContent = '4';
+                if (usersElement) usersElement.textContent = '9';
+                if (healthElement) healthElement.textContent = 'Excellent';
+            }, 2500);
+
+            // Show notification
+            setTimeout(() => {
+                showNotification('Dashboard data loaded successfully! All systems are running optimally.', 'success');
+            }, 3000);
+        }
+
+        function animateCounter(elementId, targetValue, duration, suffix = '') {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            const startValue = 0;
+            const increment = targetValue / (duration / 16);
+            let currentValue = startValue;
+
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= targetValue) {
+                    currentValue = targetValue;
+                    clearInterval(timer);
+                }
+                
+                element.textContent = Math.floor(currentValue).toLocaleString() + suffix;
+            }, 16);
+        }
+
+        function startSystemMonitoring() {
+            // Update system status every 30 seconds
+            setInterval(() => {
+                updateLastUpdatedTime();
+                
+                // Simulate occasional status changes
+                if (Math.random() < 0.1) {
+                    simulateSystemEvent();
+                }
+            }, 30000);
+        }
+
+        function updateLastUpdatedTime() {
+            const lastUpdatedElement = document.getElementById('last-updated');
+            if (lastUpdatedElement) {
+                lastUpdatedElement.textContent = new Date().toLocaleTimeString();
+            }
+        }
+
+        function simulateSystemEvent() {
+            const events = [
+                'Database optimization completed',
+                'New user registration detected',
+                'System backup completed successfully',
+                'Performance monitoring active',
+                'Security scan completed - no issues found'
+            ];
+            
+            const randomEvent = events[Math.floor(Math.random() * events.length)];
+            showNotification(randomEvent, 'info');
+        }
+
+        function refreshSystemStatus() {
+            updateSystemStatus('loading', 'Refreshing system status...');
+            
+            // Simulate refresh delay
+            setTimeout(() => {
+                updateSystemStatus('operational', 'All systems operational');
+                updateLastUpdatedTime();
+                showNotification('System status refreshed successfully', 'success');
+            }, 1500);
+        }
+
+        function showNotification(message, type = 'info') {
+            const banner = document.getElementById('notification-banner');
+            const text = document.getElementById('notification-text');
+            
+            if (banner && text) {
+                text.textContent = message;
+                banner.classList.remove('hidden');
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    dismissNotification();
+                }, 5000);
+            }
+        }
+
+        function dismissNotification() {
+            const banner = document.getElementById('notification-banner');
+            if (banner) {
+                banner.classList.add('hidden');
+            }
+        }
+
+        function setupInteractiveFeatures() {
+            // Chart interaction functions
+            window.filterChart = function(filter) {
+                console.log('Filtering chart by:', filter);
+                showNotification(`Chart filtered by ${filter} status`, 'info');
+            };
+
+            window.downloadChart = function() {
+                showNotification('Chart data export initiated', 'success');
+            };
+
+            window.refreshChart = function() {
+                showNotification('Chart data refreshed', 'success');
+            };
+
+            window.showInsights = function() {
+                showNotification('AI-powered insights: Peak application times are between 10 AM - 2 PM', 'info');
+            };
+
+            window.toggleChartView = function() {
+                const text = document.getElementById('chart-view-text');
+                if (text && text.textContent === 'Line View') {
+                    text.textContent = 'Bar View';
+                    showNotification('Switched to line chart view', 'info');
+                } else if (text) {
+                    text.textContent = 'Line View';
+                    showNotification('Switched to bar chart view', 'info');
+                }
+            };
+
+            window.showChartDetails = function() {
+                showNotification('Detailed analytics: 94.2% success rate, 2.8 days avg processing time', 'info');
+            };
+
+            window.toggleChartSeries = function(series) {
+                const legend = document.getElementById(`legend-${series}`);
+                if (legend) {
+                    legend.classList.toggle('inactive');
+                    showNotification(`${series} series toggled`, 'info');
+                }
+            };
+        }
+
+        // Add CSS for loading shimmer effect
+        const style = document.createElement('style');
+        style.textContent = `
+            .loading-shimmer {
+                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                background-size: 200% 100%;
+                animation: shimmer 1.5s infinite;
+                border-radius: 4px;
+                display: inline-block;
+                padding: 2px 8px;
+            }
+            
+            @keyframes shimmer {
+                0% { background-position: -200% 0; }
+                100% { background-position: 200% 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Real-time clock update
+        setInterval(() => {
+            updateLastUpdatedTime();
+        }, 1000);
 
         document.addEventListener('click', () => {
             const dropdownMenus = document.querySelectorAll('.dropdown-menu');

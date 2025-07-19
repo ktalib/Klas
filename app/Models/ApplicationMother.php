@@ -47,4 +47,9 @@ class ApplicationMother extends Model
         'application_status',
         'approval_date',
     ];
+
+    public function fileIndexing()
+    {
+        return $this->hasOne(FileIndexing::class, 'main_application_id');
+    }
 }

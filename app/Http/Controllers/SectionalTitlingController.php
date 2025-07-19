@@ -63,7 +63,7 @@ class  SectionalTitlingController extends Controller
             $PageDescription = 'Process Survey Applications';
         } else {
             $PageTitle = $request->get('url') === 'phy_planning' ? 'Planning Recommendation Approval' : 
-                         ($request->get('url') === 'recommendation' ? 'Planning Recommendation' : 'Unit Applications');
+                         ($request->get('url') === 'recommendation' ? 'Planning Recommendation' : 'Secondary  Applications');
             $PageDescription = $request->get('url') === 'phy_planning' ? '' : 
                                ($request->get('url') === 'recommendation' ? 'Review and process planning recommendation for sectional titles' : 'Process CofO for individually owned sections of multi-unit developments.');
         }
@@ -173,6 +173,25 @@ class  SectionalTitlingController extends Controller
         $PageDescription = 'Geospatial visualization of sectional title properties in Kano State.';
   
         return view('map.index', compact('PageTitle', 'PageDescription'));
+    }
+
+    public function mother(Request $request)
+    {
+        if ($request->has('survey')) {
+            $PageTitle = 'Sectional Titling Survey - Mother Applications';
+            $PageDescription = 'Process Survey Applications for Mother Applications';
+        } else {
+            $PageTitle = $request->get('url') === 'phy_planning' ? 'Planning Recommendation Approval - Mother Applications' : 
+                    ($request->get('url') === 'recommendation' ? 'Planning Recommendation - Mother Applications' : 'Mother Applications');
+            $PageDescription = $request->get('url') === 'phy_planning' ? 'Physical planning approval for mother applications' : 
+                    ($request->get('url') === 'recommendation' ? 'Review and process planning recommendation for mother applications' : 'Manage and process mother applications for sectional titling.');
+        }
+
+        $PrimaryApplications = DB::connection('sqlsrv')->table('dbo.mother_applications')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('sectionaltitling.mother', compact('PrimaryApplications', 'PageTitle', 'PageDescription'));
     }
 
     public function getBuyerList($applicationId)

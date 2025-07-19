@@ -376,9 +376,9 @@
                                     EDMS
                                     </button>
                                  
-                                    <button class="flex items-center px-3 py-1 text-xs bg-green-700 text-white rounded-md hover:bg-gray-800">
-                                        <i data-lucide="send-horizontal" class="w-3.5 h-3.5 mr-1.5"></i>
-                                        Submit
+                                    <button class="flex items-center px-3 py-1 text-xs bg-gray-300 text-gray-500 rounded-md cursor-not-allowed" disabled>
+                                      <i data-lucide="send-horizontal" class="w-3.5 h-3.5 mr-1.5"></i>
+                                      Submit
                                     </button>
                               </div>
                             </div>

@@ -310,11 +310,21 @@
                         <textarea id="addressOfCurrentAllottee" name="addressOfCurrentAllottee" rows="2" class="w-full p-2 border border-gray-300 rounded-md text-sm">{{ $gisData->addressOfCurrentAllottee ?? '' }}</textarea>
                     </div>
                     
+                 
                     <div class="space-y-2">
-                        <label for="titleOfCurrentAllottee" class="block text-sm font-medium text-gray-700">Title of Current Allottee</label>
-                        <input type="text" id="titleOfCurrentAllottee" name="titleOfCurrentAllottee" value="{{ $gisData->titleOfCurrentAllottee ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="title" class="block text-sm font-medium text-gray-700">Title <span class="text-red-600">*</span></label>
+                        <select id="title" name="titleOfCurrentAllottee" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
+                            <option value="">Select Title</option>
+                            <option value="CofO">CofO</option>
+                            <option value="RofO">RofO</option>
+                            <option value="Grant">Grant</option>
+                            <option value="Occupancy Permit">Occupancy Permit</option>
+                            <option value="SLTR">SLTR</option>
+                            <option value="GIS">GIS</option>
+                            <option value="Customary">Customary</option>
+                            <option value="other">other</option>
+                        </select>
                     </div>
-                    
                     <div class="space-y-2">
                         <label for="phoneNo" class="block text-sm font-medium text-gray-700">Phone Number</label>
                         <input type="tel" id="phoneNo" name="phoneNo" value="{{ $gisData->phoneNo ?? '' }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">

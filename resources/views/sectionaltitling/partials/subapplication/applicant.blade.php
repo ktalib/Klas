@@ -22,30 +22,30 @@
                                             class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                                             onchange="updateApplicantNamePreview()">
                                             <option value="" disabled selected>Select title</option>
-                                            <option value="Mr.">Mr.</option>
-                                            <option value="Mrs.">Mrs.</option>
-                                            <option value="Chief">Chief</option>
-                                            <option value="Master">Master</option>
-                                            <option value="Capt">Capt</option>
-                                            <option value="Coln">Coln</option>
-                                            <option value="Pastor">Pastor</option>
-                                            <option value="King">King</option>
-                                            <option value="Prof">Prof</option>
-                                            <option value="Dr.">Dr.</option>
-                                            <option value="Alhaji">Alhaji</option>
-                                            <option value="Alhaja">Alhaja</option>
-                                            <option value="High Chief">High Chief</option>
-                                            <option value="Lady">Lady</option>
-                                            <option value="Bishop">Bishop</option>
-                                            <option value="Senator">Senator</option>
-                                            <option value="Messr">Messr</option>
-                                            <option value="Honorable">Honorable</option>
-                                            <option value="Miss">Miss</option>
-                                            <option value="Rev.">Rev.</option>
-                                            <option value="Barr.">Barr.</option>
-                                            <option value="Arc.">Arc.</option>
-                                            <option value="Sister">Sister</option>
-                                            <option value="Other">Other</option>
+                                            <option value="MR.">MR.</option>
+                                            <option value="MRS.">MRS.</option>
+                                            <option value="CHIEF">CHIEF</option>
+                                            <option value="MASTER">MASTER</option>
+                                            <option value="CAPT">CAPT</option>
+                                            <option value="COLN">COLN</option>
+                                            <option value="PASTOR">PASTOR</option>
+                                            <option value="KING">KING</option>
+                                            <option value="PROF">PROF</option>
+                                            <option value="DR.">DR.</option>
+                                            <option value="ALHAJI">ALHAJI</option>
+                                            <option value="ALHAJA">ALHAJA</option>
+                                            <option value="HIGH CHIEF">HIGH CHIEF</option>
+                                            <option value="LADY">LADY</option>
+                                            <option value="BISHOP">BISHOP</option>
+                                            <option value="SENATOR">SENATOR</option>
+                                            <option value="MESSR">MESSR</option>
+                                            <option value="HONORABLE">HONORABLE</option>
+                                            <option value="MISS">MISS</option>
+                                            <option value="REV.">REV.</option>
+                                            <option value="BARR.">BARR.</option>
+                                            <option value="ARC.">ARC.</option>
+                                            <option value="SISTER">SISTER</option>
+                                            <option value="OTHER">OTHER</option>
                                         </select>
                                     </div>
 
@@ -56,7 +56,7 @@
                                         </label>
                                         <input type="text" id="applicantName" name="first_name"
                                             class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
-                                            placeholder="Enter first name" oninput="updateApplicantNamePreview()">
+                                            placeholder="Enter first name" style="text-transform:uppercase" oninput="this.value = this.value.toUpperCase(); updateApplicantNamePreview();">
                                     </div>
 
                                     <!-- Middle Name -->
@@ -66,7 +66,7 @@
                                         </label>
                                         <input type="text" id="applicantMiddleName" name="middle_name"
                                             class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
-                                            placeholder="Enter middle name" oninput="updateApplicantNamePreview()">
+                                            placeholder="Enter middle name" style="text-transform:uppercase" oninput="this.value = this.value.toUpperCase(); updateApplicantNamePreview();">
                                     </div>
 
                                     <!-- Surname -->
@@ -76,7 +76,7 @@
                                         </label>
                                         <input type="text" id="applicantSurname" name="surname"
                                             class="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
-                                            placeholder="Enter surname" oninput="updateApplicantNamePreview()">
+                                            placeholder="Enter surname" style="text-transform:uppercase" oninput="this.value = this.value.toUpperCase(); updateApplicantNamePreview();">
                                     </div>
                                
                                     <!-- Name of Applicant -->

@@ -7,10 +7,27 @@
 @section('content')
 <style>
     /* Required for proper z-index stacking and overflow */
-    .dropdown-wrapper { position: relative; }
-    .dropdown-menu { z-index: 1000; }
-    /* Ensure overflow is visible */
-    .overflow-x-auto { overflow-y: visible !important; }
+    .dropdown-wrapper { 
+        position: static; 
+    }
+    .dropdown-menu { 
+        position: fixed;
+        z-index: 9999;
+        min-width: 12rem;
+        margin-top: 0.25rem;
+    }
+    /* Ensure table doesn't expand due to dropdown */
+    .overflow-x-auto { 
+        overflow-x: auto;
+        overflow-y: visible;
+    }
+    /* Prevent table cell from expanding */
+    .action-cell {
+        width: 60px;
+        min-width: 60px;
+        max-width: 60px;
+        position: relative;
+    }
     /* Tab styling */
     .tab-nav { border-bottom: 1px solid #e5e7eb; }
     .tab-nav button { padding: 0.75rem 1.5rem; margin-right: 0.5rem; border-bottom: 2px solid transparent; }
@@ -98,8 +115,22 @@
                                     <td class="table-cell px-1 py-1 truncate">{{ $data->oldTitlePageNo ?? 'N/A' }}</td>
                                     <td class="table-cell px-1 py-1 truncate">{{ $data->oldTitleVolumeNo ?? 'N/A' }}</td>
                                     <td class="table-cell px-1 py-1 truncate">{{ $data->created_at ? date('d M, Y', strtotime($data->created_at)) : 'N/A' }}</td>
-                                    <td class="table-cell px-1 py-1 truncate">
-                                        <div class="dropdown-wrapper" x-data="{ open: false, toggle() { this.open = !this.open; } }">
+                                    <td class="table-cell action-cell px-1 py-1">
+                                        <div class="dropdown-wrapper" x-data="{ 
+                                            open: false, 
+                                            toggle() { 
+                                                this.open = !this.open; 
+                                                if (this.open) {
+                                                    this.$nextTick(() => {
+                                                        const button = this.$refs.button;
+                                                        const dropdown = this.$refs.dropdown;
+                                                        const rect = button.getBoundingClientRect();
+                                                        dropdown.style.top = (rect.bottom + 4) + 'px';
+                                                        dropdown.style.left = (rect.right - dropdown.offsetWidth) + 'px';
+                                                    });
+                                                }
+                                            } 
+                                        }">
                                             <button x-ref="button" @click.prevent="toggle()" class="text-gray-600 hover:text-blue-600 p-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ml-auto block">
                                                 <i data-lucide="more-vertical" class="h-5 w-5"></i>
                                             </button>
@@ -168,8 +199,22 @@
                                     <td class="table-cell px-1 py-1 truncate">{{ $data->UnitSize ?? 'N/A' }}</td>
                                     <td class="table-cell px-1 py-1 truncate">{{ $data->plotNo ?? 'N/A' }}</td>
                                     <td class="table-cell px-1 py-1 truncate">{{ $data->created_at ? date('d M, Y', strtotime($data->created_at)) : 'N/A' }}</td>
-                                    <td class="table-cell px-1 py-1 truncate">
-                                        <div class="dropdown-wrapper" x-data="{ open: false, toggle() { this.open = !this.open; } }">
+                                    <td class="table-cell action-cell px-1 py-1">
+                                        <div class="dropdown-wrapper" x-data="{ 
+                                            open: false, 
+                                            toggle() { 
+                                                this.open = !this.open; 
+                                                if (this.open) {
+                                                    this.$nextTick(() => {
+                                                        const button = this.$refs.button;
+                                                        const dropdown = this.$refs.dropdown;
+                                                        const rect = button.getBoundingClientRect();
+                                                        dropdown.style.top = (rect.bottom + 4) + 'px';
+                                                        dropdown.style.left = (rect.right - dropdown.offsetWidth) + 'px';
+                                                    });
+                                                }
+                                            } 
+                                        }">
                                             <button x-ref="button" @click.prevent="toggle()" class="text-gray-600 hover:text-blue-600 p-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ml-auto block">
                                                 <i data-lucide="more-vertical" class="h-5 w-5"></i>
                                             </button>

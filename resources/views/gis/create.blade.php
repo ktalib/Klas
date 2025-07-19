@@ -52,44 +52,32 @@
                 <h3 class="text-lg font-semibold mb-4 text-gray-700">Plot Information</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="space-y-2">
-                        <label for="plotNo" class="block text-sm font-medium text-gray-700">Plot Number</label>
-                        <input type="text" id="plotNo" name="plotNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="plotNo" class="block text-sm font-medium text-gray-700">Plot Number <span class="text-red-600">*</span></label>
+                        <input type="text" id="plotNo" name="plotNo" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="blockNo" class="block text-sm font-medium text-gray-700">Block Number</label>
-                        <input type="text" id="blockNo" name="blockNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="blockNo" class="block text-sm font-medium text-gray-700">Block Number <span class="text-red-600">*</span></label>
+                        <input type="text" id="blockNo" name="blockNo" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="approvedPlanNo" class="block text-sm font-medium text-gray-700">Approved Plan Number</label>
-                        <input type="text" id="approvedPlanNo" name="approvedPlanNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="approvedPlanNo" class="block text-sm font-medium text-gray-700">Approved Plan Number <span class="text-red-600">*</span></label>
+                        <input type="text" id="approvedPlanNo" name="approvedPlanNo" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="tpPlanNo" class="block text-sm font-medium text-gray-700">TP Plan Number</label>
-                        <input type="text" id="tpPlanNo" name="tpPlanNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="tpPlanNo" class="block text-sm font-medium text-gray-700">TP Plan Number <span class="text-red-600">*</span></label>
+                        <input type="text" id="tpPlanNo" name="tpPlanNo" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="areaInHectares" class="block text-sm font-medium text-gray-700">Area (in Hectares)</label>
-                        <input type="number" step="0.0001" id="areaInHectares" name="areaInHectares" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="areaInHectares" class="block text-sm font-medium text-gray-700">Area (in Hectares) <span class="text-red-600">*</span></label>
+                        <input type="number" step="0.0001" id="areaInHectares" name="areaInHectares" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
-                    <div class="space-y-2">
-                        <label for="landUse" class="block text-sm font-medium text-gray-700">Land Use</label>
-                        <select id="landUse" name="landUse" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                            <option value="">Select land use</option>
-                            <option value="Residential">Residential</option>
-                            <option value="Commercial">Commercial</option>
-                            <option value="Industrial">Industrial</option>  
-                        </select>
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label for="specifically" class="block text-sm font-medium text-gray-700">Specific Use</label>
-                        <input type="text" id="specifically" name="specifically" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
+                      @include('components.landuse')
+                      @include('components.specifically')
                 </div>
             </div>
             
@@ -98,40 +86,33 @@
                 <h3 class="text-lg font-semibold mb-4 text-gray-700">Location Information</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="space-y-2">
-                        <label for="layoutName" class="block text-sm font-medium text-gray-700">Layout Name</label>
-                        <input type="text" id="layoutName" name="layoutName" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="layoutName" class="block text-sm font-medium text-gray-700">Layout Name <span class="text-red-600">*</span></label>
+                        <input type="text" id="layoutName" name="layoutName" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="districtName" class="block text-sm font-medium text-gray-700">District Name</label>
-                        <input type="text" id="districtName" name="districtName" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="districtName" class="block text-sm font-medium text-gray-700">District Name <span class="text-red-600">*</span></label>
+                        <input type="text" id="districtName" name="districtName" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                      @include('components.lga')
-                    
+        
                     <div class="space-y-2">
-                        <label for="StateName" class="block text-sm font-medium text-gray-700">State Name</label>
-                        <input type="text" id="StateName" name="StateName" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="StateName" class="block text-sm font-medium text-gray-700">State Name <span class="text-red-600">*</span></label>
+                        <input type="text" id="StateName" name="StateName" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
+                     @include('components.StreetName')
+
                     <div class="space-y-2">
-                        <label for="streetName" class="block text-sm font-medium text-gray-700">Street Name</label>
-                        <input type="text" id="streetName" name="streetName" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="houseNo" class="block text-sm font-medium text-gray-700">House Number <span class="text-red-600">*</span></label>
+                        <input type="text" id="houseNo" name="houseNo" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
-                    
-                    <div class="space-y-2">
-                        <label for="houseNo" class="block text-sm font-medium text-gray-700">House Number</label>
-                        <input type="text" id="houseNo" name="houseNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label for="houseType" class="block text-sm font-medium text-gray-700">House Type</label>
-                        <input type="text" id="houseType" name="houseType" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
+                     @include('components.HouseType')
 
                        <div class="space-y-2">
-                        <label for="tenancy" class="block text-sm font-medium text-gray-700">Tenancy</label>
-                        <input type="text" id="tenancy" name="tenancy" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="tenancy" class="block text-sm font-medium text-gray-700">Tenancy <span class="text-red-600">*</span></label>
+                        <input type="text" id="tenancy" name="tenancy" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                      
@@ -210,43 +191,43 @@
                 <h3 class="text-lg font-semibold mb-4 text-gray-700">Title Information</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="space-y-2">
-                        <label for="oldTitleSerialNo" class="block text-sm font-medium text-gray-700">Old Title Serial No</label>
-                        <input type="text" id="oldTitleSerialNo" name="oldTitleSerialNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="oldTitleSerialNo" class="block text-sm font-medium text-gray-700">Old Title Serial No <span class="text-red-600">*</span></label>
+                        <input type="text" id="oldTitleSerialNo" name="oldTitleSerialNo" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="oldTitlePageNo" class="block text-sm font-medium text-gray-700">Old Title Page No</label>
-                        <input type="text" id="oldTitlePageNo" name="oldTitlePageNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="oldTitlePageNo" class="block text-sm font-medium text-gray-700">Old Title Page No <span class="text-red-600">*</span></label>
+                        <input type="text" id="oldTitlePageNo" name="oldTitlePageNo" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="oldTitleVolumeNo" class="block text-sm font-medium text-gray-700">Old Title Volume No</label>
-                        <input type="text" id="oldTitleVolumeNo" name="oldTitleVolumeNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="oldTitleVolumeNo" class="block text-sm font-medium text-gray-700">Old Title Volume No <span class="text-red-600">*</span></label>
+                        <input type="text" id="oldTitleVolumeNo" name="oldTitleVolumeNo" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="deedsDate" class="block text-sm font-medium text-gray-700">Deeds Date</label>
-                        <input type="date" id="deedsDate" name="deedsDate" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="deedsDate" class="block text-sm font-medium text-gray-700">Deeds Date <span class="text-red-600">*</span></label>
+                        <input type="date" id="deedsDate" name="deedsDate" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="deedsTime" class="block text-sm font-medium text-gray-700">Deeds Time</label>
-                        <input type="text" id="deedsTime" name="deedsTime" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="deedsTime" class="block text-sm font-medium text-gray-700">Deeds Time <span class="text-red-600">*</span></label>
+                        <input type="text" id="deedsTime" name="deedsTime" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="certificateDate" class="block text-sm font-medium text-gray-700">Certificate Date</label>
-                        <input type="date" id="certificateDate" name="certificateDate" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="certificateDate" class="block text-sm font-medium text-gray-700">Certificate Date <span class="text-red-600">*</span></label>
+                        <input type="date" id="certificateDate" name="certificateDate" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="CofOSerialNo" class="block text-sm font-medium text-gray-700">CofO Serial No</label>
-                        <input type="text" id="CofOSerialNo" name="CofOSerialNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="CofOSerialNo" class="block text-sm font-medium text-gray-700">CofO Serial No <span class="text-red-600">*</span></label>
+                        <input type="text" id="CofOSerialNo" name="CofOSerialNo" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="titleIssuedYear" class="block text-sm font-medium text-gray-700">Title Issued Year</label>
-                        <input type="number" id="titleIssuedYear" name="titleIssuedYear" min="1900" max="2099" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="titleIssuedYear" class="block text-sm font-medium text-gray-700">Title Issued Year <span class="text-red-600">*</span></label>
+                        <input type="number" id="titleIssuedYear" name="titleIssuedYear" min="1900" max="2099" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                 </div>
             </div>
@@ -256,66 +237,72 @@
                 <h3 class="text-lg font-semibold mb-4 text-gray-700">Owner Information</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="space-y-2">
-                        <label for="originalAllottee" class="block text-sm font-medium text-gray-700">Original Allottee</label>
-                        <input type="text" id="originalAllottee" name="originalAllottee" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="originalAllottee" class="block text-sm font-medium text-gray-700">Original Allottee <span class="text-red-600">*</span></label>
+                        <input type="text" id="originalAllottee" name="originalAllottee" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="addressOfOriginalAllottee" class="block text-sm font-medium text-gray-700">Address of Original Allottee</label>
-                        <textarea id="addressOfOriginalAllottee" name="addressOfOriginalAllottee" rows="2" class="w-full p-2 border border-gray-300 rounded-md text-sm"></textarea>
+                        <label for="addressOfOriginalAllottee" class="block text-sm font-medium text-gray-700">Address of Original Allottee <span class="text-red-600">*</span></label>
+                        <textarea id="addressOfOriginalAllottee" name="addressOfOriginalAllottee" rows="2" class="w-full p-2 border border-gray-300 rounded-md text-sm" required></textarea>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="changeOfOwnership" class="block text-sm font-medium text-gray-700">Change of Ownership</label>
-                        <select id="changeOfOwnership" name="changeOfOwnership" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="changeOfOwnership" class="block text-sm font-medium text-gray-700">Change of Ownership <span class="text-red-600">*</span></label>
+                        <select id="changeOfOwnership" name="changeOfOwnership" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                             <option value="No">No</option>
                             <option value="Yes">Yes</option>
                         </select>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="reasonForChange" class="block text-sm font-medium text-gray-700">Reason for Change</label>
-                        <input type="text" id="reasonForChange" name="reasonForChange" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="reasonForChange" class="block text-sm font-medium text-gray-700">Reason for Change <span class="text-red-600">*</span></label>
+                        <input type="text" id="reasonForChange" name="reasonForChange" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="currentAllottee" class="block text-sm font-medium text-gray-700">Current Allottee</label>
-                        <input type="text" id="currentAllottee" name="currentAllottee" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="currentAllottee" class="block text-sm font-medium text-gray-700">Current Allottee <span class="text-red-600">*</span></label>
+                        <input type="text" id="currentAllottee" name="currentAllottee" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="addressOfCurrentAllottee" class="block text-sm font-medium text-gray-700">Address of Current Allottee</label>
-                        <textarea id="addressOfCurrentAllottee" name="addressOfCurrentAllottee" rows="2" class="w-full p-2 border border-gray-300 rounded-md text-sm"></textarea>
+                        <label for="addressOfCurrentAllottee" class="block text-sm font-medium text-gray-700">Address of Current Allottee <span class="text-red-600">*</span></label>
+                        <textarea id="addressOfCurrentAllottee" name="addressOfCurrentAllottee" rows="2" class="w-full p-2 border border-gray-300 rounded-md text-sm" required></textarea>
+                    </div>
+                    
+                       
+                    <div class="space-y-2">
+                        <label for="title" class="block text-sm font-medium text-gray-700">Title <span class="text-red-600">*</span></label>
+                        <select id="title" name="titleOfCurrentAllottee" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
+                            <option value="">Select Title</option>
+                            <option value="CofO">CofO</option>
+                            <option value="RofO">RofO</option>
+                            <option value="Grant">Grant</option>
+                            <option value="Occupancy Permit">Occupancy Permit</option>
+                            <option value="SLTR">SLTR</option>
+                            <option value="GIS">GIS</option>
+                            <option value="Customary">Customary</option>
+                            <option value="other">other</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label for="phoneNo" class="block text-sm font-medium text-gray-700">Phone Number <span class="text-red-600">*</span></label>
+                        <input type="tel" id="phoneNo" name="phoneNo" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="titleOfCurrentAllottee" class="block text-sm font-medium text-gray-700">Title of Current Allottee</label>
-                        <input type="text" id="titleOfCurrentAllottee" name="titleOfCurrentAllottee" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="emailAddress" class="block text-sm font-medium text-gray-700">Email Address <span class="text-red-600">*</span></label>
+                        <input type="email" id="emailAddress" name="emailAddress" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
+                    </div>
+                  @include('components.Occupation')
+                    
+                    <div class="space-y-2">
+                        <label for="nationality" class="block text-sm font-medium text-gray-700">Nationality <span class="text-red-600">*</span></label>
+                        <input type="text" id="nationality" name="nationality" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                     
                     <div class="space-y-2">
-                        <label for="phoneNo" class="block text-sm font-medium text-gray-700">Phone Number</label>
-                        <input type="tel" id="phoneNo" name="phoneNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label for="emailAddress" class="block text-sm font-medium text-gray-700">Email Address</label>
-                        <input type="email" id="emailAddress" name="emailAddress" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label for="occupation" class="block text-sm font-medium text-gray-700">Occupation</label>
-                        <input type="text" id="occupation" name="occupation" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label for="nationality" class="block text-sm font-medium text-gray-700">Nationality</label>
-                        <input type="text" id="nationality" name="nationality" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label for="CompanyRCNo" class="block text-sm font-medium text-gray-700">Company RC Number</label>
-                        <input type="text" id="CompanyRCNo" name="CompanyRCNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="CompanyRCNo" class="block text-sm font-medium text-gray-700">Company RC Number <span class="text-red-600">*</span></label>
+                        <input type="text" id="CompanyRCNo" name="CompanyRCNo" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                     </div>
                 </div>
             </div>

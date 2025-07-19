@@ -44,44 +44,83 @@ class ApplicationMotherController extends Controller
     {
         $PageTitle = 'Create Unit Application ';
         $PageDescription = 'Unit application for sectional title';
-        // Get the land use type from the request
+        
+        // Get the main application ID from request
+        $mainApplicationId = request()->get('application_id');
+        
+        // Get the mother application to determine land use
+        $motherApplication = null;
         $landUse = request()->get('land_use');
-        $prefix = '';
-
-
-     
-
-        // Determine the prefix based on land use
-        if (strtolower($landUse) === 'commercial') {
-            $prefix = 'ST-COM';
-        } elseif (strtolower($landUse) === 'residential') {
-            $prefix = 'ST-RES';
-        } elseif (strtolower($landUse) === 'industrial') {
-            $prefix = 'ST-IND';
+        
+        if ($mainApplicationId) {
+            $motherApplication = DB::connection('sqlsrv')
+                ->table('dbo.mother_applications')
+                ->where('id', $mainApplicationId)
+                ->first();
+            
+            if ($motherApplication) {
+                $landUse = $motherApplication->land_use;
+            }
         }
 
-        // Get the current year
-        $currentYear = date('Y');
-
-        // Find the last serial number for this specific prefix and year
-        $lastRecord = DB::connection('sqlsrv')
-            ->table('dbo.StFileNo')
-            ->where('file_prefix', $prefix)
-            ->where('year', $currentYear)
-            ->orderBy('serial_number', 'desc')
-            ->first();
-
-        // Determine the next serial number for this prefix-year combination
-        $nextSerialNumber = 1; // Default to 1 if no previous records
-
-        if ($lastRecord) {
-            $nextSerialNumber = intval($lastRecord->serial_number) + 1;
+        // Generate New Primary FileNo (NPFN): ST-Landuse-Year-SerialNo
+        $npFileNo = '';
+        $unitFileNo = '';
+        
+        if ($landUse) {
+            // Determine the land use code
+            $landUseCode = match(strtoupper($landUse)) {
+                'COMMERCIAL' => 'COM',
+                'INDUSTRIAL' => 'IND', 
+                'RESIDENTIAL' => 'RES',
+                default => 'RES'
+            };
+            
+            // Get the current year
+            $currentYear = date('Y');
+            
+            // For NP FileNo, use the main application ID as serial number
+            $serialNo = $mainApplicationId ? str_pad($mainApplicationId, 2, '0', STR_PAD_LEFT) : '01';
+            
+            // Generate NP FileNo (New Primary FileNo)
+            $npFileNo = "ST-{$landUseCode}-{$currentYear}-{$serialNo}";
+            
+            // Find the next unit serial number for this NP FileNo
+            $lastUnitRecord = DB::connection('sqlsrv')
+                ->table('dbo.subapplications')
+                ->where('main_application_id', $mainApplicationId)
+                ->orderBy('id', 'desc')
+                ->first();
+            
+            $nextUnitSerial = 1;
+            if ($lastUnitRecord) {
+                // Count existing units for this main application
+                $unitCount = DB::connection('sqlsrv')
+                    ->table('dbo.subapplications')
+                    ->where('main_application_id', $mainApplicationId)
+                    ->count();
+                $nextUnitSerial = $unitCount + 1;
+            }
+            
+            // Generate Unit FileNo (NP FileNo + Unit Serial)
+            $unitSerial = str_pad($nextUnitSerial, 3, '0', STR_PAD_LEFT);
+            $unitFileNo = $npFileNo . '-' . $unitSerial;
         }
 
-        // Format the serial number with leading zeros (e.g., 01, 02, etc.)
-        $formattedSerialNumber = sprintf('%02d', $nextSerialNumber);
+        // Legacy variables for backward compatibility
+        $prefix = 'ST-' . ($landUseCode ?? 'RES');
+        $formattedSerialNumber = $nextUnitSerial ?? 1;
 
-        return view('sectionaltitling.sub_application', compact('nextSerialNumber', 'prefix', 'currentYear', 'formattedSerialNumber','PageTitle', 'PageDescription'));
+        return view('sectionaltitling.sub_application', compact(
+            'npFileNo', 
+            'unitFileNo', 
+            'nextUnitSerial', 
+            'prefix', 
+            'currentYear', 
+            'formattedSerialNumber',
+            'PageTitle', 
+            'PageDescription'
+        ));
     } 
 
     public function create()
@@ -415,6 +454,7 @@ class ApplicationMotherController extends Controller
             'main_application_id' => 'required',
             'applicant_type' => 'required|in:individual,corporate,multiple',
             'fileno' => 'required',
+            'np_fileno' => 'nullable', // New Primary FileNo
             'applicant_title' => 'nullable',
             'first_name' => 'nullable',
             'middle_name' => 'nullable',
@@ -472,14 +512,18 @@ class ApplicationMotherController extends Controller
                 $validatedData['multiple_owners_passport'] = json_encode($validatedData['multiple_owners_passport']);
             }
             
-            $fileno = $request->input('fileno');
+            $unitFileNo = $request->input('fileno'); // This is the Unit FileNo
+            $npFileNo = $request->input('np_fileno'); // This is the NP FileNo (NPFN)
 
-            // Insert into StFileNo table
+            // Insert into StFileNo table with new structure
             DB::connection('sqlsrv')->table('dbo.StFileNo')->insert([
-                'file_prefix' => $request->input('file_prefix'),
-                'serial_number' => $request->input('serial_number'),
-                'year' => $request->input('year'),
-                'fileno' => $fileno,
+                'file_prefix' => $request->input('prefix', 'ST'), // Legacy field
+                'serial_number' => $request->input('serial_number', 1), // Legacy field
+                'year' => $request->input('year', date('Y')), // Legacy field
+                'fileno' => $unitFileNo, // Unit FileNo
+                'np_fileno' => $npFileNo, // New Primary FileNo (NPFN)
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             if ($request->hasFile('passport')) {
@@ -493,11 +537,25 @@ class ApplicationMotherController extends Controller
                 }
             }
 
-            // remove file related fields before inserting into subapplications table
-            $fileData = Arr::only($validatedData, ['file_prefix', 'serial_number', 'year', 'fileno']);
-            $subAppData = Arr::except($validatedData, ['file_prefix', 'serial_number', 'year', 'fileno']);
-            $subAppData['fileno'] = $fileno;
+            // Add NP FileNo to sub application data
+            $validatedData['np_fileno'] = $npFileNo;
+            $validatedData['fileno'] = $unitFileNo;
 
+            // Remove file related fields before inserting into subapplications table
+            $fileData = Arr::only($validatedData, ['file_prefix', 'serial_number', 'year', 'fileno', 'np_fileno']);
+            $subAppData = Arr::except($validatedData, ['file_prefix', 'serial_number', 'year']);
+
+            // Set default status if not provided
+            if (!isset($subAppData['application_status'])) {
+                $subAppData['application_status'] = 'pending';
+            }
+            if (!isset($subAppData['planning_recommendation_status'])) {
+                $subAppData['planning_recommendation_status'] = 'pending';
+            }
+
+            // Add timestamps
+            $subAppData['created_at'] = now();
+            $subAppData['updated_at'] = now();
 
             DB::connection('sqlsrv')->table('dbo.subapplications')->insert($subAppData);
         } catch (\Exception $e) {
@@ -505,7 +563,7 @@ class ApplicationMotherController extends Controller
             return redirect()->back()->with('error', 'Error creating Sub-application.');
         }
 
-        return redirect()->route('sectionaltitling.Subapplications')->with('success', 'Sub-application created successfully.');
+        return redirect()->route('sectionaltitling.Subapplications')->with('success', 'Sub-application created successfully with NP FileNo: ' . $npFileNo . ' and Unit FileNo: ' . $unitFileNo);
     }
     
 

@@ -1,4 +1,3 @@
-{{-- filepath: c:\wamp64\www\gisedms\resources\views\propertycard\index.blade.php --}}
 @extends('layouts.app')
 @section('page-title')
 Property Records Assistant
@@ -73,7 +72,7 @@ Property Records Assistant
                         <button class="p-1 bg-red-600 text-white hover:bg-red-700" title="Delete">
                             <i data-lucide="trash-2" style="color: black;"></i>
                         </button>
-                        <button class="p-1 bg-green-600 text-white hover:bg-green-700" title="Add" onclick="window.location.href='{{ route('propertycard.create') }}'" >
+                <button class="p-1 bg-green-600 text-white hover:bg-green-700" title="Add" onclick="window.location.href='{{ route('propertycard.create') }}'" >
                             <i data-lucide="plus" style="color: black;"></i>
                         </button>
                         <button class="p-1 bg-blue-600 text-white hover:bg-blue-700" title="Edit">
@@ -202,8 +201,17 @@ Property Records Assistant
                                     <div>
                                         <label for="instrument" class="block text-xs text-gray-600 mb-1 ">Instrument</label>
                                         <div class="relative">
-                                            <select id="instrument" class="w-full border rounded p-1 pr-6 appearance-none text-xs">
-                                                <option></option>
+                                            <select id="instrument" name="instrument" class="w-full border rounded p-1 pr-6 appearance-none text-xs">
+                                                <option value="">Select Transaction Type</option>
+                                                <option value="Assignment">Assignment</option>
+                                                <option value="Mortgage">Mortgage</option>
+                                                <option value="Certificate of Occupancy">Certificate of Occupancy</option>
+                                                <option value="Right of Occupancy">Right of Occupancy</option>
+                                                <option value="Deed of Gift">Deed of Gift</option>
+                                                <option value="Deed of Assent">Deed of Assent</option>
+                                                <option value="Power of Attorney">Power of Attorney</option>
+                                                <option value="Lease Agreement">Lease Agreement</option>
+                                                <option value="Other">Other</option>
                                             </select>
                                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-700">
                                                 <svg class="h-3 w-3" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
@@ -294,8 +302,8 @@ Property Records Assistant
                                     </div>
 
                                     <div class="mb-1">
-                                        <input type="checkbox" id="Assignee" class="mr-1 grantee-checkbox" />
-                                        <label for="Assignee" class="text-xs">Assignee</label>
+                                        <input type="checkbox" id="granteeCheckbox" class="mr-1 grantee-checkbox" />
+                                        <label for="granteeCheckbox" class="text-xs">Assignee</label>
                                         <input type="text" id="Assignee" name="currentAllottee" class="w-full border rounded p-1 mt-1 text-xs grantee-input" value="{{ request('currentAllottee') }}" disabled />
                                     </div>
 
@@ -505,7 +513,7 @@ Property Records Assistant
 
             console.log('Data to be sent:', data); // Debug log
 
-            fetch('{{ route('propertycard.search') }}', {
+            fetch("{{ route('propertycard.search') }}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -556,7 +564,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const kangisFileNo = document.getElementById('kangisFileNo').value;
         console.log('Searching for:', kangisFileNo);
 
-        fetch('{{ route('propertycard.search') }}', {
+        fetch("{{ route('propertycard.search') }}", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -640,7 +648,7 @@ document.addEventListener('DOMContentLoaded', function() {
 document.getElementById('saveButton').addEventListener('click', function() {
     var form = document.getElementById('propertyCardForm');
     var formData = new FormData(form);
-    fetch('{{ route('propertycard.saveRecord') }}', {
+    fetch(`{{ route('propertycard.saveRecord') }}`, {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -876,7 +884,7 @@ document.getElementById('findButton').addEventListener('click', function(e) {
 
     // Only proceed if we have at least one search criterion
     if (Object.keys(searchData).length > 1) { // >1 because we always have _token
-        fetch('{{ route('propertycard.search') }}', {
+        fetch(`{{ route('propertycard.search') }}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1036,4 +1044,56 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enable Grantor/Grantee when Transaction Type (Instrument) is selected
+    var instrumentSelect = document.getElementById('instrument');
+    var grantorCheckbox = document.getElementById('grantor');
+    var granteeCheckbox = document.getElementById('granteeCheckbox');
+    var grantorInput = document.getElementById('Assignor');
+    var granteeInput = document.getElementById('Assignee');
+
+    if (instrumentSelect) {
+        instrumentSelect.addEventListener('change', function() {
+            console.log('Instrument selected:', instrumentSelect.value); // Debug log
+            
+            if (instrumentSelect.value && instrumentSelect.value !== '') {
+                // Enable checkboxes and inputs
+                if (grantorCheckbox) {
+                    grantorCheckbox.checked = true;
+                    console.log('Grantor checkbox checked'); // Debug log
+                }
+                if (granteeCheckbox) {
+                    granteeCheckbox.checked = true;
+                    console.log('Grantee checkbox checked'); // Debug log
+                }
+                if (grantorInput) {
+                    grantorInput.disabled = false;
+                    console.log('Grantor input enabled'); // Debug log
+                }
+                if (granteeInput) {
+                    granteeInput.disabled = false;
+                    console.log('Grantee input enabled'); // Debug log
+                }
+            } else {
+                // Disable if no transaction type selected
+                if (grantorCheckbox) {
+                    grantorCheckbox.checked = false;
+                }
+                if (granteeCheckbox) {
+                    granteeCheckbox.checked = false;
+                }
+                if (grantorInput) {
+                    grantorInput.disabled = true;
+                }
+                if (granteeInput) {
+                    granteeInput.disabled = true;
+                }
+            }
+        });
+    } else {
+        console.log('Instrument select not found'); // Debug log
+    }
+});
+</script>
 @endsection

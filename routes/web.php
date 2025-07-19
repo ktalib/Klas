@@ -539,6 +539,7 @@ Route::post('/webcam-capture', [ScannerController::class, 'captureFromWebcam'])-
 
 Route::get('/sectionaltitling', [\App\Http\Controllers\SectionalTitlingController::class, 'index'])->name('sectionaltitling.index');
 Route::get('/sectionaltitling/primary', [\App\Http\Controllers\SectionalTitlingController::class, 'Primary'])->name('sectionaltitling.primary');
+Route::get('/sectionaltitling/mother', [\App\Http\Controllers\SectionalTitlingController::class, 'mother'])->name('sectionaltitling.mother');
 Route::get('/sectionaltitling/secondary', [\App\Http\Controllers\SectionalTitlingController::class, 'Secondary'])->name('sectionaltitling.secondary');
 Route::get('/sectionaltitling/units', [\App\Http\Controllers\SectionalTitlingController::class, 'Units'])->name('sectionaltitling.units');
 Route::get('/sectionaltitling/buyer-list/{id}', [\App\Http\Controllers\SectionalTitlingController::class, 'getBuyerList'])->name('sectionaltitling.buyerList');
@@ -686,3 +687,35 @@ Route::get('actions/generate-final-conveyance-document/{id}', [\App\Http\Control
 Route::get('conveyance/{id}', [\App\Http\Controllers\PrimaryActionsController::class, 'getConveyance'])->name('conveyance.get');
 Route::post('conveyance/update-buyer', [\App\Http\Controllers\PrimaryActionsController::class, 'updateSingleBuyer'])->name('conveyance.update.buyer');
 Route::post('conveyance/delete-buyer', [\App\Http\Controllers\PrimaryActionsController::class, 'deleteBuyer'])->name('conveyance.delete.buyer');
+
+// EDMS Workflow Routes
+Route::group(['middleware' => ['auth', 'XSS'], 'prefix' => 'edms'], function () {
+// Main EDMS workflow
+Route::get('/{applicationId}', [\App\Http\Controllers\EdmsController::class, 'index'])->name('edms.index');
+
+// Sub-application EDMS workflow
+Route::get('/sub/{applicationId}', [\App\Http\Controllers\EdmsController::class, 'index'])->defaults('type', 'sub')->name('edms.sub.index');
+
+// File Indexing
+Route::get('/create-file-indexing/{applicationId}/{type?}', [\App\Http\Controllers\EdmsController::class, 'createFileIndexing'])->name('edms.create-file-indexing');
+Route::get('/fileindexing/{fileIndexingId}', [\App\Http\Controllers\EdmsController::class, 'fileIndexing'])->name('edms.fileindexing');
+Route::put('/fileindexing/{fileIndexingId}', [\App\Http\Controllers\EdmsController::class, 'updateFileIndexing'])->name('edms.update-file-indexing');
+
+// Scanning
+Route::get('/scanning/{fileIndexingId}', [\App\Http\Controllers\EdmsController::class, 'scanning'])->name('edms.scanning');
+Route::post('/scanning/{fileIndexingId}/upload', [\App\Http\Controllers\EdmsController::class, 'uploadScannedDocuments'])->name('edms.upload-documents');
+
+// Page Typing
+Route::get('/pagetyping/{fileIndexingId}', [\App\Http\Controllers\EdmsController::class, 'pageTyping'])->name('edms.pagetyping');
+Route::post('/pagetyping/{fileIndexingId}', [\App\Http\Controllers\EdmsController::class, 'savePageTyping'])->name('edms.save-page-typing');
+Route::put('/edms/scanning/{scanningId}/update-details', [\App\Http\Controllers\EdmsController::class, 'updateDocumentDetails'])->name('edms.update-document-details');
+
+// Status API
+Route::get('/status/{applicationId}', [\App\Http\Controllers\EdmsController::class, 'getEdmsStatus'])->name('edms.status');
+});
+
+// Primary Form Routes
+Route::group(['middleware' => ['auth', 'XSS'], 'prefix' => 'primaryform'], function () {
+    Route::get('/', [\App\Http\Controllers\PrimaryFormController::class, 'index'])->name('primaryform.index');
+    Route::post('/', [\App\Http\Controllers\PrimaryFormController::class, 'store'])->name('primaryform.store');
+});

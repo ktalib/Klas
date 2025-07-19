@@ -148,13 +148,9 @@
                       <div class="flex items-center mr-4">
                         <div class="step-circle inactive flex items-center justify-center">4</div>
                       </div>
-                      <div class="flex items-center mr-4">
-                        <div class="step-circle inactive flex items-center justify-center">5</div>
-                      </div>
-                      <div class="flex items-center mr-4">
-                        <div class="step-circle inactive flex items-center justify-center">6</div>
-                      </div>
-                      
+                       <div class="flex items-center">
+          <div class="step-circle inactive">5</div>
+        </div>
                       <div class="ml-4">Step 1</div>
                     </div>
             
@@ -183,7 +179,86 @@
                             </div>
                           </div>
                           <input type="hidden" name="land_use" value="{{ request()->query('landuse') === 'Commercial' ? 'Commercial' : (request()->query('landuse') === 'Residential' ? 'Residential' : (request()->query('landuse') === 'Industrial' ? 'Industrial' : 'Mixed Use')) }}">
-                      @include('primaryform.fileno')
+                          
+                          <!-- NP FileNo Display Section -->
+                          <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mb-6">
+                            <div class="flex items-center justify-between mb-4">
+                              <div class="flex items-center">
+                                <div class="bg-blue-100 p-3 rounded-full mr-4">
+                                  <i data-lucide="file-text" class="w-6 h-6 text-blue-600"></i>
+                                </div>
+                                <div>
+                                  <h3 class="text-lg font-semibold text-gray-900">New Primary FileNo (NPFN)</h3>
+                                  <p class="text-sm text-gray-600">Auto-generated file number for this application</p>
+                                </div>
+                              </div>
+                              <div class="bg-green-100 px-3 py-1 rounded-full">
+                                <span class="text-green-800 text-sm font-medium">Auto-Generated</span>
+                              </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-lg border border-gray-200 p-4">
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-2">NP FileNo (NPFN)</label>
+                                  <div class="relative">
+                                    <input type="text" 
+                                           class="w-full px-4 py-3 bg-blue-50 border-2 border-blue-200 rounded-lg text-blue-900 font-mono text-lg font-semibold cursor-not-allowed" 
+                                           value="{{ $npFileNo ?? 'ST-RES-'.date('Y').'-01' }}" 
+                                           readonly
+                                           title="New Primary FileNo - Auto Generated">
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                      <i data-lucide="lock" class="w-5 h-5 text-blue-500"></i>
+                                    </div>
+                                  </div>
+                                  <p class="text-xs text-gray-500 mt-1">Format: ST-LandUse-Year-SerialNo</p>
+                                </div>
+                                
+                                <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-2">File Number Components</label>
+                                  <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                      <span class="text-gray-600">Prefix:</span>
+                                      <span class="font-medium">ST (Sectional Title)</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                      <span class="text-gray-600">Land Use:</span>
+                                      <span class="font-medium">
+                                        @if (request()->query('landuse') === 'Commercial')
+                                          COM (Commercial)
+                                        @elseif (request()->query('landuse') === 'Residential')
+                                          RES (Residential)
+                                        @elseif (request()->query('landuse') === 'Industrial')
+                                          IND (Industrial)
+                                        @else
+                                          RES (Residential)
+                                        @endif
+                                      </span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                      <span class="text-gray-600">Year:</span>
+                                      <span class="font-medium">{{ $currentYear ?? date('Y') }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                      <span class="text-gray-600">Serial No:</span>
+                                      <span class="font-medium">{{ $serialNo ?? '01' }}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center">
+                                  <i data-lucide="info" class="w-4 h-4 text-blue-500 mr-2"></i>
+                                  <p class="text-sm text-gray-700">
+                                    This NP FileNo will be used as the primary identifier for your application and all associated unit applications.
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          @include('primaryform.fileno')
                             
                         </div>
                         </div>
@@ -389,7 +464,7 @@
                       <div class="flex justify-between mt-8">
                         <button type="button" onclick="window.history.back()" class="px-4 py-2 bg-white border border-gray-300 rounded-md">Cancel</button>
                         <div class="flex items-center">
-                          <span class="text-sm text-gray-500 mr-4">Step 1 of 6</span>
+                          <span class="text-sm text-gray-500 mr-4">Step 1 of 4</span>
                           <button class="px-4 py-2 bg-black text-white rounded-md" id="nextStep1">Next</button>
                         </div>
                       </div>
@@ -398,7 +473,6 @@
                 </div>
               @include('primaryform.sharedareas')
               @include('primaryform.documents')
-              @include('primaryform.edms')
               @include('primaryform.buyer_list')
               @include('primaryform.summary')
             </form>

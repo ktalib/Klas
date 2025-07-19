@@ -13,14 +13,6 @@
     <i data-lucide="message-square" class="w-4 h-4 text-purple-500"></i>
   </button>
   
-  <!-- WhatsApp Action -->
-  <button onclick="openWhatsAppModal({{ $customer->id }}, '{{ $type ?? 'primary' }}')" 
-      class="p-1 text-gray-500 hover:text-green-600 rounded-full hover:bg-gray-100" 
-      title="Send WhatsApp">
-     
-    <i class="fa-brands fa-whatsapp"  class="w-4 h-4 text-green-500" style="color:green"></i>
-  </button>
-  
   <!-- Email Action -->
   <button onclick="openEmailModal({{ $customer->id }}, '{{ $type ?? 'primary' }}')" 
       class="p-1 text-gray-500 hover:text-blue-600 rounded-full hover:bg-gray-100" 

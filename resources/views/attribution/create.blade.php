@@ -58,30 +58,30 @@
                     <h4 class="text-sm font-medium mb-3">Property Identification</h4>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label for="plot_no" class="block text-sm font-medium text-gray-700">Plot No</label>
-                            <input id="plot_no" name="plot_no" type="text" value="{{ old('plot_no') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" disabled>
+                            <label for="plot_no" class="block text-sm font-medium text-gray-700">Plot No <span class="text-red-600">*</span></label>
+                            <input id="plot_no" name="plot_no" type="text" value="{{ old('plot_no') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" disabled required oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div>
-                            <label for="block_no" class="block text-sm font-medium text-gray-700">Block No</label>
-                            <input id="block_no" name="block_no" type="text" value="{{ old('block_no') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" disabled>
+                            <label for="block_no" class="block text-sm font-medium text-gray-700">Block No <span class="text-red-600">*</span></label>
+                            <input id="block_no" name="block_no" type="text" value="{{ old('block_no') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" disabled required oninput="this.value = this.value.toUpperCase()">
                         </div>
                     </div>
                     @if(request()->query('is') == 'secondary')
                     <div class="grid grid-cols-1 gap-4 mt-3" style="display: none;">
                         <div>
-                            <label for="scheme_no" class="block text-sm font-medium text-gray-700">Scheme No</label>
+                            <label for="scheme_no" class="block text-sm font-medium text-gray-700">Scheme No <span class="text-red-600">*</span></label>
                             <input id="scheme_no" name="scheme_no" type="text" value="{{ old('scheme_no') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" disabled>
                         </div>
                     </div>
                     @endif
                     <div class="grid grid-cols-2 gap-4 mt-3">
                         <div>
-                            <label for="approved_plan_no" class="block text-sm font-medium text-gray-700">Approved Plan No</label>
-                            <input id="approved_plan_no" name="approved_plan_no" type="text" value="{{ old('approved_plan_no') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <label for="approved_plan_no" class="block text-sm font-medium text-gray-700">Approved Plan No <span class="text-red-600">*</span></label>
+                            <input id="approved_plan_no" name="approved_plan_no" type="text" value="{{ old('approved_plan_no') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div>
-                            <label for="tp_plan_no" class="block text-sm font-medium text-gray-700">TP Plan No</label>
-                            <input id="tp_plan_no" name="tp_plan_no" type="text" value="{{ old('tp_plan_no') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <label for="tp_plan_no" class="block text-sm font-medium text-gray-700">TP Plan No <span class="text-red-600">*</span></label>
+                            <input id="tp_plan_no" name="tp_plan_no" type="text" value="{{ old('tp_plan_no') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required oninput="this.value = this.value.toUpperCase()">
                         </div>
                     </div>
                 </div>
@@ -94,65 +94,107 @@
                     <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label for="beacon_control_name" class="block text-sm font-medium text-gray-700">
-                               Control Beacon Name
+                               Control Beacon Name <span class="text-red-600">*</span>
                             </label>
-                            <input id="beacon_control_name" name="beacon_control_name" type="text" value="{{ old('beacon_control_name') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <input id="beacon_control_name" name="beacon_control_name" type="text" value="{{ old('beacon_control_name') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div>
                             <label for="Control_Beacon_Coordinate_X" class="block text-sm font-medium text-gray-700">
-                               Control Beacon X
+                               Control Beacon X <span class="text-red-600">*</span>
                             </label>
-                            <input id="Control_Beacon_Coordinate_X" name="Control_Beacon_Coordinate_X" type="text" value="{{ old('Control_Beacon_Coordinate_X') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <input id="Control_Beacon_Coordinate_X" name="Control_Beacon_Coordinate_X" type="text" value="{{ old('Control_Beacon_Coordinate_X') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div>
                             <label for="Control_Beacon_Coordinate_Y" class="block text-sm font-medium text-gray-700">
-                               Control Beacon Y
+                               Control Beacon Y <span class="text-red-600">*</span>
                             </label>
-                            <input id="Control_Beacon_Coordinate_Y" name="Control_Beacon_Coordinate_Y" type="text" value="{{ old('Control_Beacon_Coordinate_Y') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <input id="Control_Beacon_Coordinate_Y" name="Control_Beacon_Coordinate_Y" type="text" value="{{ old('Control_Beacon_Coordinate_Y') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required oninput="this.value = this.value.toUpperCase()">
                         </div>
                     </div>
                 </div>
 
-                <!-- Sheet Information -->
-                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
                     <h4 class="text-sm font-medium mb-3">Sheet Information</h4>
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="Metric_Sheet_Index" class="block text-sm font-medium text-gray-700">Metric Sheet Index</label>
-                            <input id="Metric_Sheet_Index" name="Metric_Sheet_Index" type="text" value="{{ old('Metric_Sheet_Index') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                        </div>
-                        <div>
-                            <label for="Metric_Sheet_No" class="block text-sm font-medium text-gray-700">Metric Sheet No</label>
-                            <input id="Metric_Sheet_No" name="Metric_Sheet_No" type="text" value="{{ old('Metric_Sheet_No') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                        </div>
+                        
+
+                       @include('components.metricSheetIndex')
+
+                        
+                    
+                        @include('components.metricSheetNo')
+
                     </div>
                     <div class="grid grid-cols-2 gap-4 mt-3">
-                        <div>
-                            <label for="Imperial_Sheet" class="block text-sm font-medium text-gray-700">Imperial Sheet</label>
-                            <input id="Imperial_Sheet" name="Imperial_Sheet" type="text" value="{{ old('Imperial_Sheet') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                        </div>
-                        <div>
-                            <label for="Imperial_Sheet_No" class="block text-sm font-medium text-gray-700">Imperial Sheet No</label>
-                            <input id="Imperial_Sheet_No" name="Imperial_Sheet_No" type="text" value="{{ old('Imperial_Sheet_No') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                        </div>
+                         @include('components.imperialSheet')
+
+                        @include('components.imperialSheetNo')
+                        
+                         
                     </div>
                 </div>
-
                 <!-- Location Information -->
                 <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
                     <h4 class="text-sm font-medium mb-3">Location Information</h4>
                     <div class="grid grid-cols-3 gap-4">
                         <div>
-                            <label for="layout_name" class="block text-sm font-medium text-gray-700">Layout Name</label>
-                            <input id="layout_name" name="layout_name" type="text" value="{{ old('layout_name') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <label for="layout_name" class="block text-sm font-medium text-gray-700">Layout Name <span class="text-red-600">*</span></label>
+                            <input id="layout_name" name="layout_name" type="text" value="{{ old('layout_name') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div>
-                            <label for="district_name" class="block text-sm font-medium text-gray-700">District Name</label>
-                            <input id="district_name" name="district_name" type="text" value="{{ old('district_name') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <label for="district_name" class="block text-sm font-medium text-gray-700">District Name <span class="text-red-600">*</span></label>
+                            <input id="district_name" name="district_name" type="text" value="{{ old('district_name') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div>
-                            <label for="lga_name" class="block text-sm font-medium text-gray-700">LGA Name</label>
-                            <input id="lga_name" name="lga_name" type="text" value="{{ old('lga_name') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <label for="lga_name" class="block text-sm font-medium text-gray-700">LGA Name <span class="text-red-600">*</span></label>
+                            <select id="lga_name" name="lga_name" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
+                                <option value="">-- Select LGA --</option>
+                                <option value="">Select LGA</option>
+                            <option value="Albasu">Albasu</option>
+                            <option value="Bagwai">Bagwai</option>
+                            <option value="Dala">Dala</option>
+                            <option value="Danbatta">Danbatta</option>
+                            <option value="D/Tofa">D/Tofa</option>
+                            <option value="Gaya">Gaya</option>
+                            <option value="Gwale">Gwale</option>
+                            <option value="Doguwa">Doguwa</option>
+                            <option value="Kibiya">Kibiya</option>
+                            <option value="Kabo">Kabo</option>
+                            <option value="Gezawa">Gezawa</option>
+                            <option value="Kunchi">Kunchi</option>
+                            <option value="Karaye">Karaye</option>
+                            <option value="Garum Malan">Garum Malan</option>
+                            <option value="Madobi">Madobi</option>
+                            <option value="Gabasawa">Gabasawa</option>
+                            <option value="Rimin Gado">Rimin Gado</option>
+                            <option value="Rogo">Rogo</option>
+                            <option value="Shanono">Shanono</option>
+                            <option value="Municipal">Municipal</option>
+                            <option value="Sumaila">Sumaila</option>
+                            <option value="Tarauni">Tarauni</option>
+                            <option value="Tsanyawa">Tsanyawa</option>
+                            <option value="Tudun Wada">Tudun Wada</option>
+                            <option value="Tofa">Tofa</option>
+                            <option value="Takai">Takai</option>
+                            <option value="Kura">Kura</option>
+                            <option value="Warawa">Warawa</option>
+                            <option value="Garko">Garko</option>
+                            <option value="Ajingi">Ajingi</option>
+                            <option value="Bichi">Bichi</option>
+                            <option value="Minjinbir">Minjinbir</option>
+                            <option value="Rano">Rano</option>
+                            <option value="Bunkure">Bunkure</option>
+                            <option value="Kiru">Kiru</option>
+                            <option value="Gwarzo">Gwarzo</option>
+                            <option value="Ungogo">Ungogo</option>
+                            <option value="Makoda">Makoda</option>
+                            <option value="Wudil">Wudil</option>
+                            <option value="Nassarawa">Nassarawa</option>
+                            <option value="Bebeji">Bebeji</option>
+                            <option value="Faffe">Faffe</option>
+                            <option value="D/Kudu">D/Kudu</option>
+                            <option value="Kumbotso">Kumbotso</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -162,42 +204,42 @@
                     <h4 class="text-sm font-medium mb-3">Personnel Information</h4>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label for="survey_by" class="block text-sm font-medium text-gray-700">Survey By</label>
-                            <input id="survey_by" name="survey_by" type="text" value="{{ old('survey_by') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <label for="survey_by" class="block text-sm font-medium text-gray-700">Survey By <span class="text-red-600">*</span></label>
+                            <input id="survey_by" name="survey_by" type="text" value="{{ old('survey_by') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div>
-                            <label for="survey_by_date" class="block text-sm font-medium text-gray-700">Survey Date</label>
-                            <input id="survey_by_date" name="survey_by_date" type="date" value="{{ old('survey_by_date') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 mt-3">
-                        <div>
-                            <label for="drawn_by" class="block text-sm font-medium text-gray-700">Drawn By</label>
-                            <input id="drawn_by" name="drawn_by" type="text" value="{{ old('drawn_by') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                        </div>
-                        <div>
-                            <label for="drawn_by_date" class="block text-sm font-medium text-gray-700">Drawn Date</label>
-                            <input id="drawn_by_date" name="drawn_by_date" type="date" value="{{ old('drawn_by_date') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <label for="survey_by_date" class="block text-sm font-medium text-gray-700">Survey Date <span class="text-red-600">*</span></label>
+                            <input id="survey_by_date" name="survey_by_date" type="date" value="{{ old('survey_by_date') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4 mt-3">
                         <div>
-                            <label for="checked_by" class="block text-sm font-medium text-gray-700">Checked By</label>
-                            <input id="checked_by" name="checked_by" type="text" value="{{ old('checked_by') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <label for="drawn_by" class="block text-sm font-medium text-gray-700">Drawn By <span class="text-red-600">*</span></label>
+                            <input id="drawn_by" name="drawn_by" type="text" value="{{ old('drawn_by') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div>
-                            <label for="checked_by_date" class="block text-sm font-medium text-gray-700">Checked Date</label>
-                            <input id="checked_by_date" name="checked_by_date" type="date" value="{{ old('checked_by_date') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <label for="drawn_by_date" class="block text-sm font-medium text-gray-700">Drawn Date <span class="text-red-600">*</span></label>
+                            <input id="drawn_by_date" name="drawn_by_date" type="date" value="{{ old('drawn_by_date') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4 mt-3">
                         <div>
-                            <label for="approved_by" class="block text-sm font-medium text-gray-700">Approved By</label>
-                            <input id="approved_by" name="approved_by" type="text" value="{{ old('approved_by') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <label for="checked_by" class="block text-sm font-medium text-gray-700">Checked By <span class="text-red-600">*</span></label>
+                            <input id="checked_by" name="checked_by" type="text" value="{{ old('checked_by') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div>
-                            <label for="approved_by_date" class="block text-sm font-medium text-gray-700">Approved Date</label>
-                            <input id="approved_by_date" name="approved_by_date" type="date" value="{{ old('approved_by_date') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <label for="checked_by_date" class="block text-sm font-medium text-gray-700">Checked Date <span class="text-red-600">*</span></label>
+                            <input id="checked_by_date" name="checked_by_date" type="date" value="{{ old('checked_by_date') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mt-3">
+                        <div>
+                            <label for="approved_by" class="block text-sm font-medium text-gray-700">Approved By <span class="text-red-600">*</span></label>
+                            <input id="approved_by" name="approved_by" type="text" value="{{ old('approved_by') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required oninput="this.value = this.value.toUpperCase()">
+                        </div>
+                        <div>
+                            <label for="approved_by_date" class="block text-sm font-medium text-gray-700">Approved Date <span class="text-red-600">*</span></label>
+                            <input id="approved_by_date" name="approved_by_date" type="date" value="{{ old('approved_by_date') }}" class="w-full p-2 border border-gray-300 rounded-md text-sm" required>
                         </div>
                     </div>
                 </div>
@@ -226,12 +268,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveSurveyBtn = document.getElementById('save-survey-btn');
     const applicationInfo = document.getElementById('application-info');
     
+    // IDs of dropdowns/fields to control
+    const controlledFields = [
+        'Imperial_Sheet',
+        'Imperial_Sheet_No',
+        'Metric_Sheet_No',
+        'Metric_Sheet_Index',
+        'lga_name'
+    ];
     let selectedApplication = null;
     const isSecondary = '{{ request()->query('is') }}' === 'secondary';
     
     // Disable all form inputs initially
     formInputs.forEach(input => {
         input.disabled = true;
+    });
+    // Explicitly disable the controlled dropdowns/fields
+    controlledFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = true;
     });
 
     // Initialize Select2
@@ -327,6 +382,11 @@ document.addEventListener('DOMContentLoaded', function() {
             formInputs.forEach(input => {
                 input.disabled = false;
             });
+            // Explicitly enable the controlled dropdowns/fields
+            controlledFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.disabled = false;
+            });
             
             // Enable save button
             saveSurveyBtn.disabled = false;
@@ -357,6 +417,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Disable all form inputs
         formInputs.forEach(input => {
             input.disabled = true;
+        });
+        // Explicitly disable the controlled dropdowns/fields
+        controlledFields.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.disabled = true;
         });
         
         // Disable save button

@@ -178,7 +178,22 @@
                     @endif
                   </td>
                   <td class="px-1 py-4">{{ $customer->phone_number ?? 'N/A' }}</td>
-                  <td class="px-1 py-4">{{ $customer->address ?? 'N/A' }}</td>
+                    <td class="px-1 py-4">
+                    {{ 
+                      trim(
+                      ($customer->address_house_no ?? '') . 
+                      (isset($customer->address_house_no) && $customer->address_house_no !== '' ? ', ' : '') .
+                      ($customer->address_street_name ?? '') . 
+                      (isset($customer->address_street_name) && $customer->address_street_name !== '' ? ', ' : '') .
+                      ($customer->address_district ?? '') . 
+                      (isset($customer->address_district) && $customer->address_district !== '' ? ', ' : '') .
+                      ($customer->address_lga ?? '') . 
+                      (isset($customer->address_lga) && $customer->address_lga !== '' ? ', ' : '') .
+                      ($customer->address_state ?? '')
+                      , ', ')
+                      ?: 'N/A' 
+                    }}
+                    </td>
                   <td class="px-1 py-4">{{ $customer->email ?? 'N/A' }}</td>
                   <td class="px-1 py-4">
                     @include('customer_care.partials.action', ['customer' => $customer])

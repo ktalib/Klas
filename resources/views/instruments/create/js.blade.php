@@ -6,115 +6,142 @@
         let currentInstrumentType = null;
         let tempFileCounter = 1;
 
-        // Complete instrument type definitions for all 12 types
+        // Complete instrument type definitions for all 18 types
         const instrumentTypes = {
             'power-of-attorney': {
                 id: 'power-of-attorney',
                 name: 'Power of Attorney',
                 firstParty: 'Grantor',
-                secondParty: 'Grantee'
+                secondParty: 'Grantee',
+                needsRootReg: true
             },
             'irrevocable-power-of-attorney': {
                 id: 'irrevocable-power-of-attorney',
                 name: 'Irrevocable Power of Attorney',
                 firstParty: 'Grantor',
-                secondParty: 'Grantee'
+                secondParty: 'Grantee',
+                needsRootReg: true
             },
             'deed-of-mortgage': {
                 id: 'deed-of-mortgage',
                 name: 'Deed of Mortgage',
                 firstParty: 'Mortgagor',
-                secondParty: 'Mortgagee'
+                secondParty: 'Mortgagee',
+                needsRootReg: true
             },
             'tripartite-mortgage': {
                 id: 'tripartite-mortgage',
                 name: 'Tripartite Mortgage',
                 firstParty: 'Mortgagor',
-                secondParty: 'Mortgagee'
+                secondParty: 'Mortgagee',
+                needsRootReg: true
             },
             'deed-of-assignment': {
                 id: 'deed-of-assignment',
                 name: 'Deed of Assignment',
                 firstParty: 'Assignor',
-                secondParty: 'Assignee'
+                secondParty: 'Assignee',
+                needsRootReg: true
             },
             'deed-of-lease': {
                 id: 'deed-of-lease',
                 name: 'Deed of Lease',
                 firstParty: 'Lessor',
-                secondParty: 'Lessee'
+                secondParty: 'Lessee',
+                needsRootReg: true
             },
             'deed-of-sub-lease': {
                 id: 'deed-of-sub-lease',
                 name: 'Deed of Sub-Lease',
                 firstParty: 'Sub-Lessor',
-                secondParty: 'Sub-Lessee'
+                secondParty: 'Sub-Lessee',
+                needsRootReg: true
             },
             'deed-of-sub-under-lease': {
                 id: 'deed-of-sub-under-lease',
                 name: 'Deed of Sub-Under-Lease',
                 firstParty: 'Sub-Under-Lessor',
-                secondParty: 'Sub-Under-Lessee'
+                secondParty: 'Sub-Under-Lessee',
+                needsRootReg: true
             },
             'deed-of-sub-division': {
                 id: 'deed-of-sub-division',
                 name: 'Deed of Sub-Division',
                 firstParty: 'Subdivider',
-                secondParty: 'Beneficiary'
+                secondParty: 'Beneficiary',
+                needsRootReg: true
             },
             'deed-of-merger': {
                 id: 'deed-of-merger',
                 name: 'Deed of Merger',
                 firstParty: 'Merging Party',
-                secondParty: 'Receiving Party'
+                secondParty: 'Receiving Party',
+                needsRootReg: true
             },
             'deed-of-surrender': {
                 id: 'deed-of-surrender',
                 name: 'Deed of Surrender',
                 firstParty: 'Surrenderer',
-                secondParty: 'Recipient'
+                secondParty: 'Surrenderor',
+                needsRootReg: true
             },
             'deed-of-variation': {
                 id: 'deed-of-variation',
                 name: 'Deed of Variation',
                 firstParty: 'Party',
-                secondParty: 'Counterparty'
+                secondParty: 'Counterparty',
+                needsRootReg: true
             },
             'deed-of-assent': {
                 id: 'deed-of-assent',
                 name: 'Deed of Assent',
                 firstParty: 'Executor/Administrator',
-                secondParty: 'Beneficiary'
+                secondParty: 'Beneficiary',
+                needsRootReg: true
             },
             'deed-of-release': {
                 id: 'deed-of-release',
                 name: 'Deed of Release',
                 firstParty: 'Releasor',
-                secondParty: 'Releasee'
+                secondParty: 'Releasee',
+                needsRootReg: true
             },
             'right-of-occupancy': {
                 id: 'right-of-occupancy',
                 name: 'Right of Occupancy (R of O)',
                 firstParty: 'Holder',
-                secondParty: 'Authority'
+                secondParty: 'Authority',
+                needsRootReg: false
             },
             'certificate-of-occupancy': {
                 id: 'certificate-of-occupancy',
                 name: 'Certificate of Occupancy (C of O)',
                 firstParty: 'Holder',
-                secondParty: 'Authority'
+                secondParty: 'Authority',
+                needsRootReg: false
             },
             'sectional-titling-c-of-o': {
                 id: 'sectional-titling-c-of-o',
                 name: 'Sectional Titling Certificate of Occupancy',
-                firstParty: 'Unit Owner',
-                secondParty: 'Authority'
+                firstParty: 'Grantor',
+                secondParty: 'Grantee',
+                needsRootReg: false,
+                autoSetGrantor: true
             },
             'sltr-c-of-o': {
                 id: 'sltr-c-of-o',
                 name: 'Systematic Land Titling and Registration (SLTR) Certificate of Occupancy',
                 firstParty: 'Holder',
-                secondParty: 'Authority'
+                secondParty: 'Authority',
+                needsRootReg: false
+            },
+            'st-assignment': {
+                id: 'st-assignment',
+                name: 'ST Assignment (Transfer of Title)',
+                firstParty: 'Grantor',
+                secondParty: 'Grantee',
+                needsRootReg: true,
+                autoSetGrantor: true
             }
         };
 
@@ -158,6 +185,17 @@
             elements.firstPartyLabel.textContent = `${type.firstParty} Name`;
             elements.secondPartyTitle.textContent = `${type.secondParty} Information`;
             elements.secondPartyLabel.textContent = `${type.secondParty} Name`;
+
+            // Update address labels
+            const firstPartyAddressTitle = document.getElementById('first-party-address-title');
+            const secondPartyAddressTitle = document.getElementById('second-party-address-title');
+            
+            if (firstPartyAddressTitle) {
+                firstPartyAddressTitle.textContent = `${type.firstParty} Address`;
+            }
+            if (secondPartyAddressTitle) {
+                secondPartyAddressTitle.textContent = `${type.secondParty} Address`;
+            }
 
             // Update placeholders
             document.getElementById('firstPartyName').placeholder = `Enter ${type.firstParty.toLowerCase()}'s full name`;
@@ -395,6 +433,34 @@
                         </div>
                     `;
                     break;
+                case 'st-assignment':
+                    fieldsContainer.innerHTML = `
+                        <div class="space-y-2">
+                            <label for="assignmentTerm" class="label">Assignment Term</label>
+                            <input id="assignmentTerm" name="assignmentTerm" class="input" placeholder="Enter assignment term">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="cofoDate" class="label">CofO Date</label>
+                            <input id="cofoDate" name="cofoDate" type="date" class="input">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="cofoRegParticulars" class="label">CofO Reg Particulars</label>
+                            <input id="cofoRegParticulars" name="cofoRegParticulars" class="input" placeholder="Enter CofO registration particulars">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="cofoTerm" class="label">CofO Term</label>
+                            <input id="cofoTerm" name="cofoTerm" class="input" placeholder="Enter CofO term">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="cofoTermStartDate" class="label">CofO Term Start Date</label>
+                            <input id="cofoTermStartDate" name="cofoTermStartDate" type="date" class="input">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="stFileNo" class="label">ST File Number</label>
+                            <input id="stFileNo" name="stFileNo" class="input" placeholder="Enter ST file number">
+                        </div>
+                    `;
+                    break;
                 default:
                     // For any new types not handled above, leave blank or add a comment
                     break;
@@ -409,11 +475,71 @@
             updatePartyLabels(instrumentType);
             renderInstrumentSpecificFields(instrumentType);
             
-            // Show/hide registration number section for power of attorney types
-            if (instrumentType === 'power-of-attorney' || instrumentType === 'irrevocable-power-of-attorney') {
-                elements.regNoSection.classList.remove('hidden');
+            // Auto-set grantor for ST Assignment and Sectional Titling CofO
+            if (type.autoSetGrantor) {
+                const firstPartyNameField = document.getElementById('firstPartyName');
+                if (firstPartyNameField) {
+                    firstPartyNameField.value = 'Kano State Government';
+                    firstPartyNameField.readOnly = true;
+                    firstPartyNameField.style.backgroundColor = '#f3f4f6'; // Light gray background
+                    firstPartyNameField.style.cursor = 'not-allowed';
+                }
+                
+                // Also set the address fields for Kano State Government
+                const addressFields = {
+                    'firstPartyStreet': 'Government House',
+                    'firstPartyCity': 'Kano',
+                    'firstPartyState': 'Kano State',
+                    'firstPartyPostalCode': '700001',
+                    'firstPartyCountry': 'Nigeria'
+                };
+                
+                Object.entries(addressFields).forEach(([fieldId, value]) => {
+                    const field = document.getElementById(fieldId);
+                    if (field) {
+                        field.value = value;
+                        field.readOnly = true;
+                        field.style.backgroundColor = '#f3f4f6';
+                        field.style.cursor = 'not-allowed';
+                    }
+                });
             } else {
-                elements.regNoSection.classList.add('hidden');
+                // Reset fields for other instrument types
+                const firstPartyNameField = document.getElementById('firstPartyName');
+                if (firstPartyNameField) {
+                    firstPartyNameField.value = '';
+                    firstPartyNameField.readOnly = false;
+                    firstPartyNameField.style.backgroundColor = '';
+                    firstPartyNameField.style.cursor = '';
+                }
+                
+                const addressFieldIds = ['firstPartyStreet', 'firstPartyCity', 'firstPartyState', 'firstPartyPostalCode', 'firstPartyCountry'];
+                addressFieldIds.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) {
+                        field.value = '';
+                        field.readOnly = false;
+                        field.style.backgroundColor = '';
+                        field.style.cursor = '';
+                    }
+                });
+            }
+            
+            // Show/hide registration number sections based on whether instrument needs Root Reg
+            const registrationDetailsSection = document.getElementById('registration-details-section');
+            if (type.needsRootReg) {
+                // For instruments that need Root Reg, show the registration details section
+                if (registrationDetailsSection) {
+                    registrationDetailsSection.classList.remove('hidden');
+                }
+                
+                // Initialize the temporary reg number section visibility
+                handleTemporaryRegNoChange();
+            } else {
+                // For instruments that don't need Root Reg, hide the entire registration details section
+                if (registrationDetailsSection) {
+                    registrationDetailsSection.classList.add('hidden');
+                }
             }
 
             // Always update survey info section visibility based on checkbox state
@@ -426,6 +552,24 @@
             elements.registrationDialog.classList.add('hidden');
             currentInstrumentType = null;
             elements.registrationForm.reset();
+            
+            // Reset registration details section visibility
+            const registrationDetailsSection = document.getElementById('registration-details-section');
+            if (registrationDetailsSection) {
+                registrationDetailsSection.classList.remove('hidden');
+            }
+            
+            // Reset checkboxes to unchecked state
+            if (elements.isTemporaryFileNo) {
+                elements.isTemporaryFileNo.checked = false;
+            }
+            if (elements.isTemporaryRegNo) {
+                elements.isTemporaryRegNo.checked = false;
+            }
+            
+            // Reset section visibility
+            handleTemporaryFileNoChange();
+            handleTemporaryRegNoChange();
         }
 
         function handleTemporaryFileNoChange() {

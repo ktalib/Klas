@@ -166,8 +166,17 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach ($PrimaryApplications as $PrimaryApplication)
                                  <tr class="text-xs">
-                                    <td class="table-cell">ST-2025-0{{ $PrimaryApplication->id }}</td> 
-                                    <td class="table-cell">{{ $PrimaryApplication->fileno }}</td>
+                                    <td class="table-cell">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="font-mono text-sm badge  bg-blue-100 text-blue-800"> {{ $PrimaryApplication->id }}</span>
+                                          
+                                        </div>
+                                    </td> 
+                                    <td class="table-cell">
+                                        <div class="truncate max-w-[120px]" title="{{ $PrimaryApplication->fileno }}">
+                                            {{ $PrimaryApplication->fileno }}
+                                        </div>
+                                    </td>
                                      
                                     <td class="table-cell">
                                         <div class="truncate max-w-[150px]" title="{{ $PrimaryApplication->property_plot_no }} {{ $PrimaryApplication->property_street_name }}, {{ $PrimaryApplication->property_lga }}">
@@ -187,7 +196,32 @@
                                             N/A
                                         @endif
                                     </td>
-                                    <td class="table-cell">{{ $PrimaryApplication->land_use }}</td>
+                                    <td class="table-cell">
+                                        @if($PrimaryApplication->land_use)
+                                            @php
+                                                $landUseClass = '';
+                                                switch(strtolower($PrimaryApplication->land_use)) {
+                                                    case 'residential':
+                                                        $landUseClass = 'badge-residential';
+                                                        break;
+                                                    case 'commercial':
+                                                        $landUseClass = 'badge-commercial';
+                                                        break;
+                                                    case 'industrial':
+                                                        $landUseClass = 'badge-industrial';
+                                                        break;
+                                                    default:
+                                                        $landUseClass = 'badge-primary';
+                                                }
+                                            @endphp
+                                            <span class="badge {{ $landUseClass }}">
+                                                <i data-lucide="map-pin" class="w-3 h-3 mr-1"></i>
+                                                {{ $PrimaryApplication->land_use }}
+                                            </span>
+                                        @else
+                                            <span class="badge badge-primary">N/A</span>
+                                        @endif
+                                    </td>
                                     <td class="table-cell">
                                         <div class="flex items-center">
                                             <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-2">
@@ -239,7 +273,16 @@
                                         </div>
  
                                     </td>
-                                    <td class="table-cell">{{ $PrimaryApplication->NoOfUnits }}</td>
+                                    <td class="table-cell">
+                                        @if($PrimaryApplication->NoOfUnits)
+                                            <span class="badge badge-units">
+                                                <i data-lucide="building" class="w-3 h-3 mr-1"></i>
+                                                {{ $PrimaryApplication->NoOfUnits }} Units
+                                            </span>
+                                        @else
+                                            <span class="badge badge-primary">0 Units</span>
+                                        @endif
+                                    </td>
                                     <td class="table-cell">
                                         {{ \Carbon\Carbon::parse($PrimaryApplication->created_at)->format('Y-m-d') }}</td>
                                     <td class="table-cell">

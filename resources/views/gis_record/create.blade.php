@@ -73,20 +73,9 @@
                         <input type="number" step="0.0001" id="areaInHectares" name="areaInHectares" class="w-full p-2 border border-gray-300 rounded-md text-sm">
                     </div>
                     
-                    <div class="space-y-2">
-                        <label for="landUse" class="block text-sm font-medium text-gray-700">Land Use</label>
-                        <select id="landUse" name="landUse" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                            <option value="">Select land use</option>
-                            <option value="Residential">Residential</option>
-                            <option value="Commercial">Commercial</option>
-                            <option value="Industrial">Industrial</option>  
-                        </select>
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label for="specifically" class="block text-sm font-medium text-gray-700">Specific Use</label>
-                        <input type="text" id="specifically" name="specifically" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
+                 
+                      @include('components.landuse')
+                      @include('components.specifically')
                 </div>
             </div>
             
@@ -111,20 +100,14 @@
                         <input type="text" id="StateName" name="StateName" class="w-full p-2 border border-gray-300 rounded-md text-sm">
                     </div>
                     
-                    <div class="space-y-2">
-                        <label for="streetName" class="block text-sm font-medium text-gray-700">Street Name</label>
-                        <input type="text" id="streetName" name="streetName" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
+                    @include('components.StreetName')
                     
                     <div class="space-y-2">
                         <label for="houseNo" class="block text-sm font-medium text-gray-700">House Number</label>
                         <input type="text" id="houseNo" name="houseNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
                     </div>
                     
-                    <div class="space-y-2">
-                        <label for="houseType" class="block text-sm font-medium text-gray-700">House Type</label>
-                        <input type="text" id="houseType" name="houseType" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
+                    @include('components.HouseType')
 
                        <div class="space-y-2">
                         <label for="tenancy" class="block text-sm font-medium text-gray-700">Tenancy</label>
@@ -285,11 +268,37 @@
                         <textarea id="addressOfCurrentAllottee" name="addressOfCurrentAllottee" rows="2" class="w-full p-2 border border-gray-300 rounded-md text-sm"></textarea>
                     </div>
                     
+                       
                     <div class="space-y-2">
-                        <label for="titleOfCurrentAllottee" class="block text-sm font-medium text-gray-700">Title of Current Allottee</label>
-                        <input type="text" id="titleOfCurrentAllottee" name="titleOfCurrentAllottee" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <label for="title" class="block text-sm font-medium text-gray-700">Title <span class="text-red-600">*</span></label>
+                        <select id="title" name="titleOfCurrentAllottee" class="w-full p-2 border border-gray-300 rounded-md text-sm" onchange="toggleOtherTitle()" required>
+                            <option value="">Select Title</option>
+                            <option value="CofO">CofO</option>
+                            <option value="RofO">RofO</option>
+                            <option value="Grant">Grant</option>
+                            <option value="Occupancy Permit">Occupancy Permit</option>
+                            <option value="SLTR">SLTR</option>
+                            <option value="GIS">GIS</option>
+                            <option value="Customary">Customary</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <input type="text" id="otherTitle" name="titleOfCurrentAllottee" class="w-full p-2 border border-gray-300 rounded-md text-sm mt-2 hidden" placeholder="Please specify other title">
                     </div>
-                    
+
+                    <script>
+                    function toggleOtherTitle() {
+                        const select = document.getElementById('title');
+                        const otherInput = document.getElementById('otherTitle');
+                        if (select.value === 'other') {
+                            otherInput.classList.remove('hidden');
+                            select.name = '';
+                        } else {
+                            otherInput.classList.add('hidden');
+                            select.name = 'titleOfCurrentAllottee';
+                            otherInput.name = '';
+                        }
+                    }
+                    </script>
                     <div class="space-y-2">
                         <label for="phoneNo" class="block text-sm font-medium text-gray-700">Phone Number</label>
                         <input type="tel" id="phoneNo" name="phoneNo" class="w-full p-2 border border-gray-300 rounded-md text-sm">
@@ -300,15 +309,12 @@
                         <input type="email" id="emailAddress" name="emailAddress" class="w-full p-2 border border-gray-300 rounded-md text-sm">
                     </div>
                     
-                    <div class="space-y-2">
-                        <label for="occupation" class="block text-sm font-medium text-gray-700">Occupation</label>
-                        <input type="text" id="occupation" name="occupation" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
+                   @include('components.Occupation') 
+                   @include('components.nationality')
                     
-                    <div class="space-y-2">
-                        <label for="nationality" class="block text-sm font-medium text-gray-700">Nationality</label>
-                        <input type="text" id="nationality" name="nationality" class="w-full p-2 border border-gray-300 rounded-md text-sm">
-                    </div>
+               
+
+                    
                     
                     <div class="space-y-2">
                         <label for="CompanyRCNo" class="block text-sm font-medium text-gray-700">Company RC Number</label>

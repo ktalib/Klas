@@ -1,72 +1,70 @@
-<div class="bg-white rounded-lg shadow-md border border-gray-200">
-    <div class="px-2 py-1">
-        <div class="border-b border-gray-200">
-            <nav class="flex flex-wrap items-center justify-center md:space-x-4 lg:space-x-6">
+<div class="bg-gradient-to-br from-white via-gray-50/30 to-white rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden backdrop-blur-sm mx-auto max-w-7xl">
+    <div class="px-4 sm:px-6 py-5">
+        <div class="border-b border-gray-200/60 pb-3">
+            <nav class="flex flex-wrap items-center justify-center gap-1 sm:gap-2 md:gap-3 lg:gap-4">
                 {{-- Overview --}}
-                <a href="{{ route('sectionaltitling.index') }}" class="group flex flex-col items-center py-3 px-3 {{ request()->routeIs('sectionaltitling.index') ? 'border-b-2 border-blue-500' : 'hover:bg-gray-50 rounded-md' }}">
-                    <div class="flex items-center justify-center w-8 h-8 {{ request()->routeIs('sectionaltitling.index') ? 'bg-blue-100 text-blue-600' : 'text-blue-500 group-hover:text-blue-600' }} rounded-full mb-1">
-                        <i data-lucide="home" class="w-4 h-4"></i>
+                <a href="{{ route('sectionaltitling.index') }}" class="group relative flex flex-col items-center py-4 px-4 min-w-[80px] transition-all duration-300 {{ request()->routeIs('sectionaltitling.index') ? 'border-b-3 border-blue-500 bg-blue-50/50' : 'hover:bg-gradient-to-t hover:from-blue-50 hover:to-transparent rounded-lg' }}">
+                    <div class="flex items-center justify-center w-10 h-10 {{ request()->routeIs('sectionaltitling.index') ? 'bg-blue-500 text-white shadow-lg' : 'bg-blue-100 text-blue-600 group-hover:bg-blue-500 group-hover:text-white group-hover:shadow-md' }} rounded-full mb-2 transition-all duration-300 transform group-hover:scale-110">
+                        <i data-lucide="home" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-sm font-medium {{ request()->routeIs('sectionaltitling.index') ? 'text-blue-600' : 'text-gray-700 group-hover:text-blue-600' }}">Overview</span>
+                    <span class="text-xs font-semibold {{ request()->routeIs('sectionaltitling.index') ? 'text-blue-700' : 'text-gray-600 group-hover:text-blue-700' }} text-center leading-tight transition-colors duration-300">Overview</span>
                 </a>
 
                 {{-- Customer Care --}}
-                <a href="{{ route('customer-care.index') }}" class="group flex flex-col items-center py-3 px-3 {{ request()->routeIs('customer-care.index') ? 'border-b-2 border-green-500' : 'hover:bg-gray-50 rounded-md' }}">
-                    <div class="flex items-center justify-center w-8 h-8 {{ request()->routeIs('customer-care.index') ? 'bg-green-100 text-green-600' : 'text-green-500 group-hover:text-green-600' }} rounded-full mb-1">
-                        <i data-lucide="user" class="w-4 h-4"></i>
+                <a href="{{ route('customer-care.index') }}" class="group relative flex flex-col items-center py-4 px-4 min-w-[80px] transition-all duration-300 {{ request()->routeIs('customer-care.index') ? 'border-b-3 border-green-500 bg-green-50/50' : 'hover:bg-gradient-to-t hover:from-green-50 hover:to-transparent rounded-lg' }}">
+                    <div class="flex items-center justify-center w-10 h-10 {{ request()->routeIs('customer-care.index') ? 'bg-green-500 text-white shadow-lg' : 'bg-green-100 text-green-600 group-hover:bg-green-500 group-hover:text-white group-hover:shadow-md' }} rounded-full mb-2 transition-all duration-300 transform group-hover:scale-110">
+                        <i data-lucide="user" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-sm font-medium {{ request()->routeIs('customer-care.index') ? 'text-green-600' : 'text-gray-700 group-hover:text-green-600' }}">Customer Care</span>
+                    <span class="text-xs font-semibold {{ request()->routeIs('customer-care.index') ? 'text-green-700' : 'text-gray-600 group-hover:text-green-700' }} text-center leading-tight transition-colors duration-300">Customer<br>Care</span>
                 </a>
 
-                   {{-- Entities --}}
-                <a href="{{ route('programmes.entity') }}" class="group flex flex-col items-center py-3 px-3 {{ request()->routeIs('programmes.entity') ? 'border-b-2 border-indigo-500' : 'hover:bg-gray-50 rounded-md' }}">
-                    <div class="flex items-center justify-center w-8 h-8 {{ request()->routeIs('programmes.entity') ? 'bg-indigo-100 text-indigo-600' : 'text-indigo-500 group-hover:text-indigo-600' }} rounded-full mb-1">
-                        <i data-lucide="building" class="w-4 h-4"></i>
+                {{-- Entities --}}
+                <a href="{{ route('programmes.entity') }}" class="group relative flex flex-col items-center py-4 px-4 min-w-[80px] transition-all duration-300 {{ request()->routeIs('programmes.entity') ? 'border-b-3 border-indigo-500 bg-indigo-50/50' : 'hover:bg-gradient-to-t hover:from-indigo-50 hover:to-transparent rounded-lg' }}">
+                    <div class="flex items-center justify-center w-10 h-10 {{ request()->routeIs('programmes.entity') ? 'bg-indigo-500 text-white shadow-lg' : 'bg-indigo-100 text-indigo-600 group-hover:bg-indigo-500 group-hover:text-white group-hover:shadow-md' }} rounded-full mb-2 transition-all duration-300 transform group-hover:scale-110">
+                        <i data-lucide="building" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-sm font-medium {{ request()->routeIs('programmes.entity') ? 'text-indigo-600' : 'text-gray-700 group-hover:text-indigo-600' }}">Entities</span>
+                    <span class="text-xs font-semibold {{ request()->routeIs('programmes.entity') ? 'text-indigo-700' : 'text-gray-600 group-hover:text-indigo-700' }} text-center leading-tight transition-colors duration-300">Entities</span>
                 </a>
 
-
-                {{-- Primary --}}
-                <a href="{{ route('sectionaltitling.primary') }}" class="group flex flex-col items-center py-3 px-3 {{ request()->routeIs('sectionaltitling.primary') ? 'border-b-2 border-purple-500' : 'hover:bg-gray-50 rounded-md' }}">
-                    <div class="flex items-center justify-center w-8 h-8 {{ request()->routeIs('sectionaltitling.primary') ? 'bg-purple-100 text-purple-600' : 'text-purple-500 group-hover:text-purple-600' }} rounded-full mb-1">
-                        <i data-lucide="file" class="w-4 h-4"></i>
+                {{-- Mother Applications --}}
+                <a href="{{ route('sectionaltitling.mother') }}" class="group relative flex flex-col items-center py-4 px-4 min-w-[80px] transition-all duration-300 {{ request()->routeIs('sectionaltitling.mother') ? 'border-b-3 border-purple-500 bg-purple-50/50' : 'hover:bg-gradient-to-t hover:from-purple-50 hover:to-transparent rounded-lg' }}">
+                    <div class="flex items-center justify-center w-10 h-10 {{ request()->routeIs('sectionaltitling.mother') ? 'bg-purple-500 text-white shadow-lg' : 'bg-purple-100 text-purple-600 group-hover:bg-purple-500 group-hover:text-white group-hover:shadow-md' }} rounded-full mb-2 transition-all duration-300 transform group-hover:scale-110">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-sm font-medium {{ request()->routeIs('sectionaltitling.primary') ? 'text-purple-600' : 'text-gray-700 group-hover:text-purple-600' }}">Primary</span>
+                    <span class="text-xs font-semibold {{ request()->routeIs('sectionaltitling.mother') ? 'text-purple-700' : 'text-gray-600 group-hover:text-purple-700' }} text-center leading-tight transition-colors duration-300">Mother<br>Applications</span>
                 </a>
 
-                {{-- Units --}}
-                <a href="{{ route('sectionaltitling.secondary') }}" class="group flex flex-col items-center py-3 px-3 {{ request()->routeIs('sectionaltitling.secondary') ? 'border-b-2 border-gray-700' : 'hover:bg-gray-50 rounded-md' }}">
-                    <div class="flex items-center justify-center w-8 h-8 {{ request()->routeIs('sectionaltitling.secondary') ? 'bg-gray-200 text-gray-700' : 'text-gray-500 group-hover:text-gray-700' }} rounded-full mb-1">
-                        <i data-lucide="files" class="w-4 h-4"></i>
+                {{-- Secondary Applications --}}
+                <a href="{{ route('sectionaltitling.secondary') }}" class="group relative flex flex-col items-center py-4 px-4 min-w-[80px] transition-all duration-300 {{ request()->routeIs('sectionaltitling.secondary') ? 'border-b-3 border-slate-500 bg-slate-50/50' : 'hover:bg-gradient-to-t hover:from-slate-50 hover:to-transparent rounded-lg' }}">
+                    <div class="flex items-center justify-center w-10 h-10 {{ request()->routeIs('sectionaltitling.secondary') ? 'bg-slate-500 text-white shadow-lg' : 'bg-slate-100 text-slate-600 group-hover:bg-slate-500 group-hover:text-white group-hover:shadow-md' }} rounded-full mb-2 transition-all duration-300 transform group-hover:scale-110">
+                        <i data-lucide="files" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-sm font-medium {{ request()->routeIs('sectionaltitling.secondary') ? 'text-gray-700' : 'text-gray-700 group-hover:text-gray-700' }}">Units</span>
+                    <span class="text-xs font-semibold {{ request()->routeIs('sectionaltitling.secondary') ? 'text-slate-700' : 'text-gray-600 group-hover:text-slate-700' }} text-center leading-tight transition-colors duration-300">Secondary<br>Applications</span>
                 </a>
 
                 {{-- Planning --}}
-                <a href="{{route('programmes.approvals.planning_recomm')}}?url=view" class="group flex flex-col items-center py-3 px-3 hover:bg-gray-50 rounded-md">
-                    <div class="flex items-center justify-center w-8 h-8 text-red-500 group-hover:text-red-600 rounded-full mb-1">
-                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                <a href="{{route('programmes.approvals.planning_recomm')}}?url=view" class="group relative flex flex-col items-center py-4 px-4 min-w-[80px] transition-all duration-300 hover:bg-gradient-to-t hover:from-red-50 hover:to-transparent rounded-lg">
+                    <div class="flex items-center justify-center w-10 h-10 bg-red-100 text-red-600 group-hover:bg-red-500 group-hover:text-white group-hover:shadow-md rounded-full mb-2 transition-all duration-300 transform group-hover:scale-110">
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-sm font-medium text-gray-700 group-hover:text-red-600">Planning</span>
+                    <span class="text-xs font-semibold text-gray-600 group-hover:text-red-700 text-center leading-tight transition-colors duration-300">Planning</span>
                 </a>
 
                 {{-- Survey --}}
-                <span class="group flex flex-col items-center py-3 px-3 cursor-not-allowed opacity-60">
-                    <div class="flex items-center justify-center w-8 h-8 text-gray-400 rounded-full mb-1">
-                        <i data-lucide="ruler" class="w-4 h-4"></i>
+                <a href="{{ route('attribution.index') }}" class="group relative flex flex-col items-center py-4 px-4 min-w-[80px] transition-all duration-300 {{ request()->routeIs('attribution.index') ? 'border-b-3 border-orange-500 bg-orange-50/50' : 'hover:bg-gradient-to-t hover:from-orange-50 hover:to-transparent rounded-lg' }}">
+                    <div class="flex items-center justify-center w-10 h-10 {{ request()->routeIs('attribution.index') ? 'bg-orange-500 text-white shadow-lg' : 'bg-orange-100 text-orange-600 group-hover:bg-orange-500 group-hover:text-white group-hover:shadow-md' }} rounded-full mb-2 transition-all duration-300 transform group-hover:scale-110">
+                        <i data-lucide="ruler" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-sm font-medium text-gray-400">Survey</span>
-                </span>
+                    <span class="text-xs font-semibold {{ request()->routeIs('attribution.index') ? 'text-orange-700' : 'text-gray-600 group-hover:text-orange-700' }} text-center leading-tight transition-colors duration-300">Survey</span>
+                </a>
 
-             
-                {{-- Operations --}}
-                <span class="group flex flex-col items-center py-3 px-3 cursor-not-allowed opacity-60">
-                    <div class="flex items-center justify-center w-8 h-8 text-gray-400 rounded-full mb-1">
-                        <i data-lucide="settings" class="w-4 h-4"></i>
+                {{-- Map --}}
+                <a href="{{ route('map.index') }}" class="group relative flex flex-col items-center py-4 px-4 min-w-[80px] transition-all duration-300 {{ request()->routeIs('map.index') ? 'border-b-3 border-teal-500 bg-teal-50/50' : 'hover:bg-gradient-to-t hover:from-teal-50 hover:to-transparent rounded-lg' }}">
+                    <div class="flex items-center justify-center w-10 h-10 {{ request()->routeIs('map.index') ? 'bg-teal-500 text-white shadow-lg' : 'bg-teal-100 text-teal-600 group-hover:bg-teal-500 group-hover:text-white group-hover:shadow-md' }} rounded-full mb-2 transition-all duration-300 transform group-hover:scale-110">
+                        <i data-lucide="map" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-sm font-medium text-gray-400">Operations</span>
-                </span>
+                    <span class="text-xs font-semibold {{ request()->routeIs('map.index') ? 'text-teal-700' : 'text-gray-600 group-hover:text-teal-700' }} text-center leading-tight transition-colors duration-300">Map</span>
+                </a>
             </nav>
         </div>
     </div>

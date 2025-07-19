@@ -1,4 +1,4 @@
-<div class="form-section" id="step6">
+<div class="form-section" id="step5">
     <div class="p-6">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-center text-gray-800">MINISTRY OF LAND AND PHYSICAL PLANNING</h2>
@@ -42,13 +42,10 @@
         <div class="flex items-center mr-4">
           <div class="step-circle inactive">4</div>
         </div>
-        <div class="flex items-center mr-4">
-          <div class="step-circle inactive">5</div>
-        </div>
         <div class="flex items-center">
-          <div class="step-circle active">6</div>
+          <div class="step-circle active">5</div>
         </div>
-        <div class="ml-4">Step 6 - Summary</div>
+        <div class="ml-4">Step 5 - Summary</div>
       </div>
 
       <div class="mb-6" id="application-summary">
@@ -247,14 +244,14 @@
         
         <div class="flex justify-between mt-8">
           <div class="flex space-x-4">
-            <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md" id="backStep6">Back</button>
+            <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md" id="backStep5">Back</button>
             <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md flex items-center" id="printApplicationSlip">
               <i data-lucide="printer" class="w-4 h-4 mr-2"></i>
               Print Application Slip
             </button>
           </div>
           <div class="flex items-center">
-            <span class="text-sm text-gray-500 mr-4">Step 6 of 6</span>
+            <span class="text-sm text-gray-500 mr-4"Step 5 of 5</span>
             <button type="button" class="px-4 py-2 bg-black text-white rounded-md" onclick="confirmSubmission()">Submit Application</button>
           </div>
         </div>
@@ -265,11 +262,11 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // Add event listener for the back button
-      const backStep6Button = document.getElementById('backStep6');
-      if (backStep6Button) {
-        backStep6Button.addEventListener('click', function() {
-          document.getElementById('step6').classList.remove('active');
-          document.getElementById('step5').classList.add('active');
+      const backStep5Button = document.getElementById('backStep5');
+      if (backStep5Button) {
+        backStep5Button.addEventListener('click', function() {
+          document.getElementById('step5').classList.remove('active');
+          document.getElementById('step4').classList.add('active');
         });
       }
       

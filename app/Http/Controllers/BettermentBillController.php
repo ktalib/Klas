@@ -60,8 +60,8 @@ class BettermentBillController extends Controller
             'application_id' => 'nullable',
             'property_value' => 'required|numeric',
             'betterment_rate' => 'required|numeric',
-            'ref_id' => 'required',
-            'Sectional_Title_File_No' => 'required',
+            'ref_id' => 'nullable',
+            'Sectional_Title_File_No' => 'nullable',
             'sub_application_id' => 'nullable'
         ]);
 
@@ -74,56 +74,99 @@ class BettermentBillController extends Controller
         }
 
         try {
+            // Log incoming request data for debugging
+            \Log::info('Betterment bill store request:', $request->all());
+            
             // Parse values and calculate betterment charges
-            $propertyValue = $request->input('property_value');
-            $bettermentRate = $request->input('betterment_rate') / 100; // Convert percentage to decimal
-            $landSize = $request->input('land_size');
+            $propertyValue = floatval($request->input('property_value'));
+            $bettermentRate = floatval($request->input('betterment_rate'));
+            $landSize = floatval($request->input('land_size', 1200)); // Default land size
             
             // Calculate land size factor
             $landSizeFactor = $this->calculateLandSizeFactor($landSize);
             
             // Calculate betterment charges with the new formula
-            $bettermentCharges = $propertyValue * $bettermentRate * $landSizeFactor;
+            $bettermentCharges = $propertyValue * ($bettermentRate / 100) * $landSizeFactor;
+            
+            \Log::info('Calculated values:', [
+                'property_value' => $propertyValue,
+                'betterment_rate' => $bettermentRate,
+                'land_size' => $landSize,
+                'land_size_factor' => $landSizeFactor,
+                'betterment_charges' => $bettermentCharges
+            ]);
             
             // Check if a betterment bill already exists for this application
+            $applicationId = $request->input('application_id');
+            $subApplicationId = $request->input('sub_application_id');
+            
+            \Log::info('Looking for existing bill with:', [
+                'application_id' => $applicationId,
+                'sub_application_id' => $subApplicationId
+            ]);
+            
+            // Remove filtering on Betterment_Charges so we always find the bill for update
             $existingBill = DB::connection('sqlsrv')
                 ->table('billing')
-                ->where('application_id', $request->input('application_id'))
-                ->orWhere('sub_application_id', $request->input('sub_application_id'))
+                ->where(function($query) use ($applicationId, $subApplicationId) {
+                    if ($applicationId) {
+                        $query->where('application_id', $applicationId);
+                    }
+                    if ($subApplicationId) {
+                        $query->orWhere('sub_application_id', $subApplicationId);
+                    }
+                })
                 ->first();
+                
+            \Log::info('Existing bill found: ' . ($existingBill ? 'Yes (ID: ' . $existingBill->ID . ')' : 'No'));
+            
+            // Generate reference ID if not provided
+            $refId = $request->input('ref_id') ?: 'BB-' . ($applicationId ?: $subApplicationId) . '-' . date('Ymd');
+            $fileNo = $request->input('Sectional_Title_File_No') ?: 'ST-' . ($applicationId ?: $subApplicationId);
                 
             if ($existingBill) {
                 // Update existing bill
-                DB::connection('sqlsrv')
+                $updateData = [
+                    'property_value' => (string)$propertyValue,
+                    'betterment_rate' => (string)$bettermentRate,
+                    'Betterment_Charges' => (string)$bettermentCharges,
+                    'ref_id' => $refId,
+                    'Sectional_Title_File_No' => $fileNo,
+                    'updated_at' => now()
+                ];
+                
+                \Log::info('Updating existing bill with data:', $updateData);
+                
+                $result = DB::connection('sqlsrv')
                     ->table('billing')
-                    ->where('application_id', $request->input('application_id'))
-                    ->orWhere('sub_application_id', $request->input('sub_application_id'))
-                    ->update([
-                        'property_value' => $propertyValue,
-                        'betterment_rate' => $request->input('betterment_rate'),
-                        'Betterment_Charges' => $bettermentCharges,
-                        'ref_id' => $request->input('ref_id'),
-                        'Sectional_Title_File_No' => $request->input('Sectional_Title_File_No'),
-                        'sub_application_id' => $request->input('sub_application_id'),
-                        'updated_at' => now()
-                    ]);
+                    ->where('ID', $existingBill->ID)
+                    ->update($updateData);
+                
+                \Log::info('Update result:', ['success' => $result]);
                 
                 $message = 'Betterment bill updated successfully';
             } else {
                 // Insert new bill
-                DB::connection('sqlsrv')
+                $insertData = [
+                    'application_id' => $applicationId,
+                    'sub_application_id' => $subApplicationId,
+                    'property_value' => (string)$propertyValue,
+                    'betterment_rate' => (string)$bettermentRate,
+                    'Betterment_Charges' => (string)$bettermentCharges,
+                    'ref_id' => $refId,
+                    'Sectional_Title_File_No' => $fileNo,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                    'Payment_Status' => 'Pending'
+                ];
+                
+                \Log::info('Inserting new betterment bill:', $insertData);
+                
+                $result = DB::connection('sqlsrv')
                     ->table('billing')
-                    ->insert([
-                        'application_id' => $request->input('application_id'),
-                        'property_value' => $propertyValue,
-                        'betterment_rate' => $request->input('betterment_rate'),
-                        'Betterment_Charges' => $bettermentCharges,
-                        'ref_id' => $request->input('ref_id'),
-                        'Sectional_Title_File_No' => $request->input('Sectional_Title_File_No'),
-                        'sub_application_id' => $request->input('sub_application_id'),
-                        'created_at' => now(),
-                        'updated_at' => now()
-                    ]);
+                    ->insert($insertData);
+                
+                \Log::info('Insert result:', ['success' => $result]);
                 
                 $message = 'Betterment bill created successfully';
             }
@@ -132,10 +175,18 @@ class BettermentBillController extends Controller
                 'success' => true,
                 'message' => $message,
                 'betterment_charges' => number_format($bettermentCharges, 2),
-                'ref_id' => $request->input('ref_id')
+                'betterment_charges_raw' => $bettermentCharges,
+                'ref_id' => $refId,
+                'data' => [
+                    'property_value' => $propertyValue,
+                    'betterment_rate' => $bettermentRate,
+                    'betterment_charges' => $bettermentCharges,
+                    'ref_id' => $refId
+                ]
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error calculating betterment bill: ' . $e->getMessage());
+            \Log::error('Error processing betterment bill: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
             
             return response()->json([
                 'success' => false,
@@ -161,11 +212,29 @@ class BettermentBillController extends Controller
     public function show($id)
     {
         try {
+            \Log::info('Show betterment bill for ID: ' . $id);
+            $idStr = (string)$id;
+            // Remove filtering on Betterment_Charges so we always return the bill
             $bettermentBill = DB::connection('sqlsrv')
                 ->table('billing')
-                ->where('application_id', $id)
-                ->orWhere('sub_application_id', $id)
+                ->where(function($query) use ($idStr) {
+                    $query->where('application_id', $idStr)
+                          ->orWhere('sub_application_id', $idStr);
+                })
                 ->first();
+                
+            \Log::info('Bill query result: ' . ($bettermentBill ? 'Found (ID: ' . $bettermentBill->ID . ')' : 'Not found'));
+            
+            if ($bettermentBill) {
+                \Log::info('Bill details: ', [
+                    'ID' => $bettermentBill->ID,
+                    'application_id' => $bettermentBill->application_id,
+                    'sub_application_id' => $bettermentBill->sub_application_id,
+                    'Betterment_Charges' => $bettermentBill->Betterment_Charges,
+                    'property_value' => $bettermentBill->property_value,
+                    'ref_id' => $bettermentBill->ref_id
+                ]);
+            }
                 
             if (!$bettermentBill) {
                 return response()->json([
@@ -187,6 +256,8 @@ class BettermentBillController extends Controller
                     ->where('id', $id)
                     ->first();
             }
+            
+            \Log::info('Application found: ' . ($application ? 'Yes (File: ' . $application->fileno . ')' : 'No'));
                 
             return response()->json([
                 'success' => true,
@@ -194,6 +265,8 @@ class BettermentBillController extends Controller
                 'application' => $application
             ]);
         } catch (\Exception $e) {
+            \Log::error('Error in show method: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'message' => 'Error retrieving betterment bill: ' . $e->getMessage()
@@ -207,12 +280,16 @@ class BettermentBillController extends Controller
     public function printReceipt($id)
     {
         try {
+            \Log::info('Print receipt requested for ID: ' . $id);
+            
             // Get the application
             // Check in mother_applications first
             $application = DB::connection('sqlsrv')
                 ->table('mother_applications')
                 ->where('id', $id)
                 ->first();
+                
+            \Log::info('Mother application found: ' . ($application ? 'Yes' : 'No'));
                 
             // If not found in mother_applications, check in subapplications
             if (!$application) {
@@ -222,39 +299,66 @@ class BettermentBillController extends Controller
                     ->where('s.id', $id)
                     ->select(
                         's.*',
+                        's.id as sub_id',
                         'm.property_house_no',
                         'm.property_plot_no',
                         'm.property_street_name',
                         'm.property_district',
                         'm.property_lga',
-                        'm.property_state'
+                        'm.property_state',
+                        'm.fileno as main_fileno'
                     )
                     ->first();
+                    
+                \Log::info('Sub application found: ' . ($application ? 'Yes' : 'No'));
             }
                
             if (!$application) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Application not found'
-                ], 404);
+                \Log::error('Application not found for ID: ' . $id);
+                return redirect()->back()->with('error', 'Application not found');
             }
             
-            // Get the betterment bill
+            // Get the betterment bill - convert ID to string for comparison
+            $idStr = (string)$id;
+            // Remove filtering on Betterment_Charges so we always return the bill
             $bill = DB::connection('sqlsrv')
                 ->table('billing')
-                ->where('application_id', $id)
-                ->orWhere('sub_application_id', $id)
+                ->where(function($query) use ($idStr) {
+                    $query->where('application_id', $idStr)
+                          ->orWhere('sub_application_id', $idStr);
+                })
                 ->first();
                 
+            \Log::info('Bill found: ' . ($bill ? 'Yes' : 'No'));
+            
+            if ($bill) {
+                \Log::info('Bill data: ', [
+                    'id' => $bill->id ?? 'N/A',
+                    'ref_id' => $bill->ref_id ?? 'N/A',
+                    'property_value' => $bill->property_value ?? 'N/A',
+                    'betterment_charges' => $bill->Betterment_Charges ?? 'N/A',
+                    'betterment_rate' => $bill->betterment_rate ?? 'N/A'
+                ]);
+            }
+                
             if (!$bill) {
-                return redirect()->back()->with('error', 'Betterment bill not found');
+                \Log::error('Betterment bill not found for ID: ' . $id);
+                return redirect()->back()->with('error', 'Betterment bill not found. Please generate a bill first.');
+            }
+            
+            // Ensure bill has required data
+            if (!$bill->Betterment_Charges || $bill->Betterment_Charges <= 0) {
+                \Log::warning('Bill found but charges are zero or null');
             }
             
             // Return the print view
             return view('components.print_betterment', compact('application', 'bill'));
         } catch (\Exception $e) {
             \Log::error('Error printing betterment bill: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Error generating print view');
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            return redirect()->back()->with('error', 'Error generating print view: ' . $e->getMessage());
         }
     }
 }
+   
+ 

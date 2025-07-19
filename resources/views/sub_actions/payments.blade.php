@@ -113,18 +113,14 @@
                             </div>
 
                             <!-- Tabs Navigation -->
-                            <div class="grid grid-cols-3 gap-2 mb-4">
+                            <div class="grid grid-cols-2 gap-2 mb-4">
                                 <button class="tab-button active" data-tab="initial">
                                     <i data-lucide="banknote" class="w-3.5 h-3.5 mr-1.5"></i>
                                     INITIAL BILL
                                 </button>
-                                <button class="tab-button" data-tab="betterment">
-                                    <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5"></i>
-                                    GENERATE BETTERMENT BILL
-                                </button>
                                 <button class="tab-button" data-tab="final">
                                     <i data-lucide="file-check" class="w-3.5 h-3.5 mr-1.5"></i>
-                                    GENERATE FINAL BILL
+                                    GENERATE BILL BALANCE
                                 </button>
                             </div>
 
@@ -374,11 +370,6 @@
                                 </div>
                             </div>
 
-                            <!-- betterment Bill Tab -->
-                            <div id="betterment-tab" class="tab-content">
-                                @include('components.betterment-bill-component', ['application' => $application])
-                            </div>
-                            
                             <!-- Final Bill Tab -->
                             <div id="final-tab" class="tab-content">
                                 @include('sub_actions.final_bill')

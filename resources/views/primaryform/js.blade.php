@@ -5,26 +5,22 @@
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM loaded - initializing form handling');
 
-        // Step navigation
+        // Step navigation - Updated to remove EDMS step
         const nextStep1 = document.getElementById('nextStep1');
         const nextStep2 = document.getElementById('nextStep2');
         const nextStep3 = document.getElementById('nextStep3');
         const nextStep4 = document.getElementById('nextStep4');
-        const nextStep5 = document.getElementById('nextStep5');
-        const prevStep4 = document.getElementById('prevStep4');
         const backStep2 = document.getElementById('backStep2');
         const backStep3 = document.getElementById('backStep3');
         const backStep4 = document.getElementById('backStep4');
         const backStep5 = document.getElementById('backStep5');
-        const backStep6 = document.getElementById('backStep6');
 
-        // Form sections
+        // Form sections - Updated to remove EDMS step
         const step1 = document.getElementById('step1');
         const step2 = document.getElementById('step2');
         const step3 = document.getElementById('step3');
         const step4 = document.getElementById('step4');
         const step5 = document.getElementById('step5');
-        const step6 = document.getElementById('step6');
 
         if (nextStep1) {
             nextStep1.addEventListener('click', function(e) {
@@ -80,35 +76,13 @@
             });
         }
 
+        // Updated nextStep4 to go directly to summary (step 5)
         if (nextStep4) {
             nextStep4.addEventListener('click', function(e) {
                 e.preventDefault();
                 
-                // Validate EDMS step
+                // Validate buyers list for step 4 (previously step 5)
                 if (validateStep4()) {
-                    // Show success message
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'EDMS Configuration Complete!',
-                        text: 'Electronic document management settings have been configured successfully.',
-                        timer: 1500,
-                        showConfirmButton: false,
-                        toast: true,
-                        position: 'top-end'
-                    });
-                    
-                    step4.classList.remove('active');
-                    step5.classList.add('active');
-                }
-            });
-        }
-
-        if (nextStep5) {
-            nextStep5.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Validate buyers list for step 5
-                if (validateStep5()) {
                     // Show success message
                     Swal.fire({
                         icon: 'success',
@@ -120,18 +94,10 @@
                         position: 'top-end'
                     });
                     
-                    step5.classList.remove('active');
-                    step6.classList.add('active');
+                    step4.classList.remove('active');
+                    step5.classList.add('active');
                     updateApplicationSummary(); // Make sure summary is updated
                 }
-            });
-        }
-
-        if (prevStep4) {
-            prevStep4.addEventListener('click', function(e) {
-                e.preventDefault();
-                step4.classList.remove('active');
-                step3.classList.add('active');
             });
         }
 
@@ -164,14 +130,6 @@
                 e.preventDefault();
                 step5.classList.remove('active');
                 step4.classList.add('active');
-            });
-        }
-
-        if (backStep6) {
-            backStep6.addEventListener('click', function(e) {
-                e.preventDefault();
-                step6.classList.remove('active');
-                step5.classList.add('active');
             });
         }
 
@@ -605,7 +563,7 @@
     // Make updateApplicationSummary globally accessible
     window.updateApplicationSummary = updateApplicationSummary;
 
-    // Validation functions
+    // Validation functions - Updated to remove EDMS validation
     function validateStep1() {
         const errors = [];
         
@@ -757,12 +715,8 @@
         return true;
     }
 
+    // Updated validateStep4 to validate buyers list (previously validateStep5)
     function validateStep4() {
-        // All EDMS required fields checks removed
-        return true;
-    }
-
-    function validateStep5() {
         const errors = [];
         
         // Check if there's at least one buyer
@@ -844,5 +798,4 @@
     window.validateStep1 = validateStep1;
     window.validateStep3 = validateStep3;
     window.validateStep4 = validateStep4;
-    window.validateStep5 = validateStep5;
 </script>

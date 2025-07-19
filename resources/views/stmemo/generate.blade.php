@@ -335,6 +335,9 @@
                                 <tr>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Serial No</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Buyer Name</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -346,7 +349,7 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @if (count($conveyanceData) > 0)
-                                    @foreach ($conveyanceData as $buyer)
+                                    @foreach ($conveyanceData as $index => $buyer)
                                         @php
                                             // Find measurement for this unit if exists
                                             $unitMeasurement = '';
@@ -363,6 +366,9 @@
                                         @endphp
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ $index + 1 }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 {{ $buyer->buyer_title ?? 'N/A' }} {{ $buyer->buyer_name ?? 'N/A' }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {{ $buyer->unit_no ?? 'N/A' }}</td>
@@ -372,7 +378,7 @@
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="3"
+                                        <td colspan="4"
                                             class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No buyers
                                             found in conveyance data</td>
                                     </tr>
@@ -392,7 +398,7 @@
                     </a>
                     <button type="submit"
                         class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Generate ST Memo
+                        Generate Memo
                     </button>
                 </div>
             </form>

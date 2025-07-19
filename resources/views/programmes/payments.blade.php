@@ -130,10 +130,11 @@
     });
   </script>
     
-    <!-- Payments Overview -->
-    @include('programmes.partials.payments_report')
-   
-      <!-- Payment Visualization -->
+     
+     @if(request()->get('url') === 'report')
+        {{-- show the print‐friendly report --}}
+         @include('programmes.partials.payments_report')
+           <!-- Payment Visualization -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
           <h3 class="text-lg font-semibold mb-4">Payment Status Distribution</h3>
@@ -164,9 +165,17 @@
           <span>Print Payment Summary</span>
         </button>
       </div>
+     @else
+         {{-- show the normal payments table --}}
+        <div class="bg-white rounded-md shadow-sm border border-gray-200" id="payments-table">
+            <!-- … all your Primary/Unit Applications tabs & tables … -->
+       </div>
+    @endif
+   
+    
       
       <!-- Payments Tabs -->
-      <div class="bg-white rounded-md shadow-sm border border-gray-200">
+      <div class="bg-white rounded-md shadow-sm border border-gray-200" id="payments-table" style="{{ request()->get('url') === 'report' ? 'display: none;' : '' }}">
         <div class="border-b border-gray-200">
           <div class="flex">
             <!-- Remove inline onclick attributes -->
@@ -208,17 +217,14 @@
                 <tr>
                   <th class="table-header">File No</th>
                   <th class="table-header">Owner</th>
-                  <th class="table-header">Scheme App Fee</th>
-                  <th class="table-header">Site Plan Fee</th>
+                  <th class="table-header">Application Fee</th>
                   <th class="table-header">Processing Fee</th>
-                  <th class="table-header">Betterment</th>
-                   
-                  <th class="table-header">Land Use</th>
+                  <th class="table-header">Site Plan Fee</th>
+                  <th class="table-header">Recertification Fee</th>
+                  <th class="table-header">Assignment Fee</th>
+                  <th class="table-header">Development Charges</th>
                   <th class="table-header">Penalty</th>
-                 
                   <th class="table-header">Date</th>
-                  
-                  
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
@@ -226,20 +232,18 @@
                 <tr>
                   <td class="table-cell">{{ $payment->Sectional_Title_File_No }}</td>
                   <td class="table-cell">{{ $payment->owner_name }}</td>
-                  <td class="table-cell">₦{{ number_format($payment->Scheme_Application_Fee, 2) }}</td>
-                  <td class="table-cell">₦{{ number_format($payment->Site_Plan_Fee, 2) }}</td>
-                  <td class="table-cell">₦{{ number_format($payment->Processing_Fee, 2) }}</td>
-                  <td class="table-cell">₦{{ number_format($payment->Betterment_Charges, 2) }}</td>
-            
-                  <td class="table-cell">₦{{ number_format($payment->Land_Use_Charge, 2) }}</td>
-                  <td class="table-cell">₦{{ number_format($payment->Penalty_Fees, 2) }}</td>
-                
+                  <td class="table-cell">₦{{ number_format($payment->Scheme_Application_Fee ?? 0, 2) }}</td>
+                  <td class="table-cell">₦{{ number_format($payment->Processing_Fee ?? 0, 2) }}</td>
+                  <td class="table-cell">₦{{ number_format($payment->Site_Plan_Fee ?? 0, 2) }}</td>
+                  <td class="table-cell">₦{{ number_format($payment->Recertification_Fee ?? 0, 2) }}</td>
+                  <td class="table-cell">₦{{ number_format($payment->Assignment_Fee ?? 0, 2) }}</td>
+                  <td class="table-cell">₦{{ number_format($payment->Development_Charges ?? 0, 2) }}</td>
+                  <td class="table-cell">₦{{ number_format($payment->Penalty_Fees ?? 0, 2) }}</td>
                   <td class="table-cell">{{ \Carbon\Carbon::parse($payment->created_at)->format('Y-m-d') }}</td>
-                 
                 </tr>
                 @empty
                 <tr>
-                  <td colspan="12" class="table-cell text-center py-4">No primary application payment records found</td>
+                  <td colspan="10" class="table-cell text-center py-4">No primary application payment records found</td>
                 </tr>
                 @endforelse
               </tbody>
@@ -276,17 +280,12 @@
                 <tr>
                   <th class="table-header">File No</th>
                   <th class="table-header">Unit Owner</th>
-                  <th class="table-header">Scheme App Fee</th>
                   <th class="table-header">Survey Fee</th>
-                  <th class="table-header">Processing Fee</th>
-                  <th class="table-header">Betterment</th>
-                  <th class="table-header">Unit App Fees</th>
-                  <th class="table-header">Land Use</th>
+                  <th class="table-header">Recertification Fee</th>
+                  <th class="table-header">Assignment Fee</th>
+                  <th class="table-header">Development Charges</th>
                   <th class="table-header">Penalty</th>
-                
                   <th class="table-header">Date</th>
-                  
-                 
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
@@ -294,20 +293,16 @@
                 <tr>
                   <td class="table-cell">{{ $payment->Sectional_Title_File_No }}</td>
                   <td class="table-cell">{{ $payment->owner_name }}</td>
-                  <td class="table-cell">₦{{ number_format($payment->Scheme_Application_Fee, 2) }}</td>
-                  <td class="table-cell">₦{{ number_format($payment->Site_Plan_Fee, 2) }}</td>
-                  <td class="table-cell">₦{{ number_format($payment->Processing_Fee, 2) }}</td>
-                  <td class="table-cell">₦{{ number_format($payment->Betterment_Charges, 2) }}</td>
-                  <td class="table-cell">₦{{ number_format($payment->Unit_Application_Fees, 2) }}</td>
-                  <td class="table-cell">₦{{ number_format($payment->Land_Use_Charge, 2) }}</td>
-                  <td class="table-cell">₦{{ number_format($payment->Penalty_Fees, 2) }}</td>
-             
+                  <td class="table-cell">₦{{ number_format($payment->Site_Plan_Fee ?? 0, 2) }}</td>
+                  <td class="table-cell">₦{{ number_format($payment->Recertification_Fee ?? 0, 2) }}</td>
+                  <td class="table-cell">₦{{ number_format($payment->Assignment_Fee ?? 0, 2) }}</td>
+                  <td class="table-cell">₦{{ number_format($payment->Development_Charges ?? 0, 2) }}</td>
+                  <td class="table-cell">₦{{ number_format($payment->Penalty_Fees ?? 0, 2) }}</td>
                   <td class="table-cell">{{ \Carbon\Carbon::parse($payment->created_at)->format('Y-m-d') }}</td>
-                 
                 </tr>
                 @empty
                 <tr>
-                  <td colspan="12" class="table-cell text-center py-4">No unit application payment records found</td>
+                  <td colspan="8" class="table-cell text-center py-4">No unit application payment records found</td>
                 </tr>
                 @endforelse
               </tbody>
@@ -576,10 +571,11 @@
                 <td class="table-cell">${payment.Sectional_Title_File_No}</td>
                 <td class="table-cell">${payment.owner_name}</td>
                 <td class="table-cell">₦${parseFloat(payment.Scheme_Application_Fee || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
-                <td class="table-cell">₦${parseFloat(payment.Site_Plan_Fee || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
                 <td class="table-cell">₦${parseFloat(payment.Processing_Fee || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
-                <td class="table-cell">₦${parseFloat(payment.Betterment_Charges || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
-                <td class="table-cell">₦${parseFloat(payment.Land_Use_Charge || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
+                <td class="table-cell">₦${parseFloat(payment.Site_Plan_Fee || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
+                <td class="table-cell">₦${parseFloat(payment.Recertification_Fee || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
+                <td class="table-cell">₦${parseFloat(payment.Assignment_Fee || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
+                <td class="table-cell">₦${parseFloat(payment.Development_Charges || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
                 <td class="table-cell">₦${parseFloat(payment.Penalty_Fees || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
                 <td class="table-cell">${payment.created_at ? new Date(payment.created_at).toISOString().split('T')[0] : ''}</td>
                 <td class="table-cell">
@@ -615,11 +611,11 @@
                 <td class="table-cell">${payment.Sectional_Title_File_No}</td>
                 <td class="table-cell">${payment.owner_name}</td>
                 <td class="table-cell">₦${parseFloat(payment.Scheme_Application_Fee || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
-                <td class="table-cell">₦${parseFloat(payment.Site_Plan_Fee || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
                 <td class="table-cell">₦${parseFloat(payment.Processing_Fee || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
-                <td class="table-cell">₦${parseFloat(payment.Betterment_Charges || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
-                <td class="table-cell">₦${parseFloat(payment.Unit_Application_Fees || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
-                <td class="table-cell">₦${parseFloat(payment.Land_Use_Charge || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
+                <td class="table-cell">₦${parseFloat(payment.Site_Plan_Fee || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
+                <td class="table-cell">₦${parseFloat(payment.Recertification_Fee || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
+                <td class="table-cell">₦${parseFloat(payment.Assignment_Fee || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
+                <td class="table-cell">₦${parseFloat(payment.Development_Charges || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
                 <td class="table-cell">₦${parseFloat(payment.Penalty_Fees || 0).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
                 <td class="table-cell">${payment.created_at ? new Date(payment.created_at).toISOString().split('T')[0] : ''}</td>
                 <td class="table-cell">

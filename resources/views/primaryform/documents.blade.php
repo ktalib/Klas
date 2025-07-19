@@ -43,12 +43,9 @@
                <div class="flex items-center mr-4">
                    <div class="step-circle inactive">4</div>
                </div>
-               <div class="flex items-center mr-4">
-                   <div class="step-circle inactive">5</div>
-               </div> 
-               <div class="flex items-center mr-4">
-                   <div class="step-circle inactive">6</div>
-               </div>
+                           <div class="flex items-center">
+          <div class="step-circle inactive">5</div>
+        </div>
                <div class="ml-4">Step 3 - Documents</div>
            </div>
            <div class="mb-6">
@@ -164,7 +161,7 @@
                    <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md"
                        id="backStep3">Back</button>
                    <div class="flex items-center">
-                       <span class="text-sm text-gray-500 mr-4">Step 3 of 6</span>
+                       <span class="text-sm text-gray-500 mr-4">Step 3 of 4</span>
                        <button type="button" class="px-4 py-2 bg-black text-white rounded-md"
                            id="nextStep3">Next</button>
                    </div>

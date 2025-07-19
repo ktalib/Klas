@@ -28,7 +28,7 @@ class SecondaryFormController extends Controller
             // Get the mother application data for context
             $motherApplication = DB::connection('sqlsrv')
                 ->table('mother_applications')
-                ->where('applicationID', $application->main_application_id)
+                ->where('id', $application->main_application_id)
                 ->first();
 
             // Decode JSON fields
@@ -117,6 +117,7 @@ class SecondaryFormController extends Controller
                 'block_number' => 'nullable',
                 'floor_number' => 'nullable',
                 'unit_number' => 'nullable',
+                'unit_size' => 'nullable|string|max:255',
                 'application_fee' => 'nullable',
                 'processing_fee' => 'nullable',
                 'site_plan_fee' => 'nullable',
@@ -270,7 +271,19 @@ class SecondaryFormController extends Controller
                 $ownershipType = $request->input('otherOwnership');
             }
             
-            // Create update data array
+            // Get the mother application to build main_id
+            $motherApplication = DB::connection('sqlsrv')
+                ->table('mother_applications')
+                ->where('id', $existingApplication->main_application_id)
+                ->first();
+
+            $mainId = null;
+            if ($motherApplication) {
+                $mainYear = date('Y', strtotime($motherApplication->created_at ?? now()));
+                $mainAppId = $motherApplication->id ?? '';
+                $mainId = sprintf('ST-%s-%03d', $mainYear, $mainAppId);
+            }
+
             $updateData = [
                 'applicant_type' => $request->input('applicantType'),
                 'applicant_title' => $request->input('applicant_title'),
@@ -295,6 +308,8 @@ class SecondaryFormController extends Controller
                 'block_number' => $request->input('block_number'),
                 'floor_number' => $request->input('floor_number'),
                 'unit_number' => $request->input('unit_number'),
+                'unit_size' => $request->input('unit_size'),
+                'main_id' => $mainId, // always set from server-side
                 'application_fee' => $request->input('application_fee'),
                 'processing_fee' => $request->input('processing_fee'),
                 'site_plan_fee' => $request->input('site_plan_fee'),
@@ -377,6 +392,7 @@ class SecondaryFormController extends Controller
                 'block_number' => 'nullable',
                 'floor_number' => 'nullable',
                 'unit_number' => 'nullable',
+                'unit_size' => 'nullable|string|max:255',
                 'application_fee' => 'nullable',
                 'processing_fee' => 'nullable',
                 'site_plan_fee' => 'nullable',
@@ -390,6 +406,7 @@ class SecondaryFormController extends Controller
                 'otherOwnership' => 'nullable',
                 'shared_areas' => 'nullable|array',
                 'main_application_id' => 'required',
+                'main_id' => 'nullable|string',
                 'scheme_no' => 'nullable',
                 'prefix' => 'required',
                 'year' => 'required',
@@ -508,11 +525,35 @@ class SecondaryFormController extends Controller
                 $ownershipType = $request->input('otherOwnership');
             }
             
+            // Get the mother application to build main_id
+            $motherApplication = DB::connection('sqlsrv')->table('mother_applications')
+                ->where('id', $request->input('main_application_id'))
+                ->first();
+
+            $mainId = null;
+            if ($motherApplication) {
+                $mainYear = date('Y', strtotime($motherApplication->created_at ?? now()));
+                $mainAppId = $motherApplication->id ?? '';
+                $mainId = sprintf('ST-%s-%03d', $mainYear, $mainAppId);
+                
+                // Debug log to check main_id generation
+                Log::info('Main ID generation', [
+                    'mother_application_id' => $request->input('main_application_id'),
+                    'mother_application_found' => $motherApplication ? 'yes' : 'no',
+                    'main_year' => $mainYear,
+                    'main_app_id' => $mainAppId,
+                    'generated_main_id' => $mainId
+                ]);
+            } else {
+                Log::warning('Mother application not found for main_application_id: ' . $request->input('main_application_id'));
+            }
+            
             // Create data array for subapplications table
             $subApplicationData = [
                 'main_application_id' => $request->input('main_application_id'),
                 'applicant_type' => $request->input('applicantType'),
-                'fileno' => $request->input('fileno'),
+                'fileno' => $request->input('fileno'), // Unit File Number
+                'np_fileno' => $motherApplication->np_fileno ?? null, // NP FileNo from mother application
                 'applicant_title' => $request->input('applicant_title'),
                 'first_name' => $request->input('first_name'),
                 'middle_name' => $request->input('middle_name'),
@@ -535,6 +576,8 @@ class SecondaryFormController extends Controller
                 'block_number' => $request->input('block_number'),
                 'floor_number' => $request->input('floor_number'),
                 'unit_number' => $request->input('unit_number'),
+                'unit_size' => $request->input('unit_size'),
+                'main_id' => $mainId, // always set from server-side
                 'application_status' => 'Pending',
                 'planning_recommendation_status' => 'Pending',
                 'application_fee' => $request->input('application_fee'),
@@ -556,22 +599,20 @@ class SecondaryFormController extends Controller
                 'application_comment' => $request->input('application_comment'),
                 'created_at' => now(),
                 'updated_at' => now(),
-'created_by' => Auth::id(),
-'updated_by' => Auth::id(),
-
+                'created_by' => Auth::id(),
+                'updated_by' => Auth::id(),
             ];
 
-            // Get the land use from the mother application
-            $motherApplication = DB::connection('sqlsrv')->table('mother_applications')
-                ->where('applicationID', $request->input('main_application_id'))
-                ->first();
-                
+            // Get the land use from the mother application (reuse the already fetched data)
             if ($motherApplication) {
                 $subApplicationData['land_use'] = $motherApplication->land_use;
             }
 
             // Log the data being inserted into subapplications
             Log::info('Data being inserted into subapplications table', [
+                'main_id' => $subApplicationData['main_id'],
+                'main_application_id' => $subApplicationData['main_application_id'],
+                'fileno' => $subApplicationData['fileno'],
                 'documents' => $subApplicationData['documents'],
                 'document_count' => count($documents),
                 'multiple_owners_data' => [
@@ -584,8 +625,47 @@ class SecondaryFormController extends Controller
                 ]
             ]);
 
+            // Log the exact SQL that would be executed
+            Log::info('About to insert subapplication data', [
+                'data_keys' => array_keys($subApplicationData),
+                'main_id_value' => $subApplicationData['main_id'],
+                'main_id_type' => gettype($subApplicationData['main_id']),
+                'main_id_length' => strlen($subApplicationData['main_id'] ?? ''),
+            ]);
+
             // Insert data into the subapplications table
             $subApplicationId = DB::connection('sqlsrv')->table('subapplications')->insertGetId($subApplicationData);
+            
+            // Verify the main_id was saved correctly
+            $savedRecord = DB::connection('sqlsrv')->table('subapplications')->where('id', $subApplicationId)->first();
+            Log::info('Verification after insert', [
+                'subapplication_id' => $subApplicationId,
+                'saved_main_id' => $savedRecord->main_id ?? 'NULL',
+                'saved_st_fillno' => $savedRecord->st_fillno ?? 'NULL',
+                'saved_fileno' => $savedRecord->fileno ?? 'NULL',
+                'expected_main_id' => $mainId,
+                'all_saved_fields' => array_keys((array)$savedRecord)
+            ]);
+            
+            // If main_id is still null, try to update it directly
+            if (empty($savedRecord->main_id) && !empty($mainId)) {
+                Log::warning('Main ID was not saved during insert, attempting direct update');
+                $updateResult = DB::connection('sqlsrv')
+                    ->table('subapplications')
+                    ->where('id', $subApplicationId)
+                    ->update(['main_id' => $mainId]);
+                    
+                Log::info('Direct update result', [
+                    'update_result' => $updateResult,
+                    'main_id_to_update' => $mainId
+                ]);
+                
+                // Verify the update worked
+                $updatedRecord = DB::connection('sqlsrv')->table('subapplications')->where('id', $subApplicationId)->first();
+                Log::info('After direct update verification', [
+                    'updated_main_id' => $updatedRecord->main_id ?? 'NULL'
+                ]);
+            }
             
 
             // Add Duplicate Check for StFileNo table
@@ -644,18 +724,64 @@ class SecondaryFormController extends Controller
             // Insert data into eRegistry table
             DB::connection('sqlsrv')->table('eRegistry')->insert($eRegistryData);
 
-            // Log successful submission
-            Log::info('Sub-application submitted successfully', [
-                'subapplication_id' => $subApplicationId, 
-                'fileno' => $request->input('fileno'),
-                'eRegistry_added' => true,
-                'multiple_owners_count' => count($request->input('multiple_owners_names', []))
-            ]);
+            // Insert billing record for unit application
+            $billingData = [
+                'Sectional_Title_File_No' => $sectionalTitleFileNo,
+                'ref_id' => $request->input('fileno'),
+                'application_id' => null,
+                'sub_application_id' => $subApplicationId,
+                'Scheme_Application_Fee' => $request->input('application_fee'),
+                'Site_Plan_Fee' => null,
+                'Processing_Fee' => $request->input('processing_fee'),
+                'survey_fee' => $request->input('site_plan_fee'), // For unit, site_plan_fee maps to survey_fee
+                'Betterment_Charges' => null,
+                'Unit_Application_Fees' => $request->input('application_fee'),
+                'Land_Use_Charge' => null,
+                'property_value' => null,
+                'Penalty_Fees' => null,
+                'Payment_Status' => 'Paid',
+                'created_at' => now(),
+                'updated_at' => now(),
+                'betterment_rate' => null
+            ];
 
-            // Return response with success message and flash data
-            return back()
-                ->with('success', 'Secondary application submitted successfully!')
-                ->with('application_id', $subApplicationId);
+            // Insert billing record
+            DB::connection('sqlsrv')->table('billing')->insert($billingData);
+
+            // Auto-create EDMS file indexing (always enabled)
+            try {
+                // Create file indexing record for sub-application
+                $fileIndexing = \App\Models\FileIndexing::on('sqlsrv')->create([
+                    'subapplication_id' => $subApplicationId,
+                    'main_application_id' => $request->input('main_application_id'),
+                    'file_number' => $request->input('fileno'), // Use the Unit File Number
+                    'file_title' => $this->generateSubApplicationFileTitle($subApplicationData, $motherApplication),
+                    'land_use_type' => $motherApplication->land_use ?? 'Residential',
+                    'plot_number' => $motherApplication->property_plot_no,
+                    'district' => $motherApplication->property_district,
+                    'lga' => $motherApplication->property_lga,
+                    'has_cofo' => false,
+                    'is_merged' => false,
+                    'has_transaction' => false,
+                    'is_problematic' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                
+                Log::info('EDMS file indexing created for sub-application', [
+                    'subapplication_id' => $subApplicationId,
+                    'file_indexing_id' => $fileIndexing->id
+                ]);
+            } catch (Exception $edmsError) {
+                Log::warning('Failed to create EDMS file indexing', [
+                    'subapplication_id' => $subApplicationId,
+                    'error' => $edmsError->getMessage()
+                ]);
+            }
+
+            // Always redirect to EDMS workflow after successful submission
+            return redirect()->route('sectionaltitling.units', $subApplicationId)
+                ->with('success', 'Unit application submitted successfully! EDMS workflow has been initialized.');
                 
         } catch (Exception $e) {
             // Enhanced error logging for debugging
@@ -669,6 +795,45 @@ class SecondaryFormController extends Controller
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Error submitting application: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Generate file title for sub-application
+     */
+    private function generateSubApplicationFileTitle($subApplicationData, $motherApplication)
+    {
+        $name = '';
+        
+        if ($subApplicationData['applicant_type'] === 'individual') {
+            $name = trim(($subApplicationData['first_name'] ?? '') . ' ' . ($subApplicationData['middle_name'] ?? '') . ' ' . ($subApplicationData['surname'] ?? ''));
+        } elseif ($subApplicationData['applicant_type'] === 'corporate') {
+            $name = $subApplicationData['corporate_name'] ?? 'Corporate Applicant';
+        } elseif ($subApplicationData['applicant_type'] === 'multiple') {
+            $names = json_decode($subApplicationData['multiple_owners_names'] ?? '[]', true);
+            if (is_array($names) && count($names) > 0) {
+                $name = $names[0] . ' et al.';
+            }
+        }
+        
+        $unitInfo = '';
+        if ($subApplicationData['unit_number']) {
+            $unitInfo = "Unit {$subApplicationData['unit_number']}";
+            if ($subApplicationData['block_number']) {
+                $unitInfo .= ", Block {$subApplicationData['block_number']}";
+            }
+        }
+        
+        $landUse = $motherApplication->land_use ?? 'Property';
+        
+        if ($name && $unitInfo) {
+            return "{$name}'s {$landUse} - {$unitInfo}";
+        } elseif ($name) {
+            return "{$name}'s Unit Application";
+        } elseif ($unitInfo) {
+            return "{$landUse} - {$unitInfo}";
+        } else {
+            return "Unit Application";
         }
     }
 }

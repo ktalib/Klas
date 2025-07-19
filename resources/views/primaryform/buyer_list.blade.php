@@ -1,4 +1,4 @@
-<div class="form-section" id="step5">
+<div class="form-section" id="step4">
   <div class="p-6">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-bold text-center text-gray-800">MINISTRY OF LAND AND PHYSICAL PLANNING</h2>
@@ -41,15 +41,12 @@
         <div class="step-circle inactive">3</div>
       </div>
       <div class="flex items-center mr-4">
-        <div class="step-circle inactive">4</div>
+        <div class="step-circle active">4</div>
       </div>
-      <div class="flex items-center mr-4">
-        <div class="step-circle active">5</div>
-      </div>
-      <div class="flex items-center mr-4">
-        <div class="step-circle inactive">6</div>
-      </div>
-      <div class="ml-4">Step 5 - Buyers List</div>
+                  <div class="flex items-center">
+          <div class="step-circle inactive">5</div>
+        </div>
+      <div class="ml-4">Step 4 - Buyers List</div>
     </div>
 
     <div class="mb-6">
@@ -82,7 +79,7 @@
                           Title <span class="text-red-500">*</span>
                         </label>
                         <select :name="'records[' + index + '][buyerTitle]'"
-                          class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
+                          class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm uppercase"
                           x-bind:value="buyer.buyerTitle || ''" required>
                           <option value="">Select title</option>
                           <option value="Mr." x-bind:selected="buyer.buyerTitle == 'Mr.'">Mr.</option>
@@ -150,9 +147,10 @@
                           Unit No <span class="text-red-500">*</span>
                         </label>
                         <input type="text" :name="'records[' + index + '][unit_no]'"
-                          class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
+                          class="w-full py-2 px-3 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm uppercase"
                           placeholder="Enter Unit No" required
-                          x-bind:value="buyer.unit_no || ''">
+                          x-bind:value="buyer.unit_no || ''"
+                          oninput="this.value = this.value.toUpperCase()">
                       </div>
                       <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -183,11 +181,11 @@
 
         <div class="flex justify-between mt-8">
           <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md"
-            id="backStep5">Back</button>
+            id="backStep4">Back</button>
           <div class="flex items-center">
-            <span class="text-sm text-gray-500 mr-4">Step 5 of 6</span>
+            <span class="text-sm text-gray-500 mr-4">Step 4 of 4</span>
             <button type="button" class="px-4 py-2 bg-black text-white rounded-md"
-              id="nextStep5">Next</button>
+              id="nextStep4">Next</button>
           </div>
         </div>
       </div>

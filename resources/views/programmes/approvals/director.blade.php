@@ -302,12 +302,12 @@
                               <a href="{{ route('actions.director-approval', ['id' => $application->id]) }}" 
                                  class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                                 <i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>
-                                <span>Approve</span>
+                                <span>Approve/Decline</span>
                               </a>
                             @else
                               <div class="block w-full text-left px-4 py-2 flex items-center space-x-2 cursor-not-allowed opacity-50">
                                 <i data-lucide="check-circle" class="w-4 h-4 text-gray-400"></i>
-                                <span>Approve</span>
+                                <span>Approve/Decline</span>
                               </div>
                             @endif
                           </li>
@@ -421,12 +421,12 @@
                           <a href="{{ route('sub-actions.director-approval', ['id' => $unitApplication->id]) }}" 
                              class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
                             <i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>
-                            <span>Approve</span>
+                            <span>Approve/Decline</span>
                           </a>
                         @else
                           <div class="block w-full text-left px-4 py-2 flex items-center space-x-2 cursor-not-allowed opacity-50">
                             <i data-lucide="check-circle" class="w-4 h-4 text-gray-400"></i>
-                            <span>Approve</span>
+                            <span>Approve/Decline</span>
                           </div>
                         @endif
                       </li>

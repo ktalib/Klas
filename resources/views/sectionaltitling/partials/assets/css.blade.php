@@ -33,29 +33,78 @@
       align-items: center;
       justify-content: center;
       padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
+      border-radius: 0.375rem;
       font-size: 0.75rem;
       font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      border: 1px solid transparent;
+      transition: all 0.2s ease-in-out;
     }
     .badge-primary {
       background-color: #f3f4f6;
       color: #4b5563;
+      border-color: #d1d5db;
     }
     .badge-progress {
       background-color: #dbeafe;
       color: #2563eb;
+      border-color: #93c5fd;
     }
     .badge-approved {
       background-color: #d1fae5;
       color: #059669;
+      border-color: #86efac;
     }
     .badge-pending {
       background-color: #fef3c7;
       color: #d97706;
+      border-color: #fcd34d;
     }  
     .badge-declined {
+      background-color: #fee2e2;
+      color: #dc2626;
+      border-color: #fca5a5;
+    }
+    
+    /* Land Use Badge Colors */
+    .badge-residential {
+      background-color: #dbeafe;
+      color: #2563eb;
+      border-color: #93c5fd;
+    }
+    .badge-commercial {
+      background-color: #d1fae5;
+      color: #059669;
+      border-color: #86efac;
+    }
+    .badge-industrial {
+      background-color: #fee2e2;
+      color: #dc2626;
+      border-color: #fca5a5;
+    }
+    
+    /* Important Value Badges */
+    .badge-high-priority {
       background-color: #fef3c7;
-      color: #a70606;
+      color: #d97706;
+      border-color: #fcd34d;
+    }
+    .badge-units {
+      background-color: #e0e7ff;
+      color: #4338ca;
+      border-color: #c7d2fe;
+    }
+    .badge-new {
+      background-color: #ecfdf5;
+      color: #16a34a;
+      border-color: #bbf7d0;
+    }
+    
+    /* Badge hover effects */
+    .badge:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     .progress-bar {
       height: 8px;

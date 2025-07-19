@@ -168,11 +168,11 @@
         <p class="text-gray-500 text-sm mb-6">Sectional titling application process</p>
         
         <div class="grid grid-cols-2 gap-6">
-          <!-- Primary Application -->
+          <!-- Mother Application -->
           <div class="bg-white rounded-md border border-gray-200 p-6">
             <div class="flex items-center mb-4">
               <i data-lucide="file-text" class="w-6 h-6 text-gray-700 mr-2"></i>
-              <h3 class="text-lg font-medium">Primary Application</h3>
+              <h3 class="text-lg font-medium">Mother Application</h3>
             </div>
             
             <p class="text-gray-600 mb-4">
@@ -208,7 +208,7 @@
               onclick="toggleDropdown(this)"
               >
               <i data-lucide="file-text" class="w-5 h-5 mr-2"></i>
-              Create Primary Application
+              Create Mother Application
               <i data-lucide="chevron-down" class="w-4 h-4 ml-2"></i>
               </button>
               <div class="absolute mt-2 bg-white border border-gray-200 rounded-md shadow-lg w-full hidden dropdown-menu">
@@ -305,8 +305,7 @@
                 <tr>
                   <th class="table-header">FileNo</th>
                   <th class="table-header">Type</th>
-                  <th class="table-header">Property/Unit</th>
-                  <th class="table-header">Applicant</th>
+                   <th class="table-header">Applicant</th>
                   <th class="table-header">Status</th>
                 </tr>
               </thead>
@@ -315,9 +314,9 @@
                 <tr>
                   <td class="table-cell text-green-700">{{ $primary->fileno }}</td>
                   <td class="table-cell">
-                    <span class="badge badge-primary">Primary</span>
+                    <span class="badge badge-primary">Mother</span>
                   </td>
-                  <td class="table-cell">{{ $primary->NoOfUnits }} Units</td>
+               
                   <td class="table-cell">
                     <div class="flex items-center">
                       <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-3">
@@ -375,7 +374,7 @@
                   <td class="table-cell">
                     <span class="badge badge-primary">Secondary</span>
                   </td>
-                  <td class="table-cell">Unit {{ $secondary->unit_number }}</td>
+                 
                   <td class="table-cell">
                     <div class="flex items-center">
                         <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-3">

@@ -5,11 +5,13 @@
 @include('sectionaltitling.sub_app_css')
 @include('sectionaltitling.partials.assets.css')
 
-@push('styles')
+@section('content')
 <!-- SweetAlert2 CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
 <!-- Animate.css for SweetAlert animations -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
 .swal-validation-popup {
     font-family: inherit;
@@ -21,15 +23,35 @@
 .swal-validation-content {
     color: #374151;
 }
+/* Select2 Custom Styling */
+.select2-container--default .select2-selection--single {
+    height: 42px;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 40px;
+    padding-left: 8px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 40px;
+}
+.select2-dropdown {
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #3b82f6;
+}
 </style>
-@endpush
-
-@push('scripts')
+ 
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
-@endpush
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+ 
 
-@section('content')
+
 <!-- Main Content -->
 <div class="flex-1 overflow-auto">
 <!-- Header -->
@@ -60,6 +82,27 @@
         $motherApplication->property_district ?? null
       ]);
       $propertyLocation = implode(', ', $locationParts);
+    }
+
+    // Fetch buyers and their unit measurements for this mother application
+    $buyersWithUnits = [];
+    if ($motherApplication) {
+        $buyersWithUnits = DB::connection('sqlsrv')
+            ->table('buyer_list as bl')
+            ->leftJoin('st_unit_measurements as sum', function($join) use ($motherApplication) {
+                $join->on('bl.unit_no', '=', 'sum.unit_no')
+                     ->where('sum.application_id', '=', $motherApplication->id);
+            })
+            ->select(
+                'bl.application_id',
+                'bl.buyer_title',
+                'bl.buyer_name', 
+                'bl.unit_no',
+                'sum.measurement',
+                'sum.buyer_id'
+            )
+            ->where('bl.application_id', $motherApplication->id)
+            ->get();
     }
   @endphp
 
@@ -93,19 +136,19 @@
                     </div>
             
                     <div class="flex items-center mb-6">
-                      <div class="flex items-center mr-4">
-                        <div class="step-circle active-tab flex items-center justify-center">1</div>
-                      </div>
-                      <div class="flex items-center mr-4">
-                        <div class="step-circle inactive-tab flex items-center justify-center">2</div>
-                      </div>
-                      <div class="flex items-center mr-4">
-                        <div class="step-circle inactive-tab flex items-center justify-center">3</div>
-                      </div>    
-                       <div class="flex items-center mr-4">
-                        <div class="step-circle inactive-tab flex items-center justify-center">4</div>
-                      </div>
-                      <div class="ml-4">Step 1</div>
+                    <div class="flex items-center mr-4">
+                    <div class="step-circle active-tab flex items-center justify-center">1</div>
+                    </div>
+                    <div class="flex items-center mr-4">
+                    <div class="step-circle inactive-tab flex items-center justify-center">2</div>
+                    </div>
+                    <div class="flex items-center mr-4">
+                    <div class="step-circle inactive-tab flex items-center justify-center">3</div>
+                    </div>    
+                    <div class="flex items-center mr-4">
+                    <div class="step-circle inactive-tab flex items-center justify-center">4</div>
+                    </div>
+                    <div class="ml-4">Step 1</div>
                     </div>
             
                     <div class="mb-6">
@@ -137,7 +180,12 @@
                       
                       <form id="subApplicationForm" method="POST" action="{{ route('secondaryform.save') }}" enctype="multipart/form-data" class="space-y-6" novalidate>
                         @csrf
-                        
+                        <input type="hidden" name="main_application_id" value="{{ $mainApplicationId ?? '' }}">
+                        <input type="hidden" name="main_id" id="mainIdHidden" value="@php
+             $mainYear = $motherApplication && $motherApplication->created_at ? date('Y', strtotime($motherApplication->created_at)) : date('Y');
+            $mainAppId = $motherApplication->id ?? '';
+             echo sprintf('ST-%s-%03d', $mainYear, $mainAppId);
+              @endphp">
                         
                       <div class="mb-6">
                         <h2 class="text-lg font-semibold text-gray-800 mb-3">Main Application Reference</h2>
@@ -152,7 +200,6 @@
                                   {{ $motherApplication->applicationID ?? 'N/A' }}
                                 </span>
                               </div>            
-                              <input type="hidden" name="main_application_id" value="{{ $mainApplicationId ?? '' }}">
                              
                             </div>
                             <div class="flex items-center">
@@ -238,8 +285,12 @@
                         
                         <!-- Left column (2/3 width) -->
                            <div>
-                              <label class="block text-sm mb-1">ST FileNo</label>
-                              <input type="text" class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700 cursor-not-allowed" name="fileno" value="{{ $prefix }}-{{ $currentYear }}-{{ $formattedSerialNumber }}" readonly>
+                              <label class="block text-sm mb-1">NP FileNo (NPFN)</label>
+                              <input type="text" class="w-full p-2 border border-gray-300 rounded-md bg-blue-100 text-blue-700 cursor-not-allowed" name="np_fileno" value="{{ $npFileNo ?? 'N/A' }}" readonly title="New Primary FileNo">
+                            </div>
+                           <div>
+                              <label class="block text-sm mb-1">Unit FileNo</label>
+                              <input type="text" class="w-full p-2 border border-gray-300 rounded-md bg-green-100 text-green-700 cursor-not-allowed" name="fileno" value="{{ $unitFileNo ?? 'N/A' }}" readonly title="Unit FileNo (NP FileNo + Serial)">
                             </div>            
                             <div>
                                 <label class="block text-sm mb-1">Scheme No <span class="text-red-500">*</span></label>
@@ -247,6 +298,87 @@
                             </div>
                             
                         <div class="col-span-2">
+                          <!-- Buyer Selection Section -->
+                          <div class="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-5">
+                            <div class="flex items-center mb-3">
+                              <div class="flex-shrink-0">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                              </div>
+                              <div class="ml-3">
+                                <h3 class="text-lg font-semibold text-gray-900">Select Existing Buyer</h3>
+                                <p class="text-sm text-gray-600">Optional - Choose from registered buyers to auto-fill form</p>
+                              </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-lg border border-gray-200 p-4">
+                              <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-end">
+                                <!-- Search Buyer Field -->
+                                <div class="lg:col-span-2">
+                                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <svg class="w-4 h-4 inline mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                    Search Buyer
+                                  </label>
+                                  <select id="buyerSelect" class="w-full" name="selected_buyer_id">
+                                    <option value="">Type to search buyer name...</option>
+                                    @foreach($buyersWithUnits as $buyer)
+                                      <option value="{{ $buyer->application_id }}_{{ $buyer->unit_no }}" 
+                                              data-buyer-title="{{ $buyer->buyer_title }}"
+                                              data-buyer-name="{{ $buyer->buyer_name }}"
+                                              data-unit-no="{{ $buyer->unit_no }}"
+                                              data-measurement="{{ $buyer->measurement }}">
+                                        {{ $buyer->buyer_title }} {{ $buyer->buyer_name }} (Unit: {{ $buyer->unit_no }})
+                                        @if($buyer->measurement) - {{ $buyer->measurement }} @endif
+                                      </option>
+                                    @endforeach
+                                  </select>
+                                </div>
+                                
+                                <!-- Action Buttons -->
+                                <div class="flex space-x-2">
+                                  <button type="button" id="clearBuyerSelection" class="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 hover:text-red-700 transition-colors duration-200" style="display: none;">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                    Clear
+                                  </button>
+                                </div>
+                              </div>
+                              
+                              <!-- Selected Buyer Info Display -->
+                              <div id="selectedBuyerInfo" class="mt-4 p-3 bg-green-50 border border-green-200 rounded-md" style="display: none;">
+                                <div class="flex items-center">
+                                  <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                  </svg>
+                                  <div>
+                                    <p class="text-sm font-medium text-green-800">Buyer Selected Successfully</p>
+                                    <p class="text-xs text-green-600" id="selectedBuyerDetails"></p>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <!-- Available Buyers Count -->
+                              @if(count($buyersWithUnits) > 0)
+                                <div class="mt-3 flex items-center text-xs text-gray-500">
+                                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                  </svg>
+                                  {{ count($buyersWithUnits) }} registered buyer(s) available for this application
+                                </div>
+                              @else
+                                <div class="mt-3 flex items-center text-xs text-amber-600 bg-amber-50 p-2 rounded">
+                                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                  </svg>
+                                  No registered buyers found for this application
+                                </div>
+                              @endif
+                            </div>
+                          </div>
                           
                           <div class="mb-6">
                             <label class="block mb-2 font-medium">Applicant Type</label>
@@ -298,28 +430,28 @@
                         <p class="text-sm mb-1">Unit Owner's Address</p>
                         <div class="grid grid-cols-2 gap-4 mb-4">
                           <div>
-                            <label class="block text-sm mb-1">House No.</label>
+                            <label class="block text-sm mb-1">House No.  <span class="text-red-500">*</span></label>
                             <input type="text" id="ownerHouseNo" class="w-full p-2 border border-gray-300 rounded-md" placeholder="HOUSE NO." name="address_house_no" style="text-transform:uppercase" oninput="this.value = this.value.toUpperCase()">
                           </div>
                           <div>
-                            <label class="block text-sm mb-1">Street Name</label>
+                            <label class="block text-sm mb-1">Street Name  <span class="text-red-500">*</span></label>
                             <input type="text" id="ownerStreetName" class="w-full p-2 border border-gray-300 rounded-md" placeholder="STREET NAME" name="address_street_name" style="text-transform:uppercase" oninput="this.value = this.value.toUpperCase()">
                           </div>
                         </div>
               
                         <div class="grid grid-cols-3 gap-4 mb-4">
                           <div>
-                            <label class="block text-sm mb-1">District</label>
+                            <label class="block text-sm mb-1">District  <span class="text-red-500">*</span></label>
                             <input type="text" id="ownerDistrict" class="w-full p-2 border border-gray-300 rounded-md" placeholder="DISTRICT" name="address_district" style="text-transform:uppercase" oninput="this.value = this.value.toUpperCase()">
                           </div>
                           <div>
-                            <label class="block text-sm mb-1">LGA</label>
+                            <label class="block text-sm mb-1">LGA  <span class="text-red-500">*</span></label>
                             <select id="ownerLga" name="address_lga" class="w-full p-2 border border-gray-300 rounded-md" style="text-transform:uppercase" disabled>
                               <option value="">SELECT LGA</option>
                             </select>
                           </div>
                           <div>
-                            <label class="block text-sm mb-1">State</label>
+                            <label class="block text-sm mb-1">State  <span class="text-red-500">*</span></label>
                             <select id="ownerState" name="address_state" class="w-full p-2 border border-gray-300 rounded-md" onchange="selectLGA(this)" style="text-transform:uppercase">
                               <option value="">SELECT STATE</option>
                             </select>
@@ -327,9 +459,9 @@
                         </div>
                              <input type="hidden" name="address" id="contactAddressHidden">    
                         <div class="mb-4">
-                          <label class="block text-sm mb-1">Contact Address:</label>
+                          <label class="block text-sm mb-1">Contact Address:  <span class="text-red-500">*</span></label>
                           <div id="contactAddressDisplay" class="p-2 bg-gray-50 border border-gray-200 rounded-md">
-                            <span id="fullContactAddress"></span>
+                            <span id="fullContactAddress" style="text-transform:uppercase"></span>
                           </div>
                         </div>
                
@@ -346,7 +478,7 @@
                           
                           <div>
                           <label class="block text-sm mb-1">Email Address</label>
-                          <input type="email" class="w-full p-2 border border-gray-300 rounded-md" placeholder="ENTER EMAIL ADDRESS" name="owner_email" style="text-transform:uppercase" oninput="this.value = this.value.toUpperCase()">
+                          <input type="email" class="w-full p-2 border border-gray-300 rounded-md" placeholder="ENTER EMAIL ADDRESS" name="owner_email"   >
                           </div>
                         </div>
                         </div>
@@ -438,8 +570,12 @@
                                 <input type="text" name="floor_number" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter floor number" required>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Unit No <span class="text-red-500">*</span></label>
-                                <input type="text" name="unit_number" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter unit number" required>
+                              <label class="block text-sm font-medium text-gray-700">Unit No <span class="text-red-500">*</span></label>
+                              <input type="text" name="unit_number" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-100 text-gray-700 cursor-not-allowed" placeholder="Enter unit number" readonly>
+                            </div>
+                            <div>
+                              <label class="block text-sm font-medium text-gray-700">Unit Size</label>
+                              <input type="text" name="unit_size" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-100 text-gray-700 cursor-not-allowed" placeholder="Enter unit size (e.g. 120 sqm)" readonly>
                             </div>
                         </div>
                         
@@ -453,58 +589,58 @@
                         <textarea id="application_comment" name="application_comment" rows="3" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Add any comments or notes here..."></textarea>
                       </div>
             
-                      <div class="bg-gray-50 p-4 rounded-md mb-6">
+                        <div class="bg-gray-50 p-4 rounded-md mb-6">
                         <h3 class="font-medium text-center mb-4">INITIAL BILL</h3>
                         
                         <div class="grid grid-cols-3 gap-4 mb-4">
                           <div>
-                            <label class="flex items-center text-sm mb-1">
-                              <i data-lucide="file-text" class="w-4 h-4 mr-1 text-green-600"></i>
-                              Application fee (₦)
-                            </label>
-                            <input type="number" name="application_fee" class="w-full p-2 border border-gray-300 rounded-md fee-input" placeholder="Enter application fee" value="0.00">
+                          <label class="flex items-center text-sm mb-1">
+                            <i data-lucide="file-text" class="w-4 h-4 mr-1 text-green-600"></i>
+                            Application fee (₦) <span class="text-red-500">*</span>
+                          </label>
+                          <input type="number" name="application_fee" class="w-full p-2 border border-gray-300 rounded-md fee-input" placeholder="Enter application fee" value="0.00" required>
                           </div>
                           <div>
-                            <label class="flex items-center text-sm mb-1">
-                              <i data-lucide="file-check" class="w-4 h-4 mr-1 text-green-600"></i>
-                              Processing fee (₦)
-                            </label>
-                            <input type="number" name="processing_fee" class="w-full p-2 border border-gray-300 rounded-md fee-input" placeholder="Enter processing fee" value="0.00">
+                          <label class="flex items-center text-sm mb-1">
+                            <i data-lucide="file-check" class="w-4 h-4 mr-1 text-green-600"></i>
+                            Processing fee (₦) <span class="text-red-500">*</span>
+                          </label>
+                          <input type="number" name="processing_fee" class="w-full p-2 border border-gray-300 rounded-md fee-input" placeholder="Enter processing fee" value="0.00" required>
                           </div>
                           <div>
-                            <label class="flex items-center text-sm mb-1">
-                              <i data-lucide="map" class="w-4 h-4 mr-1 text-green-600"></i>
-                           Survey Fee (₦)
-                            </label>
-                            <input type="text" name="survey_fee" class="w-full p-2 border border-gray-300 rounded-md fee-input" placeholder="Enter survey fee" value="0.00">
+                          <label class="flex items-center text-sm mb-1">
+                            <i data-lucide="map" class="w-4 h-4 mr-1 text-green-600"></i>
+                           Survey Fee (₦) <span class="text-red-500">*</span>
+                          </label>
+                          <input type="text" name="survey_fee" class="w-full p-2 border border-gray-300 rounded-md fee-input" placeholder="Enter survey fee" value="0.00" required>
                           </div>
                         </div>
                         
                         <div class="flex justify-between items-center mb-4">
                           <div class="flex items-center">
-                            <i data-lucide="file-text" class="w-4 h-4 mr-1 text-green-600"></i>
-                            <span>Total:</span>
+                          <i data-lucide="file-text" class="w-4 h-4 mr-1 text-green-600"></i>
+                          <span>Total:</span>
                           </div>
                           <span class="font-bold" id="total-amount">₦0.00</span>
                         </div>
                         
                         <div class="grid grid-cols-2 gap-4">
                           <div>
-                            <label class="flex items-center text-sm mb-1">
-                              <i data-lucide="calendar" class="w-4 h-4 mr-1 text-green-600"></i>
-                              has been paid on
-                            </label>
-                            <input type="date" name="payment_date" class="w-full p-2 border border-gray-300 rounded-md" value="2025-04-15">
+                          <label class="flex items-center text-sm mb-1">
+                            <i data-lucide="calendar" class="w-4 h-4 mr-1 text-green-600"></i>
+                            has been paid on <span class="text-red-500">*</span>
+                          </label>
+                            <input type="date" name="payment_date" class="w-full p-2 border border-gray-300 rounded-md" value="{{ date('Y-m-d') }}" required>
                           </div>
                           <div>
-                            <label class="flex items-center text-sm mb-1">
-                              <i data-lucide="receipt" class="w-4 h-4 mr-1 text-green-600"></i>
-                              with receipt No.
-                            </label>
-                            <input type="text"  name="receipt_number" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter receipt number">
+                          <label class="flex items-center text-sm mb-1">
+                            <i data-lucide="receipt" class="w-4 h-4 mr-1 text-green-600"></i>
+                            with receipt No. <span class="text-red-500">*</span>
+                          </label>
+                          <input type="text"  name="receipt_number" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter receipt number" required>
                           </div>
                         </div>
-                      </div> 
+                        </div> 
                       
                       <div class="flex justify-between mt-8">
                         <button class="px-4 py-2 bg-white border border-gray-300 rounded-md" onclick="window.history.back()">>Cancel</button>
@@ -569,13 +705,16 @@ const step1 = document.getElementById('step1');
 const step2 = document.getElementById('step2');
 const step3 = document.getElementById('step3');
 const step4 = document.getElementById('step4');
+const step5 = document.getElementById('step5');
 
 const nextStep1 = document.getElementById('nextStep1');
 const nextStep2 = document.getElementById('nextStep2');
 const nextStep3 = document.getElementById('nextStep3');
+const nextStep4 = document.getElementById('nextStep4');
 const backStep2 = document.getElementById('backStep2');
 const backStep3 = document.getElementById('backStep3');
 const backStep4 = document.getElementById('backStep4');
+const backStep5 = document.getElementById('backStep5');
 
 // Function to safely add event listeners
 function addSafeEventListener(element, event, callback) {
@@ -846,6 +985,21 @@ addSafeEventListener(nextStep3, 'click', function(e) {
     document.querySelectorAll('.step-circle')[3].classList.add('active-tab');
 });
 
+// Next from Step 4 to Step 5
+addSafeEventListener(nextStep4, 'click', function(e) {
+    e.preventDefault();
+    
+    // No validation needed for EDMS step - it's informational
+    step4.classList.remove('active-tab');
+    step5.classList.add('active-tab');
+
+    // Update step indicator
+    document.querySelectorAll('.step-circle')[3].classList.remove('active-tab');
+    document.querySelectorAll('.step-circle')[3].classList.add('inactive-tab');
+    document.querySelectorAll('.step-circle')[4].classList.remove('inactive-tab');
+    document.querySelectorAll('.step-circle')[4].classList.add('active-tab');
+});
+
 // Back from Step 2 to Step 1
 addSafeEventListener(backStep2, 'click', function(e) {
 e.preventDefault();
@@ -883,6 +1037,19 @@ document.querySelectorAll('.step-circle')[3].classList.remove('active-tab');
 document.querySelectorAll('.step-circle')[3].classList.add('inactive-tab');
 document.querySelectorAll('.step-circle')[2].classList.remove('inactive-tab');
 document.querySelectorAll('.step-circle')[2].classList.add('active-tab');
+});
+
+// Back from Step 5 to Step 4
+addSafeEventListener(backStep5, 'click', function(e) {
+e.preventDefault();
+step5.classList.remove('active-tab');
+step4.classList.add('active-tab');
+
+// Update step indicator (optional)
+document.querySelectorAll('.step-circle')[4].classList.remove('active-tab');
+document.querySelectorAll('.step-circle')[4].classList.add('inactive-tab');
+document.querySelectorAll('.step-circle')[3].classList.remove('inactive-tab');
+document.querySelectorAll('.step-circle')[3].classList.add('active-tab');
 });
 
 // Submit form from Step 4
@@ -1052,11 +1219,11 @@ fetch('https://nga-states-lga.onrender.com/fetch')
             x.remove(1);
         }
         
-        // Add states to dropdown
+        // Add states to dropdown (uppercase)
         if (Array.isArray(data)) {
             data.forEach(state => {
                 var option = document.createElement("option");
-                option.text = state;
+                option.text = state.toUpperCase();
                 option.value = state;
                 x.add(option);
             });
@@ -1096,7 +1263,7 @@ function selectLGA(target) {
             if (Array.isArray(data)) {
                 data.forEach(lga => {
                     var option = document.createElement("option");
-                    option.text = lga;
+                    option.text = lga.toUpperCase();
                     option.value = lga;
                     lgaSelect.add(option);
                 });
@@ -1110,12 +1277,24 @@ function selectLGA(target) {
         });
 }
 
-// Fallback event listener for robustness
+// Ensure selected value is always displayed in uppercase for State and LGA
 document.addEventListener('DOMContentLoaded', function() {
     var ownerState = document.getElementById('ownerState');
+    var ownerLga = document.getElementById('ownerLga');
     if (ownerState) {
         ownerState.addEventListener('change', function() {
+            // Update selected option text to uppercase
+            if (ownerState.selectedIndex > 0) {
+                ownerState.options[ownerState.selectedIndex].text = ownerState.options[ownerState.selectedIndex].text.toUpperCase();
+            }
             selectLGA(ownerState);
+        });
+    }
+    if (ownerLga) {
+        ownerLga.addEventListener('change', function() {
+            if (ownerLga.selectedIndex > 0) {
+                ownerLga.options[ownerLga.selectedIndex].text = ownerLga.options[ownerLga.selectedIndex].text.toUpperCase();
+            }
         });
     }
 });
@@ -1174,6 +1353,187 @@ document.addEventListener('DOMContentLoaded', function() {
         if (fullContactAddressEl) fullContactAddressEl.textContent = fullAddress;
         if (contactAddressHiddenEl) contactAddressHiddenEl.value = fullAddress;
     }
+    
+    // Initialize Buyer Select2 Dropdown
+    initializeBuyerSelect2();
 });
+
+// Buyer Select2 Functionality
+function initializeBuyerSelect2() {
+    const buyerSelect = $('#buyerSelect');
+    
+    if (!buyerSelect.length) {
+        console.log('Buyer select element not found');
+        return;
+    }
+    
+    // Initialize Select2 with static data
+    buyerSelect.select2({
+        placeholder: 'Search for buyer name...',
+        allowClear: true,
+        templateResult: function(option) {
+            if (option.loading) {
+                return option.text;
+            }
+            
+            if (option.element && option.element.dataset) {
+                const buyerTitle = option.element.dataset.buyerTitle || '';
+                const buyerName = option.element.dataset.buyerName || '';
+                const unitNo = option.element.dataset.unitNo || '';
+                const measurement = option.element.dataset.measurement || '';
+                
+                const $container = $(
+                    '<div class="select2-result-buyer clearfix">' +
+                        '<div class="select2-result-buyer__meta">' +
+                            '<div class="select2-result-buyer__title">' + buyerTitle + ' ' + buyerName + '</div>' +
+                            '<div class="select2-result-buyer__description">Unit: ' + unitNo + 
+                            (measurement ? ' | Size: ' + measurement : '') + '</div>' +
+                        '</div>' +
+                    '</div>'
+                );
+                return $container;
+            }
+            
+            return option.text;
+        },
+        templateSelection: function(option) {
+            if (option.element && option.element.dataset) {
+                const buyerTitle = option.element.dataset.buyerTitle || '';
+                const buyerName = option.element.dataset.buyerName || '';
+                const unitNo = option.element.dataset.unitNo || '';
+                return buyerTitle + ' ' + buyerName + ' (Unit: ' + unitNo + ')';
+            }
+            return option.text;
+        }
+    });
+    
+    // Handle buyer selection
+    buyerSelect.on('select2:select', function(e) {
+        const selectedOption = e.params.data.element;
+        if (selectedOption && selectedOption.dataset) {
+            const buyerData = {
+                buyer_title: selectedOption.dataset.buyerTitle,
+                buyer_name: selectedOption.dataset.buyerName,
+                unit_no: selectedOption.dataset.unitNo,
+                measurement: selectedOption.dataset.measurement
+            };
+            fillBuyerData(buyerData);
+            showSelectedBuyerInfo(buyerData);
+            document.getElementById('clearBuyerSelection').style.display = 'inline-block';
+        }
+    });
+    
+    // Handle buyer clear
+    buyerSelect.on('select2:clear', function(e) {
+        clearBuyerData();
+        hideSelectedBuyerInfo();
+        document.getElementById('clearBuyerSelection').style.display = 'none';
+    });
+    
+    // Clear button functionality
+    document.getElementById('clearBuyerSelection').addEventListener('click', function() {
+        buyerSelect.val(null).trigger('change');
+        clearBuyerData();
+        hideSelectedBuyerInfo();
+        this.style.display = 'none';
+    });
+}
+
+// Function to fill form with buyer data
+function fillBuyerData(buyer) {
+    // Fill unit size in the Unit Details section
+    const unitSizeField = document.querySelector('input[name="unit_size"]');
+    if (unitSizeField && buyer.measurement) {
+        unitSizeField.value = buyer.measurement;
+    }
+    
+    // Auto-fill unit number if available
+    const unitNumberField = document.querySelector('input[name="unit_number"]');
+    if (unitNumberField && buyer.unit_no) {
+        unitNumberField.value = buyer.unit_no;
+    }
+    
+    // Auto-select Individual applicant type and fill name fields
+    const individualRadio = document.querySelector('input[name="applicantType"][value="individual"]');
+    if (individualRadio) {
+        individualRadio.checked = true;
+        
+        // Trigger the applicant type change
+        if (typeof setApplicantType === 'function') {
+            setApplicantType('individual');
+        }
+        if (typeof showIndividualFields === 'function') {
+            showIndividualFields();
+        }
+        
+        // Fill name fields after a short delay to ensure fields are visible
+        setTimeout(function() {
+            // Parse buyer name (assuming format: "Title FirstName LastName")
+            const nameParts = buyer.buyer_name.trim().split(' ');
+            
+            // Fill title
+            const titleField = document.getElementById('applicantTitle');
+            if (titleField && buyer.buyer_title) {
+                titleField.value = buyer.buyer_title.toUpperCase();
+            }
+            
+            // Fill first name and surname
+            if (nameParts.length >= 2) {
+                const firstNameField = document.getElementById('applicantName');
+                const surnameField = document.getElementById('applicantSurname');
+                
+                if (firstNameField) {
+                    firstNameField.value = nameParts[0].toUpperCase();
+                }
+                
+                if (surnameField) {
+                    // Join remaining parts as surname
+                    surnameField.value = nameParts.slice(1).join(' ').toUpperCase();
+                }
+            } else if (nameParts.length === 1) {
+                const firstNameField = document.getElementById('applicantName');
+                if (firstNameField) {
+                    firstNameField.value = nameParts[0].toUpperCase();
+                }
+            }
+        }, 100);
+    }
+    
+    // Show success message
+    Swal.fire({
+        icon: 'success',
+        title: 'Buyer Selected',
+        text: 'Buyer information has been auto-filled. You can modify the details as needed.',
+        timer: 2000,
+        showConfirmButton: false
+    });
+}
+
+// Function to clear buyer data
+function clearBuyerData() {
+    // Note: We don't clear the form fields as user might want to keep the data
+    // Just show a message that selection was cleared
+    console.log('Buyer selection cleared');
+}
+
+// Function to show selected buyer information
+function showSelectedBuyerInfo(buyer) {
+    const selectedBuyerInfo = document.getElementById('selectedBuyerInfo');
+    const selectedBuyerDetails = document.getElementById('selectedBuyerDetails');
+    
+    if (selectedBuyerInfo && selectedBuyerDetails) {
+        const buyerText = `${buyer.buyer_title} ${buyer.buyer_name} - Unit: ${buyer.unit_no}${buyer.measurement ? ' (' + buyer.measurement + ')' : ''}`;
+        selectedBuyerDetails.textContent = buyerText;
+        selectedBuyerInfo.style.display = 'block';
+    }
+}
+
+// Function to hide selected buyer information
+function hideSelectedBuyerInfo() {
+    const selectedBuyerInfo = document.getElementById('selectedBuyerInfo');
+    if (selectedBuyerInfo) {
+        selectedBuyerInfo.style.display = 'none';
+    }
+}
 </script>
 @endsection

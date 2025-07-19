@@ -16,46 +16,180 @@
      {{-- @include('sectionaltitling.partials.statistic.statistic_card') --}}
       <!-- SecondaryApplications Overview  -->
       @include('sectionaltitling.partials.statistic.SecondaryApplications')
-      <!-- Secondary Applications Table - Screenshot 135 -->
-      <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-bold">Unit Applications</h2>
-          
-          <div class="flex items-center space-x-4">
-            <button id="exportBtn" class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-md">
-              <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
-              <span>Export</span>
-            </button>
+      <!-- Secondary Applications Table -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <!-- Header Section -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-8 py-6 border-b border-gray-100">
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900">Unit Applications</h2>
+              <p class="text-sm text-gray-600 mt-1">Manage and track all unit applications</p>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+              <!-- Search Input -->
+              <div class="relative">
+                <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                <input type="text" id="globalSearch" placeholder="Search applications..." 
+                       class="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm w-64">
+              </div>
+              
+              <!-- Export Button -->
+              <div class="relative">
+                <button id="exportBtn" class="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200 shadow-sm">
+                  <i data-lucide="download" class="w-4 h-4 text-gray-600"></i>
+                  <span class="text-gray-700 font-medium">Export</span>
+                  <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                </button>
+              </div>
+              
+              <!-- Filter Button -->
+              <button id="filterBtn" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm">
+                <i data-lucide="filter" class="w-4 h-4"></i>
+                <span class="font-medium">Filter</span>
+              </button>
+            </div>
           </div>
         </div>
         
-        <div class="w-full">
-          <table id="unitsTable" class="w-full table-auto divide-y divide-gray-200">
-            <thead>
-              <tr class="text-xs">
-            <th class="table-header text-green-500">PrimaryID</th>
-            <th class="table-header text-green-500">Scheme No</th>
-            <th class="table-header text-green-500">Mother FileNo</th>
-            <th class="table-header text-green-500">STFileNo</th> 
-            <th class="table-header text-green-500">Land Use</th>
-            <th class="table-header text-green-500">Original Owner</th>
-            <th class="table-header text-green-500">Unit Owner</th>
-            <th class="table-header text-green-500">UnitNo</th>
-            <th class="table-header text-green-500">Phone Number</th>
-            <th class="table-header text-green-500">Application Date</th>
-            <th class="table-header text-green-500">Actions</th> 
+        <!-- Table Container -->
+        <div class="overflow-x-auto">
+          <table id="unitsTable" class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                  <div class="flex items-center space-x-1">
+                    <span>Primary ID</span>
+                    <i data-lucide="arrow-up-down" class="w-3 h-3 text-gray-400"></i>
+                  </div>
+                </th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                  <div class="flex items-center space-x-1">
+                    <span>Scheme No</span>
+                    <i data-lucide="arrow-up-down" class="w-3 h-3 text-gray-400"></i>
+                  </div>
+                </th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                  <div class="flex items-center space-x-1">
+                    <span>NP FileNo</span>
+                    <i data-lucide="arrow-up-down" class="w-3 h-3 text-gray-400"></i>
+                  </div>
+                </th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                  <div class="flex items-center space-x-1">
+                    <span>Unit FileNo</span>
+                    <i data-lucide="arrow-up-down" class="w-3 h-3 text-gray-400"></i>
+                  </div>
+                </th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                  <div class="flex items-center space-x-1">
+                    <span>Land Use</span>
+                    <i data-lucide="arrow-up-down" class="w-3 h-3 text-gray-400"></i>
+                  </div>
+                </th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                  <div class="flex items-center space-x-1">
+                    <span>Original Owner</span>
+                    <i data-lucide="arrow-up-down" class="w-3 h-3 text-gray-400"></i>
+                  </div>
+                </th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                  <div class="flex items-center space-x-1">
+                    <span>Unit Owner</span>
+                    <i data-lucide="arrow-up-down" class="w-3 h-3 text-gray-400"></i>
+                  </div>
+                </th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                  <div class="flex items-center space-x-1">
+                    <span>Unit No</span>
+                    <i data-lucide="arrow-up-down" class="w-3 h-3 text-gray-400"></i>
+                  </div>
+                </th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                  <div class="flex items-center space-x-1">
+                    <span>Phone Number</span>
+                    <i data-lucide="arrow-up-down" class="w-3 h-3 text-gray-400"></i>
+                  </div>
+                </th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                  <div class="flex items-center space-x-1">
+                    <span>Application Date</span>
+                    <i data-lucide="arrow-up-down" class="w-3 h-3 text-gray-400"></i>
+                  </div>
+                </th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                  <div class="flex items-center space-x-1">
+                    <span>Planning Recommendation</span>
+                    <i data-lucide="arrow-up-down" class="w-3 h-3 text-gray-400"></i>
+                  </div>
+                </th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                  <div class="flex items-center space-x-1">
+                    <span>Director's Approval</span>
+                    <i data-lucide="arrow-up-down" class="w-3 h-3 text-gray-400"></i>
+                  </div>
+                </th>
+                <th class="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                  Actions
+                </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-white divide-y divide-gray-100">
               @foreach($SecondaryApplications as $app)
-              <tr class="text-xs">
-            <td class="table-cell px-1 py-1 truncate">{{ $app->main_application_id ?? 'N/A' }}</td>
-            <td class="table-cell px-1 py-1 truncate">{{ $app->scheme_no ?? 'N/A' }}</td>
-            <td class="table-cell px-1 py-1 truncate">{{ $app->mother_fileno ?? 'N/A' }}</td>
-            <td class="table-cell px-1 py-1 truncate">{{ $app->fileno ?? 'N/A' }}</td>
-          
-            <td class="table-cell px-1 py-1 truncate">{{ $app->land_use ?? 'N/A' }}</td>
-            <td class="table-cell px-1 py-1">
+              <tr class="hover:bg-gray-50 transition-colors duration-150">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <div class="flex items-center">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {{ $app->main_application_id ?? 'N/A' }}
+                    </span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <div class="font-medium">{{ $app->scheme_no ?? 'N/A' }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  @php
+                    // Generate NP FileNo (NPFN) from mother application data
+                    $npFileNo = 'N/A';
+                    if ($app->mother_fileno) {
+                      // Extract land use from mother fileno or use land_use field
+                      $landUse = $app->land_use ?? 'RES'; // Default to RES if not available
+                      $landUseCode = match(strtoupper($landUse)) {
+                        'COMMERCIAL' => 'COM',
+                        'INDUSTRIAL' => 'IND', 
+                        'RESIDENTIAL' => 'RES',
+                        default => 'RES'
+                      };
+                      
+                      // Get year from created_at or current year
+                      $year = $app->created_at ? date('Y', strtotime($app->created_at)) : date('Y');
+                      
+                      // Extract serial number from mother_fileno or use main_application_id
+                      $serialNo = $app->main_application_id ?? '01';
+                      $serialNo = str_pad($serialNo, 2, '0', STR_PAD_LEFT);
+                      
+                      $npFileNo = "ST-{$landUseCode}-{$year}-{$serialNo}";
+                    }
+                  @endphp
+                  <div class="font-mono text-xs bg-blue-100 px-2 py-1 rounded text-blue-800" title="New Primary FileNo (NPFN)">{{ $npFileNo }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  @php
+                    // Generate Unit FileNo (NP FileNo + Unit Serial)
+                    $unitFileNo = 'N/A';
+                    if ($npFileNo !== 'N/A' && $app->unit_number) {
+                      $unitSerial = str_pad($app->unit_number, 3, '0', STR_PAD_LEFT);
+                      $unitFileNo = $npFileNo . '-' . $unitSerial;
+                    }
+                  @endphp
+                  <div class="font-mono text-xs bg-green-100 px-2 py-1 rounded text-green-800" title="Unit FileNo (NP FileNo + Serial)">{{ $unitFileNo }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                    {{ $app->land_use ?? 'N/A' }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
               <div class="flex items-center">
                 <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-2">
                   @if(!empty($app->mother_passport))
@@ -208,16 +342,43 @@
 <td class="table-cell px-1 py-1 truncate">
     {{ $app->created_at ? \Carbon\Carbon::parse($app->created_at)->format('M d, Y') : 'N/A' }}
 </td>
-</qodoArtifact>
-            <td class="table-cell px-1 py-1">
-              @include('sectionaltitling.action_menu.unit_actions', ['app' => $app])
-            </td>
-              </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-      </div>
+<td class="table-cell px-1 py-1 truncate">
+  @php
+    $planningStatus = $app->planning_recommendation_status ?? 'N/A';
+    $statusClass = match(strtolower($planningStatus)) {
+      'approved' => 'bg-green-100 text-green-800',
+      'rejected' => 'bg-red-100 text-red-800',
+      'pending' => 'bg-yellow-100 text-yellow-800',
+      default => 'bg-gray-100 text-gray-800'
+    };
+  @endphp
+  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusClass }}">
+    {{ $planningStatus }}
+  </span>
+    </td>
+    <td class="table-cell px-1 py-1 truncate">
+  @php
+    $appStatus = $app->application_status ?? 'N/A';
+    $appStatusClass = match(strtolower($appStatus)) {
+      'approved' => 'bg-green-100 text-green-800',
+      'rejected' => 'bg-red-100 text-red-800', 
+      'pending' => 'bg-yellow-100 text-yellow-800',
+      default => 'bg-gray-100 text-gray-800'
+    };
+  @endphp
+  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $appStatusClass }}">
+    {{ $appStatus }}
+  </span>
+    </td>
+    <td class="table-cell px-1 py-1">
+      @include('sectionaltitling.action_menu.unit_actions', ['app' => $app])
+    </td>
+      </tr>
+      @endforeach
+    </tbody>
+      </table>
+    </div>
+  </div>
     
     </div>
     <!-- Footer -->
@@ -248,56 +409,60 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 $(document).ready(function() {
-    // Initialize DataTable
+    // Initialize DataTable with proper buttons configuration
     var table = $('#unitsTable').DataTable({
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
         "order": [[0, "desc"]],
         "columnDefs": [
             {
-                "targets": [9], // Actions column
+                "targets": [10], // Actions column (updated index)
                 "orderable": false,
                 "searchable": false
             }
         ],
-        "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+        "dom": 'Bfrtip', // Include buttons in DOM
         "language": {
             "info": "Showing _START_ to _END_ of _TOTAL_ applications",
             "infoEmpty": "Showing 0 to 0 of 0 applications",
             "infoFiltered": "(filtered from _MAX_ total applications)",
             "lengthMenu": "Show _MENU_ applications per page",
-            "search": "Search applications:",
+            "search": "",
+            "searchPlaceholder": "Search applications...",
             "paginate": {
                 "first": "First",
                 "last": "Last",
                 "next": "Next",
                 "previous": "Previous"
-            }
+            },
+            "emptyTable": "No unit applications found",
+            "zeroRecords": "No matching applications found"
         },
         "responsive": true,
         "processing": true,
         "autoWidth": false,
+        "searching": true,
         "buttons": [
             {
-                extend: 'excel',
+                extend: 'excelHtml5',
                 text: 'Export to Excel',
-                className: 'btn btn-success',
+                className: 'btn btn-success d-none',
                 exportOptions: {
                     columns: ':not(:last-child)' // Exclude actions column
                 }
             },
             {
-                extend: 'csv',
+                extend: 'csvHtml5',
                 text: 'Export to CSV',
-                className: 'btn btn-info',
+                className: 'btn btn-info d-none',
                 exportOptions: {
                     columns: ':not(:last-child)' // Exclude actions column
                 }
             },
             {
-                extend: 'pdf',
+                extend: 'pdfHtml5',
                 text: 'Export to PDF',
-                className: 'btn btn-danger',
+                className: 'btn btn-danger d-none',
                 exportOptions: {
                     columns: ':not(:last-child)' // Exclude actions column
                 },
@@ -307,29 +472,124 @@ $(document).ready(function() {
         ]
     });
 
+    // Hide default DataTables controls
+    $('.dataTables_filter').hide();
+    $('.dataTables_length').hide();
+    $('.dataTables_info').hide();
+    $('.dataTables_paginate').hide();
+    $('.dt-buttons').hide(); // Hide the default buttons
+
+    // Connect custom search input
+    $('#globalSearch').on('keyup', function() {
+        table.search(this.value).draw();
+    });
+
+    // Add visual feedback to search
+    $('#globalSearch').on('keyup', function() {
+        const searchTerm = this.value;
+        if (searchTerm.length > 0) {
+            $(this).addClass('border-blue-500 ring-1 ring-blue-500');
+        } else {
+            $(this).removeClass('border-blue-500 ring-1 ring-blue-500');
+        }
+    });
+
+    // Filter functionality
+    $('#filterBtn').on('click', function() {
+        Swal.fire({
+            title: 'Filter Options',
+            html: `
+                <div class="text-left space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Land Use:</label>
+                        <select id="landUseFilter" class="w-full p-2 border border-gray-300 rounded-md">
+                            <option value="">All Land Uses</option>
+                            <option value="Residential">Residential</option>
+                            <option value="Commercial">Commercial</option>
+                            <option value="Industrial">Industrial</option>
+                            <option value="Mixed">Mixed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Owner Type:</label>
+                        <select id="ownerTypeFilter" class="w-full p-2 border border-gray-300 rounded-md">
+                            <option value="">All Owner Types</option>
+                            <option value="Individual">Individual</option>
+                            <option value="Corporate">Corporate</option>
+                            <option value="Multiple">Multiple Owners</option>
+                        </select>
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Apply Filter',
+            cancelButtonText: 'Clear Filter',
+            preConfirm: () => {
+                const landUse = document.getElementById('landUseFilter').value;
+                const ownerType = document.getElementById('ownerTypeFilter').value;
+                return { landUse, ownerType };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Apply filters
+                let searchTerm = '';
+                if (result.value.landUse) {
+                    searchTerm += result.value.landUse + ' ';
+                }
+                if (result.value.ownerType) {
+                    searchTerm += result.value.ownerType + ' ';
+                }
+                table.search(searchTerm.trim()).draw();
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                // Clear filter
+                table.search('').draw();
+                $('#globalSearch').val('');
+            }
+        });
+    });
+
     // Custom export button functionality
-    $('#exportBtn').on('click', function() {
-        // Show export options
-        var exportMenu = `
-            <div class="export-menu" style="position: absolute; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000;">
-                <button onclick="exportToExcel()" class="block w-full text-left px-3 py-2 hover:bg-gray-100">Export to Excel</button>
-                <button onclick="exportToCSV()" class="block w-full text-left px-3 py-2 hover:bg-gray-100">Export to CSV</button>
-                <button onclick="exportToPDF()" class="block w-full text-left px-3 py-2 hover:bg-gray-100">Export to PDF</button>
-            </div>
-        `;
+    $('#exportBtn').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
         
-        // Remove existing menu
+        // Remove any existing menu
         $('.export-menu').remove();
         
-        // Add menu
-        $(this).after(exportMenu);
+        // Create export menu
+        var exportMenu = $(`
+            <div class="export-menu" style="position: fixed; background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 9999; min-width: 160px;">
+                <button onclick="exportToExcel()" class="block w-full text-left px-3 py-2 hover:bg-gray-50 rounded flex items-center text-sm">
+                    <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Export to Excel
+                </button>
+                <button onclick="exportToCSV()" class="block w-full text-left px-3 py-2 hover:bg-gray-50 rounded flex items-center text-sm">
+                    <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Export to CSV
+                </button>
+                <button onclick="exportToPDF()" class="block w-full text-left px-3 py-2 hover:bg-gray-50 rounded flex items-center text-sm">
+                    <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Export to PDF
+                </button>
+            </div>
+        `);
         
-        // Position menu
-        var menu = $('.export-menu');
-        var button = $(this);
-        menu.css({
-            'top': button.offset().top + button.outerHeight(),
-            'left': button.offset().left
+        // Add menu to body
+        $('body').append(exportMenu);
+        
+        // Position menu relative to button
+        var buttonOffset = $(this).offset();
+        var buttonHeight = $(this).outerHeight();
+        
+        exportMenu.css({
+            'top': buttonOffset.top + buttonHeight + 5,
+            'left': buttonOffset.left
         });
         
         // Close menu when clicking outside
@@ -343,18 +603,21 @@ $(document).ready(function() {
 
     // Export functions
     window.exportToExcel = function() {
-        table.button('.buttons-excel').trigger();
+        table.button(0).trigger(); // Trigger first button (Excel)
         $('.export-menu').remove();
+        $(document).off('click.exportMenu');
     };
 
     window.exportToCSV = function() {
-        table.button('.buttons-csv').trigger();
+        table.button(1).trigger(); // Trigger second button (CSV)
         $('.export-menu').remove();
+        $(document).off('click.exportMenu');
     };
 
     window.exportToPDF = function() {
-        table.button('.buttons-pdf').trigger();
+        table.button(2).trigger(); // Trigger third button (PDF)
         $('.export-menu').remove();
+        $(document).off('click.exportMenu');
     };
 });
 

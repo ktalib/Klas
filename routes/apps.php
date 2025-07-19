@@ -51,6 +51,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/secondaryform', [SecondaryFormController::class, 'save'])->name('secondaryform.save');
     Route::get('/sectionaltitling/edit_sub/{id}', [SecondaryFormController::class, 'edit'])->name('sectionaltitling.edit_sub');
     Route::put('/sectionaltitling/update_sub/{id}', [SecondaryFormController::class, 'update'])->name('sectionaltitling.update_sub');
+    
+    // Mother applications route
+    Route::get('/sectionaltitling/mother', [\App\Http\Controllers\SectionalTitlingController::class, 'mother'])->name('sectionaltitling.mother');
 
     Route::prefix('sub-application')->group(function () {
         Route::get('/{id}', [SubApplicationModalController::class, 'showSubApplication']);
@@ -99,6 +102,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('programmes')->group(function () {
         Route::get('/field-data', [ProgrammesController::class, 'FieldData'])->name('programmes.field-data');
+        Route::get('/bills', [ProgrammesController::class, 'bills'])->name('programmes.bills');
+        Route::get('/bill/view/{type}/{id}', [ProgrammesController::class, 'viewBill'])->name('programmes.bill.view');
+        Route::get('/bill/print/{type}/{id}', [ProgrammesController::class, 'printBill'])->name('programmes.bill.print');
+        Route::get('/bill/download/{type}/{id}', [ProgrammesController::class, 'downloadBill'])->name('programmes.bill.download');
         Route::get('/payments', [ProgrammesController::class, 'Payments'])->name('programmes.payments');
         Route::get('/approvals/other-departments', [ProgrammesController::class, 'Others'])->name('programmes.approvals.other-departments');
         Route::get('/approvals/deeds', [ProgrammesController::class, 'Deeds'])->name('programmes.approvals.deeds');

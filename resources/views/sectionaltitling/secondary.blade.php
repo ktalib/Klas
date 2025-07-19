@@ -13,7 +13,7 @@
     <div class="p-6">
       <!-- Stats Cards -->
     @if(!request()->has('survey') && (!request()->has('url') || (request()->get('url') !== 'phy_planning' && request()->get('url') !== 'recommendation')))
-      @include('sectionaltitling.partials.statistic.SecondaryApplications')
+      @include('sectionaltitling.partials.statistic.SecondaryApplications2')
     @endif
       <!-- Secondary Applications Table - Screenshot 135 -->
       <div class="bg-white rounded-md shadow-sm border border-gray-200 p-6">
